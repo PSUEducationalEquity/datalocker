@@ -1,15 +1,13 @@
-from django.db import models
-from django.utils import timezone 
 from django.contrib.auth.models import User, Group
+from django.db import models
+from django.forms.models import model_to_dict
+from django.utils import timezone
+
+import datetime
 
 
 
-# Create your models here.
-class User(models.Model):
-    pass
-
-
-# Locker class created 
+# Locker class created
 class Locker(models.Model):
     form_url = models.CharField(max_length=255)
     form_identifier = models.CharField(max_length=255)
@@ -29,31 +27,37 @@ class Locker(models.Model):
     objects = LockerManager()
 
 
-#LockerManager class created 
-class LockerManager(models.Manager):
-    
-    
-    def active(self)	
-        
-    def archive(self) 
-        pass  
+#LockerManager class created
+"""class LockerManager(models.Manager):
+
+
+    def active(self)
+
+    def archive(self)
+        pass
     def has_access(User)
         pass
     def is_archived(self, reference_date=datetime.today()):
         try: submitted_timestamp = self.filter(
-        
-   
+"""
+
 class LockerSettings(models.Model):
     category = model.CharField(max_length=255)
     setting = model.CharField(max_length=255)
     setting_identifier = models.SlugField()
     value = models.CharField(max_length=255)
-    
 
-from django.forms.models import model_to_dict
-from django.utils import timezone
 
-import datetime
+# Model to show the owner/user_id of an added locker
+class LockerUser(models.Model):
+    locker = models.ForeignKey(Locker,
+        related_name="locker_user",
+        on_delete=models.PROTECT,
+        )
+    user_id = models.ForeignKey(Locker,
+        related_name="user",
+        on_delete=models.PROTECT,
+        )
 
 
 # Model used for the actual Submission of the form
@@ -80,14 +84,6 @@ class Submission(models.Model):
         return model_to_dict(self)
 
 
-# Model to show the owner/user_id of an added locker
-class LockerUser(models.Model):
-    locker = models.ForeignKey(Locker,
-        related_name="locker_user",
-        on_delete=models.PROTECT,
-        )
-    user_id = models.ForeignKey(Locker,
-        related_name="user",
-        on_delete=models.PROTECT,
-        )
-
+# Create your models here.
+class User(models.Model):
+    pass
