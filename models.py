@@ -13,11 +13,16 @@ class Locker(models.Model):
 # Needs to include the locer name, Submission timestamp,
 # the data that is on the form and then it is needed to be returned readable
 class Submission(models.Model):
-    locker = models.ForeignKey(Locker)
-    timestamp = models.DateTimeField(auto_now=False,
-        auto_now_add=True
+    locker = models.ForeignKey(Locker,
+        related_name="locker_submission",
+        on_delete=models.PROTECT,
         )
-    data = models.CharField(max_length=250)
+    timestamp = models.DateTimeField(auto_now=False,
+        auto_now_add=True,
+        )
+    data = models.CharField(max_length=250,
+        blank=True,
+        )
 
 
     def data_dict(self):
@@ -30,5 +35,11 @@ class Submission(models.Model):
 
 # Model to show the owner/user_id of an added locker
 class LockerUser(models.Model):
-    locker = models.ForeignKey(Locker)
-    user_id = models.ForeignKey(Locker)
+    locker = models.ForeignKey(Locker,
+        related_name="locker_user",
+        on_delete=models.PROTECT,
+        )
+    user_id = models.ForeignKey(Locker,
+        related_name="user",
+        on_delete=models.PROTECT,
+        )
