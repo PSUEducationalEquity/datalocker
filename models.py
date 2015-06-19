@@ -5,10 +5,6 @@ from django.utils import timezone
 import datetime
 
 
-# Create your models here.
-class Locker(models.Model):
-    locker = models.CharField(max_length=250)
-    user_id = models.CharField(max_length=250)
 # Model used for the actual Submission of the form
 # Needs to include the locer name, Submission timestamp,
 # the data that is on the form and then it is needed to be returned readable
