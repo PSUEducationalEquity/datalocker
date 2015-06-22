@@ -135,6 +135,10 @@ fieldset[disabled] .btn-inverse.active {
     $FOOTER
 \*------------------------------------*/
 
+footer {
+    margin-top: 20px;
+}
+
 .document-footer {
     background-color: #F8F8F8;
     border-top: 1px solid #E7E7E7;
