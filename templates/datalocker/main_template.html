@@ -141,12 +141,20 @@
         {% block footer-top %}{% endblock %}
         {% block footer %}
           <div class="document-footer">
-            <p class="ownership">
-              Developed by the Office of the Vice Provost for Educational Equity
-            </p>
-            <p class="copyright">
-              Copyright 2015 the Pennsylvania State University. All Rights Reserved.
-            </p>
+            <div class="container-fluid">
+              <div class="row">
+                <p class="copyright col-sm-6">
+                  Copyright 2015
+                  <a href="http://www.psu.edu">The Pennsylvania State University</a>.
+                  All Rights Reserved.
+                </p>
+                <p class="ownership col-sm-6">
+                  Developed by the
+                  <a href="http://equity.psu.edu"
+                     >Office of the Vice Provost for Educational Equity</a>
+                </p>
+              </div>
+            </div>
           </div>
         {% endblock %}
         {% block footer-bottom %}{% endblock %}

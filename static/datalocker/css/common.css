@@ -134,3 +134,25 @@ fieldset[disabled] .btn-inverse.active {
 /*------------------------------------*\
     $FOOTER
 \*------------------------------------*/
+
+.document-footer {
+    background-color: #F8F8F8;
+    border-top: 1px solid #E7E7E7;
+    color: #777;
+    padding: 10px 0;
+}
+
+.ownership,
+.copyright {
+    color: #777;
+    font-size: 0.8em;
+}
+
+.ownership {
+    text-align: right;
+}
+@media only screen and (max-width: 767px) {
+    .ownership {
+        text-align: left;
+    }
+}
