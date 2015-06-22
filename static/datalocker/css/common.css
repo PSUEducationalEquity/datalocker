@@ -1,0 +1,136 @@
+/** Data Locker common styles **/
+
+/*------------------------------------*\
+    $CONTENTS
+\*------------------------------------*/
+/**
+ * CONTENTS.............You're reading it!
+ * GENERAL..............General styles
+ * ACCESSIBILITY........Improve the accessibility of certain structures
+ * BUTTONS..............Button styling
+ * FOOTER...............Styling specifically for the page footer
+ */
+
+
+
+/*------------------------------------*\
+    $GENERAL
+\*------------------------------------*/
+
+
+
+
+/*------------------------------------*\
+    $ACCESSIBILITY
+\*------------------------------------*/
+
+/**
+ * More accessible definition list styling
+ */
+/*ul*/.definition-list {
+    list-style-type: none;
+}
+
+/*ul*/.definition-list li {
+    margin-bottom: 2em;
+}
+
+/*ul*/.definition-list li h2,
+/*ul*/.definition-list li h3,
+/*ul*/.definition-list li h4 {
+    font-size: 20px;
+    line-height: 20px;
+    margin: 10px 0;
+}
+
+/*ul*/.definition-list li p {
+    margin-left: 3em;
+}
+
+
+/**
+ * Accessible key/value pair listing using the Bootstrap grid system
+ */
+/*ul*/.list-grid > li {
+    margin-bottom: 0.5em;
+}
+
+/*ul*/.list-grid > li h2,
+/*ul*/.list-grid > li h3,
+/*ul*/.list-grid > li h4 {
+    font-size: 1em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/*ul,ol*/.list-grid .divider {
+    border-top: 1px solid #CCCCCC;
+    padding-top: 0.5em;
+}
+
+/*ul,ol*/.list-grid .divider-success { border-color: #d6e9c6; }
+/*ul,ol*/.list-grid .divider-info    { border-color: #bce8f1; }
+/*ul,ol*/.list-grid .divider-warning { border-color: #faebcc; }
+/*ul,ol*/.list-grid .divider-danger  { border-color: #ebccd1; }
+
+
+
+
+/*------------------------------------*\
+    $BUTTONS
+\*------------------------------------*/
+
+/**
+ * Black (inverse) button style for Bootstrap buttons
+ */
+.btn-inverse {
+  color: #ffffff;
+  background-color: #333333;
+  border-color: #000000;
+}
+
+.btn-inverse:hover,
+.btn-inverse:focus,
+.btn-inverse:active,
+.btn-inverse.active,
+.open .dropdown-toggle.btn-inverse {
+  color: #ffffff;
+  background-color: #4c4c4c; /*#ebebeb;*/
+  border-color: #333333;
+}
+
+.btn-inverse:active,
+.btn-inverse.active,
+.open .dropdown-toggle.btn-inverse {
+  background-image: none;
+}
+
+.btn-inverse.disabled,
+.btn-inverse[disabled],
+fieldset[disabled] .btn-inverse,
+.btn-inverse.disabled:hover,
+.btn-inverse[disabled]:hover,
+fieldset[disabled] .btn-inverse:hover,
+.btn-inverse.disabled:focus,
+.btn-inverse[disabled]:focus,
+fieldset[disabled] .btn-inverse:focus,
+.btn-inverse.disabled:active,
+.btn-inverse[disabled]:active,
+fieldset[disabled] .btn-inverse:active,
+.btn-inverse.disabled.active,
+.btn-inverse[disabled].active,
+fieldset[disabled] .btn-inverse.active {
+  background-color: #333333;
+  border-color: #cccccc;
+}
+
+.btn-inverse .badge {
+  color: #333333;
+  background-color: #333333;
+}
+
+
+
+/*------------------------------------*\
+    $FOOTER
+\*------------------------------------*/
