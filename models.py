@@ -6,8 +6,34 @@ from django.utils import timezone
 import datetime
 
 
+##
+# Model Managers
+##
 
-# Locker class created
+class LockerManager(models.Manager):
+    def active(self):
+        pass
+
+
+    def archive(self):
+        pass
+
+
+    def has_access(User):
+        pass
+
+
+    # def is_archived(self, reference_date=datetime.today()):
+    #     #try: submitted_timestamp = self.filter(
+    #     pass
+
+
+
+
+##
+# Models
+##
+
 class Locker(models.Model):
     form_url = models.CharField(max_length=255)
     form_identifier = models.CharField(max_length=255)
@@ -22,24 +48,10 @@ class Locker(models.Model):
         auto_now_add=True,
         editable=False,
         )
-
-
     objects = LockerManager()
 
 
-#LockerManager class created
-"""class LockerManager(models.Manager):
 
-
-    def active(self)
-
-    def archive(self)
-        pass
-    def has_access(User)
-        pass
-    def is_archived(self, reference_date=datetime.today()):
-        try: submitted_timestamp = self.filter(
-"""
 
 class LockerSettings(models.Model):
     category = model.CharField(max_length=255)
