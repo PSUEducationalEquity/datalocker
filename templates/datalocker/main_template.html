@@ -1,0 +1,168 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% block title-wrapper %}
+      <title>
+        {% block page-meta-title %}Site{% endblock page-meta-title %}
+        :: {% block page-meta-org %}Data Locker{% endblock page-meta-org %}
+      </title>
+    {% endblock title-wrapper %}
+
+    {% block site-styles %}
+      <link type="text/css" rel="stylesheet"
+            href="{% static 'datalocker/css/bootstrap.min.css' %}" />
+      <link type="text/css" rel="stylesheet"
+            href="{% static 'datalocker/css/common.css' %}" />
+    {% endblock site-styles %}
+  </head>
+
+  {% block body-tag %}<body>{% endblock body-tag %}
+    {% block header-wrapper %}
+      <header class="hidden-print">
+        {% block header-top %}{% endblock %}
+        <div class="document-header">
+          <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <button type="button"
+                        class="navbar-toggle collapsed"
+                        data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1"
+                        aria-expanded="false"
+                        >
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'datalocker:index' %}"
+                   ><span class="application-name" id="application-name">
+                    {% block app-name %}Data Locker{% endblock app-name %}
+                  </span>
+                </a>
+              </div>
+
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <!-- holding for future navbar links
+                <ul class="nav navbar-nav">
+                  <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                  <li><a href="#">Link</a></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Action</a></li>
+                      <li><a href="#">Another action</a></li>
+                      <li><a href="#">Something else here</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">Separated link</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">One more separated link</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                -->
+                {% block personal-bar-wrapper %}
+                  <ul class="nav navbar-nav navbar-right personal-bar">
+                    {% if request.user.is_authenticated %}
+                      <li class="dropdown">
+                        <a href="#"
+                           class="dropdown-toggle"
+                           data-toggle="dropdown"
+                           id="dropdown-personal-bar"
+                           role="button"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                           >
+                          <span class="sr-only">
+                            Currently logged in username:
+                          </span>
+                          <span id="current-username"
+                                >{{ request.user.username }}</span>
+                          <span class="caret"></span>
+                        </a>
+                        <ul aria-label="Menu of site-wide commands for the current user"
+                            class="dropdown-menu pull-right"
+                            role="menu">
+                          <li><a href="#">Action</a></li>
+                          <li><a href="#">Another action</a></li>
+                          <li><a href="#">Something else here</a></li>
+                          <li role="separator" class="divider"></li>
+                          <li><a href="#">Separated link</a></li>
+                          {% block personal-bar-menu %}
+                            <li role="presentation"
+                              ><a role="menuitem"
+                                  tabindex="-1"
+                                  href="{% block logout-url %}{% url 'admin:logout' %}{% end block %}"
+                                >Log out</a>
+                            </li>
+                            {% block menuitem-password-change %}
+                            <li role="presentation"
+                              ><a role="menuitem"
+                                  tabindex="-1"
+                                  href="{% url 'admin:password_change' %}"
+                                >Log out</a>
+                            </li>
+                            {% endblock menuitem-password-change %}
+                            <li role="separator" class="divider"></li>
+                            <li role="presentation"
+                              ><a role="menuitem"
+                                  tabindex="-1"
+                                  href="{% url 'admin:index' %}"
+                                >Settings</a>
+                            </li>
+                          {% endblock personal-bar-menu %}
+                        </ul>
+                      </li>
+
+                    {% else %}
+                      <li><a href="#">Log In</a></li>
+                    {% endif %}
+                  </ul>
+                {% endblock personal-bar-wrapper %}
+              </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+          </nav>
+        </div>
+        {% block header-bottom %}{% endblock %}
+      </header>
+    {% endblock header-wrapper %}
+
+    <div class="document-content">
+      {% block content %}{% endblock %}
+    </div>
+
+    {% block footer-wrapper %}
+      <footer class="hidden-print">
+        {% block footer-top %}{% endblock %}
+        {% block footer %}
+          <div class="document-footer">
+            <p class="ownership">
+              Developed by the Office of the Vice Provost for Educational Equity
+            </p>
+            <p class="copyright">
+              Copyright 2015 the Pennsylvania State University. All Rights Reserved.
+            </p>
+          </div>
+        {% endblock %}
+        {% block footer-bottom %}{% endblock %}
+      </footer>
+    {% endblock footer-wrapper %}
+
+    {% block dialogs %}
+    {% endblock dialogs %}
+
+    {% block site-scripts %}
+      <script type="text/javascript"
+              src="{% static 'datalocker/js/jquery-2.1.4.min.js' %}"></script>
+      <script type="text/javascript"
+              src="{% static 'datalocker/js/bootstrap.min.js' %}"></script>
+      <script type="text/javascript"
+              src="{% static 'datalocker/js/moment.min.js' %}"></script>
+    {% endblock site-scripts %}
+  </body>
+</html>
