@@ -3,7 +3,8 @@ from django.db import models
 from django.forms.models import model_to_dict
 from django.utils import timezone
 
-import datetime
+
+from datetime import datetime
 
 
 ##
@@ -12,20 +13,22 @@ import datetime
 
 class LockerManager(models.Manager):
     def active(self):
-        pass
+        return self.filter(archive_timestamp = None)    
 
 
     def archive(self):
-        pass
+        return self.filter(archive_timestamp__isnull = False)
 
 
-    def has_access(User):
-        pass
+    def has_access(self, user):
+        return self.filter(user = user)
 
 
-    # def is_archived(self, reference_date=datetime.today()):
-    #     #try: submitted_timestamp = self.filter(
-    #     pass
+   
+
+
+
+
 
 
 
@@ -43,21 +46,28 @@ class Locker(models.Model):
         auto_now=False,
         auto_now_add=True,
         editable=False,)
-    archive_timestamp = models.DateField(DateTimeField(
+    archive_timestamp = models.DateTimeField(
         auto_now=False,
-        auto_now_add=True,
+        auto_now_add=False,
         editable=False,
+        null=True,
+        blank=True,
         )
     objects = LockerManager()
 
 
 
+    def is_archived(self):         
+        if archive_timestamp is None:
+            return False
+        return True
+
 
 class LockerSettings(models.Model):
-    category = model.CharField(max_length=255)
-    setting = model.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+    setting = models.CharField(max_length=255)
     setting_identifier = models.SlugField()
-    value = models.CharField(max_length=255)
+    value = models.TextField()
 
 
 # Model to show the owner/user_id of an added locker
