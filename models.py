@@ -23,9 +23,8 @@ class LockerManager(models.Manager):
         pass
 
 
-    # def is_archived(self, reference_date=datetime.today()):
-    #     #try: submitted_timestamp = self.filter(
-    #     pass
+    def is_archived(self, reference_date=datetime.today()):
+        pass
 
 
 
@@ -42,8 +41,9 @@ class Locker(models.Model):
     submitted_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
-        editable=False,)
-    archive_timestamp = models.DateField(DateTimeField(
+        editable=False,
+        )
+    archive_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
@@ -51,11 +51,9 @@ class Locker(models.Model):
     objects = LockerManager()
 
 
-
-
 class LockerSettings(models.Model):
-    category = model.CharField(max_length=255)
-    setting = model.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+    setting = models.CharField(max_length=255)
     setting_identifier = models.SlugField()
     value = models.CharField(max_length=255)
 
@@ -67,7 +65,7 @@ class LockerUser(models.Model):
         on_delete=models.PROTECT,
         )
     user_id = models.ForeignKey(Locker,
-        related_name="user",
+        related_name="Locker",
         on_delete=models.PROTECT,
         )
 
@@ -77,15 +75,13 @@ class LockerUser(models.Model):
 # the data that is on the form and then it is needed to be returned readable
 class Submission(models.Model):
     locker = models.ForeignKey(Locker,
-        related_name="locker_submission",
+        related_name="Locker",
         on_delete=models.PROTECT,
         )
     timestamp = models.DateTimeField(auto_now=False,
         auto_now_add=True,
         )
-    data = models.CharField(max_length=250,
-        blank=True,
-        )
+    data = models.TextField(blank=True)
 
 
     def data_dict(self):
@@ -93,9 +89,9 @@ class Submission(models.Model):
 
 
     def to_dict(self):
-        return model_to_dict(self)
+        return self.to_dict()
 
 
-# Create your models here.
+
 class User(models.Model):
     pass
