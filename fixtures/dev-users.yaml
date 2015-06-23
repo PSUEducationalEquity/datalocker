@@ -1,0 +1,43 @@
+---
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: par117@psu.edu
+    first_name: Paul
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2015-01-14 15:08:22-05:00'
+    last_name: Rentschler
+    password: pbkdf2_sha256$10000$IF2EIwH9oGe7$4TtpR9H/lvTi4UNi50kXFqz9NORd3wsq26SZXf5A1mg=
+    user_permissions: []
+    username: par117
+  model: auth.user
+  pk: 1
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: das66@psu.edu
+    first_name: Dominick
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38-05:00'
+    last_name: Stuck
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: das66
+  model: auth.user
+  pk: 2
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: hay110@psu.edu
+    first_name: Hunter
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38-05:00'
+    last_name: Yohn
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: hay110
+  model: auth.user
+  pk: 3
