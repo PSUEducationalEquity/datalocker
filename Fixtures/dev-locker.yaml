@@ -16,6 +16,7 @@
     submitted_timestamp: '2015-01-14 15:30:10-05:00'
     archive_timestamp: ''
   model: models.Locker
+<<<<<<< HEAD
   pk:2
 - fields:
     form_url: www.aol.com
@@ -62,3 +63,6 @@
     archive_timestamp: ''
   model: models.Locker
   pk:7
+=======
+  pk: 2
+>>>>>>> 53445e79aac1558640ef4057af0357f0d81338da

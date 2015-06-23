@@ -4,7 +4,11 @@ from django.forms.models import model_to_dict
 from django.utils import timezone
 
 
+
 from datetime import datetime
+
+import datetime, json
+
 
 
 ##
@@ -24,13 +28,8 @@ class LockerManager(models.Manager):
         return self.filter(user = user)
 
 
-   
-
-
-
-
-
-
+    def is_archived(self):
+        pass
 
 
 ##
@@ -45,7 +44,9 @@ class Locker(models.Model):
     submitted_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
-        editable=False,)
+        editable=False,
+        )
+
     archive_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
@@ -54,7 +55,6 @@ class Locker(models.Model):
         blank=True,
         )
     objects = LockerManager()
-
 
 
     def is_archived(self):         
@@ -77,7 +77,7 @@ class LockerUser(models.Model):
         on_delete=models.PROTECT,
         )
     user_id = models.ForeignKey(Locker,
-        related_name="user",
+        related_name="LockerUser",
         on_delete=models.PROTECT,
         )
 
@@ -87,25 +87,25 @@ class LockerUser(models.Model):
 # the data that is on the form and then it is needed to be returned readable
 class Submission(models.Model):
     locker = models.ForeignKey(Locker,
-        related_name="locker_submission",
+        related_name="Submission",
         on_delete=models.PROTECT,
         )
     timestamp = models.DateTimeField(auto_now=False,
         auto_now_add=True,
         )
-    data = models.CharField(max_length=250,
-        blank=True,
-        )
+    data = models.TextField(blank=True)
 
 
     def data_dict(self):
-        return self.to_dict()
+        return json.loads(self.data)
 
 
     def to_dict(self):
-        return model_to_dict(self)
+        result = model_to_dict(self)
+        import pdb; pdb.set_trace()
+        result['data'] = self.data_dict()
+        return result
 
 
-# Create your models here.
 class User(models.Model):
     pass
