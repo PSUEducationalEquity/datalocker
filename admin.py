@@ -2,5 +2,12 @@ from django.contrib import admin
 from .models import Locker, Submission
 
 # Register your models here.
-admin.site.register(Locker)
-admin.site.register(Submission)
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ['id','locker','timestamp','data']
+
+
+class LockerAdmin(admin.ModelAdmin):
+    list_display = ['id','form_url','form_identifier','user','name','submitted_timestamp','archive_timestamp']
+
+admin.site.register(Locker, LockerAdmin)
+admin.site.register(Submission, SubmissionAdmin)

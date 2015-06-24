@@ -53,6 +53,9 @@ class Locker(models.Model):
         )
     objects = LockerManager()
 
+    def __str__(self):
+        return self.form_identifier
+
 
     def is_archived(self):
         if archive_timestamp is None:
@@ -83,8 +86,12 @@ class LockerUser(models.Model):
 # Needs to include the locer name, Submission timestamp,
 # the data that is on the form and then it is needed to be returned readable
 class Submission(models.Model):
+
+    def __long__(self):
+        return 'Submission: ' + self.id
     locker = models.ForeignKey(Locker,
-        related_name="Submission",
+        db_column="form_identifier",
+        related_name="Submission_locker",
         on_delete=models.PROTECT,
         )
     timestamp = models.DateTimeField(auto_now=False,
