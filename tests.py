@@ -11,13 +11,13 @@ import datetime
 # Create your tests here.
 
 class Tests(TestCase):
-    fixtures = ['dev-locker.yaml']
-    fixtures = ['dev-submissions.yaml']
-    fixtures = ['dev-users.yaml']
+    fixtures = ['/datalocker_proj/datalocker/fixtures/dev-locker.yaml/',]
+    fixtures = ['/datalocker_proj/datalocker/fixtures/dev-submission.yaml/',]
+    fixtures = ['/datalocker_proj/datalocker/fixtures/dev-users.yaml/',]
 
 
 	def test_archived(self):
-	    s= Locker.objects.archive()
+	    s= Locker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.archive()],(3, 4, ))
       
 

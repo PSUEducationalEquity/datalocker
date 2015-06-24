@@ -6,7 +6,7 @@
     name: 'Dominick Stuck'
     submitted_timestamp: '2015-01-14 15:00:00-05:00'
     archive_timestamp: ''
-  model: models.Locker
+  model: datalocker.Locker
   pk: 1
 - fields:
     form_url: www.google+.com
@@ -15,8 +15,8 @@
     name: 'Hunter Yohn'
     submitted_timestamp: '2015-01-14 15:30:10-05:00'
     archive_timestamp: ''
-  model: models.Locker
-  pk:2
+  model: datalocker.Locker
+  pk: 2
 - fields:
     form_url: www.aol.com
     form_identifier: T-98
@@ -24,8 +24,8 @@
     name: 'Chase Smith'
     submitted_timestamp: '2015-01-14 15:35:10-05:00'
     archive_timestamp: ''
-  model: models.Locker
-  pk:3
+  model: datalocker.Locker
+  pk: 3
 - fields:
     form_url: www.ubuntu.com
     form_identifier: I-130
@@ -33,8 +33,8 @@
     name: 'Dustin Hagans'
     submitted_timestamp: '2015-01-14 15:38:10-05:00'
     archive_timestamp: ''
-  model: models.Locker
-  pk:4
+  model: datalocker.Locker
+  pk: 4
 - fields:
     form_url: www.google+.com
     form_identifier: I-9
@@ -42,8 +42,8 @@
     name: 'Cory Yoder'
     submitted_timestamp: '2015-01-14 15:40:10-05:00'
     archive_timestamp: ''
-  model: models.Locker
-  pk:5
+  model: datalocker.Locker
+  pk: 5
 - fields:
     form_url: www.lecturesnippets.com
     form_identifier: 8822
@@ -51,8 +51,8 @@
     name: 'Matthew Penning'
     submitted_timestamp: '2015-01-14 15:55:10-05:00'
     archive_timestamp: ''
-  model: models.Locker
-  pk:6
+  model: datalocker.Locker
+  pk: 6
 - fields:
     form_url: www.pinterest.com
     form_identifier: DS-5504
@@ -60,5 +60,5 @@
     name: 'Richard Migginis'
     submitted_timestamp: '2015-01-14 15:20:10-05:00'
     archive_timestamp: ''
-  model: models.Locker
-  pk:7
+  model: datalocker.Locker
+  pk: 7

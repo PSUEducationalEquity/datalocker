@@ -18,11 +18,10 @@ class LockerView(generic.ListView):
 
     def get_queryset(self):
         # Return all lockers for the current user
-<<<<<<< HEAD
-        return #Locker.objects.has_access()
-              
+        return #Locker.objects.has_access(self)
+
 
 class SubmissionView(generic.ListView):
     model = Submission
     template_name = 'datalocker/submission.html'
->>>>>>> 6a42f6c10021851f3f5c62dbab1632720ea682ff
+
