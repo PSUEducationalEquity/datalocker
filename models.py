@@ -25,8 +25,6 @@ class LockerManager(models.Manager):
         return self.filter(user = user)
 
 
-    def is_archived(self):
-        pass
 
 
 ##
