@@ -1,0 +1,5 @@
+settings_local.py
+secret_key.py
+*.pyc
+~*
+

@@ -16,14 +16,17 @@ class LockerListView(generic.ListView):
 
 
 class SubmissionView(generic.ListView):
-    model = Submission
-    template_name = 'datalocker/submission.html'
+    context_object_name = 'my_submission_list'
+    template_name = 'datalocker/submissionlist.html'
+
+
+    def get_queryset(self):
+        # Return all submissions for selected locker
+        return Submission.objects.all()
 
 
 class SubmissionListView(generic.ListView):
     model = Submission
-    template_name = 'datalocker/listing.html'
-
 
     def get_queryset(self):
         return Submission.objects.all()

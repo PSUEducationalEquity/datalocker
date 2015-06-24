@@ -56,7 +56,7 @@ class Locker(models.Model):
 
 
     def __str__(self):
-        return self.form_identifier
+        return self.name
 
 
     def is_archived(self):
