@@ -36,7 +36,7 @@ class LockerManager(models.Manager):
 class Locker(models.Model):
     form_url = models.CharField(max_length=255)
     form_identifier = models.CharField(max_length=255)
-    user  = models.ForeignKey(User)
+    user  = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     submitted_timestamp = models.DateTimeField(
         auto_now=False,

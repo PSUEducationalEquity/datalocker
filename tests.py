@@ -11,6 +11,8 @@ import datetime
 # Create your tests here.
 
 class Tests(TestCase):
+    fixtures = ['/path/to/datalocker_proj/datalocker/fixtures/dev-users.yaml/',]
+
 	def testArchived(self):
 	    pass
 
