@@ -10,9 +10,15 @@
         <p><a href="/datalocker/">Back to list of Lockers</a></p>
         <table>
             <tbody>
-                {% for record in Submission %}
-                <tr><td>Timestamp</td></tr>
-                <tr><td>{{ record.timestamp }}</td></tr>
+                <tr>
+                    <th style="width: 200px;">Submission Number</th>
+                    <th style="width: 200px;">Date</th>
+                </tr>
+                {% for record in query_results %}
+                <tr>
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.timestamp }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>

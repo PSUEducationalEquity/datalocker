@@ -26,3 +26,5 @@ class SubmissionView(generic.ListView):
     model = Submission
     template_name = 'datalocker/submission.html'
 
+    def get_queryset(request):
+        query_results = Submission.objects.all()
