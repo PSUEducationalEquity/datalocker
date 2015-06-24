@@ -17,4 +17,4 @@ class LockerView(generic.ListView):
 
     def get_queryset(self):
         # Return all lockers for the current user
-        return Locker.objects.has_access()
+        return #Locker.objects.has_access()

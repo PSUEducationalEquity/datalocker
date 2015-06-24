@@ -2,7 +2,7 @@ from datalocker.models import Locker, Submission
 from django.test import TestCase
 from django.utils import timezone
 from datalocker.models import LockerManager, Locker
-
+from django.test import TestCase
 
 
 import datetime
@@ -11,22 +11,30 @@ import datetime
 # Create your tests here.
 
 class Tests(TestCase):
-	def testArchived(self):
-	    pass
+    fixtures = ['dev-locker.yaml']
+    fixtures = ['dev-submissions.yaml']
+    fixtures = ['dev-users.yaml']
 
 
-	def testHasAccess(self):
-        pass
+	def test_archived(self):
+	    s= Locker.objects.archive()
+        self.assertItemsEqual([ locker.pk for locker in Locker.objects.archive()],(3, 4, ))
+      
 
+	def test_has_access(self):
+        s = datalocker.objects.all()
+        self.assertItemsEqual([ locker.pk for locker in Locker.objects.has_access()],(1, 2, 3,))
+     
 
-	def testIsActive(self):
-        pass
+	def test_is_active(self):
+        s = datalocker.objects.all()
+        self.assertItemsEqual([ locker.pk for locker in Locker.objects.active()],(1, 2, 3, 4, 5, 6, 7,))
+      
 
-
-
-	def testIsArchived(self):
-        pass
-
+	def test_is_archived(self):
+        s = datalocker.objects.all()
+        self.assertItemsEqual([ locker.pk for locker in Locker.objects.is_archived()],(0, ))
+     
 
 class DictionTests(TestCase):
     def test_data_dict(self):
