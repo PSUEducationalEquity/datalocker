@@ -1,14 +1,11 @@
+from datetime import datetime
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.forms.models import model_to_dict
 from django.utils import timezone
 
 
-
-from datetime import datetime
-
 import datetime, json
-
 
 
 ##
@@ -17,7 +14,7 @@ import datetime, json
 
 class LockerManager(models.Manager):
     def active(self):
-        return self.filter(archive_timestamp = None)    
+        return self.filter(archive_timestamp = None)
 
 
     def archive(self):
@@ -57,7 +54,7 @@ class Locker(models.Model):
     objects = LockerManager()
 
 
-    def is_archived(self):         
+    def is_archived(self):
         if archive_timestamp is None:
             return False
         return True
