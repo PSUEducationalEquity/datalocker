@@ -1,57 +1,78 @@
-from datalocker.models import Locker, Submission
 from django.test import TestCase
 from django.utils import timezone
-from datalocker.models import LockerManager, Locker
-from django.test import TestCase
 
+from datalocker.models import Locker, Submission
 
 import datetime
 
 
 # Create your tests here.
 
-class Tests(TestCase):
-    fixtures = ['/datalocker_proj/datalocker/fixtures/dev-locker.yaml/',]
-    fixtures = ['/datalocker_proj/datalocker/fixtures/dev-submission.yaml/',]
-    fixtures = ['/datalocker_proj/datalocker/fixtures/dev-users.yaml/',]
+class LockerManagerTestCase(TestCase):
+    fixtures = [
+        'dev-users.yaml',
+        'dev-locker.yaml',
+        'dev-submission.yaml',
+        ]
 
 
-	def test_archived(self):
-	    s= Locker.objects.all()
-        self.assertItemsEqual([ locker.pk for locker in Locker.objects.archive()],(3, 4, ))
-
-
-	def test_has_access(self):
+    def test_has_access(self):
         s = datalocker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.has_access()],(1, 2, 3,))
 
 
-	def test_is_active(self):
+    def test_is_active(self):
         s = datalocker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.active()],(1, 2, 3, 4, 5, 6, 7,))
 
 
-	def test_is_archived(self):
+    def test_is_archived(self):
         s = datalocker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.is_archived()],(0, ))
 
 
-class DictionTests(TestCase):
+
+
+class SubmissionTestCase(TestCase):
+    fixtures = [
+        'dev-users.yaml',
+        'dev-locker.yaml',
+        'dev-submission.yaml',
+        ]
+
+
     def test_data_dict(self):
         """
-        data_dict should properly convert json into a python object
+        data_dict should properly convert JSON formatted text in the `data`
+        property into a python dictionary
         """
         s = Submission(data ='{"name": "George", "Gender": "Male"}')
-        s.data_dict()['name']
-        self.assertDictEqual(s.data_dict()['name'], "u'George'")
+        self.assertDictEqual(
+            s.data_dict(),
+            { 
+                u'name': u'George',
+                u'Gender': u'Male',
+                }
+            )
 
 
     def test_to_dict(self):
         """
-        to_dict should properly convert python into a diction format
+        to_dict method should properly convert the object to a dictionary
         """
-        s = Submission(data = '{"name": "Jeff", "Gender": "Male"}')
-        s.data_dict()['name']
-        s.to_dict()
-        result['data'] = self.data_dict()
-        self.assertDictEqual(result, "u'Jeff'")
+        ### TODO: figure out why the timestamp property isn't output
+        #         as part of the to_dict() conversion.
+        self.maxDiff = None
+        self.assertDictEqual(
+            Submission.objects.get(pk=1).to_dict(),
+            {
+                u'id': 1L,
+                'locker': 1L,
+                'data': [{
+                    u'user': u'das66', 
+                    u'name': u'Dominick Stuck', 
+                    u'submitted-timestamp': u'2015-01-14 15:00:00-05:00', 
+                    u'archive-timestamp': u'2015-02-16 14:02:20-05:00'
+                    }, ]
+                }
+            )
