@@ -86,9 +86,6 @@ class LockerUser(models.Model):
 # Needs to include the locer name, Submission timestamp,
 # the data that is on the form and then it is needed to be returned readable
 class Submission(models.Model):
-
-    def __long__(self):
-        return 'Submission: ' + self.id
     locker = models.ForeignKey(Locker,
         db_column="form_identifier",
         related_name="Submission_locker",
@@ -98,6 +95,10 @@ class Submission(models.Model):
         auto_now_add=True,
         )
     data = models.TextField(blank=True)
+
+
+    def __str__(self):
+        return str(self.locker)
 
 
     def data_dict(self):

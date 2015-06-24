@@ -1,23 +1,23 @@
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
-{% block page-meta-title %}Submissions{% endblock page-meta-title %}
+{% block page-meta-title %}Submission Listing{% endblock page-meta-title %}
 
 {% block content %}
     <div class="container-fluid">
         <h1>{{ locker.form_identifier }}</h1>
-        <p>Coming soon: Table of information from the Locker you just tried to access</p>
-        <p><a href="/datalocker/">Back to list of Lockers</a></p>
+        <p>Coming soon: Table of all the Lockers accessable to your user id</p>
+        <p><a href="/datalocker/">All Available Lockers</a></p>
         <table>
             <tbody>
                 <tr>
                     <th style="width: 200px;">Submission Number</th>
                     <th style="width: 200px;">Date</th>
                 </tr>
-                {% for record in query_results %}
+                {% for submission in datalocker_submission %}
                 <tr>
-                    <td>{{ record.id }}</td>
-                    <td>{{ record.timestamp }}</td>
+                    <td>{{ submission.id }}</td>
+                    <td>{{ submission.timestamp }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
