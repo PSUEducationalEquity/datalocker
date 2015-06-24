@@ -17,12 +17,12 @@ class LockerManager(models.Manager):
         return self.filter(archive_timestamp = None)
 
 
-    def archive(self):
+    def archived(self):
         return self.filter(archive_timestamp__isnull = False)
 
 
     def has_access(self, user):
-        return self.filter(user = user)
+        return self.filter(owner = user)
 
 
 
