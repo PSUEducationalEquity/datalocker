@@ -34,14 +34,17 @@ class LockerManager(models.Manager):
 class Locker(models.Model):
     form_url = models.CharField(max_length=255)
     form_identifier = models.CharField(max_length=255)
-    user  = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+    owner = models.CharField(max_length=255)
+    users = models.ManyToManyField(
+        User,
+        related_name='lockers',
+        )
     submitted_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
         )
-
     archive_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
@@ -50,6 +53,7 @@ class Locker(models.Model):
         blank=True,
         )
     objects = LockerManager()
+
 
     def __str__(self):
         return self.form_identifier
@@ -61,6 +65,8 @@ class Locker(models.Model):
         return True
 
 
+
+
 class LockerSettings(models.Model):
     category = models.CharField(max_length=255)
     setting = models.CharField(max_length=255)
@@ -68,28 +74,20 @@ class LockerSettings(models.Model):
     value = models.TextField()
 
 
-# Model to show the owner/user_id of an added locker
-class LockerUser(models.Model):
-    locker = models.ForeignKey(Locker,
-        related_name="locker_user",
-        on_delete=models.PROTECT,
-        )
-    user_id = models.ForeignKey(Locker,
-        related_name="LockerUser",
-        on_delete=models.PROTECT,
-        )
 
 
 # Model used for the actual Submission of the form
 # Needs to include the locer name, Submission timestamp,
 # the data that is on the form and then it is needed to be returned readable
 class Submission(models.Model):
-    locker = models.ForeignKey(Locker,
+    locker = models.ForeignKey(
+        Locker,
         db_column="form_identifier",
         related_name="Submission_locker",
         on_delete=models.PROTECT,
         )
-    timestamp = models.DateTimeField(auto_now=False,
+    timestamp = models.DateTimeField(
+        auto_now=False,
         auto_now_add=True,
         )
     data = models.TextField(blank=True)
@@ -105,10 +103,5 @@ class Submission(models.Model):
 
     def to_dict(self):
         result = model_to_dict(self)
-        import pdb; pdb.set_trace()
         result['data'] = self.data_dict()
         return result
-
-
-class User(models.Model):
-    pass
