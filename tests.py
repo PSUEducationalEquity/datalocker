@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 
@@ -16,19 +17,35 @@ class LockerManagerTestCase(TestCase):
         ]
 
 
+    def test_active(self):
+        """
+        Returns only the active (non-archived) lockers
+        """
+        self.assertItemsEqual(
+            [ locker.pk for locker in Locker.objects.active() ],
+            (1, 2, 3, 4, 5, 6, 7, )
+            )
+
+
+    def test_archived(self):
+        """
+        Returns only archived lockers
+        """
+        self.assertItemsEqual(
+            [ locker.pk for locker in Locker.objects.archived() ],
+            ()
+            )
+
+
     def test_has_access(self):
-        s = datalocker.objects.all()
-        self.assertItemsEqual([ locker.pk for locker in Locker.objects.has_access()],(1, 2, 3,))
-
-
-    def test_is_active(self):
-        s = datalocker.objects.all()
-        self.assertItemsEqual([ locker.pk for locker in Locker.objects.active()],(1, 2, 3, 4, 5, 6, 7,))
-
-
-    def test_is_archived(self):
-        s = datalocker.objects.all()
-        self.assertItemsEqual([ locker.pk for locker in Locker.objects.is_archived()],(0, ))
+        """
+        Returns only those lockers that the specified user has access to
+        """
+        user = User.objects.get(pk=2)
+        self.assertItemsEqual(
+            [ locker.pk for locker in Locker.objects.has_access(user) ],
+            (1, )
+            )
 
 
 
