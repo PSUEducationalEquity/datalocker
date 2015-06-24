@@ -7,7 +7,7 @@ class SubmissionAdmin(admin.ModelAdmin):
 
 
 class LockerAdmin(admin.ModelAdmin):
-    list_display = ['id','form_url','form_identifier','user','name','submitted_timestamp','archive_timestamp']
+    list_display = ['id','form_url','form_identifier','owner','name','submitted_timestamp','archive_timestamp']
 
 admin.site.register(Locker, LockerAdmin)
 admin.site.register(Submission, SubmissionAdmin)
