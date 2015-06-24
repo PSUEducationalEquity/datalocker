@@ -21,6 +21,7 @@ class LockerView(generic.ListView):
         return #Locker.objects.has_access(self)
 
 
+
 class SubmissionView(generic.ListView):
     model = Submission
     template_name = 'datalocker/submission.html'

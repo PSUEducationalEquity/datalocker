@@ -19,22 +19,22 @@ class Tests(TestCase):
 	def test_archived(self):
 	    s= Locker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.archive()],(3, 4, ))
-      
+
 
 	def test_has_access(self):
         s = datalocker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.has_access()],(1, 2, 3,))
-     
+
 
 	def test_is_active(self):
         s = datalocker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.active()],(1, 2, 3, 4, 5, 6, 7,))
-      
+
 
 	def test_is_archived(self):
         s = datalocker.objects.all()
         self.assertItemsEqual([ locker.pk for locker in Locker.objects.is_archived()],(0, ))
-     
+
 
 class DictionTests(TestCase):
     def test_data_dict(self):

@@ -5,7 +5,11 @@
     user: das66
     name: 'Dominick Stuck'
     submitted_timestamp: '2015-01-14 15:00:00-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 1
 - fields:
@@ -14,7 +18,11 @@
     user: hay110
     name: 'Hunter Yohn'
     submitted_timestamp: '2015-01-14 15:30:10-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 2
 - fields:
@@ -23,7 +31,11 @@
     user: cas11
     name: 'Chase Smith'
     submitted_timestamp: '2015-01-14 15:35:10-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 3
 - fields:
@@ -32,7 +44,11 @@
     user: dah12
     name: 'Dustin Hagans'
     submitted_timestamp: '2015-01-14 15:38:10-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 4
 - fields:
@@ -41,7 +57,11 @@
     user: coy13
     name: 'Cory Yoder'
     submitted_timestamp: '2015-01-14 15:40:10-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 5
 - fields:
@@ -50,7 +70,11 @@
     user: map15
     name: 'Matthew Penning'
     submitted_timestamp: '2015-01-14 15:55:10-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 6
 - fields:
@@ -59,6 +83,10 @@
     user: ram16
     name: 'Richard Migginis'
     submitted_timestamp: '2015-01-14 15:20:10-05:00'
+<<<<<<< HEAD
     archive_timestamp: ''
+=======
+    archive_timestamp: null
+>>>>>>> bd46c009df6c815073d91c53263c7f1cb60541c2
   model: datalocker.Locker
   pk: 7

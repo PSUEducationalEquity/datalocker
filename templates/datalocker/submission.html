@@ -5,16 +5,15 @@
 
 {% block content %}
     <div class="container-fluid">
-        <!-- Needs to be the name of hte form not Submissions -->
         <h1>{{ locker.form_identifier }}</h1>
         <p>Coming soon: Table of information from the Locker you just tried to access</p>
         <p><a href="/datalocker/">Back to list of Lockers</a></p>
         <table>
-            <thead></thead>
             <tbody>
-                {% for
-                <tr></tr>
-                %}
+                {% for record in Submission %}
+                <tr><td>Timestamp</td></tr>
+                <tr><td>{{ record.timestamp }}</td></tr>
+                {% endfor %}
             </tbody>
         </table>
         <p>&nbsp;</p>
