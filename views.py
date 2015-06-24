@@ -1,24 +1,17 @@
-
 from django.shortcuts import render, render_to_response
 from django.views import generic
-from .models import Locker, LockerManager, LockerSettings, LockerUser, Submission
+
+from .models import Locker, Submission
 
 
-# def index(request):
-#     """
-#     Displays the application home page
-#     """
-#     return render(request, 'datalocker/index.html', {})
-
-
-class LockerView(generic.ListView):
-    model = Locker
+class LockerListView(generic.ListView):
+    context_object_name = 'my_lockers_list'
     template_name = 'datalocker/index.html'
 
 
     def get_queryset(self):
         # Return all lockers for the current user
-        return #Locker.objects.has_access(self)
+        return Locker.objects.has_access(self.request.user)
 
 
 

@@ -1,24 +1,21 @@
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
-{% block page-meta-title %}Home{% endblock page-meta-title %}
+{% block page-meta-title %}My Lockers{% endblock page-meta-title %}
 
 {% block content %}
     <div class="container-fluid">
         <h1>My Lockers</h1>
-        <p>Move along, nothing to see here</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
+        {% if my_lockers_list|length == 0 %}
+            <p>You have no lockers.</p>
+        {% endif %}
+        <ul>
+            {% for locker in my_lockers_list %}
+                <li>
+                    <a href="{% url 'datalocker:submissions_list' locker.pk %}"
+                        >{{ locker.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
