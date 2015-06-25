@@ -16,7 +16,24 @@
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
-
+.submission-list {
+  border: 1px solid blue;
+}
+.submission-list th{
+  border: 1px solid blue;
+  background: #ADC2EB;
+  width: 200px;
+  text-align: center;
+}
+.submission-data {
+  border: 1px solid blue;
+}
+.submission-data th{
+  border: 1px solid blue;
+  background: #ADC2EB;
+  width: 900px;
+  text-align: center;
+}
 
 
 
