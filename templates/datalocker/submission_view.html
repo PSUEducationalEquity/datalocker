@@ -1,0 +1,36 @@
+{% extends "datalocker/main_template.html" %}
+{% load staticfiles %}
+
+{% block page-meta-title %}Submission View{% endblock page-meta-title %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h1>Submission Data</h1>
+        <p><a href="/datalocker/">All Available Lockers</a></p>
+        <table>
+            <tbody>
+                <tr>
+                    <th style="width: 200px;">Submission Number</th>
+                    <th style="width: 200px;">Date</th>
+                </tr>
+                {% for submission in submission_view %}
+                <tr>
+                    <td>{{ submission.id }}</td>
+                    <td>{{ submission.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </div>
+{% endblock %}
