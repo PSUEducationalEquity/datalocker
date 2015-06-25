@@ -8,7 +8,7 @@ urlpatterns = patterns('',
         context_object_name='my_submission_list'),
         name='submissions_list',
     	),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/view$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<pk>[0-9]+)/view$',
     	views.SubmissionView.as_view(
         context_object_name='submission_view'),
     	name='submissions_view'
