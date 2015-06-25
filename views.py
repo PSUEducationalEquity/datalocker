@@ -1,7 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.views import generic
 
-from .models import Locker, Submission 
+from .models import Locker, Submission
 
 
 
@@ -15,10 +15,9 @@ class LockerListView(generic.ListView):
         # Return all lockers for the current user
         return Locker.objects.has_access(self.request.user).order_by('name')
 
-    
 
 
-    
+
 class SubmissionView(generic.ListView):
     context_object_name = 'submission_view'
     template_name = 'datalocker/submission_view.html'
@@ -28,6 +27,8 @@ class SubmissionView(generic.ListView):
          # Return all submissions for selected locker
         data = Submission.objects.all()
         return data
+
+
 
 
 class LockerSubmissionView(generic.ListView):

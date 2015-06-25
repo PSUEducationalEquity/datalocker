@@ -16,16 +16,16 @@
         </tr>
         <tr>
             <td>
-                {% for locker in my_lockers_list %}                    
+                {% for locker in my_lockers_list %}
                     <a href="{% url 'datalocker:submissions_list' locker.pk %}"
                     >{{ locker.name }}</a>
-                    <br>                
+                    <br>
                 {% endfor %}
-            </td>            
+            </td>
             <td>
                 {% for locker in my_lockers_list %}
-                    {{ locker.submitted_timestamp }} 
-                    <br>               
+                    {{ locker.submitted_timestamp }}
+                    <br>
                 {% endfor %}
             </td>
         </tr>
