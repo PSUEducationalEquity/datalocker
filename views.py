@@ -1,8 +1,8 @@
 
 from django.shortcuts import render, render_to_response
 from django.views import generic
-
-from .models import Locker, Submission
+from django.db.models.query import QuerySet
+from .models import Locker, Submission , LockerManager ,LockerQuerySet
 
 
 
@@ -14,7 +14,8 @@ class LockerListView(generic.ListView):
 
     def get_queryset(self):
         # Return all lockers for the current user
-        return Locker.objects.has_access(self.request.user).order_by('name')
+        #return
+        return Locker.objects.active().has_access(self.request.user).order_by("name")
 
 
 

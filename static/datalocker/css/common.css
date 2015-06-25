@@ -42,8 +42,15 @@
 .submission-data {
   width: 900px;
 }
-
-
+.locker-list td{
+  border: 1px solid blue;
+}
+.locker-list th{
+  border: 1px solid blue;
+  background: #ADC2EB;
+  width: 500px;
+  text-align: center;
+}
 
 /*------------------------------------*\
     $ACCESSIBILITY
