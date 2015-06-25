@@ -7,16 +7,14 @@
     <div class="container-fluid">
         <h1>Submission Data</h1>
         <p><a href="/datalocker/">All Available Lockers</a></p>
-        <table>
+        <table class="submission-data">
             <tbody>
                 <tr>
-                    <th style="width: 200px;">Submission Number</th>
-                    <th style="width: 200px;">Date</th>
+                    <th>Submission Data</th>
                 </tr>
                 {% for submission in submission_view %}
                 <tr>
-                    <td>{{ submission.id }}</td>
-                    <td>{{ submission.timestamp }}</td>
+                    <td>{{ submission.data }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

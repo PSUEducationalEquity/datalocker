@@ -11,17 +11,19 @@ class LockerListView(generic.ListView):
 
     def get_queryset(self):
         # Return all lockers for the current user
-        return Locker.objects.has_access(self.request.user)
+        return Locker.objects.has_access(self.request.user).order_by('name')
 
 
 
 class SubmissionView(generic.ListView):
     context_object_name = 'submission_view'
-    template_name = 'datalocker/submision_view.html'
+    template_name = 'datalocker/submission_view.html'
+
 
     def get_queryset(self):
          # Return all submissions for selected locker
-        return Submission.objects.all()
+        data = Submission.objects.all()
+        return data
 
 
 class LockerSubmissionView(generic.ListView):
@@ -31,5 +33,5 @@ class LockerSubmissionView(generic.ListView):
     def get_queryset(self):
          # Return all submissions for selected locker
 
-        data = Submission.objects.all()
+        data = Submission.objects.all().order_by('-timestamp')
         return data

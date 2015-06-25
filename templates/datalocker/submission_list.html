@@ -5,20 +5,18 @@
 
 {% block content %}
     <div class="container-fluid">
-        <h1>Locker Listing</h1>
+        <h1>{{ submission.locker }}</h1>
         <p><a href="/datalocker/">All Available Lockers</a></p>
-        <table>
+        <table class="submission-list">
+            <thead>
+                    <th>Date of the Submission</th>
+            </thead>
             <tbody>
-                <tr>
-                    <th style="width: 200px;">Locker Name</th>
-                    <th style="width: 200px;">Date</th>
-                </tr>
                 {% for submission in my_submission_list %}
                 <tr>
                 <td>
                     <a href="{% url 'datalocker:submissions_list' submission.pk %}"
-                        >{{ submission.locker }}</a></td>
-                        <td>{{ submission.timestamp }}</td>
+                        >{{ submission.timestamp }}</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
