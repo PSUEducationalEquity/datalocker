@@ -16,41 +16,7 @@
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
-.submission-list {
-  border: 1px solid blue;
-}
-.submission-list th{
-  border: 1px solid blue;
-  background: #ADC2EB;
-  width: 200px;
-  text-align: center;
-}
-.submission-data {
-  border: 1px solid blue;
-}
-.submission-data th{
-  border: 1px solid blue;
-  background: #ADC2EB;
-  text-align: center;
-}
-.submission-data tr {
-  border: 1px dashed blue;
-}
-.submission-timestamp {
-  width: 250px;
-}
-.submission-data {
-  width: 900px;
-}
-.locker-list td{
-  border: 1px solid blue;
-}
-.locker-list th{
-  border: 1px solid blue;
-  background: #ADC2EB;
-  width: 500px;
-  text-align: center;
-}
+
 
 /*------------------------------------*\
     $ACCESSIBILITY

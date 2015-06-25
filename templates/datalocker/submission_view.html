@@ -7,14 +7,19 @@
     <div class="container-fluid">
         <h1>{{ object.locker.name }} Submission</h1>
         <p><a href="{% url 'datalocker:submissions_list' object.locker.id %}">All Available Lockers</a></p>
-        <table class="submission-data">
+        <table>
+            <caption>Submission Data</caption>
             <tbody>
                 <tr>
-                    <th class="submission-data">Submission Data</th>
+                    <th>Key</th>
+                    <th>Value</th>
                 </tr>
+                {% for key, value in object.data_dict.items %}
                 <tr>
-                    <td>{{ object.data }}</td>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
         <p>&nbsp;</p>
