@@ -41,3 +41,59 @@
     username: hay110
   model: auth.user
   pk: 3
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: map15@southhills.edu
+    first_name: Matt
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38-05:00'
+    last_name: Penning
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: map15
+  model: auth.user
+  pk: 4
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: coy16@southhills.edu
+    first_name: Cory
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38-05:00'
+    last_name: Yoder
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: coy16
+  model: auth.user
+  pk: 5
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: dah16@southhills.edu
+    first_name: Dustin
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38-05:00'
+    last_name: Hagans
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: dah16
+  model: auth.user
+  pk: 6
+- fields:
+    date_joined: '2014-08-14 13:59:38-05:00'
+    email: cas11@southhills.edu
+    first_name: Chase
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38-05:00'
+    last_name: Smith
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: cas11
+  model: auth.user
+  pk: 7
