@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="container-fluid">
-        <h1>Locker Submissions</h1>
+        <h1>{{ locker.name }} Submissions</h1>
         <p><a href="{% url 'datalocker:index' %}">All Available Lockers</a></p>
         <table class="submission-list">
             <thead>
