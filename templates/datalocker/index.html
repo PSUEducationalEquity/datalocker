@@ -5,17 +5,30 @@
 
 {% block content %}
     <div class="container-fluid">
-        <h1>My Lockers</h1>
+        <h1><i>My Lockers</i></h1>
         {% if my_lockers_list|length == 0 %}
             <p>You have no lockers.</p>
         {% endif %}
-        <ul>
-            {% for locker in my_lockers_list %}
-                <li>
+        <table style="width:30%" border="2">
+        <tr>
+            <th>Lockers</a></th>
+            <th>Submission Date</th>
+        </tr>
+        <tr>
+            <td>
+                {% for locker in my_lockers_list %}                    
                     <a href="{% url 'datalocker:submissions_list' locker.pk %}"
-                        >{{ locker.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+                    >{{ locker.name }}</a>
+                    <br>                
+                {% endfor %}
+            </td>            
+            <td>
+                {% for locker in my_lockers_list %}
+                    {{ locker.submitted_timestamp }} 
+                    <br>               
+                {% endfor %}
+            </td>
+        </tr>
+        </table>
     </div>
 {% endblock %}
