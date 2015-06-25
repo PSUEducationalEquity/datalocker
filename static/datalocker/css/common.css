@@ -31,8 +31,16 @@
 .submission-data th{
   border: 1px solid blue;
   background: #ADC2EB;
-  width: 900px;
   text-align: center;
+}
+.submission-data tr {
+  border: 1px dashed blue;
+}
+.submission-timestamp {
+  width: 250px;
+}
+.submission-data {
+  width: 900px;
 }
 
 
