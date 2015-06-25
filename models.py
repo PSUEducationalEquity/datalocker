@@ -3,6 +3,7 @@ from django.contrib.auth.models import User, Group
 from django.db import models
 from django.forms.models import model_to_dict
 from django.utils import timezone
+from django.db.models.query import QuerySet
 
 
 import datetime, json
@@ -12,7 +13,7 @@ import datetime, json
 # Model Managers
 ##
 
-class LockerManager(models.Manager):
+class LockerQuerySet(models.query.QuerySet):
     def active(self):
         return self.filter(archive_timestamp = None)
 
@@ -24,6 +25,19 @@ class LockerManager(models.Manager):
     def has_access(self, user):
         return self.filter(owner = user)
 
+
+
+
+
+class LockerManager(models.Manager):
+    def get_query_set(self):
+        return LockerQuerySet(self.model, using=self._db)
+
+    def __getattr__(self, attr, *args):
+        try:
+            return getattr(self.__class__,attr, *args)
+        except AttributeError:
+            return getattr(self.get_query_set(), attr, *args)
 
 
 
@@ -52,6 +66,8 @@ class Locker(models.Model):
         null=True,
         blank=True,
         )
+
+
     objects = LockerManager()
 
 

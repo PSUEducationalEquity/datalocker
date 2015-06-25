@@ -34,6 +34,18 @@
   width: 900px;
   text-align: center;
 }
+.locker-list td{
+  border: 1px solid blue;
+  
+}
+.locker-list th{
+  border: 1px solid blue;
+  background: #ADC2EB;
+  width: 500px;
+  text-align: center;
+}
+
+
 
 
 

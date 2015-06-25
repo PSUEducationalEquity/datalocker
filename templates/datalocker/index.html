@@ -9,7 +9,7 @@
         {% if my_lockers_list|length == 0 %}
             <p>You have no lockers.</p>
         {% endif %}
-        <table style="width:30%" border="2">
+        <table class="locker-list">
         <tr>
             <th>Lockers</a></th>
             <th>Submission Date</th>
@@ -24,7 +24,7 @@
             </td>
             <td>
                 {% for locker in my_lockers_list %}
-                    {{ locker.submitted_timestamp }}
+                    {{ locker.submitted_timestamp}}
                     <br>
                 {% endfor %}
             </td>
