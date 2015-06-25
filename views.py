@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, render_to_response
 from django.views import generic
 
@@ -18,15 +19,9 @@ class LockerListView(generic.ListView):
 
 
 
-class SubmissionView(generic.ListView):
-    context_object_name = 'submission_view'
+class SubmissionView(generic.DetailView):
     template_name = 'datalocker/submission_view.html'
-
-
-    def get_queryset(self):
-         # Return all submissions for selected locker
-        data = Submission.objects.all()
-        return data
+    model = Submission
 
 
 
@@ -35,8 +30,14 @@ class LockerSubmissionView(generic.ListView):
     context_object_name = 'my_submission_list'
     template_name = 'datalocker/submission_list.html'
 
+
+    def get_context_data(self, **kwargs):
+        context = super(LockerSubmissionView, self).get_context_data(**kwargs)
+        context['locker'] = Locker.objects.get(pk=self.kwargs['locker_id'])
+        return context
+
+
     def get_queryset(self):
          # Return all submissions for selected locker
+        return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
 
-        data = Submission.objects.all().order_by('-timestamp')
-        return data
