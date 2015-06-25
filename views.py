@@ -1,8 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.views import generic
 
-from .models import Locker, Submission ,LockerManager
-
+from .models import Locker, Submission 
 
 
 
