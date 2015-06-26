@@ -17,12 +17,17 @@
     $GENERAL
 \*------------------------------------*/
 
-.submission-list {
+.data-listing {
   width: 500px;
+  border-radius: 5px;
 }
-.locker-list {
-  width: 500px;
+.listing {
+  width: 700px;
 }
+.submission-heading {
+  font-weight: bold;
+}
+
 /*------------------------------------*\
     $ACCESSIBILITY
 \*------------------------------------*/
