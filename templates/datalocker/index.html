@@ -12,26 +12,22 @@
         {% if my_lockers_list|length == 0 %}
             <p>You have no lockers.</p>
         {% endif %}
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover locker-list">
         <tr>
-            <th>Lockers</a></th>
-            <th>Submission Date</th>
+            <th>Form Name</a></th>
+            <th>Latest Submission</th>
         </tr>
-        <tr>
-            <td>
-                {% for locker in my_lockers_list %}
-                    <a href="{% url 'datalocker:submissions_list' locker.pk %}"
+
+            {% for locker in my_lockers_list %}
+            <tr>
+                <td><a href="{% url 'datalocker:submissions_list' locker.pk %}"
                     >{{ locker.name }}</a>
-                    <br>
+                </td>
+                <td>
+                    {{ locker.submitted_timestamp }}
+                </td>
+            </tr>
                 {% endfor %}
-            </td>
-            <td>
-                {% for locker in my_lockers_list %}
-                    {{ locker.submitted_timestamp}}
-                    <br>
-                {% endfor %}
-            </td>
-        </tr>
         </table>
     </div>
 {% endblock %}
