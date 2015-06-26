@@ -19,10 +19,12 @@
 
 .data-listing {
   width: 500px;
-  border-radius: 5px;
 }
 .listing {
   width: 700px;
+}
+.rounding {
+  border-radius: 5px;
 }
 .submission-heading {
   font-weight: bold;
