@@ -7,14 +7,15 @@
     <div class="container-fluid">
     <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
-        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}">All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a></li>
-        <li class="active">Submission</li>
+        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}"
+                >All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a></li>
+        <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
     </ol>
         <h1>{{ object.locker.name }} Submission</h1>
         <h3>Submission Data</h3>
         <ul class="list-grid">
         {% for key, value in object.data_dict.items %}
-        <li class="list-group-item data-listing"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
+        <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
         {% endfor %}
         </ul>
     </div>
