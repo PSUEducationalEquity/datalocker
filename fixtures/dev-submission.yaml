@@ -1,289 +1,109 @@
 ---
 - fields:
     locker: 1
-    timestamp: '2006-01-15 10:49:30-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2015-01-14 15:00:00-05:00", "archive-timestamp": "2015-02-16 14:02:20-05:00"}'
-  model: datalocker.Submission
-  pk: 1
-- fields:
-    locker: 2
-    timestamp: '2005-02-16 09:12:10-05:00'
-    data: '{"user": "hay110", "name": "Hunter Yohn", "submitted-timestamp": "2015-01-14 15:00:00-05:00", "archive-timestamp": "2015-02-16 14:02:20-05:00"}'
-  model: datalocker.Submission
-  pk: 2
-- fields:
-    locker: 3
-    timestamp: '2005-02-03 10:02:18-05:00'
-    data: '{"user": "ayy001", "name": "Anthony Young", "submitted-timestamp": "2005-02-03 10:02:18-05:00", "archive-timestamp": "2009-04-19 15:04:01-05:00"}'
-  model: datalocker.Submission
-  pk: 3
-- fields:
-    locker: 4
-    timestamp: '2009-04-19 15:04:01-05:00'
-    data: '{"user": "boo002", "name": "Barry Oliver", "submitted-timestamp": "2009-04-19 15:04:01-05:00", "archive-timestamp": "2009-07-14 03:07:42-05:00"}'
-  model: datalocker.Submission
-  pk: 4
-- fields:
-    locker: 5
-    timestamp: '2009-07-14 03:07:42-05:00'
-    data: '{"user": "cbb003", "name": "Callie Barker", "submitted-timestamp": "2009-07-14 03:07:42-05:00", "archive-timestamp": "2016-02-27 17:02:59-05:00"}'
-  model: datalocker.Submission
-  pk: 5
-- fields:
-    locker: 6
-    timestamp: '2016-02-27 17:02:59-05:00'
-    data: '{"user": "hpp006", "name": "Hedwig Pope", "submitted-timestamp": "2016-02-27 17:02:59-05:00", "archive-timestamp": "2016-06-04 06:06:02-05:00"}'
-  model: datalocker.Submission
-  pk: 6
-- fields:
-    locker: 7
-    timestamp: '2016-06-04 06:06:02-05:00'
-    data: '{"user": "xxp007", "name": "Xantha Phelps", "submitted-timestamp": "2016-06-04 06:06:02-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 7
-- fields:
-    locker: 5
-    timestamp: '1998-07-28 13:07:33-05:00'
-    data: '{"user": "ajj008", "name": "Athena Jones", "submitted-timestamp": "1998-07-28 13:07:33-05:00", "archive-timestamp": "1999-03-31 15:03:04-05:00"}'
-  model: datalocker.Submission
-  pk: 8
-- fields:
-    locker: 7
-    timestamp: '1999-03-31 15:03:04-05:00'
-    data: '{"user": "vvc009", "name": "Vivian Conrad", "submitted-timestamp": "1999-03-31 15:03:04-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 9
-- fields:
-    locker: 2
-    timestamp: '2014-06-17 15:06:26-05:00'
-    data: '{"user": "ndd010", "name": "Nita Dean", "submitted-timestamp": "2014-06-17 15:06:26-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 10
-- fields:
-    locker: 1
-    timestamp: '2006-05-15 10:49:30-05:00'
-    data: '{"user": "gld011", "name": "Gabriel Dudley", "submitted-timestamp": "2015-01-14 15:00:00-05:00", "archive-timestamp": "2015-02-16 14:02:20-05:00"}'
-  model: datalocker.Submission
-  pk: 11
-- fields:
-    locker: 2
-    timestamp: '2005-06-16 09:12:10-05:00'
-    data: '{"user": "huc012", "name": "Hunter Christian", "submitted-timestamp": "2015-01-14 15:00:00-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 12
-- fields:
-    locker: 3
-    timestamp: '2005-02-03 10:02:18-05:00'
-    data: '{"user": "scr013", "name": "Scott Raymond", "submitted-timestamp": "2005-02-03 10:02:18-05:00", "archive-timestamp": "2009-04-19 15:04:01-05:00"}'
-  model: datalocker.Submission
-  pk: 13
-- fields:
-    locker: 4
-    timestamp: '2009-04-19 15:04:01-05:00'
-    data: '{"user": "acr014", "name": "Abel Richard", "submitted-timestamp": "2009-04-19 15:04:01-05:00-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 14
-- fields:
-    locker: 5
-    timestamp: '2009-07-14 03:07:42-05:00'
-    data: '{"user": "aih015", "name": "Alfreda Hart", "submitted-timestamp": "2009-07-14 03:07:42-05:00", "archive-timestamp": "2016-02-27 17:02:59-05:00"}'
-  model: datalocker.Submission
-  pk: 15
-- fields:
-    locker: 6
-    timestamp: '2016-02-27 17:02:59-05:00'
-    data: '{"user": "pts016", "name": "Patricia Savage", "submitted-timestamp": "2016-02-27 17:02:59-05:00", "archive-timestamp": "2016-06-04 06:06:02-05:00"}'
-  model: datalocker.Submission
-  pk: 16
-- fields:
-    locker: 7
-    timestamp: '2016-06-04 06:06:02-05:00'
-    data: '{"user": "cll017", "name": "Channing Lowe", "submitted-timestamp": "2016-06-04 06:06:02-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 17
-- fields:
-    locker: 5
-    timestamp: '1998-07-28 13:07:33-05:00'
-    data: '{"user": "fik018", "name": "Freya Keith", "submitted-timestamp": "1998-07-28 13:07:33-05:00", "archive-timestamp": "1999-03-31 15:03:04-05:00"}'
-  model: datalocker.Submission
-  pk: 18
-- fields:
-    locker: 7
-    timestamp: '1999-03-31 15:03:04-05:00'
-    data: '{"user": "app019", "name": "Ali Pope", "submitted-timestamp": "1999-03-31 15:03:04-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 19
-- fields:
-    locker: 2
-    timestamp: '2014-06-17 15:06:26-05:00'
-    data: '{"user": "lam020", "name": "Lucas Moss", "submitted-timestamp": "2014-06-17 15:06:26-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 20
-- fields:
-    locker: 9
-    timestamp: '2014-06-17 15:06:26-05:00'
-    data: '{"user": "lam020", "name": "Lucas Moss", "submitted-timestamp": "2014-06-17 15:06:26-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 21
-- fields:
-    locker: 9
-    timestamp: '2015-01-27 15:21:06-05:00'
-    data: '{"user": "lam020", "name": "Lucas Moss", "submitted-timestamp": "2014-06-17 15:06:26-05:00", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 22
-- fields:
-    locker: 8
-    timestamp: '2013-01-27 13:11:01-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 23
-- fields:
-    locker: 8
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 24
-- fields:
-    locker: 10
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 25
-- fields:
-    locker: 10
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 26
-- fields:
-    locker: 11
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 27
-- fields:
-    locker: 11
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 28
-- fields:
-    locker: 12
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 29
-- fields:
-    locker: 12
-    timestamp: '2011-11-23 02:15:51-05:00'
-    data: '{"user": "das66", "name": "Dominick Stuck", "submitted-timestamp": "2014-01-19 12:19:30-0500", "archive-timestamp": null}'
-  model: datalocker.Submission
-  pk: 30
-- fields:
-    locker: 17
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Name of College or Institution:": "South Hills School of Business and Technology", "Attendance": "Will Attend", "Name of representatice attending": "Jeff Higgins", "Phone Number": "894-569-1201", "E-Mail address": "jhiggins@yahoo.com", "Name of additional representative attending": "Jenny Fisherman", "Additional representatives E-mail address": "jfisherman@yahoo.com", "Additional representatives phone number": "894-569-1202", "Special accommodations required": "I will need a few drinks and maybe a trash can nearby", "Will you be driving a State Vehicle?": "Yes", "If not, will you need a parking permit?": "No"}'
-  model: datalocker.Submission
-  pk: 31
-- fields:
-    locker: 17
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Name of College or Institution:": "South Hills School of Busniess and Technology", "Attendance": "Will Not Attend", "Name of representatice attending": "Booby Hangover", "Phone Number": "894-569-1203", "E-Mail address": "bhangover@yahoo.com", "Name of additional representative attending": "Jenny Fisherman", "Additional representatives E-mail address": "jfisherman@yahoo.com", "Additional representatives phone number": "894-569-1205", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "Yes", "If not, will you need a parking permit?": "No"}'
-  model: datalocker.Submission
-  pk: 32
-- fields:
-    locker: 17
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Name of College or Institution:": "Mifflin County High School", "Attendance": "Will Attend", "Name of representatice attending": "David Hains", "Phone Number": "894-569-1204", "E-Mail address": "dhains@yahoo.com", "Name of additional representative attending": "Jenny Fisherman", "Additional representatives E-mail address": "jfisherman@yahoo.com", "Additional representatives phone number": "894-569-1206", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "No", "If not, will you need a parking permit?": "Yes"}'
-  model: datalocker.Submission
-  pk: 33
-- fields:
-    locker: 14
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"First Name:": "Matthew", "Preferred Name": "Matt", "Last Name": "Chamber", "Penn State E-Mail address": "ccc@psu.edu", "Local street address" : "44 University Park Road", "City": "Lewistown", "State": "PA", "Zip Code": "17044", "Preferred phone": "717-777-7777", "Level": "Graduate", "Undergrad semester standing": "01", "College of Enrollment": "Information Sciences and Technology", "Department": "IT", "Major": "Computer Science", "Campus Location": "Penn State Harrisburg", "Anticipated graduation date": "2014-2015", "Capacity for commission service": "Understand and agree to this commitment", "Membership desired": "Affiliate", "Previous commssion service": "No", "Commission": "None", "Why are you interested in becoming a member of CORED": "zxcvbnm", "Interested in leadership?": "No", "Academic, community, or student organizations of which you are a member": "FFA", "special skills, talents, expertise, or areas of interest that may benefit committee assignments": "No talents"}'
-  model: datalocker.Submission
-  pk: 34
-- fields:
-    locker: 14
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"First Name:": "Jeffery", "Preferred Name": "Jeff", "Last Name": "Chamber", "Penn State E-Mail address": "ccc@psu.edu", "Local street address" : "44 University Park Road", "City": "Lewistown", "State": "PA", "Zip Code": "17044", "Preferred phone": "717-777-7777", "Level": "Graduate", "Undergrad semester standing": "01", "College of Enrollment": "Information Sciences and Technology", "Department": "IT", "Major": "Computer Science", "Campus Location": "Penn State Harrisburg", "Anticipated graduation date": "2014-2015", "Capacity for commission service": "Understand and agree to this commitment", "Membership desired": "Affiliate", "Previous commssion service": "No", "Commission": "None", "Why are you interested in becoming a member of CORED": "zxcvbnm", "Interested in leadership?": "No", "Academic, community, or student organizations of which you are a member": "NSA", "special skills, talents, expertise, or areas of interest that may benefit committee assignments": "No talents"}'
-  model: datalocker.Submission
-  pk: 35
-- fields:
-    locker: 14
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"First Name:": "Lucas", "Preferred Name": "Luke", "Last Name": "Chamber", "Penn State E-Mail address": "ccc@psu.edu", "Local street address" : "44 University Park Road", "City": "Lewistown", "State": "PA", "Zip Code": "17044", "Preferred phone": "717-777-7777", "Level": "Graduate", "Undergrad semester standing": "01", "College of Enrollment": "Information Sciences and Technology", "Department": "IT", "Major": "Computer Science", "Campus Location": "Penn State Harrisburg", "Anticipated graduation date": "2014-2015", "Capacity for commission service": "Understand and agree to this commitment", "Membership desired": "Affiliate", "Previous commssion service": "No", "Commission": "None", "Why are you interested in becoming a member of CORED": "zxcvbnm", "Interested in leadership?": "No", "Academic, community, or student organizations of which you are a member": "NRA", "special skills, talents, expertise, or areas of interest that may benefit committee assignments": "No talents"}'
-  model: datalocker.Submission
-  pk: 36
-- fields:
-    locker: 15
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Semester": "Summer 2015", "Last Name": "Liter", "First Name:": "High", "Phone Number": "875-465-4545", "PSU ID Number": "123456789", "E-Mail address": "high.lighter@lighterandbrighter.com", "Name of your disability specialist" : "Jeff", "Scheduled meet with specialist": "07-15-15", "Last seen specialist": "07-05-15", "Hardware used to read textbooks": "Laptop", "Operating system used to read textbooks": "Windows 8", "Software being used to read textbooks": "other", "If, other please list below": "Adobe", "File format are you requesting to read your textbooks": "PDF format", "List the format for each course that you are requesting": "MATH 101 PDF format; ENG 012 PDF format;", "Course Name": "MATH 001", "Course Number": "001", "Section": "001", "Instructor Name": "Smarty Pants", "Instructor e-mail": "smartypants@iknowitall.com", "Course Name": "ENG 012", "Course Number": "012", "Section": "012", "Instructor Name": "William Shakespeare", "Instructor E-mail": "ancientromeo@english.org"}'
-  model: datalocker.Submission
-  pk: 37
-- fields:
-    locker: 15
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Semester": "Spring 2015", "Last Name": "Light", "First Name:": "Medium", "Phone Number": "885-465-4845", "PSU ID Number": "987654321", "E-Mail address": "high.lighter@lighterandbrighter.com", "Name of your disability specialist" : "Jeff", "Scheduled meet with specialist": "07-15-15", "Last seen specialist": "07-05-15", "Hardware used to read textbooks": "Laptop", "Operating system used to read textbooks": "Windows 8", "Software being used to read textbooks": "other", "If, other please list below": "Adobe", "File format are you requesting to read your textbooks": "PDF format", "List the format for each course that you are requesting": "MATH 230 PDF format; ENG 541 PDF format;", "Course Name": "MATH 230", "Course Number": "230", "Section": "230", "Instructor Name": "Smarty Pants", "Instructor e-mail": "smartypants@iknowitall.com", "Course Name": "ENG 541", "Course Number": "021", "Section": "021", "Instructor Name": "Will Jenkins", "Instructor E-mail": "ancientromeo@english.org"}'
-  model: datalocker.Submission
-  pk: 38
-- fields:
-    locker: 15
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Semester": "Fall 2015", "Last Name": "Beam", "First Name:": "Low", "Phone Number": "812-465-4565", "PSU ID Number": "784512369", "E-Mail address": "high.lighter@lighterandbrighter.com", "Name of your disability specialist" : "Jeff", "Scheduled meet with specialist": "07-15-15", "Last seen specialist": "07-05-15", "Hardware used to read textbooks": "Laptop", "Operating system used to read textbooks": "Windows 8", "Software being used to read textbooks": "other", "If, other please list below": "Adobe", "File format are you requesting to read your textbooks": "PDF format", "List the format for each course that you are requesting": "MATH 145 PDF format; ENG 784 PDF format;", "Course Name": "MATH 145", "Course Number": "145", "Section": "145", "Instructor Name": "Smarty Pants", "Instructor e-mail": "smartypants@iknowitall.com", "Course Name": "ENG 784", "Course Number": "950", "Section": "950", "Instructor Name": "Jebodia Rossman", "Instructor E-mail": "ancientromeo@english.org"}'
-  model: datalocker.Submission
-  pk: 39
-- fields:
-    locker: 16
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Program Title": "IT", "Program Description": "Information Technology is all about", "Goals(s)/Objective(s)": "The goals are to get rid of IE completely", "Availability (Date/Time)": "March 2016/3:05pm", "Location": "Lewistown", "Do you need us to find you space": "No", "Projected expense of the program": "500", "Do you need assistance with funding": "No", "Main Presenter": "Richard", "Daytime Phone": "717-777-7777", "Your E-Mail address": "rrr@psu.edu", "would you allow permission for a member of the Diversability Council to video record you evnet": "Recording, Live Broadcast", "Do yo need assitance with the above": "Sure", "Do you have any accessibility needs": "No"}'
-  model: datalocker.Submission
-  pk: 40
-- fields:
-    locker: 16
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Program Title": "IT", "Program Description": "Information Technology is all about", "Goals(s)/Objective(s)": "Go Firefox", "Availability (Date/Time)": "May 2016/5:05pm", "Location": "Lewistown", "Do you need us to find you space": "No", "Projected expense of the program": "500", "Do you need assistance with funding": "No", "Main Presenter": "Richard", "Daytime Phone": "717-444-3265", "Your E-Mail address": "alk@psu.edu", "would you allow permission for a member of the Diversability Council to video record you evnet": "No", "Do yo need assitance with the above": "No", "Do you have any accessibility needs": "No"}'
-  model: datalocker.Submission
-  pk: 41
-- fields:
-    locker: 16
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Program Title": "IT", "Program Description": "Information Technology is all about", "Goals(s)/Objective(s)": "Google Chrome is the way to go", "Availability (Date/Time)": "May 2016/2:35pm", "Location": "Lewistown", "Do you need us to find you space": "No", "Projected expense of the program": "500", "Do you need assistance with funding": "No", "Main Presenter": "Richard", "Daytime Phone": "717-481-1545", "Your E-Mail address": "pks@psu.edu", "would you allow permission for a member of the Diversability Council to video record you evnet": "No", "Do yo need assitance with the above": "No", "Do you have any accessibility needs": "No"}'
-  model: datalocker.Submission
-  pk: 42
-- fields:
-    locker: 13
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Name of Organization, Group, or Commonwealth Campus": "Talent Search", "Date of Event": "6/27/2015", "Name of contact person": "Matthew", "University mailing address": "55 University Park Road", "Penn State e-mail address": "hsa10@psu.edu", "Phone number": "717-994-1111", "Event/project name": "Talent Search", "Amount of funding requested from CLGBTE (500 maximum per year)": "$200", "Please describe how the funds will be used": "The funds will be used for more advertising", "What is the anticipated outcome for your project/event": "The anticipated outcome for the event is to have more people sign up", "What is the TOTAL funding needed for your project/event, including the amount you are requesting from CLGBTE?": "$1200", "Have you requested funding from other sources?": "No", "Name": "Bob", "E-mail address": "jkl12@psu.edu"}'
-  model: datalocker.Submission
-  pk: 43
-- fields:
-    locker: 13
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Name of Organization, Group, or Commonwealth Campus": "Movies R Us", "Date of Event": "6/4/2015", "Name of contact person": "Jeffery", "University mailing address": "55 University Park Road", "Penn State e-mail address": "dkf10@psu.edu", "Phone number": "717-965-1235", "Event/project name": "Movies never stop", "Amount of funding requested from CLGBTE (500 maximum per year)": "$175", "Please describe how the funds will be used": "The funds will be used for more popcorn for movies", "What is the anticipated outcome for your project/event": "The anticipated outcome for the event is to have more people sign up", "What is the TOTAL funding needed for your project/event, including the amount you are requesting from CLGBTE?": "$1200", "Have you requested funding from other sources?": "No", "Name": "Bob", "E-mail address": "jkl12@psu.edu"}'
-  model: datalocker.Submission
-  pk: 44
-- fields:
-    locker: 13
-    timestamp: '2015-06-26 12:25:20-0500'
-    data: '{"Name of Organization, Group, or Commonwealth Campus": "Popcorn Growers of America", "Date of Event": "5/30/2015", "Name of contact person": "Lola", "University mailing address": "55 University Park Road", "Penn State e-mail address": "lop102@psu.edu", "Phone number": "717-978-1024", "Event/project name": "Gow Popcorn", "Amount of funding requested from CLGBTE (500 maximum per year)": "$450", "Please describe how the funds will be used": "The funds will be used for more popcorn", "What is the anticipated outcome for your project/event": "The anticipated outcome for the event is to have more people sign up", "What is the TOTAL funding needed for your project/event, including the amount you are requesting from CLGBTE?": "$1200", "Have you requested funding from other sources?": "No", "Name": "Bob", "E-mail address": "jkl12@psu.edu"}'
-  model: datalocker.Submission
-  pk: 45
-- fields:
-    locker: 1
     timestamp: '2015-06-26 12:25:20-0500'
     data: '{"Name of Organization, Group, or Commonwealth Campus:": "Better handshakers of America", "Event/project name:": "Learn How to Handshake", "First Name of Contact Person:": "Steve", "Last Name of Contact Person:": "Perso", "University mailing address:": "shakemwell@hands.edu", "Penn State email address:": "something@psu.edu", "Phone number: (Include Area Code)": "457-784-7878", "Date of event:": "10-15-15", "Amount of funding requested from CFW ($250 maximum per year for each group, or $300 maximum per campus liaison):": "150", "Please describe how the funds will be used:": "To Buy stuff I need for my handshaking business", "What is the anticipated outcome for your project/event?:": "To learn people how to shake hands well", "Please explain how your request supports the mission of the Commission for Women:": "Because they will be smarter", "Have you requested funding from other sources?:": "Yes", "Name of Source:": "I dont remember", "Amount requested:": "1500", "Amount received:": "1499", "Name of Commonwealth Campus Financial Officer:": "Financial Occifer", "Email of Commonwealth Campus Financial Officer:": "imcool@officer.com", "If your funding request supports a registered student organization, please provide the appropriate ASA account number:": "124"}'
   model: datalocker.Submission
-  pk: 46
+  pk: 1
 - fields:
     locker: 1
     timestamp: '2015-06-26 12:25:20-0500'
     data: '{"Name of Organization, Group, or Commonwealth Campus:": "Buger Flippers Anonymous", "Event/project name:": "Learn How to Cook", "First Name of Contact Person:": "George", "Last Name of Contact Person:": "Foreman", "University mailing address:": "ltc@google.com", "Penn State email address:": "something@psu.edu", "Phone number: (Include Area Code)": "445-230-1541", "Date of event:": "12-14-15", "Amount of funding requested from CFW ($250 maximum per year for each group, or $300 maximum per campus liaison):": "150", "Please describe how the funds will be used:": "To Buy stuff I need for my handshaking business", "What is the anticipated outcome for your project/event?:": "To learn people how to shake hands well", "Please explain how your request supports the mission of the Commission for Women:": "Because they will be smarter", "Have you requested funding from other sources?:": "Yes", "Name of Source:": "I dont remember", "Amount requested:": "1500", "Amount received:": "1499", "Name of Commonwealth Campus Financial Officer:": "Financial Occifer", "Email of Commonwealth Campus Financial Officer:": "imcool@officer.com", "If your funding request supports a registered student organization, please provide the appropriate ASA account number:": "124"}'
   model: datalocker.Submission
-  pk: 47
+  pk: 2
 - fields:
     locker: 1
     timestamp: '2015-06-26 12:25:20-0500'
     data: '{"Name of Organization, Group, or Commonwealth Campus:": "Buckle Up", "Event/project name:": "Learn How to Drive", "First Name of Contact Person:": "Steve", "Last Name of Contact Person:": "Perso", "University mailing address:": "ltd@google.com", "Penn State email address:": "something@psu.edu", "Phone number: (Include Area Code)": "654-784-8841", "Date of event:": "10-01-15", "Amount of funding requested from CFW ($250 maximum per year for each group, or $300 maximum per campus liaison):": "150", "Please describe how the funds will be used:": "To Buy stuff I need for my handshaking business", "What is the anticipated outcome for your project/event?:": "To learn people how to shake hands well", "Please explain how your request supports the mission of the Commission for Women:": "Because they will be smarter", "Have you requested funding from other sources?:": "Yes", "Name of Source:": "I dont remember", "Amount requested:": "1500", "Amount received:": "1499", "Name of Commonwealth Campus Financial Officer:": "Financial Occifer", "Email of Commonwealth Campus Financial Officer:": "imcool@officer.com", "If your funding request supports a registered student organization, please provide the appropriate ASA account number:": "124"}'
   model: datalocker.Submission
-  pk: 48
+  pk: 3
+- fields:
+    locker: 2
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Name of Organization, Group, or Commonwealth Campus": "Talent Search", "Date of Event": "6/27/2015", "Name of contact person": "Matthew", "University mailing address": "55 University Park Road", "Penn State e-mail address": "hsa10@psu.edu", "Phone number": "717-994-1111", "Event/project name": "Talent Search", "Amount of funding requested from CLGBTE (500 maximum per year)": "$200", "Please describe how the funds will be used": "The funds will be used for more advertising", "What is the anticipated outcome for your project/event": "The anticipated outcome for the event is to have more people sign up", "What is the TOTAL funding needed for your project/event, including the amount you are requesting from CLGBTE?": "$1200", "Have you requested funding from other sources?": "No", "Name": "Bob", "E-mail address": "jkl12@psu.edu"}'
+  model: datalocker.Submission
+  pk: 4
+- fields:
+    locker: 2
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Name of Organization, Group, or Commonwealth Campus": "Movies R Us", "Date of Event": "6/4/2015", "Name of contact person": "Jeffery", "University mailing address": "55 University Park Road", "Penn State e-mail address": "dkf10@psu.edu", "Phone number": "717-965-1235", "Event/project name": "Movies never stop", "Amount of funding requested from CLGBTE (500 maximum per year)": "$175", "Please describe how the funds will be used": "The funds will be used for more popcorn for movies", "What is the anticipated outcome for your project/event": "The anticipated outcome for the event is to have more people sign up", "What is the TOTAL funding needed for your project/event, including the amount you are requesting from CLGBTE?": "$1200", "Have you requested funding from other sources?": "No", "Name": "Bob", "E-mail address": "jkl12@psu.edu"}'
+  model: datalocker.Submission
+  pk: 5
+- fields:
+    locker: 2
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Name of Organization, Group, or Commonwealth Campus": "Popcorn Growers of America", "Date of Event": "5/30/2015", "Name of contact person": "Lola", "University mailing address": "55 University Park Road", "Penn State e-mail address": "lop102@psu.edu", "Phone number": "717-978-1024", "Event/project name": "Gow Popcorn", "Amount of funding requested from CLGBTE (500 maximum per year)": "$450", "Please describe how the funds will be used": "The funds will be used for more popcorn", "What is the anticipated outcome for your project/event": "The anticipated outcome for the event is to have more people sign up", "What is the TOTAL funding needed for your project/event, including the amount you are requesting from CLGBTE?": "$1200", "Have you requested funding from other sources?": "No", "Name": "Bob", "E-mail address": "jkl12@psu.edu"}'
+  model: datalocker.Submission
+  pk: 6
+- fields:
+    locker: 3
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"First Name:": "Matthew", "Preferred Name": "Matt", "Last Name": "Chamber", "Penn State E-Mail address": "ccc@psu.edu", "Local street address" : "44 University Park Road", "City": "Lewistown", "State": "PA", "Zip Code": "17044", "Preferred phone": "717-777-7777", "Level": "Graduate", "Undergrad semester standing": "01", "College of Enrollment": "Information Sciences and Technology", "Department": "IT", "Major": "Computer Science", "Campus Location": "Penn State Harrisburg", "Anticipated graduation date": "2014-2015", "Capacity for commission service": "Understand and agree to this commitment", "Membership desired": "Affiliate", "Previous commssion service": "No", "Commission": "None", "Why are you interested in becoming a member of CORED": "zxcvbnm", "Interested in leadership?": "No", "Academic, community, or student organizations of which you are a member": "FFA", "special skills, talents, expertise, or areas of interest that may benefit committee assignments": "No talents"}'
+  model: datalocker.Submission
+  pk: 7
+- fields:
+    locker: 3
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"First Name:": "Jeffery", "Preferred Name": "Jeff", "Last Name": "Chamber", "Penn State E-Mail address": "ccc@psu.edu", "Local street address" : "44 University Park Road", "City": "Lewistown", "State": "PA", "Zip Code": "17044", "Preferred phone": "717-777-7777", "Level": "Graduate", "Undergrad semester standing": "01", "College of Enrollment": "Information Sciences and Technology", "Department": "IT", "Major": "Computer Science", "Campus Location": "Penn State Harrisburg", "Anticipated graduation date": "2014-2015", "Capacity for commission service": "Understand and agree to this commitment", "Membership desired": "Affiliate", "Previous commssion service": "No", "Commission": "None", "Why are you interested in becoming a member of CORED": "zxcvbnm", "Interested in leadership?": "No", "Academic, community, or student organizations of which you are a member": "NSA", "special skills, talents, expertise, or areas of interest that may benefit committee assignments": "No talents"}'
+  model: datalocker.Submission
+  pk: 8
+- fields:
+    locker: 3
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"First Name:": "Lucas", "Preferred Name": "Luke", "Last Name": "Chamber", "Penn State E-Mail address": "ccc@psu.edu", "Local street address" : "44 University Park Road", "City": "Lewistown", "State": "PA", "Zip Code": "17044", "Preferred phone": "717-777-7777", "Level": "Graduate", "Undergrad semester standing": "01", "College of Enrollment": "Information Sciences and Technology", "Department": "IT", "Major": "Computer Science", "Campus Location": "Penn State Harrisburg", "Anticipated graduation date": "2014-2015", "Capacity for commission service": "Understand and agree to this commitment", "Membership desired": "Affiliate", "Previous commssion service": "No", "Commission": "None", "Why are you interested in becoming a member of CORED": "zxcvbnm", "Interested in leadership?": "No", "Academic, community, or student organizations of which you are a member": "NRA", "special skills, talents, expertise, or areas of interest that may benefit committee assignments": "No talents"}'
+  model: datalocker.Submission
+  pk: 9
+- fields:
+    locker: 4
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Semester": "Summer 2015", "Last Name": "Liter", "First Name:": "High", "Phone Number": "875-465-4545", "PSU ID Number": "123456789", "E-Mail address": "high.lighter@lighterandbrighter.com", "Name of your disability specialist" : "Jeff", "Scheduled meet with specialist": "07-15-15", "Last seen specialist": "07-05-15", "Hardware used to read textbooks": "Laptop", "Operating system used to read textbooks": "Windows 8", "Software being used to read textbooks": "other", "If, other please list below": "Adobe", "File format are you requesting to read your textbooks": "PDF format", "List the format for each course that you are requesting": "MATH 101 PDF format; ENG 012 PDF format;", "Course Name": "MATH 001", "Course Number": "001", "Section": "001", "Instructor Name": "Smarty Pants", "Instructor e-mail": "smartypants@iknowitall.com", "Course Name": "ENG 012", "Course Number": "012", "Section": "012", "Instructor Name": "William Shakespeare", "Instructor E-mail": "ancientromeo@english.org"}'
+  model: datalocker.Submission
+  pk: 10
+- fields:
+    locker: 4
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Semester": "Spring 2015", "Last Name": "Light", "First Name:": "Medium", "Phone Number": "885-465-4845", "PSU ID Number": "987654321", "E-Mail address": "high.lighter@lighterandbrighter.com", "Name of your disability specialist" : "Jeff", "Scheduled meet with specialist": "07-15-15", "Last seen specialist": "07-05-15", "Hardware used to read textbooks": "Laptop", "Operating system used to read textbooks": "Windows 8", "Software being used to read textbooks": "other", "If, other please list below": "Adobe", "File format are you requesting to read your textbooks": "PDF format", "List the format for each course that you are requesting": "MATH 230 PDF format; ENG 541 PDF format;", "Course Name": "MATH 230", "Course Number": "230", "Section": "230", "Instructor Name": "Smarty Pants", "Instructor e-mail": "smartypants@iknowitall.com", "Course Name": "ENG 541", "Course Number": "021", "Section": "021", "Instructor Name": "Will Jenkins", "Instructor E-mail": "ancientromeo@english.org"}'
+  model: datalocker.Submission
+  pk: 11
+- fields:
+    locker: 4
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Semester": "Fall 2015", "Last Name": "Beam", "First Name:": "Low", "Phone Number": "812-465-4565", "PSU ID Number": "784512369", "E-Mail address": "high.lighter@lighterandbrighter.com", "Name of your disability specialist" : "Jeff", "Scheduled meet with specialist": "07-15-15", "Last seen specialist": "07-05-15", "Hardware used to read textbooks": "Laptop", "Operating system used to read textbooks": "Windows 8", "Software being used to read textbooks": "other", "If, other please list below": "Adobe", "File format are you requesting to read your textbooks": "PDF format", "List the format for each course that you are requesting": "MATH 145 PDF format; ENG 784 PDF format;", "Course Name": "MATH 145", "Course Number": "145", "Section": "145", "Instructor Name": "Smarty Pants", "Instructor e-mail": "smartypants@iknowitall.com", "Course Name": "ENG 784", "Course Number": "950", "Section": "950", "Instructor Name": "Jebodia Rossman", "Instructor E-mail": "ancientromeo@english.org"}'
+  model: datalocker.Submission
+  pk: 12
+- fields:
+    locker: 5
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Program Title": "IT", "Program Description": "Information Technology is all about", "Goals(s)/Objective(s)": "The goals are to get rid of IE completely", "Availability (Date/Time)": "March 2016/3:05pm", "Location": "Lewistown", "Do you need us to find you space": "No", "Projected expense of the program": "500", "Do you need assistance with funding": "No", "Main Presenter": "Richard", "Daytime Phone": "717-777-7777", "Your E-Mail address": "rrr@psu.edu", "would you allow permission for a member of the Diversability Council to video record you evnet": "Recording, Live Broadcast", "Do yo need assitance with the above": "Sure", "Do you have any accessibility needs": "No"}'
+  model: datalocker.Submission
+  pk: 13
+- fields:
+    locker: 5
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Program Title": "IT", "Program Description": "Information Technology is all about", "Goals(s)/Objective(s)": "Go Firefox", "Availability (Date/Time)": "May 2016/5:05pm", "Location": "Lewistown", "Do you need us to find you space": "No", "Projected expense of the program": "500", "Do you need assistance with funding": "No", "Main Presenter": "Richard", "Daytime Phone": "717-444-3265", "Your E-Mail address": "alk@psu.edu", "would you allow permission for a member of the Diversability Council to video record you evnet": "No", "Do yo need assitance with the above": "No", "Do you have any accessibility needs": "No"}'
+  model: datalocker.Submission
+  pk: 14
+- fields:
+    locker: 5
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Program Title": "IT", "Program Description": "Information Technology is all about", "Goals(s)/Objective(s)": "Google Chrome is the way to go", "Availability (Date/Time)": "May 2016/2:35pm", "Location": "Lewistown", "Do you need us to find you space": "No", "Projected expense of the program": "500", "Do you need assistance with funding": "No", "Main Presenter": "Richard", "Daytime Phone": "717-481-1545", "Your E-Mail address": "pks@psu.edu", "would you allow permission for a member of the Diversability Council to video record you evnet": "No", "Do yo need assitance with the above": "No", "Do you have any accessibility needs": "No"}'
+  model: datalocker.Submission
+  pk: 15
+- fields:
+    locker: 6
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Name of College or Institution:": "South Hills School of Business and Technology", "Attendance": "Will Attend", "Name of representatice attending": "Jeff Higgins", "Phone Number": "894-569-1201", "E-Mail address": "jhiggins@yahoo.com", "Name of additional representative attending": "Jenny Fisherman", "Additional representatives E-mail address": "jfisherman@yahoo.com", "Additional representatives phone number": "894-569-1202", "Special accommodations required": "I will need a few drinks and maybe a trash can nearby", "Will you be driving a State Vehicle?": "Yes", "If not, will you need a parking permit?": "No"}'
+  model: datalocker.Submission
+  pk: 16
+- fields:
+    locker: 6
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Name of College or Institution:": "South Hills School of Busniess and Technology", "Attendance": "Will Not Attend", "Name of representatice attending": "Booby Hangover", "Phone Number": "894-569-1203", "E-Mail address": "bhangover@yahoo.com", "Name of additional representative attending": "Jenny Fisherman", "Additional representatives E-mail address": "jfisherman@yahoo.com", "Additional representatives phone number": "894-569-1205", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "Yes", "If not, will you need a parking permit?": "No"}'
+  model: datalocker.Submission
+  pk: 17
+- fields:
+    locker: 6
+    timestamp: '2015-06-26 12:25:20-0500'
+    data: '{"Name of College or Institution:": "Mifflin County High School", "Attendance": "Will Attend", "Name of representatice attending": "David Hains", "Phone Number": "894-569-1204", "E-Mail address": "dhains@yahoo.com", "Name of additional representative attending": "Jenny Fisherman", "Additional representatives E-mail address": "jfisherman@yahoo.com", "Additional representatives phone number": "894-569-1206", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "No", "If not, will you need a parking permit?": "Yes"}'
+  model: datalocker.Submission
+  pk: 18
