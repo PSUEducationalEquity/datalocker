@@ -5,33 +5,17 @@
 
 {% block content %}
     <div class="container-fluid">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'datalocker:index' %}">Lockers</a></li>
+        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}">Submission List</a></li>
+        <li class="active">Submission</li>
+    </ol>
         <h1>{{ object.locker.name }} Submission</h1>
-        <p><a href="{% url 'datalocker:submissions_list' object.locker.id %}">All Available Lockers</a></p>
-        <table>
-            <caption>Submission Data</caption>
-            <tbody>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-                {% for key, value in object.data_dict.items %}
-                <tr>
-                    <td>{{ key }}</td>
-                    <td>{{ value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
+        <h3>Submission Data</h3>
+        <ul class="list-group">
+        {% for key, value in object.data_dict.items %}
+        <li class="list-group-item submission-list">{{ key }}:  {{ value }}</li>
+        {% endfor %}
+        </ul>
     </div>
 {% endblock %}
