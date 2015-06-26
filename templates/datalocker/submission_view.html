@@ -12,9 +12,9 @@
     </ol>
         <h1>{{ object.locker.name }} Submission</h1>
         <h3>Submission Data</h3>
-        <ul class="list-group">
+        <ul class="list-grid">
         {% for key, value in object.data_dict.items %}
-        <li class="list-group-item submission-list">{{ key }}:  {{ value }}</li>
+        <li class="list-group-item submission-list">{{ key }}  {{ value }}</li>
         {% endfor %}
         </ul>
     </div>
