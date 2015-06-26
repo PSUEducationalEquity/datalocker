@@ -1,7 +1,7 @@
 ---
 - fields:
     form_url: https://equity.psu.edu/testing/locker/2014-15-cfw-funding-request-form
-    form_identifier: 2014-15 2014-15 CFW Funding Request Form
+    form_identifier: 2014-15-cfw-funding-request-form
     owner: das66
     name: 'CFW Funding Request Form'
     submitted_timestamp: '2015-01-14 15:00:00-05:00'
@@ -109,7 +109,7 @@
   pk: 12
 - fields:
     form_url: https://equity.psu.edu/testing/locker/clgbte-funding
-    form_identifier: CLGBTE
+    form_identifier: clgbte-funding
     owner: das66
     name: CLGBTE Funding Request Form
     submitted_timestamp: '2015-06-25 09:45:10-05:00'
@@ -118,7 +118,7 @@
   pk: 13
 - fields:
     form_url: https://equity.psu.edu/testing/locker/copy_of_cored-student-app
-    form_identifier: CORED
+    form_identifier: copy_of_cored-student-app
     owner: das66
     name: CORED 2015-16 Student Application for Membership
     submitted_timestamp: '2015-06-25 09:45:10-05:00'
@@ -127,7 +127,7 @@
   pk: 14
 - fields:
     form_url: https://equity.psu.edu/testing/locker/alternative-format-request-form
-    form_identifier: AFRF
+    form_identifier: alternative-format-request-form
     owner: hay110
     name: Alternative Format Request Form
     submitted_timestamp: '2015-06-25 09:45:10-05:00'
@@ -136,7 +136,7 @@
   pk: 15
 - fields:
     form_url: https://equity.psu.edu/testing/locker/call-for-proposals
-    form_identifier: 2014DCFP
+    form_identifier: call-for-proposals
     owner: hay110
     name: Diversability Call for Proposals
     submitted_timestamp: '2015-06-25 09:45:10-05:00'
@@ -145,7 +145,7 @@
   pk: 16
 - fields:
     form_url: https://equity.psu.edu/testing/locker/college-fair-2015
-    form_identifier: CF2015
+    form_identifier: college-fair-2015
     owner: hay110
     name: College Fair 2015
     submitted_timestamp: '2015-06-25 09:45:10-05:00'
