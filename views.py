@@ -3,6 +3,7 @@ from django.shortcuts import render, render_to_response
 from django.views import generic
 from django.db.models.query import QuerySet
 from .models import Locker, Submission , LockerManager ,LockerQuerySet
+from django.db.models import Max
 
 
 
@@ -11,11 +12,13 @@ class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
     template_name = 'datalocker/index.html'
 
-
+ 
     def get_queryset(self):
         # Return all lockers for the current user
         #return
-        return Locker.objects.active().has_access(self.request.user).order_by("name")
+        lastest_submission = Locker.objects.all()
+        #lastest_submission = Locker.objects.annotate(lastest_submission= Max('submission__timestamp'))
+        return Locker.objects.active().has_access(self.request.user).annotate(lastest_submission= Max('submission__timestamp')).order_by('name')
 
 
 
