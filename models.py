@@ -99,7 +99,7 @@ class Submission(models.Model):
     locker = models.ForeignKey(
         Locker,
         db_column="form_identifier",
-        related_name="Submission_locker",
+        related_name="submission",
         on_delete=models.PROTECT,
         )
     timestamp = models.DateTimeField(

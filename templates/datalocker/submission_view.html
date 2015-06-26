@@ -6,8 +6,8 @@
 {% block content %}
     <div class="container-fluid">
     <ol class="breadcrumb">
-        <li><a href="{% url 'datalocker:index' %}">Lockers</a></li>
-        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}">Submission List</a></li>
+        <li><a href="{% url 'datalocker:index' %}">My Lockers</a></li>
+        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}">All Submissions</a></li>
         <li class="active">Submission</li>
     </ol>
         <h1>{{ object.locker.name }} Submission</h1>
