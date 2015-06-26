@@ -1,9 +1,9 @@
 ---
 - fields:
-    form_url: www.google.com
-    form_identifier: T-190A
+    form_url: https://equity.psu.edu/testing/locker/2014-15-cfw-funding-request-form
+    form_identifier: 2014-15 2014-15 CFW Funding Request Form
     owner: das66
-    name: 'Google Application'
+    name: 'CFW Funding Request Form'
     submitted_timestamp: '2015-01-14 15:00:00-05:00'
     archive_timestamp: null
   model: datalocker.Locker
@@ -107,3 +107,48 @@
     archive_timestamp: null
   model: datalocker.Locker
   pk: 12
+- fields:
+    form_url: https://equity.psu.edu/testing/locker/clgbte-funding
+    form_identifier: CLGBTE
+    owner: das66
+    name: CLGBTE Funding Request Form
+    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    archive_timestamp: null
+  model: datalocker.Locker
+  pk: 13
+- fields:
+    form_url: https://equity.psu.edu/testing/locker/copy_of_cored-student-app
+    form_identifier: CORED
+    owner: das66
+    name: CORED 2015-16 Student Application for Membership
+    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    archive_timestamp: null
+  model: datalocker.Locker
+  pk: 14
+- fields:
+    form_url: https://equity.psu.edu/testing/locker/alternative-format-request-form
+    form_identifier: AFRF
+    owner: hay110
+    name: Alternative Format Request Form
+    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    archive_timestamp: null
+  model: datalocker.Locker
+  pk: 15
+- fields:
+    form_url: https://equity.psu.edu/testing/locker/call-for-proposals
+    form_identifier: 2014DCFP
+    owner: hay110
+    name: Diversability Call for Proposals
+    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    archive_timestamp: null
+  model: datalocker.Locker
+  pk: 16
+- fields:
+    form_url: https://equity.psu.edu/testing/locker/college-fair-2015
+    form_identifier: CF2015
+    owner: hay110
+    name: College Fair 2015
+    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    archive_timestamp: null
+  model: datalocker.Locker
+  pk: 17
