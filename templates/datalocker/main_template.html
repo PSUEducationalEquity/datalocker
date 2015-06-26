@@ -85,7 +85,7 @@
                                 >{{ request.user.username }}</span>
                           <span class="caret"></span>
                         </a>
-                        <ul aria-label="Menu of site-wide commands for the current user"
+                        <ul aria-label="site-wide commands for the current user"
                             class="dropdown-menu pull-right"
                             role="menu">
                           <li><a href="#">Action</a></li>
@@ -105,7 +105,7 @@
                               ><a role="menuitem"
                                   tabindex="-1"
                                   href="{% url 'admin:password_change' %}"
-                                >Log out</a>
+                                >Change Password</a>
                             </li>
                             {% endblock menuitem-password-change %}
                             <li role="separator" class="divider"></li>
