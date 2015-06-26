@@ -54,7 +54,7 @@ class Locker(models.Model):
         User,
         related_name='lockers',
         )
-    submitted_timestamp = models.DateTimeField(
+    create_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,

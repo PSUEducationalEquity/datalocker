@@ -13,10 +13,10 @@
             <p>You have no lockers.</p>
         {% endif %}
         <table class="table table-striped table-hover listing">
-        <thead>
+        <tr>
             <th>Form Name</a></th>
             <th>Latest Submission</th>
-        </thead>
+        </tr>
 
             {% for locker in my_lockers_list %}
             <tr>
@@ -24,7 +24,7 @@
                     >{{ locker.name }}</a>
                 </td>
                 <td>
-                    {{ locker.submitted_timestamp }}
+                    {{ locker.create_timestamp }}
                 </td>
             </tr>
                 {% endfor %}

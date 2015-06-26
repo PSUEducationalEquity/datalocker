@@ -4,7 +4,7 @@
     form_identifier: 2014-15-cfw-funding-request-form
     owner: das66
     name: 'CFW Funding Request Form'
-    submitted_timestamp: '2015-01-14 15:00:00-05:00'
+    create_timestamp: '2015-01-14 15:00:00-05:00'
     archive_timestamp: null
   model: datalocker.Locker
   pk: 1
@@ -13,7 +13,7 @@
     form_identifier: clgbte-funding
     owner: das66
     name: CLGBTE Funding Request Form
-    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
   model: datalocker.Locker
   pk: 2
@@ -22,7 +22,7 @@
     form_identifier: copy_of_cored-student-app
     owner: das66
     name: CORED 2015-16 Student Application for Membership
-    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
   model: datalocker.Locker
   pk: 3
@@ -31,7 +31,7 @@
     form_identifier: alternative-format-request-form
     owner: hay110
     name: Alternative Format Request Form
-    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
   model: datalocker.Locker
   pk: 4
@@ -40,7 +40,7 @@
     form_identifier: call-for-proposals
     owner: hay110
     name: Diversability Call for Proposals
-    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
   model: datalocker.Locker
   pk: 5
@@ -49,7 +49,7 @@
     form_identifier: college-fair-2015
     owner: hay110
     name: College Fair 2015
-    submitted_timestamp: '2015-06-25 09:45:10-05:00'
+    create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
   model: datalocker.Locker
   pk: 6
