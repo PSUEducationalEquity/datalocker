@@ -20,6 +20,7 @@
                     <td>
                         <a href="{% url 'datalocker:submissions_view' submission.locker.id submission.pk %}"
                         >{{ submission.timestamp }}</a>
+                        {{ submission.data }}
                     </td>
                 </tr>
                 {% endfor %}
