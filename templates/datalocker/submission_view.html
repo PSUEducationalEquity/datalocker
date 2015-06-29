@@ -14,9 +14,9 @@
         <h1>{{ object.locker.name }} Submission</h1>
         <h3>Submission Data</h3>
         <ul class="list-grid">
-        {% for key, value in object.data_dict.items %}
-        <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
-        {% endfor %}
+            {% for key, value in object.data_dict.items %}
+            <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
+            {% endfor %}
         </ul>
     </div>
 {% endblock %}
