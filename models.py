@@ -5,6 +5,7 @@ from django.forms.models import model_to_dict
 from django.utils import timezone
 from django.db.models.query import QuerySet
 
+from collections import OrderedDict
 
 import datetime, json
 
@@ -114,7 +115,7 @@ class Submission(models.Model):
 
 
     def data_dict(self):
-        return json.loads(self.data)
+        return json.loads(self.data, object_pairs_hook=OrderedDict)
 
 
     def to_dict(self):

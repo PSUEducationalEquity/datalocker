@@ -11,8 +11,8 @@ from django.db.models import Max
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
     template_name = 'datalocker/index.html'
-    
-    
+
+
     def get_queryset(self):
         # Return all lockers for the current user
         #return
@@ -31,6 +31,8 @@ class SubmissionView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
         return context
+
+
 
 
 
