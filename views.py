@@ -8,6 +8,17 @@ from django.db.models import Max
 
 
 
+class GetSubmissionFieldsView(generic.ListView):
+    context_object_name = 'get_submissions'
+    template_name = 'datalocker/submissions.html'
+
+
+    def get_queryset(self, **kwargs):
+        return Submission.objects.all()
+
+
+
+
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
     template_name = 'datalocker/index.html'
@@ -17,7 +28,7 @@ class LockerListView(generic.ListView):
         # Return all lockers for the current user
         #return
         lastest_submission = Locker.objects.all()
-        #lastest_submission = Locker.objects.annotate(lastest_submission= Max('submission__timestamp'))
+        #latest_submission = Locker.objects.annotate(lastest_submission= Max('submission__timestamp'))
         return Locker.objects.active().has_access(self.request.user).annotate(lastest_submission= Max('submission__timestamp')).order_by('name')
 
 
