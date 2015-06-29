@@ -83,7 +83,7 @@ class Locker(models.Model):
 
 
 
-class LockerSettings(models.Model):
+class LockerSetting(models.Model):
     category = models.CharField(max_length=255)
     setting = models.CharField(max_length=255)
     setting_identifier = models.SlugField()
