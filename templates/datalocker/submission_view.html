@@ -11,8 +11,8 @@
                 >All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a></li>
         <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
     </ol>
-        <h1>{{ object.locker.name }} Submission</h1>
-        <h3>Submission Data</h3>
+        <h1>{{ object.locker.name }}</h1>
+        <caption name="form submissions">Submission Data</caption>
         <ul class="list-grid">
             {% for key, value in object.data_dict.items %}
             <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
