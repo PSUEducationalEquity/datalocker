@@ -9,13 +9,13 @@
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
         <li class="active">All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></li>
     </ol>
-        <h1>{{ locker.name }} Submissions</h1>
+        <h1>{{ locker.name }}</h1>
         <table class="table table-striped table-hover listing" name="submission listing">
+          <catption>Form Submissions</catption>
             <thead>
                     <th>Date of the Submission</th>
                     <th>Name of Submission</th>
-                    <th><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Fields</button>
-                    </th>
+                    <th><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Fields</button></th>
             </thead>
             <tbody>
                 {% for submission in my_submission_list %}
@@ -26,13 +26,12 @@
                     </td>
                     <td>
                         {{ submission.data }}
-                    </td>
+                    <td></td>
                  </tr>
                  {% endfor %}
             </tbody>
         </table>
         <!-- Modal -->
-        <form action="{% url 'datalocker:submissions_list' locker.pk %}">
           <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
 
@@ -49,12 +48,11 @@
                   <input type="checkbox" id="date" checked="true" />
                 </div>
                 <div class="modal-footer">
-                  <input type="submit" class="btn btn-info btn-sm save-button" />
+                  <input type="submit" class="btn btn-info btn-sm save-button" data-dismiss="modal"/>
                   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
           </div>
-        </form>
     </div>
 {% endblock %}
