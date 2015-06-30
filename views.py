@@ -2,19 +2,9 @@
 from django.shortcuts import render, render_to_response
 from django.views import generic
 from django.db.models.query import QuerySet
-from .models import Locker, Submission , LockerManager ,LockerQuerySet
 from django.db.models import Max
 
-
-
-
-class GetSubmissionFieldsView(generic.ListView):
-    context_object_name = 'get_submissions'
-    template_name = 'datalocker/submissions.html'
-
-
-    def get_queryset(self, **kwargs):
-        return Submission.objects.all()
+from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
 
 
@@ -34,19 +24,6 @@ class LockerListView(generic.ListView):
 
 
 
-class SubmissionView(generic.DetailView):
-    template_name = 'datalocker/submission_view.html'
-    model = Submission
-
-
-    def get_context_data(self, **kwargs):
-        context = super(SubmissionView, self).get_context_data(**kwargs)
-        return context
-
-
-
-
-
 class LockerSubmissionView(generic.ListView):
     context_object_name = 'my_submission_list'
     template_name = 'datalocker/submission_list.html'
@@ -62,3 +39,25 @@ class LockerSubmissionView(generic.ListView):
          # Return all submissions for selected locker
         return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
 
+
+
+
+class SubmissionView(generic.DetailView):
+    template_name = 'datalocker/submission_view.html'
+    model = Submission
+
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionView, self).get_context_data(**kwargs)
+        return context
+
+
+
+
+class GetSubmissionFieldsView(generic.ListView):
+    context_object_name = 'submission_filter'
+    template_name = 'datalocker/submission_list.html'
+
+
+    def get_queryset(self):
+        return Submission.objects.all()
