@@ -20,12 +20,14 @@ class Migration(migrations.Migration):
                 ('form_url', models.CharField(max_length=255)),
                 ('form_identifier', models.CharField(max_length=255)),
                 ('name', models.CharField(max_length=255)),
-                ('submitted_timestamp', models.DateTimeField(auto_now_add=True)),
+                ('owner', models.CharField(max_length=255)),
+                ('create_timestamp', models.DateTimeField(auto_now_add=True)),
                 ('archive_timestamp', models.DateTimeField(null=True, editable=False, blank=True)),
+                ('users', models.ManyToManyField(related_name='lockers', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
-            name='LockerSettings',
+            name='LockerSetting',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('category', models.CharField(max_length=255)),
@@ -35,31 +37,12 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='LockerUser',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('locker', models.ForeignKey(related_name='locker_user', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Locker')),
-                ('user_id', models.ForeignKey(related_name='LockerUser', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Locker')),
-            ],
-        ),
-        migrations.CreateModel(
             name='Submission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('data', models.TextField(blank=True)),
-                ('locker', models.ForeignKey(related_name='Submission', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Locker')),
+                ('locker', models.ForeignKey(related_name='submission', db_column=b'form_identifier', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Locker')),
             ],
-        ),
-        migrations.CreateModel(
-            name='User',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-            ],
-        ),
-        migrations.AddField(
-            model_name='locker',
-            name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
     ]
