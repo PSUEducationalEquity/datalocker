@@ -115,7 +115,9 @@ class Submission(models.Model):
 
 
     def data_dict(self):
-        return json.loads(self.data, object_pairs_hook=OrderedDict)
+        data = json.loads(self.data, object_pairs_hook=OrderedDict)
+        json = json.parse(Submission.data)
+        return data, json
 
 
     def to_dict(self):
