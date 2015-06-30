@@ -45,13 +45,13 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Fields to view </h4>
+            <h4 class="modal-title">Fields to display </h4>
           </div>
           <div class="modal-body">
-            <label for="name">Name
-            <input type="checkbox" id="name" value="name" name="displayFields"/></label><br />
-            <label for="date">Date
-            <input type="checkbox" id="date" checked="true" value="date" name="displayFields"/></label>
+            {% for key in submission_filter %}
+            <label for="{{ key }}">{{ key }}
+            <input type="checkbox" id="{{ key }}" value="name" name="displayFields"/></label><br />
+            {% endfor %}
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-info btn-sm save-button" />
