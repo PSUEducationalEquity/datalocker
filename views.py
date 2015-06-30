@@ -55,9 +55,9 @@ class SubmissionView(generic.DetailView):
 
 
 class GetSubmissionFieldsView(generic.ListView):
-    context_object_name = 'submission_filter'
+    model = Submission
+    context_object_name = 'submission_fields'
     template_name = 'datalocker/submission_list.html'
 
-
     def get_queryset(self):
-        return Submission.objects.all()
+        return Submission.objects.filter(data)

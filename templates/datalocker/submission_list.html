@@ -48,7 +48,7 @@
             <h4 class="modal-title">Fields to display </h4>
           </div>
           <div class="modal-body">
-            {% for key in submission_filter %}
+            {% for key in sub %}
             <label for="{{ key }}">{{ key }}
             <input type="checkbox" id="{{ key }}" value="name" name="displayFields"/></label><br />
             {% endfor %}
@@ -62,3 +62,10 @@
     </form>
   </div>
 {% endblock %}
+
+{% block site-scripts %}
+    {{ block.super }}
+    <script type="text/javascript"
+        src="{% static 'datalocker/js/jsonloop.js' %}"></script>
+{% endblock site-scripts %}
+
