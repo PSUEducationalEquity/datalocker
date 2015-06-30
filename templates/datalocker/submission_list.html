@@ -7,7 +7,7 @@
     <div class="container-fluid">
     <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
-        <li class="active">All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></li>
+        <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
     </ol>
         <h1>{{ locker.name }}</h1>
         <table class="table table-striped table-hover listing" name="submission listing">
@@ -31,28 +31,34 @@
                  {% endfor %}
             </tbody>
         </table>
-        <!-- Modal -->
-          <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+      </div>
+{% endblock %}
 
-              <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">Fields to view {{ object.locker.name }}</h4>
-                </div>
-                <div class="modal-body">
-                  <label for="name">Name </label>
-                  <input type="checkbox" id="name" /><br />
-                  <label for="date">Date </label>
-                  <input type="checkbox" id="date" checked="true" />
-                </div>
-                <div class="modal-footer">
-                  <input type="submit" class="btn btn-info btn-sm save-button" data-dismiss="modal"/>
-                  <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
+
+{% block dialogs %}
+<!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form method="GET" name="modalForm" action="{% url 'datalocker:submissions_list' locker.id %}">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Fields to view </h4>
           </div>
-    </div>
+          <div class="modal-body">
+            <label for="name">Name
+            <input type="checkbox" id="name" value="name" name="displayFields"/></label><br />
+            <label for="date">Date
+            <input type="checkbox" id="date" checked="true" value="date" name="displayFields"/></label>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-info btn-sm save-button" />
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 {% endblock %}
