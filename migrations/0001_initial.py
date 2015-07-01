@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('data', models.TextField(blank=True)),
-                ('locker', models.ForeignKey(related_name='submission', db_column=b'form_identifier', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Locker')),
+                ('locker', models.ForeignKey(related_name='submissions', db_column=b'form_identifier', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Locker')),
             ],
         ),
     ]
