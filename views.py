@@ -1,11 +1,15 @@
 
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.views import generic
 from django.db.models.query import QuerySet
 from django.db.models import Max
+from django.utils.text import slugify
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
+
+import json
 
 
 
@@ -29,23 +33,18 @@ class LockerSubmissionView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(LockerSubmissionView, self).get_context_data(**kwargs)
-        context['locker'] = Locker.objects.get(pk=self.kwargs['locker_id'])
-        fields_list = []
-        for submission in context['locker'].submissions.all():
-            fields = submission.data_dict().keys()
-            for field in fields:
-                #if field[-1] == ':':
-                #    field = field[:-1]
-                if not field in fields_list:
-                    fields_list.append(field)
-            context['fields_list'] = fields_list
-        selected_fields = context['fields_list']
-        context['column_headings'] = ['Date', ] + selected_fields
+        self.locker = Locker.objects.get(pk=self.kwargs['locker_id'])
+        context['locker'] = self.locker
+        self.fields_list = self.locker.get_all_fields_list()
+        context['fields_list'] = self.fields_list
+        self.selected_fields = self.locker.get_selected_fields_list()
+        context['selected_fields'] = self.selected_fields
+        context['column_headings'] = ['Date', ] + self.selected_fields
         context['data'] = []
-        for submission in context['locker'].submissions.all():
+        for submission in self.locker.submissions.all():
             entry = [submission.id, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
-                if field in selected_fields:
+                if field in self.selected_fields:
                     entry.append(value)
             context['data'].append(entry)
         return context
@@ -57,10 +56,22 @@ class LockerSubmissionView(generic.ListView):
 
 
     def post(self, *args, **kwargs):
-
-        return reverse('datalocker:submissions_list', kwargs={'locker_id': kwargs['locker_id']})
-
-
+        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
+        selected_fields = []
+        for field in locker.get_all_fields_list():
+            if slugify(field) in self.request.POST:
+                selected_fields.append(field)
+        selected_fields_setting, created = LockerSetting.objects.get_or_create(
+            category='fields-list',
+            setting_identifier='selected-fields',
+            defaults={
+                'setting': 'User-defined list of fields to display in tabular view',
+                'locker': locker,
+                }
+            )
+        selected_fields_setting.value = json.dumps(selected_fields)
+        selected_fields_setting.save()
+        return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
 
 
 

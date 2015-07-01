@@ -1,4 +1,4 @@
-from datetime import datetime
+
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.forms.models import model_to_dict
@@ -80,6 +80,60 @@ class Locker(models.Model):
         if archive_timestamp is None:
             return False
         return True
+
+    def get_all_fields_list(self):
+        try:
+            all_fields_setting = self.settings.get(category='fields-list', setting_identifier='all-fields')
+        except LockerSetting.DoesNotExist:
+            all_fields = []
+        else:
+            all_fields = json.loads(all_fields_setting.value)
+
+        try:
+            last_updated_setting = self.settings.get(category='fields-list', setting_identifier='last-updated')
+        except LockerSetting.DoesNotExist:
+            submissions = self.submissions.all()
+        else:
+            submissions = self.submissions.filter(timestamp__gte=last_updated_setting.value)
+
+        for submission in submissions:
+            fields = submission.data_dict().keys()
+            for field in fields:
+                if not field in all_fields:
+                    all_fields.append(field)
+        try:
+            all_fields_setting.value = json.dumps(all_fields)
+        except UnboundLocalError:
+            all_fields_setting = LockerSetting(
+                category='fields-list',
+                setting='List of all fields',
+                setting_identifier='all-fields',
+                value=json.dumps(all_fields),
+                locker=self,
+                )
+        all_fields_setting.save()
+        try:
+            last_updated_setting.value = datetime.datetime.now()
+        except UnboundLocalError:
+            last_updated_setting = LockerSetting(
+                category='fields-list',
+                setting='Date/time all fields list last updated',
+                setting_identifier='last-updated',
+                value=datetime.now(),
+                locker=self,
+                )
+        last_updated_setting.save()
+        return all_fields
+
+
+    def get_selected_fields_list(self):
+        try:
+            selected_fields_setting = self.settings.get(category='fields-list', setting_identifier='selected-fields')
+        except LockerSetting.DoesNotExist:
+            selected_fields = []
+        else:
+            selected_fields = json.loads(selected_fields_setting.value)
+        return selected_fields
 
 
 

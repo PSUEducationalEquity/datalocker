@@ -56,7 +56,9 @@
           </div>
           <div class="modal-body">
             {% for field in fields_list %}
-            <input type="checkbox" id="{{ field|slugify }}" value="checked" name="{{ field|slugify }}"/> <label for="{{ field|slugify }}">{{ field }}</label><br />
+              <input type="checkbox" id="{{ field|slugify }}" value="Y" name="{{ field|slugify }}"
+                     {% if field in selected_fields %} checked="checked" {% endif %}/>
+              <label for="{{ field|slugify }}">{{ field }}</label><br />
             {% endfor %}
           </div>
           <div class="modal-footer">
