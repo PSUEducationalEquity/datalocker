@@ -10,25 +10,31 @@
         <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
     </ol>
         <h1>{{ locker.name }}</h1>
+        <button type="button" class="btn btn-info btn-sm" role="filter-results">Fields</button>
         <table class="table table-striped table-hover listing" name="submission listing">
-          <catption>Form Submissions</catption>
+            <caption>Form Submissions</caption>
             <thead>
-                    <th>Date of the Submission</th>
-                    <th>Name of Submission</th>
-                    <th><button type="button" class="btn btn-info btn-sm" role="filter-results">Fields</button></th>
+              {% for heading in column_headings %}
+                <th>{{ heading }}</th>
+              {% endfor %}
             </thead>
             <tbody>
-                {% for submission in my_submission_list %}
+              {% for submission in data %}
                 <tr>
-                    <td>
-                        <a href="{% url 'datalocker:submissions_view' submission.locker.id submission.pk %}"
-                         >{{ submission.timestamp }}</a>
-                    </td>
-                    <td>
-                        {{ submission.data }}
-                    <td></td>
-                 </tr>
-                 {% endfor %}
+                  {% for value in submission %}
+                    {% if forloop.counter > 1 %}
+                      <td>
+                        {% if forloop.counter == 2 %}
+                          <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
+                           >{{ value }}</a>
+                        {% else %}
+                          {{ value }}
+                        {% endif %}
+                      </td>
+                    {% endif %}
+                  {% endfor %}
+                </tr>
+              {% endfor %}
             </tbody>
         </table>
       </div>
@@ -36,9 +42,10 @@
 
 
 {% block dialogs %}
-<!-- Modal -->
+<!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-filterResults" tabindex="-1" role="dialog" aria-labelledby="dialog-filerResults-title" aria-hidden="true">
-    <form method="GET" name="modalForm" action="{% url 'datalocker:submissions_list' locker.id %}">
+    <form method="POST" name="modalForm" action="{% url 'datalocker:submissions_list' locker.id %}">
+      {% csrf_token %}
       <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -49,11 +56,11 @@
           </div>
           <div class="modal-body">
             {% for field in fields_list %}
-            <input type="checkbox" id="{{ field }}" value="checked" name="{{ field }}"/> <label for="{{ field }}">{{ field }}</label><br />
+            <input type="checkbox" id="{{ field|slugify }}" value="checked" name="{{ field|slugify }}"/> <label for="{{ field|slugify }}">{{ field }}</label><br />
             {% endfor %}
           </div>
           <div class="modal-footer">
-            <input type="submit" class="btn btn-info btn-sm save-button" />
+            <input type="submit" class="btn btn-primary btn-sm save-button" />
             <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
           </div>
         </div>
@@ -64,6 +71,8 @@
 
 {% block site-scripts %}
     {{ block.super }}
+    <!-- JavaScript code to run the modal into the page when the button
+    is pressed -->
     <script type="text/javascript">
       $(document).ready(function (){
         $("button[role='filter-results']").on("click", function (event){

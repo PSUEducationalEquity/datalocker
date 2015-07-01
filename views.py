@@ -1,4 +1,5 @@
 
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, render_to_response
 from django.views import generic
 from django.db.models.query import QuerySet
@@ -23,7 +24,6 @@ class LockerListView(generic.ListView):
 
 
 class LockerSubmissionView(generic.ListView):
-    context_object_name = 'my_submission_list'
     template_name = 'datalocker/submission_list.html'
 
 
@@ -34,17 +34,31 @@ class LockerSubmissionView(generic.ListView):
         for submission in context['locker'].submissions.all():
             fields = submission.data_dict().keys()
             for field in fields:
-                if field[-1] == ':':
-                    field = field[:-1]
+                #if field[-1] == ':':
+                #    field = field[:-1]
                 if not field in fields_list:
                     fields_list.append(field)
             context['fields_list'] = fields_list
+        selected_fields = context['fields_list']
+        context['column_headings'] = ['Date', ] + selected_fields
+        context['data'] = []
+        for submission in context['locker'].submissions.all():
+            entry = [submission.id, submission.timestamp, ]
+            for field, value in submission.data_dict().iteritems():
+                if field in selected_fields:
+                    entry.append(value)
+            context['data'].append(entry)
         return context
 
 
     def get_queryset(self):
          # Return all submissions for selected locker
         return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
+
+
+    def post(self, *args, **kwargs):
+
+        return reverse('datalocker:submissions_list', kwargs={'locker_id': kwargs['locker_id']})
 
 
 
@@ -59,13 +73,3 @@ class SubmissionView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
         return context
-
-
-
-
-class GetSubmissionFieldsView(generic.ListView):
-    model = Submission
-    template_name = 'datalocker/submission_list.html'
-
-    def get_queryset(self):
-        return Submission.objects.filter(locker_id=self.kwargs['locker_id'])
