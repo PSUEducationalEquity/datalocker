@@ -89,6 +89,11 @@ class LockerSetting(models.Model):
     setting = models.CharField(max_length=255)
     setting_identifier = models.SlugField()
     value = models.TextField()
+    locker = models.ForeignKey(
+        Locker,
+        related_name="settings",
+        on_delete=models.PROTECT,
+        )
 
 
 
