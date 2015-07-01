@@ -48,9 +48,8 @@
             <h4 class="modal-title">Fields to display </h4>
           </div>
           <div class="modal-body">
-            {% for key in sub %}
-            <label for="{{ key }}">{{ key }}
-            <input type="checkbox" id="{{ key }}" value="name" name="displayFields"/></label><br />
+            {% for field in fields_list %}
+            <input type="checkbox" id="{{ field }}" value="checked" name="fields"/> <label for="{{ field }}">{{ field }}</label><br />
             {% endfor %}
           </div>
           <div class="modal-footer">

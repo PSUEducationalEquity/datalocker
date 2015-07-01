@@ -92,15 +92,17 @@ class LockerSetting(models.Model):
 
 
 
-
+##
 # Model used for the actual Submission of the form
 # Needs to include the locer name, Submission timestamp,
 # the data that is on the form and then it is needed to be returned readable
+##
+
 class Submission(models.Model):
     locker = models.ForeignKey(
         Locker,
         db_column="form_identifier",
-        related_name="submission",
+        related_name="submissions",
         on_delete=models.PROTECT,
         )
     timestamp = models.DateTimeField(

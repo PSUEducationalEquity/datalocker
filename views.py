@@ -16,10 +16,8 @@ class LockerListView(generic.ListView):
 
     def get_queryset(self):
         # Return all lockers for the current user
-        #return
         lastest_submission = Locker.objects.all()
-        #latest_submission = Locker.objects.annotate(lastest_submission= Max('submission__timestamp'))
-        return Locker.objects.active().has_access(self.request.user).annotate(lastest_submission= Max('submission__timestamp')).order_by('name')
+        return Locker.objects.active().has_access(self.request.user).annotate(lastest_submission= Max('submissions__timestamp')).order_by('name')
 
 
 
@@ -32,12 +30,23 @@ class LockerSubmissionView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(LockerSubmissionView, self).get_context_data(**kwargs)
         context['locker'] = Locker.objects.get(pk=self.kwargs['locker_id'])
+        fields_list = []
+        for submission in context['locker'].submissions.all():
+            fields = submission.data_dict().keys()
+            for field in fields:
+                if field[-1] == ':':
+                    field = field[:-1]
+                if not field in fields_list:
+                    fields_list.append(field)
+            context['fields_list'] = fields_list
         return context
 
 
     def get_queryset(self):
          # Return all submissions for selected locker
         return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
+
+
 
 
 
@@ -56,8 +65,7 @@ class SubmissionView(generic.DetailView):
 
 class GetSubmissionFieldsView(generic.ListView):
     model = Submission
-    context_object_name = 'submission_fields'
     template_name = 'datalocker/submission_list.html'
 
     def get_queryset(self):
-        return Submission.objects.filter(data)
+        return Submission.objects.filter(locker_id=self.kwargs['locker_id'])
