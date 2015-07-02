@@ -119,7 +119,7 @@ class Locker(models.Model):
                 category='fields-list',
                 setting='Date/time all fields list last updated',
                 setting_identifier='last-updated',
-                value=datetime.now(),
+                value=datetime.datetime.now(),
                 locker=self,
                 )
         last_updated_setting.save()
@@ -134,7 +134,6 @@ class Locker(models.Model):
         else:
             selected_fields = json.loads(selected_fields_setting.value)
         return selected_fields
-
 
 
 
