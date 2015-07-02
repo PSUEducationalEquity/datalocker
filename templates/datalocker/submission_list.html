@@ -43,7 +43,7 @@
 
 {% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
-  <div class="modal fade" id="dialog-filterResults" tabindex="-1" role="dialog" aria-labelledby="dialog-filerResults-title" aria-hidden="true">
+  <div class="modal fade" id="dialog-filter-results" tabindex="-1" role="dialog" aria-labelledby="dialog-filter-results-title" aria-hidden="true">
     <form method="POST" name="modalForm" action="{% url 'datalocker:submissions_list' locker.id %}">
       {% csrf_token %}
       <div class="modal-dialog">
@@ -52,18 +52,24 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="dialog-filterResults-title">Fields to display </h4>
+            <h4 class="modal-title" id="dialog-filter-results-title">Fields to display </h4>
           </div>
           <div class="modal-body">
+            <div>
+              <input type="checkbox" id="fields-select-all" role="select-all" data-target="fields-list"/>
+              <label for="fields-select-all"  class="select-all-checkbox">Select All</label>
+            </div>
+            <ul class="list-unstyled" id="fields-list">
             {% for field in fields_list %}
-              <input type="checkbox" id="{{ field|slugify }}" value="Y" name="{{ field|slugify }}"
-                     {% if field in selected_fields %} checked="checked" {% endif %}/>
-              <label for="{{ field|slugify }}">{{ field }}</label><br />
+              <li><input type="checkbox" id="{{ field|slugify }}" name="{{ field|slugify }}" class="checkbox-inputs"
+                     {% if field in selected_fields %} checked="checked" {% endif %} />
+              <label for="{{ field|slugify }}">{{ field }}</label></li>
             {% endfor %}
+            </ul>
           </div>
           <div class="modal-footer">
-            <input type="submit" class="btn btn-primary btn-sm save-button" />
-            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
+            <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -78,11 +84,13 @@
     <script type="text/javascript">
       $(document).ready(function (){
         $("button[role='filter-results']").on("click", function (event){
-          $("#dialog-filterResults").modal('show');
+          $("#dialog-filter-results").modal('show');
         });
       });
     </script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/sortable.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/select-all.js' %}"></script>
 {% endblock site-scripts %}
 

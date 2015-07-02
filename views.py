@@ -39,7 +39,7 @@ class LockerSubmissionView(generic.ListView):
         context['fields_list'] = self.fields_list
         self.selected_fields = self.locker.get_selected_fields_list()
         context['selected_fields'] = self.selected_fields
-        context['column_headings'] = ['Date', ] + self.selected_fields
+        context['column_headings'] = ['Submitted Date', ] + self.selected_fields
         context['data'] = []
         for submission in self.locker.submissions.all():
             entry = [submission.id, submission.timestamp, ]
@@ -64,9 +64,9 @@ class LockerSubmissionView(generic.ListView):
         selected_fields_setting, created = LockerSetting.objects.get_or_create(
             category='fields-list',
             setting_identifier='selected-fields',
+            locker=locker,
             defaults={
                 'setting': 'User-defined list of fields to display in tabular view',
-                'locker': locker,
                 }
             )
         selected_fields_setting.value = json.dumps(selected_fields)

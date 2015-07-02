@@ -16,9 +16,12 @@
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
-
 .rounding {
   border-radius: 5px;
+}
+.select-all-checkbox {
+  font-size: 12px;
+  font-weight: normal;
 }
 .submission-heading {
   font-weight: bold;
