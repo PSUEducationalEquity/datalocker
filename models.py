@@ -24,7 +24,13 @@ class LockerQuerySet(models.query.QuerySet):
 
 
     def has_access(self, user):
-        return self.filter(owner = user)
+        """
+        We will need to know the id of the user from the auth_user table.
+        We will then need to cross reference that user id
+        with the allowed user id in the datalocker_locker_user table
+        """
+        allAvailLockers = Locker.objects.filter(users=user) | Locker.objects.filter(owner=user)
+        return allAvailLockers
 
 
 
