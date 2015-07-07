@@ -6,6 +6,7 @@
     name: 'CFW Funding Request Form'
     create_timestamp: '2015-01-14 15:00:00-05:00'
     archive_timestamp: null
+    users: '3'
   model: datalocker.Locker
   pk: 1
 - fields:
@@ -15,6 +16,7 @@
     name: CLGBTE Funding Request Form
     create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
+    users: '3'
   model: datalocker.Locker
   pk: 2
 - fields:
@@ -24,6 +26,7 @@
     name: CORED 2015-16 Student Application for Membership
     create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
+    users: '3'
   model: datalocker.Locker
   pk: 3
 - fields:
@@ -33,6 +36,7 @@
     name: Alternative Format Request Form
     create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
+    users: '2'
   model: datalocker.Locker
   pk: 4
 - fields:
@@ -42,6 +46,7 @@
     name: Diversability Call for Proposals
     create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
+    users: '2'
   model: datalocker.Locker
   pk: 5
 - fields:
@@ -51,5 +56,6 @@
     name: College Fair 2015
     create_timestamp: '2015-06-25 09:45:10-05:00'
     archive_timestamp: null
+    users: '2'
   model: datalocker.Locker
   pk: 6
