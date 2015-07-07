@@ -12,7 +12,7 @@
         {% if my_lockers_list|length == 0 %}
             <p>You have no lockers.</p>
         {% endif %}
-        <table class="table table-striped table-hover listing" name="locker listing">
+        <table class="table table-striped table-hover listing sortable" id="sortabletable" name="locker listing" instanceid="sortabletable">
         <thead>
             <th>Form Name</th>
             <th>Latest Submission</th>
@@ -32,3 +32,9 @@
         </table>
     </div>
 {% endblock %}
+
+{% block site-scripts %}
+    {{ block.super }}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/sortable.js' %}"></script>
+{% endblock site-scripts %}
