@@ -29,8 +29,9 @@ class LockerQuerySet(models.query.QuerySet):
         We will then need to cross reference that user id
         with the allowed user id in the datalocker_locker_user table
         """
-        allAvailLockers = self.filter(users=user) | self.filter(owner=user)
-        return allAvailLockers
+        #allAvailLockers = self.filter(users=user) | self.filter(owner=user)
+        #return allAvailLockers
+        return self.filter(owner=user)
 
 
 
