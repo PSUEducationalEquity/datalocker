@@ -22,11 +22,11 @@ You will want this repo to be on your virtual machine inside your project direct
     git clone https://<your username>@bitbucket.org/psueduequity/datalocker.git
 ```
 
-### To clone using sourceTree ###
-* Open sourceTree
-* In the top menu click Clone/New
-* Click the Clone Repository Tab (if not already selected)
-* In the Source Path / URL box paste the bitbucket url (example: https://<your username>@bitbucket.org/psueduequity/datalocker.git)
+### To clone using SourceTree ###
+* Open 'SourceTree'
+* In the top menu click 'Clone/New'
+* Click the 'Clone Repository' Tab (if not already selected)
+* In the Source Path / URL box paste the bitbucket url '(example: https://<your username>@bitbucket.org/psueduequity/datalocker.git)'
 * In the Destination Path enter your django project directory
 * Click the Clone button on the bottom
 
@@ -34,12 +34,12 @@ You should now have a cloned version of the datalocker application on your virtu
 
 ### Accessing the web application ###
 * Open the terminal to your VM
-* Type datalocker press ENTER
-* Type djserve press ENTER
+* Type 'datalocker' press 'ENTER'
+* Type 'djserve' press 'ENTER'
     * This runs the webserver allowing you to access the webpage
 * Open a browser of choice
-* The VM is setup to run with the ip of 10.18.55.20 on port 8000
-* In the address bar type 10.18.55.20:8000/datalocker
+* The VM is setup to run with the ip of '10.18.55.20' on port '8000'
+* In the address bar type '10.18.55.20:8000/datalocker'
     * This will bring you to the DataLocker homepage which should show nothing because you aren't logged in. You will have to log in first with one of the users that were created by the fixture. You can find one by navigating to the fixtures folder and looking in the yaml file named dev-users.yaml.
 * Once you have a user and log in you can click on any submissions that you have if any and you can explore the application.
 
@@ -58,7 +58,7 @@ datalocker
 djserve
 
 ```
-* Those commands will log you into the VM and also run the webserver now what you want to do is go to 10.18.55.20:8000/datalocker/admin and log in with one of the users from the fixtures file. From here you will be redirected to the app with the test data loaded. You can go back up in the url and type 10.18.55.20:8000/datalocker/admin in again and you will be at the admin site where you can add and delete records from the table.
+* Those commands will log you into the VM and also run the webserver now what you want to do is go to '10.18.55.20:8000/datalocker/admin' and log in with one of the users from the fixtures file. From here you will be redirected to the app with the test data loaded. You can go back up in the url and type '10.18.55.20:8000/datalocker/admin' in again and you will be at the admin site where you can add and delete records from the table.
 
 
 ** Ultimately you will still want to add data in the fixtures for test because then it will always upload. The format in the fixtures is how the database needs it to read correctly so copy and pasting would be the best way to add fixtures and alter the data in the fields.
