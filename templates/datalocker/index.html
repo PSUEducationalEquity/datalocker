@@ -4,11 +4,13 @@
 {% block page-meta-title %}My Lockers{% endblock page-meta-title %}
 
 {% block content %}
+
     <div class="container-fluid">
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
     </ol>
         <h1><i>My Lockers</i></h1>
+        {% if user.is_authenticated %}
         {% if my_lockers_list|length == 0 %}
             <p>You have no lockers.</p>
         {% endif %}
@@ -30,6 +32,9 @@
                 {% endfor %}
         </tbody>
         </table>
+        {% else %}
+        <h4>Please log in to view the lockers you have access to</h4>
+        {% endif %}
     </div>
 {% endblock %}
 

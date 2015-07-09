@@ -5,6 +5,7 @@
 
 {% block content %}
     <div class="container-fluid">
+    {% if user.is_authenticated %}
     <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
         <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}"
@@ -12,11 +13,14 @@
         <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
     </ol>
         <h1>{{ object.locker.name }}</h1>
-        <h4>Submission Data</h4>
+        <h5>Submission Data</h5>
         <ul class="list-grid">
             {% for key, value in object.data_dict.items %}
             <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
             {% endfor %}
         </ul>
+    {% else %}
+    <h4>Please log in to view this submission</h4>
+    {% endif %}
     </div>
 {% endblock %}

@@ -5,6 +5,7 @@
 
 {% block content %}
     <div class="container-fluid">
+    {% if user.is_authenticated %}
     <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
         <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
@@ -37,6 +38,9 @@
               {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <h4>Please log in to view the submissions for this locker</h4>
+        {% endif %}
       </div>
 {% endblock %}
 
