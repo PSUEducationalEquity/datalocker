@@ -16,6 +16,5 @@ class Migration(migrations.Migration):
             model_name='lockersetting',
             name='locker',
             field=models.ForeignKey(related_name='settings', on_delete=django.db.models.deletion.PROTECT, default=None, to='datalocker.Locker'),
-            preserve_default=False,
         ),
     ]
