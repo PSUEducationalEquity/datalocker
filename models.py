@@ -2,10 +2,13 @@
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.forms.models import model_to_dict
+from django.http import request
 from django.utils import timezone
 from django.db.models.query import QuerySet
 
 from collections import OrderedDict
+
+from .models import User
 
 import datetime, json
 
@@ -29,9 +32,10 @@ class LockerQuerySet(models.query.QuerySet):
         We will then need to cross reference that user id
         with the allowed user id in the datalocker_locker_user table
         """
-        #allAvailLockers = self.filter(users=user) | self.filter(owner=user)
-        #return allAvailLockers
-        return self.filter(owner=user)
+        if user.is_authenticated():
+            return Locker.objects.filter(owner=user) | Locker.objects.filter(users=user)
+        else:
+            return Locker.objects.filter(owner=user)
 
 
 
