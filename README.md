@@ -1,6 +1,6 @@
 # Datalocker #
 
-### Reason for this Repo ###
+## Reason for this Repo ##
 
 This repo contains every python file, Python, CSS, HTML, and JS page that was written to operate this application. Any changes that are made to the application are done inside this repository. This is the main location for the entire datalocker application.
 
