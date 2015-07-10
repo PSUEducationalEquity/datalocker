@@ -92,9 +92,20 @@ class SubmissionView(generic.DetailView):
     
 
     #def post(self, *args, **kwargs)
+<<<<<<< HEAD
     #    user = get_object_or_404(User, id=kwargs['locker_id'])
     #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
 
+=======
+    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
+    #    user = []
+    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
+    #    for key, value in user:
+    #       if something:
+    #           key.model_to_dict().iteritems()
+    #    Locker.user.add()
+    #    Locker.save()
+>>>>>>> cdcd741fdec54156af77b813a881a707346a4961
     #    name = Locker.objects.get(id=kwargs['locker_id'])
     #    subject = 'Locker Access'
     #    from_email = 'eeqsys@psu.edu'
@@ -105,10 +116,14 @@ class SubmissionView(generic.DetailView):
     #            from_email,
     #            [to])                        
     #    email.send()
+<<<<<<< HEAD
 
     #    Locker.user.add()
     #    Locker.save()
 
+=======
+    #return jsonResponse()
+>>>>>>> cdcd741fdec54156af77b813a881a707346a4961
     
 
 
@@ -119,4 +134,9 @@ class SubmissionView(generic.DetailView):
     #    user =  get_object_or_404(User, id=kwargs['locker_id'])
     #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
     #    Locker.user.remove()
+<<<<<<< HEAD
          #return 
+=======
+
+    #return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
+>>>>>>> cdcd741fdec54156af77b813a881a707346a4961

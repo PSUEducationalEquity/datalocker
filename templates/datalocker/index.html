@@ -27,11 +27,13 @@
                 </td>
                 <td>
                     {{ locker.lastest_submission }}
-                </td>
+                </td>                
                 <td>
+                  {% if locker.owner == user.username %}
                   <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
                   <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
-                </td>
+                  {% endif %}
+                </td>                
             </tr>
                 {% endfor %}
         </tbody>
@@ -39,7 +41,6 @@
         </table>
         {% else %}
         <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view the lockers you have access to</h4>
-
         {% endif %}
     </div>
 {% endblock %}
