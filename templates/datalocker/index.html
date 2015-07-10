@@ -28,18 +28,84 @@
                 <td>
                     {{ locker.lastest_submission }}
                 </td>
+                <button type="button" class="btn btn-info btn-sm" role="edit-users" style="float:right;">Users</button>
+                <button type="button" class="btn btn-info btn-sm" role="edit-locker" style="float:right;">Edit Locker</button>
             </tr>
                 {% endfor %}
         </tbody>
+
         </table>
         {% else %}
         <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view the lockers you have access to</h4>
+
         {% endif %}
     </div>
 {% endblock %}
+{% block dialogs %}
+<!-- Modal for filtering out the data shown in the submission list -->
+  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-filter-results-title" aria-hidden="true">
+    <form method="POST" name="modalForm" action="{% url 'datalocker:index' locker.id %}">
+      {% csrf_token %}
+      <div class="modal-dialog">
 
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="dialog-filter-results-title">Edit Lockers </h4>
+          </div>
+          <div class="modal-body">
+            <div>
+              <label for="add-user">
+              <input type="text" name="add-user"> 
+              <button type="button" class="btn btn-info btn-sm" >Add</button>
+            </div>
+            <ul>         
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
+            <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+{% block dialogs %}
+<!-- Modal for filtering out the data shown in the submission list -->
+  <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
+    <form method="POST" name="modalForm" action="{% url 'datalocker:index' locker.id %}">
+      {% csrf_token %}
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="dialog-edit-locker-title">Edit Locker </h4>
+          </div>
+          <div class="modal-body">
+            <div>
+             <label for="edit-locker-name">Edit Locker Name: </label>
+               <input type="text" name="edit-locker"><br/>            
+             <label for="edit-owner">Edit Owner: </label>
+               <input type="text" name="edit-owner"><br/>
+            </div>           
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
+            <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}
 {% block site-scripts %}
     {{ block.super }}
     <script type="text/javascript"
-            src=" {% static 'datalocker/js/sortable.js' %}"></script>
+            src=" {% static 'datalocker/js/sortable.js' %}" ></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/locker.js' %}" ></script>
 {% endblock site-scripts %}
