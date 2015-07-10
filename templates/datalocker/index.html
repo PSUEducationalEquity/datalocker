@@ -71,8 +71,6 @@
       </div>
     </form>
   </div>
-{% endblock %}
-{% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
     <form method="POST" name="modalForm" action="{% url 'datalocker:index' locker.id %}">
