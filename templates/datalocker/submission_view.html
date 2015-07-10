@@ -13,7 +13,7 @@
         <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
     </ol>
         <h1>{{ object.locker.name }}</h1>
-        <h5>Submission Data</h5>
+        <!--<h5>Submission Data</h5> Toolbar for next and previous items -->
         <ul class="list-grid">
             {% for key, value in object.data_dict.items %}
             <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
