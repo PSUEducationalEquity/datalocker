@@ -19,14 +19,14 @@
 // {
 //     // submit the request
 //     var email = $("#email").val();
-//     var addUrl = $("#tag-list").attr("data-url")           
+//     var addUrl = $("#tag-list").attr("data-url")
 //     Locker.addRequest = $.ajax({
 //         url: addUrl,
 //         type: "post",
 //         cache: false
 //         data: {
 //             email: 'email'
-//             crsf: 
+//             crsf:
 //         }
 //     });
 
@@ -65,14 +65,14 @@
 // {
 //     // submit the request
 //     var email = $("#email").val();
-//     var deleteUrl = $("#tag-list").attr("data-url")           
+//     var deleteUrl = $("#tag-list").attr("data-url")
 //     Locker.deleteRequest = $.ajax({
 //         url: deleteUrl,
 //         type: "post",
 //         cache: flase
 //         data: {
 //             id: 'id'
-//             CSRF: 
+//             CSRF:
 //         }
 //     });
 
@@ -122,7 +122,6 @@
 //      * @access      private
 //      * @author      Paul Rentschler <par117@psu.edu>
 //      * @since       18 April 2014
-     
 //     Locker.buildList = function (data)
 //     {
 //         var count = 0;

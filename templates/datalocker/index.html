@@ -21,19 +21,19 @@
         </thead>
         <tbody>
             {% for locker in my_lockers_list %}
-            {% if locker.owner == user.username %}             
+            {% if locker.owner == user.username %}
             <tr>
                 <td>
                   <a style="display:block;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
                 </td>
                 <td>
                     {{ locker.latest_submission }}
-                </td>                
-                <td>              
-                    <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
-                    <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>                  
                 </td>
-            </tr>            
+                <td>
+                    <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
+                    <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
+                </td>
+            </tr>
             {% endif %}
             {% endfor %}
         </tbody>
@@ -83,7 +83,7 @@
               <ul id="existing-users">
               </ul>
               <label for="email">
-              <input type="text" name="email" id="email"> 
+              <input type="text" name="email" id="email">
               <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="{% url 'datalocker:index' }">Add</button>
             </div>
           </div>
@@ -95,7 +95,7 @@
       </div>
     </form>
   </div>
-  
+
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
     <form method="POST" name="modalLocker" action="{% url 'datalocker:index' %}">
@@ -111,10 +111,10 @@
           <div class="modal-body">
             <div>
              <label for="edit-locker-name">Edit Locker Name: </label>
-               <input type="text" name="edit-locker" id="edit-locker"><br/>            
+               <input type="text" name="edit-locker" id="edit-locker"><br/>
              <label for="edit-owner">Edit Owner: </label>
                <input type="text" name="edit-owner" id="edit-owner"><br/>
-            </div>           
+            </div>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
