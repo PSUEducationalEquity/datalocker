@@ -22,8 +22,8 @@ Locker.add = function ()
         url: addUrl,
         type: "post",
         data: {
-            email: 'email'
-            //crsf: 
+            email: 'email',
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value
               }
     });
 
@@ -67,8 +67,8 @@ Locker.delete = function ()
         url: deleteUrl,
         type: "post",      
         data: {
-            id: 'id'
-          //  CSRF: 
+            id: 'id',
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value
         }
     });
 
