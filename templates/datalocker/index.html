@@ -22,7 +22,7 @@
         <tbody>
             {% for locker in my_lockers_list %}
             <tr>
-                <td><a href="{% url 'datalocker:submissions_list' locker.pk %}"
+                <td><a style="display:block;" href="{% url 'datalocker:submissions_list' locker.pk %}"
                     >{{ locker.name }}</a>
                 </td>
                 <td>
