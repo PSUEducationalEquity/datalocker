@@ -22,7 +22,7 @@ class LockerListView(generic.ListView):
     def get_queryset(self):
         # Return all lockers for the current user
         lastest_submission = Locker.objects.all()
-        return Locker.objects.active().has_access(self.request.user).annotate(lastest_submission= Max('submissions__timestamp')).order_by('name')
+        return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
 
 
 
