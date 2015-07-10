@@ -47,7 +47,7 @@
 {% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true">
-    <form method="POST" name="modalForm" action="{% url 'datalocker:index' %}">
+    <form method="POST" name="modalForm" action="{% url 'datalocker:index'  %}">
 
       {% csrf_token %}
       <div class="modal-dialog">
@@ -65,11 +65,11 @@
               </ul>
               <label for="email">
               <input type="text" name="email" id="email"> 
-              <button type="button" class="btn btn-info btn-sm" id="button-add-user">Add</button>
+              <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="{% url 'datalocker:index' }">Add</button>
             </div>
           </div>
           <div class="modal-footer">
-            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
+            <button type="button" class="btn btn-primary btn-sm save-button pull-left" />Done</button>
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
           </div>
         </div>
