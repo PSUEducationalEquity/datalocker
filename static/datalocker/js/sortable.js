@@ -125,7 +125,7 @@ function ts_resortTable(lnk, clid) {
     }
     newRows.sort(sortfn);
     if (span.getAttribute("sortdir") == 'down') {
-            ARROW = '&nbsp;&nbsp;&darr';
+            ARROW = '&nbsp;&nbsp;&darr;';
             newRows.reverse();
             span.setAttribute('sortdir','up');
     } else {
