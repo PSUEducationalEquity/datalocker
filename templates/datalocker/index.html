@@ -28,8 +28,8 @@
                 <td>
                     {{ locker.lastest_submission }}
                 </td>
-                <button type="button" class="btn btn-info btn-sm" role="edit-users" style="float:right;">Users</button>
-                <button type="button" class="btn btn-info btn-sm" role="edit-locker" style="float:right;">Edit Locker</button>
+                <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
+                <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
             </tr>
                 {% endfor %}
         </tbody>
@@ -43,8 +43,9 @@
 {% endblock %}
 {% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
-  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-filter-results-title" aria-hidden="true">
-    <form method="POST" name="modalUsers" action="{% url 'datalocker:index' %}">
+  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true">
+    <form method="POST" name="modalForm" action="{% url 'datalocker:index' %}">
+
       {% csrf_token %}
       <div class="modal-dialog">
 
@@ -52,7 +53,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="dialog-filter-results-title">Edit Users</h4>
+            <h4 class="modal-title" id="dialog-edit-users-title">Edit Lockers </h4>
           </div>
           <div class="modal-body">
             <div>
@@ -71,6 +72,7 @@
       </div>
     </form>
   </div>
+  
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
     <form method="POST" name="modalLocker" action="{% url 'datalocker:index' %}">
