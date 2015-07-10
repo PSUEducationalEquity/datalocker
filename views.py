@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.views import generic
+from django.views.generic import View
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.utils.text import slugify
@@ -12,7 +13,7 @@ from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuer
 import json
 
 
-
+public_fields = 'id', 'email','locker' 
 
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
@@ -88,33 +89,29 @@ class SubmissionView(generic.DetailView):
 
 
 
-#class LockerUserAdd(view):
+class LockerUserAdd(View):
     
 
-    #def post(self, *args, **kwargs)
-    #    user = get_object_or_404(User, id=kwargs['locker_id'])
-    #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
-    #    user = []
-    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
-    #    for key, value in user:
-    #       if something:
-    #           key.model_to_dict().iteritems()
-    #    Locker.user.add()
-    #    Locker.save()
-    #    name = Locker.objects.get(id=kwargs['locker_id'])
-    #    subject = 'Locker Access'
-    #    from_email = 'eeqsys@psu.edu'
-    #    to = self.request.POST.get('email', "")_
-    #    body= 'Hello,\nYou now have access to a locker' +' '+ name.name
-    #    email = EmailMessage(subject, 
-    #            body, 
-    #            from_email,
-    #            [to])                        
-    #    email.send()
-    #    Locker.user.add()
-    #    Locker.save()
-    #return jsonResponse()
+    def post(self, *args, **kwargs):
+       user = get_object_or_404(User, id=kwargs['locker_id'])
+       locker =  get_object_or_404(Locker, id=kwargs['locker_id'])    
+       user = []
+       # for key, value in user:
+       #    if something:
+       #        key.model_to_dict().iteritems()    
+       name = Locker.objects.get(id=kwargs['locker_id'])
+       subject = 'Locker Access'
+       from_email = 'eeqsys@psu.edu'
+       to = self.request.POST.get('email', "")
+       body= 'Hello,\nYou now have access to a locker' +' '+ name.name
+       email = EmailMessage(subject, 
+               body, 
+               from_email,
+               [to])                        
+       email.send()
+       Locker.user.add()
+       Locker.save()
+       return jsonResponse()
 
     
 
@@ -125,6 +122,7 @@ class SubmissionView(generic.DetailView):
     # def post(self, *args, **kwargs)
     #    user =  get_object_or_404(User, id=kwargs['locker_id'])
     #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    #    Locker.user.remove() 
+    #    Locker.user.remove()
+         #return 
     #return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
 
