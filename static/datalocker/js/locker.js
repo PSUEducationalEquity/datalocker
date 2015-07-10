@@ -15,53 +15,97 @@
 //      * @author      Paul Rentschler <par117@psu.edu>
 //      * @since       21 March 2014
 //      */
-//     Locker.add = function ()
-//     {
-//         // submit the request
-//         var email = $("#email").val();
-//         var addUrl = $("#tag-list").attr("data-url")           
-//         Locker.addRequest = $.ajax({
-//             url: addUrl,
-//             type: "get",
-//             cache: flase
-//             data: {
-//                 email: 'email'
-//                 CSRF: 
+// Locker.add = function ()
+// {
+//     // submit the request
+//     var email = $("#email").val();
+//     var addUrl = $("#tag-list").attr("data-url")           
+//     Locker.addRequest = $.ajax({
+//         url: addUrl,
+//         type: "post",
+//         cache: false
+//         data: {
+//             email: 'email'
+//             crsf: 
+//         }
+//     });
+
+//     // callback handler: success
+//     Locker.addRequest.done(function (response, textStatus, jqXHR) {
+//         if (response.result) {
+//             $("#email").val("");
+//             Locker.update();
+//         } else if (typeof(response) == "object") {
+//             // this was a group add
+//             $("#email").val("");
+//             Locker.buildList(response);
+//         }
+//         Locker.addRequest = null;
+//     });
+
+//     // callback handler: failure
+//     Locker.addRequest.fail(function (jqXHR, textStatus, errorThrown) {
+//         if (errorThrown != "abort") {
+//             if (jqXHR.status == 400 || jqXHR.status == 404) {
+//                 Locker.errorHandler(jqXHR, 'adding');
+
+//             } else {
+//                 console.error(
+//                     "Locker.add in Locker.js AJAX error: "
+//                         + textStatus,
+//                     errorThrown
+//                 );
 //             }
-//         });
+//         }
+//         Locker.addRequest = null;
+//     });
+// }
 
-//         // callback handler: success
-//         Locker.addRequest.done(function (response, textStatus, jqXHR) {
-//             if (response.result) {
-//                 $("#add-tag-name").val("");
-//                 Locker.update();
-//             } else if (typeof(response) == "object") {
-//                 // this was a group add
-//                 $("#add-tag-name").val("");
-//                 Locker.buildList(response);
+// Locker.delete = function ()
+// {
+//     // submit the request
+//     var email = $("#email").val();
+//     var deleteUrl = $("#tag-list").attr("data-url")           
+//     Locker.deleteRequest = $.ajax({
+//         url: deleteUrl,
+//         type: "post",
+//         cache: flase
+//         data: {
+//             id: 'id'
+//             CSRF: 
+//         }
+//     });
+
+//     // callback handler: success
+//     Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
+//         if (response.result) {
+//             $("#email").val("");
+//             Locker.update();
+//         } else if (typeof(response) == "object") {
+//             // this was a group add
+//             $("#email").val("");
+//             Locker.buildList(response);
+//         }
+//         Locker.deleteRequest = null;
+//     });
+
+//     // callback handler: failure
+//     Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
+//         if (errorThrown != "abort") {
+//             if (jqXHR.status == 400 || jqXHR.status == 404) {
+//                 Locker.errorHandler(jqXHR, 'adding');
+
+//             } else {
+//                 console.error(
+//                     "Locker.add in Locker.js AJAX error: "
+//                         + textStatus,
+//                     errorThrown
+//                 );
 //             }
-//             Locker.addRequest = null;
-//         });
-
-//         // callback handler: failure
-//         Locker.addRequest.fail(function (jqXHR, textStatus, errorThrown) {
-//             if (errorThrown != "abort") {
-//                 if (jqXHR.status == 400 || jqXHR.status == 404) {
-//                     Locker.errorHandler(jqXHR, 'adding');
-
-//                 } else {
-//                     console.error(
-//                         "Locker.add in Locker.js AJAX error: "
-//                             + textStatus,
-//                         errorThrown
-//                     );
-//                 }
-//             }
-//             Locker.addRequest = null;
-//         });
-//     }
-
-
+//         }
+//         Locker.deleteRequest = null;
+//     });
+// }
 
 
 
