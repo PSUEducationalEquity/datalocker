@@ -92,13 +92,13 @@ class SubmissionView(generic.DetailView):
     
 
     #def post(self, *args, **kwargs)
-    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
-    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
+    #    user = get_object_or_404(User, id=kwargs['locker_id'])
+    #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
 
     #    name = Locker.objects.get(id=kwargs['locker_id'])
     #    subject = 'Locker Access'
     #    from_email = 'eeqsys@psu.edu'
-    #    to = self.request.POST.get('email', "")
+    #    to = self.request.POST.get('email', "")_
     #    body= 'Hello,\nYou now have access to a locker' +' '+ name.name
     #    email = EmailMessage(subject, 
     #            body, 
@@ -106,7 +106,9 @@ class SubmissionView(generic.DetailView):
     #            [to])                        
     #    email.send()
 
-    #    Locker.User.add()
+    #    Locker.user.add()
+    #    Locker.save()
+
     
 
 
@@ -114,6 +116,7 @@ class SubmissionView(generic.DetailView):
     
 
     # def post(self, *args, **kwargs)
-    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
-    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
+    #    user =  get_object_or_404(User, id=kwargs['locker_id'])
+    #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
     #    Locker.user.remove()
+         #return 

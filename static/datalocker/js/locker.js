@@ -109,6 +109,9 @@
 
 
 //     Locker._build_list = function (data)
+//$.each(json, function(key, value){
+ //   $("ul").append('<li>'+value+'</div>');
+//
 
 
 
