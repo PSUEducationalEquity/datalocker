@@ -28,8 +28,10 @@
                 <td>
                     {{ locker.lastest_submission }}
                 </td>
-                <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
-                <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
+                <td>
+                  <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
+                  <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
+                </td>
             </tr>
                 {% endfor %}
         </tbody>
@@ -71,7 +73,7 @@
       </div>
     </form>
   </div>
-  
+
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
     <form method="POST" name="modalForm" action="{% url 'datalocker:index' %}">
