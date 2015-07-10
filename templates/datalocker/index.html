@@ -55,18 +55,19 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="dialog-edit-users-title">Edit Lockers </h4>
+            <h4 class="modal-title" id="dialog-edit-users-title">Edit Users </h4>
           </div>
           <div class="modal-body">
             <div>
-            <h5 class="modal-title"> Existing Users</h5>   
-            <ul>         
-            </ul>            
+                <h5 clss="modal-title">Existing Users</h5>
+                <ul id="existing-users">
+                </ul>
               <label for="email">
               <input type="text" name="email" id="email"> 
               <button type="button" class="btn btn-info btn-sm" id="button-add-user">Add</button>
             </div>
-           
+            <ul id="added-users">
+            </ul>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />

@@ -1,7 +1,8 @@
 // (function (Locker, $, undefined)
 // {
 //     // the AJAX objects that handles server communication
-//     Locker.dataRequest;   
+//     Locker.dataRequest;
+//     Locker.toggleRequest;
 //     Locker.addRequest;
 
 
@@ -21,7 +22,7 @@
 //     var addUrl = $("#tag-list").attr("data-url")           
 //     Locker.addRequest = $.ajax({
 //         url: addUrl,
-//         type: "post",        
+//         type: "post",
 //         data: {
 //             email: 'email'
 //             crsf: 
@@ -67,8 +68,10 @@
 //     Locker.deleteRequest = $.ajax({
 //         url: deleteUrl,
 //         type: "post",
+//         cache: flase
 //         data: {
-//             id: 'id'           
+//             id: 'id'
+//             CSRF: 
 //         }
 //     });
 
@@ -105,7 +108,7 @@
 
 
 
-//     //Locker._build_list = function (data)
+//     Locker._build_list = function (data)
 
 
 
@@ -162,52 +165,31 @@
 
 
 
-//      tags.update = function ()
+//     /**
+//      * Handles errors from the server-side
+//      *
+//      * @param       object jqXHR  an object containing the AJAX response
+//      * @return      void
+//      * @access      private
+//      * @author      Paul Rentschler <par117@psu.edu>
+//      * @since       17 September 2014
+//      */
+//     Locker.errorHandler = function (jqXHR, action)
 //     {
-//         // get the url to use
-//         var url = $("#tag-list").attr("data-url") + "/list";
-//         if ($("#tag-list").length === 0) {
-//             url = false;
+//         var msg = "<strong>Oops!</strong> An error occurred while "
+//             + action + " the tag.";
+//         if (jqXHR.responseJSON.msg) {
+//             msg += " " + jqXHR.responseJSON.msg;
 //         }
-
-//         // submit the request (if none are pending)
-//         if (!tags.dataRequest && url) {
-//             tags.dataRequest = $.ajax({
-//                 url: url,
-//                 type: "get",
-//                 cache: false
-//             });
-
-//             // callback handler: success
-//             tags.dataRequest.done(function (response, textStatus, jqXHR) {
-//                 tags.buildList(response);
-//                 tags.dataRequest = null;
-//             });
-
-//             // callback handler: failure
-//             tags.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
-//                 if (errorThrown != "abort") {
-//                     console.error(
-//                         "tags.dataRequest in tagging.js AJAX error: "
-//                             + textStatus,
-//                         errorThrown
-//                     );
-//                 }
-//                 tags.dataRequest = null;
-//             });
-//         }
+//         userMessage.add(msg, 'danger', true, 10);
+//         $(window).scrollTop(0);
 //     }
-// }( window.tags = window.tags || {}, jQuery));
-
 
 $(document).ready(function (){
-
     $("button[role='edit-users']").on("click", function (event){
         $("#dialog-edit-users").modal('show');
     });
-
     $("button[role='edit-locker']").on("click", function (event){
         $("#dialog-edit-locker").modal('show');
-        
     });
 });
