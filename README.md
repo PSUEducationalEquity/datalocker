@@ -62,3 +62,6 @@ djserve
 
 
 ** Ultimately you will still want to add data in the fixtures for test because then it will always upload. The format in the fixtures is how the database needs it to read correctly so copy and pasting would be the best way to add fixtures and alter the data in the fields.
+
+** The `password` field on the fixtures yaml file is all written with a hash. You will have to either make a hash yourself or use the ones already in the file.
+** The password for every user in the fixture file is `admin`
