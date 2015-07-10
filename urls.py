@@ -2,6 +2,8 @@ from django.conf.urls import patterns, url
 from datalocker import views
 
 urlpatterns = patterns('',
+    #url(r'^(?P<locker_id>[0-9]+)/locker/add$', views.LockerUserAdd.as_view(), 
+     #   name='index'),
     url(r'^$', views.LockerListView.as_view(), name='index'),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<pk>[0-9]+)/view$',
     	views.SubmissionView.as_view(
