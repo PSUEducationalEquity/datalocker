@@ -44,7 +44,7 @@
 {% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-filter-results-title" aria-hidden="true">
-    <form method="POST" name="modalForm" action="{% url 'datalocker:index' %}">
+    <form method="POST" name="modalUsers" action="{% url 'datalocker:index' %}">
       {% csrf_token %}
       <div class="modal-dialog">
 
@@ -52,7 +52,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="dialog-filter-results-title">Edit Lockers </h4>
+            <h4 class="modal-title" id="dialog-filter-results-title">Edit Users</h4>
           </div>
           <div class="modal-body">
             <div>
@@ -73,7 +73,7 @@
   </div>
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
-    <form method="POST" name="modalForm" action="{% url 'datalocker:index' %}">
+    <form method="POST" name="modalLocker" action="{% url 'datalocker:index' %}">
       {% csrf_token %}
       <div class="modal-dialog">
 

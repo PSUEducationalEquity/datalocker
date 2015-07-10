@@ -89,10 +89,31 @@ class SubmissionView(generic.DetailView):
 
 
 #class LockerUserAdd(view):
+    
 
+    #def post(self, *args, **kwargs)
+    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
+    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
 
+    #    name = Locker.objects.get(id=kwargs['locker_id'])
+    #    subject = 'Locker Access'
+    #    from_email = 'eeqsys@psu.edu'
+    #    to = self.request.POST.get('email', "")
+    #    body= 'Hello,\nYou now have access to a locker' +' '+ name.name
+    #    email = EmailMessage(subject, 
+    #            body, 
+    #            from_email,
+    #            [to])                        
+    #    email.send()
 
-
+    #    Locker.User.add()
+    
 
 
 #class LockerUserDelete(view):
+    
+
+    # def post(self, *args, **kwargs)
+    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
+    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
+    #    Locker.user.remove()

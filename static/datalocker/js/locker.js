@@ -22,22 +22,22 @@
         var addUrl = $("#tag-list").attr("data-url")           
         Locker.addRequest = $.ajax({
             url: addUrl,
-            type: "get",
-            cache: flase
+            type: "post",
+            cache: false
             data: {
                 email: 'email'
-                CSRF: 
+                crsf: 
             }
         });
 
         // callback handler: success
         Locker.addRequest.done(function (response, textStatus, jqXHR) {
             if (response.result) {
-                $("#add-tag-name").val("");
+                $("#email").val("");
                 Locker.update();
             } else if (typeof(response) == "object") {
                 // this was a group add
-                $("#add-tag-name").val("");
+                $("#email").val("");
                 Locker.buildList(response);
             }
             Locker.addRequest = null;
@@ -58,6 +58,52 @@
                 }
             }
             Locker.addRequest = null;
+        });
+    }
+
+    Locker.delete = function ()
+    {
+        // submit the request
+        var email = $("#email").val();
+        var deleteUrl = $("#tag-list").attr("data-url")           
+        Locker.deleteRequest = $.ajax({
+            url: deleteUrl,
+            type: "post",
+            cache: flase
+            data: {
+                id: 'id'
+                CSRF: 
+            }
+        });
+
+        // callback handler: success
+        Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
+            if (response.result) {
+                $("#email").val("");
+                Locker.update();
+            } else if (typeof(response) == "object") {
+                // this was a group add
+                $("#email").val("");
+                Locker.buildList(response);
+            }
+            Locker.deleteRequest = null;
+        });
+
+        // callback handler: failure
+        Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
+            if (errorThrown != "abort") {
+                if (jqXHR.status == 400 || jqXHR.status == 404) {
+                    Locker.errorHandler(jqXHR, 'adding');
+
+                } else {
+                    console.error(
+                        "Locker.add in Locker.js AJAX error: "
+                            + textStatus,
+                        errorThrown
+                    );
+                }
+            }
+            Locker.deleteRequest = null;
         });
     }
 
@@ -147,6 +193,6 @@ $(document).ready(function ()
     
     // add a tag when pressing enter in the input field
      $("[role='edit-users']").on("click", function (event) {  //on click      
-        $('#modalUsers').modal('show');
+        $('#dialog-edit-users').modal('show');
 
 })
