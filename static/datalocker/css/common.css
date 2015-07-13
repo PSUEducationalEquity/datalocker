@@ -10,6 +10,9 @@
  * BUTTONS..............Button styling
  * FOOTER...............Styling specifically for the page footer
  */
+ .btn {
+  margin: 1em;
+ }
 .button-navigation {
   margin: 2em;
 }
