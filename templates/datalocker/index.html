@@ -96,10 +96,9 @@
 
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
-    <form method="POST" name="modalLocker" action="{% url 'datalocker:index' %}">
+    <form method="POST" name="modalLocker" action="" data-url="{% url 'datalocker:modify_locker' 0 %}">
       {% csrf_token %}
       <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
@@ -113,13 +112,8 @@
              <label for="edit-owner">Edit Owner: </label>
                <input type="text" name="edit-owner" id="edit-owner" placeholder="New Locker Owner"><br/>
             </div>           
-          </div>
-               <input type="text" name="edit-owner" id="edit-owner"><br/>
-            </div>
-               <input type="text" name="edit-locker" id="edit-locker"><br/>
-             <label for="edit-owner">Edit Owner: </label>
-               <input type="text" name="edit-owner" id="edit-owner"><br/>               
-            </div>
+          </div>     
+            
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>

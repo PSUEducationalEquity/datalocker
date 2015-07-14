@@ -103,7 +103,7 @@ Locker.add = function ()
 
 Locker._build_list_entry = function (data)
 {
-    $.each(json, function(key, value){
+    $.each(data, function(){
         $("ul").append('<li>' + (first_name + "" +last_name)+ '</li>')    
 
     });
@@ -195,7 +195,7 @@ $(document).ready(function (){
 
     //Calls the add function 
     $("#button-add-user").on("click", function (e){
-       // var addUrl = $("#button-add-user").attr("data-url").replace(locker.id/user/add);
+        var addUrl = $("#button-add-user").attr("data-url") 
         e.preventDefault();
         Locker.add();
     });

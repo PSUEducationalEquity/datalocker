@@ -1,6 +1,6 @@
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response
 from django.views import generic
 from django.views.generic import View
@@ -13,7 +13,7 @@ from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuer
 import json
 
 
-public_fields = 'id', 'email','locker' 
+public_fields = 'id', 'email','locker','first_name','last_name'
 
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
@@ -26,7 +26,7 @@ class LockerListView(generic.ListView):
         return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
 
 
-
+ 
 
 class LockerSubmissionView(generic.ListView):
     template_name = 'datalocker/submission_list.html'
@@ -91,17 +91,13 @@ class SubmissionView(generic.DetailView):
 
 class LockerUserAdd(View):
     
-#class LockerUserAdd(view):
-
-
+    
     def post(self, *args, **kwargs):
        user = get_object_or_404(User, id=kwargs['locker_id'])
-       locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-       user = Locker.objects.get(User, id=kwargs['locker_id'])
-       user = []
-       locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
+       locker =  get_object_or_404(Locker, id=kwargs['locker_id'])   
+       user = []     
        for key, value in user:
-          #if user = locker.user:
+          if user in locker.user:
             key.model_to_dict().iteritems()
        Locker.user.add()
        Locker.save()
@@ -121,11 +117,15 @@ class LockerUserAdd(View):
 
 
 
-#class LockerUserDelete(view):
+class LockerUserDelete(View):
 
 
-    # def post(self, *args, **kwargs)
-    #    user =  get_object_or_404(User, id=kwargs['locker_id'])
-    #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    #    Locker.user.remove()
-    #    return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
+    def post(self, *args, **kwargs):
+       user =  get_object_or_404(User, id=kwargs['locker_id'])
+       locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+       Locker.user.remove()
+       return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
+
+
+class ModifyLocker(View):
+    pass
