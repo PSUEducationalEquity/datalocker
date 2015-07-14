@@ -13,6 +13,7 @@ from .models import User
 import datetime, json
 
 
+
 ##
 # Model Managers
 ##
@@ -225,21 +226,19 @@ class Submission(models.Model):
         return result
 
 
-    def newer_submission(self, **kwargs):
-        # Returns the next submission in the current locker assuming the kwargs work
-        # the last line should return the id value for the next locker. Works fine
-        # in the shell haven't been able to get it to work here yet
-        lockerid = kwargs['locker_id']
-        submission = kwargs['id']
-        nextSubmission = Submission.objects.filter(locker=lockerid, id__gt=submission)[0]
-        return nextSubmissions.id
+    def newer_submission(self):
+        # Works correctly we just need to pass in the locker and the id from the
+        # url which I can't get
+        # lockerid = self.kwargs['locker_id']
+        # submission = kwargs['id']
+        nextSubmission = Submission.objects.filter(locker=2, id__gt=5)[0]
+        return nextSubmission.id
 
 
-    def older_submission(self, **kwargs):
-        # Returns the next submission in the current locker assuming the kwargs work
-        # the last line should return the id value for the previous locker. Works fine
-        # in the shell haven't been able to get it to work here yet
-        lockerid = kwargs['locker_id']
-        submission = kwargs['id']
-        lastSubmission = Submission.objects.filter(locker=lockerid, id__lt=submission)[0]
+    def older_submission(self):
+        # Works correctly we just need to pass in the locker and the id from the
+        # url which I can't get
+        # lockerid = kwargs['locker_id']
+        # submission = kwargs['id']
+        lastSubmission = Submission.objects.filter(locker=2, id__lt=5)[0]
         return lastSubmission.id
