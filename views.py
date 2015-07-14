@@ -82,6 +82,8 @@ class SubmissionView(generic.DetailView):
     model = Submission
 
 
+
+
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
         return context

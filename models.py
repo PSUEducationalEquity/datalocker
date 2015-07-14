@@ -242,3 +242,16 @@ class Submission(models.Model):
         # submission = kwargs['id']
         lastSubmission = Submission.objects.filter(locker=2, id__lt=5)[0]
         return lastSubmission.id
+
+
+    def oldest_submission(self):
+        # Shows and loads the correct oldest_submission
+        oldestSubmission = Submission.objects.filter(locker=2).order_by('id')[0]
+        return oldestSubmission.id
+
+
+    def newest_submission(self):
+        # Shows and loads the correct newest_submission even if there is a submission added
+        # to a different locker creating a gap in id's for submissions
+        newestSubmission = Submission.objects.filter(locker=2).order_by('-id')[0]
+        return newestSubmission.id
