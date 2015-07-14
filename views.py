@@ -91,6 +91,8 @@ class SubmissionView(generic.DetailView):
 
 class LockerUserAdd(View):
     
+#class LockerUserAdd(view):
+
 
     def post(self, *args, **kwargs):
        user = get_object_or_404(User, id=kwargs['locker_id'])
@@ -118,11 +120,9 @@ class LockerUserAdd(View):
        return JsonResponse()
 
 
-    
-
 
 #class LockerUserDelete(view):
-    
+
 
     # def post(self, *args, **kwargs)
     #    user =  get_object_or_404(User, id=kwargs['locker_id'])

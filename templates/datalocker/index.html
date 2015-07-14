@@ -33,14 +33,12 @@
                     <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
                     <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>                  
                 </td>
-            </tr>            
+            </tr>
             {% endif %}
             {% endfor %}
         </tbody>
         </table>
         <hr />
-
-
         <h1><i>Lockers Shared with Me</i></h1>
         <table class="table table-striped table-hover listing sortable" id="sortabletable" name="shared locker listing" instanceid="sortabletable">
           <thead>
@@ -95,7 +93,7 @@
       </div>
     </form>
   </div>
-  
+
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
     <form method="POST" name="modalLocker" action="{% url 'datalocker:index' %}">
@@ -116,6 +114,12 @@
                <input type="text" name="edit-owner" id="edit-owner" placeholder="New Locker Owner"><br/>
             </div>           
           </div>
+               <input type="text" name="edit-owner" id="edit-owner"><br/>
+            </div>
+               <input type="text" name="edit-locker" id="edit-locker"><br/>
+             <label for="edit-owner">Edit Owner: </label>
+               <input type="text" name="edit-owner" id="edit-owner"><br/>               
+            </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
