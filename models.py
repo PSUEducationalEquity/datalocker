@@ -40,7 +40,6 @@ class LockerQuerySet(models.query.QuerySet):
 
 
 
-
 class LockerManager(models.Manager):
     def get_query_set(self):
         return LockerQuerySet(self.model, using=self._db)
@@ -54,25 +53,33 @@ class LockerManager(models.Manager):
 
 
 
-class SubmissionManager(models.Manager):
-    def get_query_set(self):
-        return Submission.objects.all()
-
-
+class SubmissionQuerySet(models.query.QuerySet):
     ## Returns the oldest_submission for the selected locker.
     ## call oldest_submission.id it will give you the id of the submission
     ## needs to be passed to the href of the oldest button
-    def oldest_submissioon(self):
-        oldest = Submission.objects.filter(locker='locker_id').order_by('timestamp')[0]
+    def oldest_submission(self):
+        oldest = self.filter(locker='locker_id').order_by('timestamp')[0]
         return oldest
 
     ## Returns the newest submission for the selected locker. Not sure how to use it later
     ## call newest_submission.id it will give you the id of the submission, this id will need to be passed
     ## needs to be passed to the href of the newest button
     def newest_submission(self):
-        newest = Submission.objects.filter(locker='locker_id').latest('timestamp')
+        newest = self.filter(locker='locker_id').latest('timestamp')
         return newest
 
+
+
+
+class SubmissionManager(models.Manager):
+    def get_query_set(self):
+        return SubmissionQuerySet(self.model, using=self._db)
+
+    def __getattr__(self, attr, *args):
+        try:
+            return getattr(self.__class__,attr, *args)
+        except AttributeError:
+            return getattr(self.get_query_set(), attr, *args)
 
 ##
 # Models
@@ -225,10 +232,10 @@ class Submission(models.Model):
         return ""
 
     def newer_submission(self):
-        submission = Submission.objects.filter(timestamp__gte=now)
+        submission = Submission.objects.filter(locker='locker_id').order_by('timestamp')[0]
         return submission
 
 
     def older_submission(self):
-        submission = Submission.objects.filter(timestamp__lte=now)
+        #submission = Submission.objects.filter(timestamp__lte=)
         return ""
