@@ -53,6 +53,27 @@ class LockerManager(models.Manager):
 
 
 
+
+class SubmissionManager(models.Manager):
+    def get_query_set(self):
+        return Submission.objects.all()
+
+
+    ## Returns the oldest_submission for the selected locker.
+    ## call oldest_submission.id it will give you the id of the submission
+    ## needs to be passed to the href of the oldest button
+    def oldest_submissioon(self):
+        oldest = Submission.objects.filter(locker='locker_id').order_by('timestamp')[0]
+        return oldest
+
+    ## Returns the newest submission for the selected locker. Not sure how to use it later
+    ## call newest_submission.id it will give you the id of the submission, this id will need to be passed
+    ## needs to be passed to the href of the newest button
+    def newest_submission(self):
+        newest = Submission.objects.filter(locker='locker_id').latest('timestamp')
+        return newest
+
+
 ##
 # Models
 ##
@@ -194,3 +215,11 @@ class Submission(models.Model):
         result = model_to_dict(self)
         result['data'] = self.data_dict()
         return result
+
+
+    def get_newer(self):
+        return ""
+
+
+    def get_older(self):
+        return ""

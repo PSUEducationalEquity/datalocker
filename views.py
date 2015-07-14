@@ -8,12 +8,12 @@ from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.utils.text import slugify
 
-from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
+from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, SubmissionManager
 
 import json
 
 
-public_fields = 'id', 'email','locker' 
+public_fields = 'id', 'email','locker'
 
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
@@ -87,10 +87,19 @@ class SubmissionView(generic.DetailView):
         return context
 
 
+    def newest(self):
+        newest = Submission.objecst.newest_submission()
+        return newest
+
+
+    def oldest(self):
+        return ""
+
+
 
 
 #class LockerUserAdd(View):
-    
+
 #class LockerUserAdd(view):
 
 

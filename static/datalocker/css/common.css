@@ -10,12 +10,12 @@
  * BUTTONS..............Button styling
  * FOOTER...............Styling specifically for the page footer
  */
- .btn {
-  margin: 1em;
- }
 .button-navigation {
   margin: 2em;
 }
+ .button-navigation button {
+  margin: 1em;
+ }
 .sub-list {
   margin-left: 2em;
   font-size: 16px;
