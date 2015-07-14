@@ -13,8 +13,8 @@
 .button-navigation {
   margin: 2em;
 }
- .button-navigation button {
-  margin: 1em;
+ .button-navigation a {
+  margin: .5em;
  }
 .sub-list {
   margin-left: 2em;
