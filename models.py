@@ -223,3 +223,12 @@ class Submission(models.Model):
 
     def get_older(self):
         return ""
+
+    def newer_submission(self):
+        submission = Submission.objects.filter(timestamp__gte=now)
+        return submission
+
+
+    def older_submission(self):
+        submission = Submission.objects.filter(timestamp__lte=now)
+        return ""
