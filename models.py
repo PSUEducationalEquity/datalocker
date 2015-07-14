@@ -57,16 +57,17 @@ class SubmissionQuerySet(models.query.QuerySet):
     ## Returns the oldest_submission for the selected locker.
     ## call oldest_submission.id it will give you the id of the submission
     ## needs to be passed to the href of the oldest button
+    ## Assuming the 'locker_id' is correct
     def oldest_submission(self):
-        oldest = self.filter(locker='locker_id').order_by('timestamp')[0]
-        return oldest
+        return self.filter(locker='locker_id').order_by('timestamp')[0]
+
 
     ## Returns the newest submission for the selected locker. Not sure how to use it later
     ## call newest_submission.id it will give you the id of the submission, this id will need to be passed
     ## needs to be passed to the href of the newest button
+    ## Assuming the 'locker_id' is correct
     def newest_submission(self):
-        newest = self.filter(locker='locker_id').latest('timestamp')
-        return newest
+        return self.filter(locker='locker_id').latest('timestamp')
 
 
 
@@ -224,18 +225,21 @@ class Submission(models.Model):
         return result
 
 
-    def get_newer(self):
-        return ""
+    def newer_submission(self, **kwargs):
+        # Returns the next submission in the current locker assuming the kwargs work
+        # the last line should return the id value for the next locker. Works fine
+        # in the shell haven't been able to get it to work here yet
+        lockerid = kwargs['locker_id']
+        submission = kwargs['id']
+        nextSubmission = Submission.objects.filter(locker=lockerid, id__gt=submission)[0]
+        return nextSubmissions.id
 
 
-    def get_older(self):
-        return ""
-
-    def newer_submission(self):
-        submission = Submission.objects.filter(locker='locker_id').order_by('timestamp')[0]
-        return submission
-
-
-    def older_submission(self):
-        #submission = Submission.objects.filter(timestamp__lte=)
-        return ""
+    def older_submission(self, **kwargs):
+        # Returns the next submission in the current locker assuming the kwargs work
+        # the last line should return the id value for the previous locker. Works fine
+        # in the shell haven't been able to get it to work here yet
+        lockerid = kwargs['locker_id']
+        submission = kwargs['id']
+        lastSubmission = Submission.objects.filter(locker=lockerid, id__lt=submission)[0]
+        return lastSubmission.id

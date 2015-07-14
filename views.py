@@ -48,8 +48,6 @@ class LockerSubmissionView(generic.ListView):
                 if field in self.selected_fields:
                     entry.append(value)
             context['data'].append(entry)
-
-        context['oldest'] = Submission.objects.all()
         return context
 
 
@@ -87,15 +85,6 @@ class SubmissionView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
         return context
-
-
-    def newest(self):
-        newest = Submission.objecst.newest_submission()
-        return newest
-
-
-    def oldest(self):
-        return ""
 
 
 
