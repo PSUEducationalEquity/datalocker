@@ -53,6 +53,13 @@ class LockerManager(models.Manager):
 
 
 
+
+class SubmissionManager(models.Manager):
+    def get_query_set(self):
+        return ""
+
+
+
 ##
 # Models
 ##
@@ -194,3 +201,13 @@ class Submission(models.Model):
         result = model_to_dict(self)
         result['data'] = self.data_dict()
         return result
+
+
+    def newer_submission(self):
+        submission = Submission.objects.filter(timestamp__gte=now)
+        return submission
+
+
+    def older_submission(self):
+        submission = Submission.objects.filter(timestamp__lte=now)
+        return ""
