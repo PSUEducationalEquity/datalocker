@@ -66,7 +66,7 @@
 {% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true">
-    <form method="POST" name="modalForm" action="{% url 'datalocker:index'  %}">
+    <form method="POST" name="modalForm"  action="" data-url="{% url 'datalocker:locker_user_add' 0 %}">
 
       {% csrf_token %}
       <div class="modal-dialog">
@@ -82,13 +82,13 @@
               <h5 clss="modal-title">Existing Users</h5>
               <ul id="existing-users">
               </ul>
-              <label for="email">
+              <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text" name="email" id="email"  placeholder="Email Address"> 
-              <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="{% url 'datalocker:index' }">Add</button>
+              <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="{% url 'datalocker:locker_user_add'  }">Add</button>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary btn-sm save-button pull-left" />Done</button>
+            <button type="button" class="btn btn-primary btn-sm save-button pull-left" data-dismiss="modal" />Done</button>
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
           </div>
         </div>
@@ -111,9 +111,9 @@
           <div class="modal-body">
             <div>
              <label for="edit-locker-name">Edit Locker Name: </label>
-               <input type="text" name="edit-locker" id="edit-locker"><br/>            
+               <input type="text" name="edit-locker" id="edit-locker"  placeholder="New Locker Name"><br/>            
              <label for="edit-owner">Edit Owner: </label>
-               <input type="text" name="edit-owner" id="edit-owner"><br/>
+               <input type="text" name="edit-owner" id="edit-owner" placeholder="New Locker Owner"><br/>
             </div>           
           </div>
           <div class="modal-footer">

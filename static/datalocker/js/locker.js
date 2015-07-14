@@ -17,13 +17,13 @@ Locker.add = function ()
 {
     // submit the request
     var email = $("#email").val();
-    var addUrl = $("#tag-list").attr("data-url")           
+    var addUrl = $("#button-add-user").attr("data-url")           
     Locker.addRequest = $.ajax({
         url: addUrl,
         type: "post",
         data: {
             email: 'email',
-            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value
+            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
               }
     });
 
@@ -31,12 +31,9 @@ Locker.add = function ()
     Locker.addRequest.done(function (response, textStatus, jqXHR) {
         if (response.result) {
             $("#email").val("");
+            $("#existing-users").append(Locker._build_list_entry(response));
             Locker.update();
-        } else if (typeof(response) == "object") {
-            // this was a group add
-            $("#email").val("");
-            Locker.buildList(response);
-        }
+        } 
         Locker.addRequest = null;
     });
 
@@ -58,58 +55,59 @@ Locker.add = function ()
     });
 }
 
-Locker.delete = function ()
+// Locker.delete = function ()
+// {
+//     // submit the request
+//     var email = $("#email").val();
+//     var deleteUrl = $("#tag-list").attr("data-url")           
+//     Locker.deleteRequest = $.ajax({
+//         url: deleteUrl,
+//         type: "post",      
+//         data: {
+//             id: 'id',
+//             csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+//         }
+//     });
+
+//     // callback handler: success
+//     Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
+//         if (response.result) {
+//             $("#email").val("");
+//             Locker.update();
+//         } else if (typeof(response) == "object") {
+//             // this was a group add
+//             $("#email").val("");
+//             Locker.buildList(response);
+//         }
+//         Locker.deleteRequest = null;
+//     });
+
+//     // callback handler: failure
+//     Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
+//         if (errorThrown != "abort") {
+//             if (jqXHR.status == 400 || jqXHR.status == 404) {
+//                 Locker.errorHandler(jqXHR, 'adding');
+
+//             } else {
+//                 console.error(
+//                     "Locker.add in Locker.js AJAX error: "
+//                         + textStatus,
+//                     errorThrown
+//                 );
+//             }
+//         }
+//         Locker.deleteRequest = null;
+//     });
+// }
+
+
+Locker._build_list_entry = function (data)
 {
-    // submit the request
-    var email = $("#email").val();
-    var deleteUrl = $("#tag-list").attr("data-url")           
-    Locker.deleteRequest = $.ajax({
-        url: deleteUrl,
-        type: "post",      
-        data: {
-            id: 'id',
-            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value
-        }
-    });
+    $.each(json, function(key, value){
+        $("ul").append('<li>' + (first_name + "" +last_name)+ '</li>')    
 
-    // callback handler: success
-    Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
-        if (response.result) {
-            $("#email").val("");
-            Locker.update();
-        } else if (typeof(response) == "object") {
-            // this was a group add
-            $("#email").val("");
-            Locker.buildList(response);
-        }
-        Locker.deleteRequest = null;
-    });
-
-    // callback handler: failure
-    Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
-        if (errorThrown != "abort") {
-            if (jqXHR.status == 400 || jqXHR.status == 404) {
-                Locker.errorHandler(jqXHR, 'adding');
-
-            } else {
-                console.error(
-                    "Locker.add in Locker.js AJAX error: "
-                        + textStatus,
-                    errorThrown
-                );
-            }
-        }
-        Locker.deleteRequest = null;
     });
 }
-
-
-
-//     Locker._build_list = function (data)
-// $.each(json, function(key, value){
-//    $("ul").append('<li>'+value+'</div>');
-
-
 
 
 
@@ -140,19 +138,8 @@ Locker.buildList = function (data)
                     $("<span />").addClass("sr-only").text("Global tag")
                 )
             );
-        }
-        $item.append(
-            $("<i />").addClass(
-                "pull-right active-indicator fo-icon-ok"
-            ).append(
-                $("<span />").addClass("sr-only").text("Selected")
-            )
-        );
-        $tagList.append(
-            $("<li />").attr("data-id", entry.id).append(
-                $item
-            )
-        );
+        }       
+        
     });
 }    
    
@@ -201,12 +188,17 @@ $(document).ready(function (){
         $("#dialog-edit-users").modal('show');
     });
 
-
-     //Opens the edit lockers modal dialog
+    //Opens the edit lockers modal dialog
     $("button[role='edit-locker']").on("click", function (event){
         $("#dialog-edit-locker").modal('show');
     });
 
-
+    //Calls the add function 
+    $("#button-add-user").on("click", function (e){
+       // var addUrl = $("#button-add-user").attr("data-url").replace(locker.id/user/add);
+        e.preventDefault();
+        Locker.add();
+    });
+ 
 
 });
