@@ -1,8 +1,9 @@
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.conf.urls import patterns, url
 from datalocker import views
 
 urlpatterns = patterns('',
-    #url(r'^(?P<locker_id>[0-9]+)/locker/add$', views.LockerUserAdd.as_view(), 
+    #url(r'^(?P<locker_id>[0-9]+)/locker/add$', views.LockerUserAdd.as_view(),
      #   name='index'),
     url(r'^$', views.LockerListView.as_view(), name='index'),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<pk>[0-9]+)/view$',

@@ -1,3 +1,4 @@
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
@@ -66,7 +67,7 @@ class SubmissionTestCase(TestCase):
         s = Submission(data ='{"name": "George", "Gender": "Male"}')
         self.assertDictEqual(
             s.data_dict(),
-            { 
+            {
                 u'name': u'George',
                 u'Gender': u'Male',
                 }
@@ -86,9 +87,9 @@ class SubmissionTestCase(TestCase):
                 u'id': 1L,
                 'locker': 1L,
                 'data': [{
-                    u'user': u'das66', 
-                    u'name': u'Dominick Stuck', 
-                    u'submitted-timestamp': u'2015-01-14 15:00:00-05:00', 
+                    u'user': u'das66',
+                    u'name': u'Dominick Stuck',
+                    u'submitted-timestamp': u'2015-01-14 15:00:00-05:00',
                     u'archive-timestamp': u'2015-02-16 14:02:20-05:00'
                     }, ]
                 }

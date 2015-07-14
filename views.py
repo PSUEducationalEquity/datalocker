@@ -1,4 +1,4 @@
-
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
@@ -8,7 +8,7 @@ from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.utils.text import slugify
 
-from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, SubmissionManager
+from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, SubmissionManager, SubmissionQuerySet
 
 import json
 
@@ -48,6 +48,8 @@ class LockerSubmissionView(generic.ListView):
                 if field in self.selected_fields:
                     entry.append(value)
             context['data'].append(entry)
+
+        context['oldest'] = Submission.objects.all()
         return context
 
 

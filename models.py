@@ -1,4 +1,4 @@
-
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.forms.models import model_to_dict

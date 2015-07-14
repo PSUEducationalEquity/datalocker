@@ -1,7 +1,8 @@
+//Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
 (function (Locker, $, undefined)
 {
     // the AJAX objects that handles server communication
-    Locker.dataRequest;   
+    Locker.dataRequest;
     Locker.addRequest;
 
 
@@ -17,7 +18,7 @@ Locker.add = function ()
 {
     // submit the request
     var email = $("#email").val();
-    var addUrl = $("#tag-list").attr("data-url")           
+    var addUrl = $("#tag-list").attr("data-url")
     Locker.addRequest = $.ajax({
         url: addUrl,
         type: "post",
@@ -62,10 +63,10 @@ Locker.delete = function ()
 {
     // submit the request
     var email = $("#email").val();
-    var deleteUrl = $("#tag-list").attr("data-url")           
+    var deleteUrl = $("#tag-list").attr("data-url")
     Locker.deleteRequest = $.ajax({
         url: deleteUrl,
-        type: "post",      
+        type: "post",
         data: {
             id: 'id',
             csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value
@@ -113,8 +114,8 @@ Locker.delete = function ()
 
 
 
-  
-     
+
+
 Locker.buildList = function (data)
 {
     var count = 0;
@@ -154,8 +155,8 @@ Locker.buildList = function (data)
             )
         );
     });
-}    
-   
+}
+
 Locker.update = function ()
     {
         // get the url to use

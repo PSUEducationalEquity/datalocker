@@ -1,3 +1,5 @@
+//Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+
 /**
  * Select-all script to use a single checkbox to select or deselect every checkbox
  * within the sepcified list. To use this feature you must add a role="select-all"
@@ -5,6 +7,7 @@
  * add a data-target attribute equal to the id attribute of the list of checkboxes.
  *
  */
+
 $(document).ready(function() {
     $("[role='select-all']").on("click", function (event) {  //on click
         var target = $(this).attr("data-target");
