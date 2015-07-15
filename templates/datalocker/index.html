@@ -82,7 +82,7 @@
               </ul>
               <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text" name="email" id="email"  placeholder="Email Address"> 
-              <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="{% url 'datalocker:locker_user_add'  }">Add</button>
+              <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="">Add</button>
             </div>
           </div>
           <div class="modal-footer">
@@ -106,16 +106,23 @@
             <h4 class="modal-title" id="dialog-edit-locker-title">Edit Locker </h4>
           </div>
           <div class="modal-body">
-            <div>
-             <label for="edit-locker-name">Edit Locker Name: </label>
-               <input type="text" name="edit-locker" id="edit-locker"  placeholder="New Locker Name"><br/>            
-             <label for="edit-owner">Edit Owner: </label>
-               <input type="text" name="edit-owner" id="edit-owner" placeholder="New Locker Owner"><br/>
+            <div class="form-group">
+             <label for="edit-locker-name">Name</label>
+               <input type="text" name="edit-locker" class="form-control" id="edit-locker"  placeholder="New Locker Name"><br/>  
+            </div>
+            <div class="form-group">          
+             <label for="edit-owner">Owner</label>
+               <input type="text" name="edit-owner" class="form-control"  id="edit-owner" placeholder="New Locker Owner"><br/>
+            </div>
+            <div class="checkbox">
+              <label>
+               <input type="checkbox" name="edit-commenting"  id="edit-commenting" > Allow Commenting 
+               </label>     
             </div>           
           </div>     
             
           <div class="modal-footer">
-            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
+            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" value="Done" />
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
           </div>
         </div>

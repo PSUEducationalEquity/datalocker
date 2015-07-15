@@ -13,7 +13,7 @@ from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuer
 import json
 
 
-public_fields = 'id', 'email','locker','first_name','last_name'
+public_fields = ['id', 'email', 'first_name', 'last_name']
 
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
@@ -93,27 +93,26 @@ class LockerUserAdd(View):
     
     
     def post(self, *args, **kwargs):
-       user = get_object_or_404(User, id=kwargs['locker_id'])
-       locker =  get_object_or_404(Locker, id=kwargs['locker_id'])   
-       user = []     
-       for key, value in user:
-          if user in locker.user:
-            key.model_to_dict().iteritems()
-       Locker.user.add()
-       Locker.save()
-       name = Locker.objects.get(id=kwargs['locker_id'])
-       subject = 'Locker Access'
-       from_email = 'eeqsys@psu.edu'
-       to = self.request.POST.get('email', "")
-       body= 'Hello,\nYou now have access to a locker' +' '+ name.name
-       email = EmailMessage(subject, 
-               body, 
-               from_email,
-               [to])                        
-       email.send()
-       Locker.user.add()
-       Locker.save()
-       return JsonResponse()
+        user = get_object_or_404(User, id=kwargs['user_id'])
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])               
+        if not user in locker.users:
+            locker.users.add(user)        
+            locker.save()
+        user_dict = {}
+        for key,value in user.model_to_dict().iteritems():
+            if key in public_fields:
+                user_dict[key] = value                
+        # name = Locker.objects.get(id=kwargs['locker_id'])
+        # subject = 'Locker Access'
+        # from_email = 'eeqsys@psu.edu'
+        # to = self.request.POST.get('email', "")
+        # body= 'Hello,\nYou now have access to a locker' +' '+ name.name
+        # email = EmailMessage(subject, 
+        #    body, 
+        #    from_email,
+        #    [to])                        
+        # email.send()       
+        return JsonResponse(user_dict)
 
 
 
@@ -121,7 +120,7 @@ class LockerUserDelete(View):
 
 
     def post(self, *args, **kwargs):
-       user =  get_object_or_404(User, id=kwargs['locker_id'])
+       user =  get_object_or_404(User, id=kwargs['user_id'])
        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
        Locker.user.remove()
        return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
