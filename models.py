@@ -227,31 +227,38 @@ class Submission(models.Model):
 
 
     def newer_submission(self):
-        # Works correctly we just need to pass in the locker and the id from the
-        # url which I can't get
-        # lockerid = self.kwargs['locker_id']
-        # submission = kwargs['id']
-        nextSubmission = Submission.objects.filter(locker=2, id__gt=5)[0]
+        try:
+            nextSubmission = Submission.objects.filter(locker=self.locker, id__gt=self.id)[0]
+        except IndexError:
+            nextSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
         return nextSubmission.id
 
 
     def older_submission(self):
-        # Works correctly we just need to pass in the locker and the id from the
-        # url which I can't get
-        # lockerid = kwargs['locker_id']
-        # submission = kwargs['id']
-        lastSubmission = Submission.objects.filter(locker=2, id__lt=5)[0]
+        try:
+            lastSubmission = Submission.objects.filter(locker=self.locker, id__lt=self.id).order_by('-id')[0]
+        except IndexError:
+            lastSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
         return lastSubmission.id
 
 
     def oldest_submission(self):
-        # Shows and loads the correct oldest_submission
-        oldestSubmission = Submission.objects.filter(locker=2).order_by('id')[0]
+        oldestSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
         return oldestSubmission.id
 
 
     def newest_submission(self):
-        # Shows and loads the correct newest_submission even if there is a submission added
-        # to a different locker creating a gap in id's for submissions
-        newestSubmission = Submission.objects.filter(locker=2).order_by('-id')[0]
+        newestSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
         return newestSubmission.id
+
+    def disabled(self):
+        newestSubmission = self.newest_submission()
+        oldestSubmission = self.oldest_submission()
+        lastSubmission = self.older_submission()
+        newerSubmission = self.newer_submission()
+
+        if newestSubmission == self.id:
+            disabled = True
+        else:
+            disabled = False
+        return disabled

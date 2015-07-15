@@ -37,6 +37,7 @@
         <p> Older Submission:  {{ object.older_submission }}</p>
         <p> Oldest Submission: {{ object.oldest_submission }}</p>
         <p> Newest Submission: {{ object.newest_submission }}</p>
+        {{ object.disabled }}
         {% else %}
             <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
         {% endif %}
