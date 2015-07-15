@@ -226,7 +226,7 @@ class Submission(models.Model):
         return result
 
 
-    def newer_submission(self):
+    def newer(self):
         try:
             nextSubmission = Submission.objects.filter(locker=self.locker, id__gt=self.id)[0]
         except IndexError:
@@ -234,7 +234,7 @@ class Submission(models.Model):
         return nextSubmission.id
 
 
-    def older_submission(self):
+    def older(self):
         try:
             lastSubmission = Submission.objects.filter(locker=self.locker, id__lt=self.id).order_by('-id')[0]
         except IndexError:
@@ -242,23 +242,11 @@ class Submission(models.Model):
         return lastSubmission.id
 
 
-    def oldest_submission(self):
+    def oldest(self):
         oldestSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
         return oldestSubmission.id
 
 
-    def newest_submission(self):
+    def newest(self):
         newestSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
         return newestSubmission.id
-
-    def disabled(self):
-        newestSubmission = self.newest_submission()
-        oldestSubmission = self.oldest_submission()
-        lastSubmission = self.older_submission()
-        newerSubmission = self.newer_submission()
-
-        if newestSubmission == self.id:
-            disabled = True
-        else:
-            disabled = False
-        return disabled
