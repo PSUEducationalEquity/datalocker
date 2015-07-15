@@ -63,7 +63,7 @@
 {% endblock %}
 {% block dialogs %}
 <!-- Modal for filtering out the data shown in the submission list -->
-  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true">
+  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true" data-locker-id="0">
     <form method="POST" name="modalForm"  action="" data-url="{% url 'datalocker:locker_user_add' 0 %}">
 
       {% csrf_token %}
@@ -78,7 +78,7 @@
           <div class="modal-body">
             <div>
               <h5 clss="modal-title">Existing Users</h5>
-              <ul id="existing-users">
+              <ul id="existing-users" data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}" data-url="{% url 'datalocker:locker_users' 0 %}">
               </ul>
               <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text" name="email" id="email"  placeholder="Email Address"> 

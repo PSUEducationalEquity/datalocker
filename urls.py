@@ -2,8 +2,12 @@ from django.conf.urls import patterns, url
 from datalocker import views
 
 urlpatterns = patterns('',
+    url(r'^(?P<locker_id>[0-9]+)/users$', views.locker_users,
+        name='locker_users'),
     url(r'^(?P<locker_id>[0-9]+)/users/add$', views.LockerUserAdd.as_view(), 
         name='locker_user_add'),
+     url(r'^(?P<locker_id>[0-9]+)/users/delete$', views.LockerUserDelete.as_view(), 
+        name='locker_user_delete'),
     url(r'^(?P<locker_id>[0-9]+)/modify$', views.ModifyLocker.as_view(), 
         name='modify_locker'),
     url(r'^$', views.LockerListView.as_view(), name='index'),

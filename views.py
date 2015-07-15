@@ -91,6 +91,21 @@ class SubmissionView(generic.DetailView):
 
 
 
+def locker_users(request, locker_id):    
+    if request.is_ajax():
+        locker = get_object_or_404(Locker, pk=locker_id)
+        users = []
+        for user in locker.users.all():
+            user_dict = {}
+            for key, value in model_to_dict(user).iteritems():
+                if key in public_fields:
+                    user_dict[key] = value
+            users.append(user_dict)
+        return JsonResponse({'users': users})
+    else:
+        return HttpResponseRedirect(reverse('index'))
+
+
 
 class LockerUserAdd(View):
     

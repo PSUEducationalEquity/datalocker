@@ -98,13 +98,12 @@ Locker.add = function ()
 
 
 Locker._build_list_entry = function (user)
-{
- 
+{ 
     return $("<li />").attr("data-id", user.id).append( 
             $("<span />").html(user.first_name + " " + user.last_name)
-        )    
-
- 
+        ).append(
+            $("<a />").html("&times;").attr("href", $("#existing-users").attr("data-url").replace("/0/",  "/" + user.id + "/") )
+        ); 
 }
 
 
@@ -113,31 +112,44 @@ Locker._build_list_entry = function (user)
      
 Locker.buildList = function (users){
 
-    var $users_list = $("#existing-users");
+     // get the url to use
+    var locker_id = $("#dialog-edit-users").attr("data-locker-id");
+    var url = $("#existing-users").attr("data-url").replace("/0/", "/" + locker_id +"/");
 
-    // clear the list
-    $tagList.children().remove();
+    // submit the request (if none are pending)
+    if (!Locker.dataRequest && url) {
+        Locker.dataRequest = $.ajax({
+            url: url,
+            type: "get",
+            cache: false
+        });
 
-    // build the list of Locker
-    $.each(data, function (index, entry) {
-        var $item = $("<a />").attr("href", "#").text(entry.name);
-        if (entry.description != "") {
-            $item.attr("title", entry.description);
-        }
-        if (entry.active) {
-            $item.addClass("active");
-        }
-        if (!entry.user) {
-            $item.append(
-                $("<i />").addClass(
-                    "global-indicator fo-icon-globe"
-                ).attr("title", "Global tag").append(
-                    $("<span />").addClass("sr-only").text("Global tag")
-                )
-            );
-        }       
-        
-    });
+        // callback handler: success
+        Locker.dataRequest.done(function (response, textStatus, jqXHR) {
+            var $users_list = $("#existing-users");
+            // clear the list
+            $users_list.children().remove();
+
+            // build the list of Locker
+            $.each(response.users, function (index, user) {  
+                $users_list.append(Locker._build_list_entry(user));     
+                
+            });
+            Locker.dataRequest = null;
+        });
+
+        // callback handler: failure
+        Locker.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
+            if (errorThrown != "abort") {
+                console.error(
+                    "Locker.dataRequest in locker.js AJAX error: "
+                        + textStatus,
+                    errorThrown
+                );
+            }
+            Locker.dataRequest = null;
+        });
+    }  
 }    
    
 
@@ -149,9 +161,11 @@ $(document).ready(function (){
     //Opens the users modal dialog
     $("button[role='edit-users']").on("click", function (event){        
         event.preventDefault();
-        var id= $(this).closest("tr").attr("data-id");
+        var id = $(this).closest("tr").attr("data-id");
+        $("#dialog-edit-users").attr("data-locker-id", id);
         var url = $("#dialog-edit-users").find("form").attr("data-url");
         $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));
+        Locker.buildList();
         $("#dialog-edit-users").modal('show');
     });
 
