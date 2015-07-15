@@ -8,7 +8,7 @@ from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.utils.text import slugify
 
-from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, SubmissionManager, SubmissionQuerySet
+from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
 import json
 
