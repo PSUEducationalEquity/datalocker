@@ -17,26 +17,22 @@ Locker.add = function ()
 {
     // submit the request
     var email = $("#email").val();
-    var addUrl = $("#button-add-user").attr("data-url")           
+    var addUrl = $("#dialog-edit-users form").attr("action");           
     Locker.addRequest = $.ajax({
         url: addUrl,
         type: "post",
         data: {
-            email: 'email',
+            email: email,
             csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
               }
     });
 
     // callback handler: success
-    Locker.addRequest.done(function (response, textStatus, jqXHR) {
-        if (response.result) {
+    Locker.addRequest.done(function (response, textStatus, jqXHR) {        
             $("#email").val("");
-            $("#existing-users").append(Locker._build_list_entry(response));
-            Locker.update();
-        } 
-        Locker.addRequest = null;
+            $("#existing-users").append(Locker._build_list_entry(response));    
+          Locker.addRequest = null;       
     });
-
     // callback handler: failure
     Locker.addRequest.fail(function (jqXHR, textStatus, errorThrown) {
         if (errorThrown != "abort") {
@@ -101,22 +97,23 @@ Locker.add = function ()
 // }
 
 
-Locker._build_list_entry = function (data)
+Locker._build_list_entry = function (user)
 {
-    $.each(data, function(){
-        $("ul").append('<li>' + (first_name + "" +last_name)+  '</li>')    
+ 
+    return $("<li />").attr("data-id", user.id).append( 
+            $("<span />").html(user.first_name + " " + user.last_name)
+        )    
 
-    });
+ 
 }
 
 
 
   
      
-Locker.buildList = function (data)
-{
-    var count = 0;
-    var $tagList = $("#tag-list");
+Locker.buildList = function (users){
+
+    var $users_list = $("#existing-users");
 
     // clear the list
     $tagList.children().remove();
@@ -143,48 +140,18 @@ Locker.buildList = function (data)
     });
 }    
    
-Locker.update = function ()
-    {
-        // get the url to use
-        var url = $("#tag-list").attr("data-url") + "/list";
-        if ($("#tag-list").length === 0) {
-            url = false;
-        }
 
-        // submit the request (if none are pending)
-        if (!Locker.dataRequest && url) {
-            Locker.dataRequest = $.ajax({
-                url: url,
-                type: "get",
-                cache: false
-            });
-
-            // callback handler: success
-            Locker.dataRequest.done(function (response, textStatus, jqXHR) {
-                Locker.buildList(response);
-                Locker.dataRequest = null;
-            });
-
-            // callback handler: failure
-            Locker.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
-                if (errorThrown != "abort") {
-                    console.error(
-                        "Locker.dataRequest in tagging.js AJAX error: "
-                            + textStatus,
-                        errorThrown
-                    );
-                }
-                Locker.dataRequest = null;
-            });
-        }
-    }
 }( window.Locker = window.Locker || {}, jQuery));
 
 
 
 $(document).ready(function (){
     //Opens the users modal dialog
-    $("button[role='edit-users']").on("click", function (event){
+    $("button[role='edit-users']").on("click", function (event){        
+        event.preventDefault();
+        var id= $(this).closest("tr").attr("data-id");
+        var url = $("#dialog-edit-users").find("form").attr("data-url");
+        $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));
         $("#dialog-edit-users").modal('show');
     });
 
@@ -194,11 +161,8 @@ $(document).ready(function (){
     });
 
     //Calls the add function 
-    $("#button-add-user").on("submit", function (e){
-        //var Locker = 
-        var addUrl = $("#button-add-user").attr("data-url").replace("0","1")
-
-        e.preventDefault();
+    $("#dialog-edit-users form").on("submit", function (event){         
+        event.preventDefault();
         Locker.add();
     });
  

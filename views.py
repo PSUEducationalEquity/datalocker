@@ -1,12 +1,15 @@
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response , get_object_or_404
 from django.views import generic
 from django.views.generic import View
 from django.db.models.query import QuerySet
 from django.db.models import Max
+from django.forms.models import model_to_dict
 from django.utils.text import slugify
+from django.core.mail.message import EmailMessage
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
@@ -92,14 +95,14 @@ class SubmissionView(generic.DetailView):
 class LockerUserAdd(View):
     
     
-    def post(self, *args, **kwargs):
-        user = get_object_or_404(User, id=kwargs['user_id'])
+    def post(self, *args, **kwargs):        
+        user = get_object_or_404(User, email=self.request.POST.get('email', ''))
         locker =  get_object_or_404(Locker, id=kwargs['locker_id'])               
-        if not user in locker.users:
+        if not user in locker.users.all():
             locker.users.add(user)        
             locker.save()
         user_dict = {}
-        for key,value in user.model_to_dict().iteritems():
+        for key,value in model_to_dict(user).iteritems():
             if key in public_fields:
                 user_dict[key] = value                
         # name = Locker.objects.get(id=kwargs['locker_id'])
