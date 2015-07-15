@@ -27,8 +27,7 @@
                     {% if forloop.counter > 1 %}
                       <td>
                         {% if forloop.counter == 2 %}
-                          <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}" style="display:block;"
-                           >{{ value }}</a>
+                          <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}">{{ value }}</a>
                         {% else %}
                           {{ value }}
                         {% endif %}

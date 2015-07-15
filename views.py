@@ -10,7 +10,7 @@ from django.utils.text import slugify
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
-import json, requests
+import datetime, json, requests
 
 
 public_fields = 'id', 'email','locker'
@@ -78,11 +78,43 @@ class LockerSubmissionView(generic.ListView):
 
 
 class SubmissionAPIView(View):
-    def get_context_data(self, **kwargs):
-        context = super(SubmissionAPIView, self).get_context_data(**kwargs)
+    # currently adds a locker with the following inputs:
+    # form_identifier of 'identifier'
+    # form_url of 'url'
+    # name of 'name'
+    # owner of 'owner'
+    # all values are dummy values, we need to pull the values off of the web form
+    # creation
+
+    # How to assign owner and users when we won't know them unless form passes that
+    # through
+    locker = []
+    url = 'http://httpbin.org/cache/60'
+    identifier = "test-data"
+    owner = "das66"
+    name = "Test Data Form"
+    response = requests.get(url)
+    data = response.json()
+    data = json.dumps(data)
+    locker, created = Locker.objects.get_or_create(
+        form_identifier=identifier,
+        defaults={
+            'name': name,
+            'form_url': url,
+            'owner': owner,
+            }
+        )
+    locker.save()
+
+    lid = Locker.objects.get(form_identifier=identifier)
+    submission = Submission.objects.get_or_create(
+        locker=lid,
+        data=data,
+        )
         # Need the request data from the internet web form
         # r = requests.get('webUrl') will get the data
         # r.json() will print out the json to be seen
+
 
 
 
