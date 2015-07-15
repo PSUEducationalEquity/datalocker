@@ -13,4 +13,8 @@ $(document).ready(function() {
         var target = $(this).attr("data-target");
         $("#" + target + " input[type='checkbox']").prop("checked", $(this).prop("checked"));
     });
+
+    if ($('.checkbox-inputs:checked').length == $('.checkbox-inputs').length){
+        $('#fields-select-all').prop("checked", true);
+    }
 });
