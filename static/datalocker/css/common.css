@@ -10,31 +10,29 @@
  * BUTTONS..............Button styling
  * FOOTER...............Styling specifically for the page footer
  */
+
+/*------------------------------------*\
+    $GENERAL
+\*------------------------------------*/
 .pagination {
   margin: .5em;
 }
  .pagination a {
   margin: .5em;
  }
-.sub-list {
-  margin-left: 2em;
-  font-size: 16px;
-}
-.sub-list dd {
-  padding-bottom: 1em;
-}
-
-
-
-/*------------------------------------*\
-    $GENERAL
-\*------------------------------------*/
 .rounding {
   border-radius: 5px;
 }
 .select-all-checkbox {
   font-size: 12px;
   font-weight: normal;
+}
+.sub-list {
+  margin-left: 2em;
+  font-size: 16px;
+}
+.sub-list dd {
+  padding-bottom: 1em;
 }
 .submission-heading {
   font-weight: bold;
