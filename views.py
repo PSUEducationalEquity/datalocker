@@ -10,7 +10,7 @@ from django.utils.text import slugify
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
-import json
+import json, requests
 
 
 public_fields = 'id', 'email','locker'
@@ -74,6 +74,15 @@ class LockerSubmissionView(generic.ListView):
         selected_fields_setting.save()
         return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
 
+
+
+
+class SubmissionAPIView(View):
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionAPIView, self).get_context_data(**kwargs)
+        # Need the request data from the internet web form
+        # r = requests.get('webUrl') will get the data
+        # r.json() will print out the json to be seen
 
 
 
