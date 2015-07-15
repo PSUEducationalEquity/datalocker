@@ -95,7 +95,7 @@
   </div>
 
 <!-- Modal for filtering out the data shown in the submission list -->
-  <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
+  <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true" data-locker-id="0">
     <form method="POST" name="modalLocker"  data-url="{% url 'datalocker:modify_locker' 0 %}">
       {% csrf_token %}
       <div class="modal-dialog">

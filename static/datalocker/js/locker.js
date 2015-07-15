@@ -51,58 +51,49 @@ Locker.add = function ()
     });
 }
 
-// Locker.delete = function ()
-// {
-//     // submit the request
-//     var email = $("#email").val();
-//     var deleteUrl = $("#tag-list").attr("data-url")           
-//     Locker.deleteRequest = $.ajax({
-//         url: deleteUrl,
-//         type: "post",      
-//         data: {
-//             id: 'id',
-//             csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-//         }
-//     });
+Locker.delete = function (user)
+{
+    // submit the request
+   // var email = $("#email").val();
+    var deleteUrl = $("#existing-users").attr("data-delete-url");           
+    Locker.deleteRequest = $.ajax({
+        url: deleteUrl,
+        type: "post",      
+        data: {
+            id : user.id,
+            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+        }
+    });
 
-//     // callback handler: success
-//     Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
-//         if (response.result) {
-//             $("#email").val("");
-//             Locker.update();
-//         } else if (typeof(response) == "object") {
-//             // this was a group add
-//             $("#email").val("");
-//             Locker.buildList(response);
-//         }
-//         Locker.deleteRequest = null;
-//     });
+    Locker.deleteRequest.done(function (response, textStatus, jqXHR) {              
+        $("#existing-users").append(Locker._build_list_entry(response));    
+      Locker.deleteRequest = null;       
+    });
+    // callback handler: failure
+    Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
+        if (errorThrown != "abort") {
+            if (jqXHR.status == 400 || jqXHR.status == 404) {
+                Locker.errorHandler(jqXHR, 'adding');
 
-//     // callback handler: failure
-//     Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
-//         if (errorThrown != "abort") {
-//             if (jqXHR.status == 400 || jqXHR.status == 404) {
-//                 Locker.errorHandler(jqXHR, 'adding');
-
-//             } else {
-//                 console.error(
-//                     "Locker.add in Locker.js AJAX error: "
-//                         + textStatus,
-//                     errorThrown
-//                 );
-//             }
-//         }
-//         Locker.deleteRequest = null;
-//     });
-// }
+            } else {
+                console.error(
+                    "Locker.add in Locker.js AJAX error: "
+                        + textStatus,
+                errorThrown
+                );
+            }
+        }
+        Locker.deleteRequest = null;
+    });
+}
 
 
 Locker._build_list_entry = function (user)
 { 
     return $("<li />").attr("data-id", user.id).append( 
-            $("<span />").html(user.first_name + " " + user.last_name)
+            $("<span />").html(user.first_name + " " + user.last_name + " ")
         ).append(
-            $("<a />").html("&times;").attr("href", $("#existing-users").attr("data-url").replace("/0/",  "/" + user.id + "/") )
+            $("<a />").html("<span class='glyphicon glyphicon-remove'>").attr("href", $("#existing-users").attr("data-url").replace("/0/",  "/" + user.id + "/"))
         ); 
 }
 
@@ -171,6 +162,10 @@ $(document).ready(function (){
 
     //Opens the edit lockers modal dialog
     $("button[role='edit-locker']").on("click", function (event){
+        var id = $(this).closest("tr").attr("data-id");
+        $("#dialog-edit-locker").attr("data-locker-id", id);
+        var url = $("#dialog-edit-locker").find("form").attr("data-url");
+        $("#dialog-edit-locker").find("form").attr("action", url.replace("/0/","/"+ id +"/"));
         $("#dialog-edit-locker").modal('show');
     });
 
@@ -178,6 +173,14 @@ $(document).ready(function (){
     $("#dialog-edit-users form").on("submit", function (event){         
         event.preventDefault();
         Locker.add();
+    });
+    $("#dialog-edit-users ul").on("click","a", function (event){   
+        var id = $(this).closest("tr").attr("data-id");  
+        $("#existing-users").attr("data-delete-url", id);
+        var url = $("#dialog-edit-users").find("#existing-users").attr("data-delete-url");
+        $("#dialog-edit-users").find("#existing-users").attr("data-delete-url", url.replace("/0/","/"+ id +"/"));
+        event.preventDefault();
+        Locker.delete();
     });
  
 
