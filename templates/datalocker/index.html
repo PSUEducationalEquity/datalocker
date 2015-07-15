@@ -25,7 +25,10 @@
             {% if locker.owner == user.username %}
             <tr>
                 <td>
-                  <a style="display:block;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                  <a style="display:block; float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                  {% if locker.archive_timestamp != null %}
+                    <span class="label label-warning" style="margin-left:.5em;">Archived</span>
+                  {% endif %}
                 </td>
                 <td>
                     {{ locker.latest_submission }}
@@ -50,7 +53,11 @@
             {% for locker in my_lockers_list %}
             {% if locker.owner != user.username %}
               <tr>
-                <td><a style="display:block;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a></td>
+                <td><a style="display:block; float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                  {% if locker.archive_timestamp != null %}
+                    <span class="label label-warning" style="margin-left:.5em;">Archived</span>
+                  {% endif %}
+                </td>
                 <td>{{ locker.latest_submission }}</td>
               </tr>
             {% endif %}
