@@ -89,8 +89,8 @@ class SubmissionAPIView(View):
     # How to assign owner and users when we won't know them unless form passes that
     # through
     locker = []
-    url = 'http://httpbin.org/cache/60'
-    identifier = "test-data"
+    url = 'http://developers.squarespace.com/view-json-data/?format=json-pretty'
+    identifier = "college-fair-2015"
     owner = "das66"
     name = "Test Data Form"
     response = requests.get(url)
