@@ -92,15 +92,13 @@ class SubmissionAPIView(View):
     response = requests.get(url)
     data = response.json()
     data = json.dumps(data)
-    identifier = "copy_of_cored-student-app"
+    identifier = "t9812-form"
     owner = "das66"
-    name = "CORED 2015-16 (Active) Python Created Locker"
+    name = "New T9812 Form"
     address = User.objects.get(username=owner)
     email = address.email
-    lockerid = Locker.objects.get(form_identifier=identifier).id
-
-    lockerurl = 'http://10.18.55.20:8000/datalocker/' + str(lockerid) + '/submissions'
     submission = Submission()
+    lockerurl = 'http://10.18.55.20:8000/datalocker/'
 
     try:
         exists = Locker.objects.get(form_identifier=identifier)
@@ -116,12 +114,10 @@ class SubmissionAPIView(View):
                 }
             )
             submission.locker=Locker.objects.get(form_identififer=identifier)
-            send_mail(
-                'New Locker Created',
-                'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl,
-                'eeqsys@psu.edu',
-                [email],
-            )
+            lockerid = Locker.objects.get(form_identifier=identifier).id
+            lockerurl += str(lockerid) + '/submissions'
+            subject = 'New Locker Created'
+            message = 'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl
         elif exists and archived == None:
             locker, created = Locker.objects.get_or_create(
                 form_identifier=identifier,
@@ -132,12 +128,10 @@ class SubmissionAPIView(View):
                 }
             )
             submission.locker=Locker.objects.get(form_identifier=identifier)
-            send_mail(
-                'New Submission Recevied',
-                'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl,
-                'eeqsys@psu.edu',
-                [email],
-            )
+            lockerid = Locker.objects.get(form_identifier=identifier).id
+            lockerurl += str(lockerid) + '/submissions'
+            subject = 'New Submission Recevied'
+            message = 'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl
     except:
         locker, created = Locker.objects.get_or_create(
             form_identifier=identifier,
@@ -148,28 +142,20 @@ class SubmissionAPIView(View):
             }
         )
         submission.locker=Locker.objects.get(form_identifier=identifier)
-        send_mail(
-            'New Submission Recevied',
-            'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl,
-            'eeqsys@psu.edu',
-            [email],
-        )
+        lockerid = Locker.objects.get(form_identifier=identifier).id
+        lockerurl += str(lockerid) + '/submissions'
+        subject = 'New Submission Recevied'
+        message = 'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl
     submission.data=data
     submission.save()
 
     # code to send an email to the above address
-
-    def send_email(subject, message, fromaddr, toaddr):
-        send_mail(
-            subject,
-            message,
-            fromaddr,
-            toaddr,
-            fail_silently=False
-        )
-        return send_mail
-
-
+    send_mail(
+        subject,
+        message,
+        'eeqsys@psu.edu',
+        [email],
+    )
 
 class SubmissionView(generic.DetailView):
     template_name = 'datalocker/submission_view.html'
