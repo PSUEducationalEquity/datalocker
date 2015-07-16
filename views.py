@@ -1,4 +1,5 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
@@ -8,7 +9,7 @@ from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.utils.text import slugify
 
-from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
+from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
 
 import datetime, json, requests
 
@@ -94,6 +95,8 @@ class SubmissionAPIView(View):
     identifier = "copy_of_cored-student-app"
     owner = "das66"
     name = "CORED 2015-16 (Active) Python Created Locker"
+    address = User.objects.get(username=owner)
+    email = address.email
 
     submission = Submission()
 
@@ -134,6 +137,14 @@ class SubmissionAPIView(View):
     submission.data=data
     submission.save()
 
+    # code to send an email to the above address
+    send_mail(
+        'New Submission Added',
+        'A new submission was submitted to your locker' + ' ' + name,
+        'eeqsys@psu.edu',
+        [email],
+        fail_silently=False
+    )
 
 
 
