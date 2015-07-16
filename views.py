@@ -86,6 +86,11 @@ class SubmissionAPIView(View):
     # all values are dummy values, we need to pull the values off of the web form
     # creation
 
+    ##
+    # Adds information to create a locker and adds a submission unless the data is
+    # word for word exactly the same. However, it also adds to and archived locker
+    ##
+
     # How to assign owner and users when we won't know them unless form passes that
     # through
     locker = []
@@ -111,9 +116,6 @@ class SubmissionAPIView(View):
         locker=lid,
         data=data,
         )
-        # Need the request data from the internet web form
-        # r = requests.get('webUrl') will get the data
-        # r.json() will print out the json to be seen
 
 
 
