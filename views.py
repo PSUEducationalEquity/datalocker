@@ -96,21 +96,48 @@ class SubmissionAPIView(View):
     response = requests.get(url)
     data = response.json()
     data = json.dumps(data)
-    identifier = "copy_of_cored-student-app"
+    identifier = "call-for-proposals"
     owner = "das66"
     name = "Test Locker Creation"
 
-
-    # You can change any value you want but the only way to create a new locker is
-    # to change the form_identifiter
-    locker, created = Locker.objects.get_or_create(
-        form_identifier=identifier,
-        defaults={
-            'name': name,
-            'form_url': url,
-            'owner': owner,
+    try:
+        exists = Locker.objects.get(form_identifier=identifier)
+        archived = Locker.objects.get(form_identifier=identifier).archive_timestamp
+        if exists and archived != None:
+            locker = Locker()
+            locker.form_identifier=identifier
+            locker.form_url=url
+            locker.name=name
+            locker.owner=owner
+            locker.save()
+        elif exists and archived == None:
+            locker, created = Locker.objects.get_or_create(
+                form_identifier=identifier,
+                defaults={
+                    'name': name,
+                    'form_url': url,
+                    'owner': owner,
+                }
+            )
+    except:
+        locker, created = Locker.objects.get_or_create(
+            form_identifier=identifier,
+            defaults={
+                'name': name,
+                'form_url': url,
+                'owner': owner,
             }
         )
+    # # You can change any value you want but the only way to create a new locker is
+    # # to change the form_identifiter
+    # locker, created = Locker.objects.get_or_create(
+    #     form_identifier=identifier,
+    #     defaults={
+    #         'name': name,
+    #         'form_url': url,
+    #         'owner': owner,
+    #         }
+    #     )
 
     l_id = Locker.objects.get(form_identifier=identifier)
     # this way won't save the submission if there is already one with the exact
