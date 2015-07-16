@@ -86,11 +86,6 @@ class SubmissionAPIView(View):
     # all values are dummy values, we need to pull the values off of the web form
     # creation
 
-    ##
-    # Adds information to create a locker and adds a submission unless the data is
-    # word for word exactly the same. However, it also adds to and archived locker
-    ##
-
     locker = []
     url = 'http://developers.squarespace.com/view-json-data/?format=json-pretty'
     response = requests.get(url)
@@ -98,7 +93,7 @@ class SubmissionAPIView(View):
     data = json.dumps(data)
     identifier = "copy_of_cored-student-app"
     owner = "das66"
-    name = "Test Locker Creation"
+    name = "CORED 2015-16 (Active) Python Created Locker"
 
     submission = Submission()
 
@@ -136,17 +131,6 @@ class SubmissionAPIView(View):
             }
         )
         submission.locker=Locker.objects.get(form_identifier=identifier)
-    # # You can change any value you want but the only way to create a new locker is
-    # # to change the form_identifiter
-    # locker, created = Locker.objects.get_or_create(
-    #     form_identifier=identifier,
-    #     defaults={
-    #         'name': name,
-    #         'form_url': url,
-    #         'owner': owner,
-    #         }
-    #     )
-
     submission.data=data
     submission.save()
 
