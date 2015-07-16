@@ -97,7 +97,9 @@ class SubmissionAPIView(View):
     name = "CORED 2015-16 (Active) Python Created Locker"
     address = User.objects.get(username=owner)
     email = address.email
+    lockerid = Locker.objects.get(form_identifier=identifier).id
 
+    lockerurl = 'http://10.18.55.20:8000/datalocker/' + str(lockerid) + '/submissions'
     submission = Submission()
 
     try:
@@ -114,6 +116,12 @@ class SubmissionAPIView(View):
                 }
             )
             submission.locker=Locker.objects.get(form_identififer=identifier)
+            send_mail(
+                'New Locker Created',
+                'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl,
+                'eeqsys@psu.edu',
+                [email],
+            )
         elif exists and archived == None:
             locker, created = Locker.objects.get_or_create(
                 form_identifier=identifier,
@@ -124,6 +132,12 @@ class SubmissionAPIView(View):
                 }
             )
             submission.locker=Locker.objects.get(form_identifier=identifier)
+            send_mail(
+                'New Submission Recevied',
+                'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl,
+                'eeqsys@psu.edu',
+                [email],
+            )
     except:
         locker, created = Locker.objects.get_or_create(
             form_identifier=identifier,
@@ -134,17 +148,26 @@ class SubmissionAPIView(View):
             }
         )
         submission.locker=Locker.objects.get(form_identifier=identifier)
+        send_mail(
+            'New Submission Recevied',
+            'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl,
+            'eeqsys@psu.edu',
+            [email],
+        )
     submission.data=data
     submission.save()
 
     # code to send an email to the above address
-    send_mail(
-        'New Submission Added',
-        'A new submission was submitted to your locker' + ' ' + name,
-        'eeqsys@psu.edu',
-        [email],
-        fail_silently=False
-    )
+
+    def send_email(subject, message, fromaddr, toaddr):
+        send_mail(
+            subject,
+            message,
+            fromaddr,
+            toaddr,
+            fail_silently=False
+        )
+        return send_mail
 
 
 
