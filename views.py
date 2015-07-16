@@ -91,16 +91,18 @@ class SubmissionAPIView(View):
     # word for word exactly the same. However, it also adds to and archived locker
     ##
 
-    # How to assign owner and users when we won't know them unless form passes that
-    # through
     locker = []
     url = 'http://developers.squarespace.com/view-json-data/?format=json-pretty'
-    identifier = "college-fair-2015"
-    owner = "das66"
-    name = "Test Data Form"
     response = requests.get(url)
     data = response.json()
     data = json.dumps(data)
+    identifier = "copy_of_cored-student-app"
+    owner = "das66"
+    name = "Test Locker Creation"
+
+
+    # You can change any value you want but the only way to create a new locker is
+    # to change the form_identifiter
     locker, created = Locker.objects.get_or_create(
         form_identifier=identifier,
         defaults={
@@ -109,13 +111,21 @@ class SubmissionAPIView(View):
             'owner': owner,
             }
         )
-    locker.save()
 
-    lid = Locker.objects.get(form_identifier=identifier)
-    submission = Submission.objects.get_or_create(
-        locker=lid,
-        data=data,
-        )
+    l_id = Locker.objects.get(form_identifier=identifier)
+    # this way won't save the submission if there is already one with the exact
+    # same info for the data and locker id fields
+    # submission = Submission.objects.get_or_create(
+    #     locker=lid,
+    #     data=data,
+    #     )
+
+    # This will add a submission with the locker_id of the locker with the identifier
+    # indicated above
+    submission = Submission()
+    submission.locker=l_id
+    submission.data=data
+    submission.save()
 
 
 
