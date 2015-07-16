@@ -3,7 +3,7 @@
     // the AJAX objects that handles server communication
     Locker.dataRequest;   
     Locker.addRequest;
-
+    Locker.deleteRequest;    
 
     /**
      * Adds a new tag to the student via AJAX
@@ -31,6 +31,7 @@ Locker.add = function ()
     Locker.addRequest.done(function (response, textStatus, jqXHR) {        
             $("#email").val("");
             $("#existing-users").append(Locker._build_list_entry(response));    
+            $("email").focus();
           Locker.addRequest = null;       
     });
     // callback handler: failure
@@ -51,33 +52,34 @@ Locker.add = function ()
     });
 }
 
-Locker.delete = function (user)
+
+Locker.delete = function ()
 {
     // submit the request
-   // var email = $("#email").val();
-    var deleteUrl = $("#existing-users").attr("data-delete-url");           
+    var id = $(this).closest("tr").attr("data-id");  
+    var deleteUrl = $("#existing-users").attr("data-url");           
     Locker.deleteRequest = $.ajax({
         url: deleteUrl,
         type: "post",      
         data: {
-            id : user.id,
+            id : id,
             csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-        }
+              }
     });
 
     Locker.deleteRequest.done(function (response, textStatus, jqXHR) {              
-        $("#existing-users").append(Locker._build_list_entry(response));    
+        $("#existing-users").remove(response);    
       Locker.deleteRequest = null;       
     });
     // callback handler: failure
     Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
         if (errorThrown != "abort") {
             if (jqXHR.status == 400 || jqXHR.status == 404) {
-                Locker.errorHandler(jqXHR, 'adding');
+                Locker.errorHandler(jqXHR, 'deleting');
 
             } else {
                 console.error(
-                    "Locker.add in Locker.js AJAX error: "
+                    "Locker.delete in Locker.js AJAX error: "
                         + textStatus,
                 errorThrown
                 );
@@ -93,7 +95,7 @@ Locker._build_list_entry = function (user)
     return $("<li />").attr("data-id", user.id).append( 
             $("<span />").html(user.first_name + " " + user.last_name + " ")
         ).append(
-            $("<a />").html("<span class='glyphicon glyphicon-remove'>").attr("href", $("#existing-users").attr("data-url").replace("/0/",  "/" + user.id + "/"))
+            $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr("href", $("#existing-users").attr("data-url").replace("/0/",  "/" + user.id + "/"))
         ); 
 }
 
@@ -155,7 +157,7 @@ $(document).ready(function (){
         var id = $(this).closest("tr").attr("data-id");
         $("#dialog-edit-users").attr("data-locker-id", id);
         var url = $("#dialog-edit-users").find("form").attr("data-url");
-        $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));
+        $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));        
         Locker.buildList();
         $("#dialog-edit-users").modal('show');
     });
@@ -174,12 +176,15 @@ $(document).ready(function (){
         event.preventDefault();
         Locker.add();
     });
-    $("#dialog-edit-users ul").on("click","a", function (event){   
-        var id = $(this).closest("tr").attr("data-id");  
-        $("#existing-users").attr("data-delete-url", id);
-        var url = $("#dialog-edit-users").find("#existing-users").attr("data-delete-url");
-        $("#dialog-edit-users").find("#existing-users").attr("data-delete-url", url.replace("/0/","/"+ id +"/"));
+
+
+    $("#dialog-edit-users form ul").on("click","a", function (event){ 
         event.preventDefault();
+        alert("Hello! I am an alert box!");
+        var id = $(this).closest("tr").attr("data-id");  
+        $("#dialog-edit-users").attr("data-locker-id", id);
+        var url = $("#dialog-edit-users").find("#existing-users").attr("data-delete-url");
+        $("#dialog-edit-users").find("#existing-users li>a").attr("href", url.replace("/0/","/"+ id +"/"));      
         Locker.delete();
     });
  

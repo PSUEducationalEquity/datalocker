@@ -10,6 +10,9 @@ from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.utils.text import slugify
 from django.core.mail.message import EmailMessage
+from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
@@ -120,16 +123,16 @@ class LockerUserAdd(View):
         for key,value in model_to_dict(user).iteritems():
             if key in public_fields:
                 user_dict[key] = value                
-        # name = Locker.objects.get(id=kwargs['locker_id'])
-        # subject = 'Locker Access'
-        # from_email = 'eeqsys@psu.edu'
-        # to = self.request.POST.get('email', "")
-        # body= 'Hello,\nYou now have access to a locker' +' '+ name.name
-        # email = EmailMessage(subject, 
-        #    body, 
-        #    from_email,
-        #    [to])                        
-        # email.send()       
+        name = Locker.objects.get(id=kwargs['locker_id'])           
+        subject = 'Locker Access'
+        from_email = 'eeqsys@psu.edu'
+        to = self.request.POST.get('email', "")
+        body= 'Hello, '+ to +'\n You now have access to a locker' +' '+ name.name
+        email = EmailMessage(subject, 
+           body, 
+           from_email,
+           [to])                        
+        email.send()       
         return JsonResponse(user_dict)
 
 
@@ -137,11 +140,13 @@ class LockerUserAdd(View):
 class LockerUserDelete(View):
 
 
-    def post(self, *args, **kwargs):
-       user =  get_object_or_404(User, id=kwargs['user_id'])
-       locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-       Locker.user.remove()
-       return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
+    def post(self):      
+        user = get_object_or_404(User, id=self.request.POST.get('id', ''))
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])  
+        if user in locker.users.all():
+            locker.users.remove(user)
+            locker.save()
+        return HttpResponseRedirect(reverse('index'))
 
 
 class ModifyLocker(View):
