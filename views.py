@@ -102,13 +102,12 @@ class SubmissionAPIView(View):
     response = requests.get(url)
     data = response.json()
     data = json.dumps(data)
-    identifier = "create_locker"
+    identifier = "4051"
     owner = "das66"
-    name = "Create Locker Test"
+    name = "Python Created Locker"
     address = User.objects.get(username=owner)
     email = address.email
     submission = Submission()
-    record = Submission.objects.all().order_by('-id')[0]
     lockerurl = 'http://10.18.55.20:8000/datalocker/'
 
     try:
@@ -119,6 +118,7 @@ class SubmissionAPIView(View):
             create_locker(identifier, name, url, owner)
             submission.locker = Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
+            record = Submission.objects.all().order_by('-id')[0]
             lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
             message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
@@ -126,6 +126,7 @@ class SubmissionAPIView(View):
             create_locker(identifier, name, url, owner)
             submission.locker = Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
+            record = Submission.objects.all().order_by('-id')[0]
             lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
             message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
@@ -133,6 +134,7 @@ class SubmissionAPIView(View):
         create_locker(identifier, name, url, owner)
         submission.locker = Locker.objects.get(form_identifier=identifier)
         lockerid = Locker.objects.get(form_identifier=identifier).id
+        record = Submission.objects.all().order_by('-id')[0]
         lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
         subject = 'New Locker Created'
         message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
