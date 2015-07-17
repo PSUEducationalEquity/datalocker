@@ -86,63 +86,52 @@ class SubmissionAPIView(View):
     # owner of 'owner'
     # all values are dummy values, we need to pull the values off of the web form
     # creation
+    def create_locker(identifier, name, url, owner):
+        locker, created = Locker.objects.get_or_create(
+            form_identifier=identifier,
+            defaults={
+                'name':name,
+                'form_url':url,
+                'owner': owner,
+            }
+        )
+        return locker
 
     locker = []
     url = 'http://cookie.jsontest.com/'
     response = requests.get(url)
     data = response.json()
     data = json.dumps(data)
-    identifier = "json-cookie-test"
+    identifier = "create_locker"
     owner = "das66"
-    name = "Json Cookie Test"
+    name = "Create Locker Test"
     address = User.objects.get(username=owner)
     email = address.email
     submission = Submission()
-    lockerurl = 'http://10.18.55.20:8000/datalocker/'
     record = Submission.objects.all().order_by('-id')[0]
+    lockerurl = 'http://10.18.55.20:8000/datalocker/'
 
     try:
         exists = Locker.objects.get(form_identifier=identifier)
         archived = Locker.objects.get(form_identifier=identifier).archive_timestamp
         if exists and archived != None:
             identifier += '-active'
-            locker, created = Locker.objects.get_or_create(
-                form_identifier=identifier,
-                defaults={
-                    'name': name,
-                    'form_url': url,
-                    'owner': owner,
-                }
-            )
-            submission.locker=Locker.objects.get(form_identififer=identifier)
+            create_locker(identifier, name, url, owner)
+            submission.locker = Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
             lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
             message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
         elif exists and archived == None:
-            locker, created = Locker.objects.get_or_create(
-                form_identifier=identifier,
-                defaults={
-                    'name': name,
-                    'form_url': url,
-                    'owner': owner,
-                }
-            )
-            submission.locker=Locker.objects.get(form_identifier=identifier)
+            create_locker(identifier, name, url, owner)
+            submission.locker = Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
             lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
             message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
     except:
-        locker, created = Locker.objects.get_or_create(
-            form_identifier=identifier,
-            defaults={
-                'name': name,
-                'form_url': url,
-                'owner': owner,
-            }
-        )
-        submission.locker=Locker.objects.get(form_identifier=identifier)
+        create_locker(identifier, name, url, owner)
+        submission.locker = Locker.objects.get(form_identifier=identifier)
         lockerid = Locker.objects.get(form_identifier=identifier).id
         lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
         subject = 'New Locker Created'
@@ -157,6 +146,12 @@ class SubmissionAPIView(View):
         'eeqsys@psu.edu',
         [email],
     )
+
+
+
+
+
+
 
 class SubmissionView(generic.DetailView):
     template_name = 'datalocker/submission_view.html'
