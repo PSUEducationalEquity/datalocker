@@ -88,17 +88,18 @@ class SubmissionAPIView(View):
     # creation
 
     locker = []
-    url = 'http://developers.squarespace.com/view-json-data/?format=json-pretty'
+    url = 'http://cookie.jsontest.com/'
     response = requests.get(url)
     data = response.json()
     data = json.dumps(data)
-    identifier = "t9812-form"
+    identifier = "json-cookie-test"
     owner = "das66"
-    name = "New T9812 Form"
+    name = "Json Cookie Test"
     address = User.objects.get(username=owner)
     email = address.email
     submission = Submission()
     lockerurl = 'http://10.18.55.20:8000/datalocker/'
+    record = Submission.objects.all().order_by('-id')[0]
 
     try:
         exists = Locker.objects.get(form_identifier=identifier)
@@ -115,9 +116,9 @@ class SubmissionAPIView(View):
             )
             submission.locker=Locker.objects.get(form_identififer=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
-            lockerurl += str(lockerid) + '/submissions'
-            subject = 'New Locker Created'
-            message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
+            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+            subject = 'New Form Submission Recevied'
+            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
         elif exists and archived == None:
             locker, created = Locker.objects.get_or_create(
                 form_identifier=identifier,
@@ -129,7 +130,7 @@ class SubmissionAPIView(View):
             )
             submission.locker=Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
-            lockerurl += str(lockerid) + '/submissions'
+            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
             message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
     except:
@@ -143,9 +144,9 @@ class SubmissionAPIView(View):
         )
         submission.locker=Locker.objects.get(form_identifier=identifier)
         lockerid = Locker.objects.get(form_identifier=identifier).id
-        lockerurl += str(lockerid) + '/submissions'
-        subject = 'New Form Submission Recevied'
-        message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
+        lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+        subject = 'New Locker Created'
+        message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
     submission.data=data
     submission.save()
 
