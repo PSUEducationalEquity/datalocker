@@ -43,7 +43,7 @@ class LockerSubmissionView(generic.ListView):
         context['selected_fields'] = self.selected_fields
         context['column_headings'] = ['Submitted Date', ] + self.selected_fields
         context['data'] = []
-        for submission in self.locker.submissions.all():
+        for submission in self.locker.submissions.all().order_by('-timestamp'):
             entry = [submission.id, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
                 if field in self.selected_fields:
@@ -117,7 +117,7 @@ class SubmissionAPIView(View):
             lockerid = Locker.objects.get(form_identifier=identifier).id
             lockerurl += str(lockerid) + '/submissions'
             subject = 'New Locker Created'
-            message = 'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl
+            message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
         elif exists and archived == None:
             locker, created = Locker.objects.get_or_create(
                 form_identifier=identifier,
@@ -130,8 +130,8 @@ class SubmissionAPIView(View):
             submission.locker=Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
             lockerurl += str(lockerid) + '/submissions'
-            subject = 'New Submission Recevied'
-            message = 'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl
+            subject = 'New Form Submission Recevied'
+            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
     except:
         locker, created = Locker.objects.get_or_create(
             form_identifier=identifier,
@@ -144,8 +144,8 @@ class SubmissionAPIView(View):
         submission.locker=Locker.objects.get(form_identifier=identifier)
         lockerid = Locker.objects.get(form_identifier=identifier).id
         lockerurl += str(lockerid) + '/submissions'
-        subject = 'New Submission Recevied'
-        message = 'A new locker ' + name + ' was created due to a new form submission \n View your new submissions at ' + lockerurl
+        subject = 'New Form Submission Recevied'
+        message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
     submission.data=data
     submission.save()
 
