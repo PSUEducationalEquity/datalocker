@@ -104,6 +104,7 @@ class SubmissionAPIView(View):
     data = json.dumps(data)
     identifier = "4051"
     owner = "das66"
+    users = []
     name = "Python Created Locker"
     address = User.objects.get(username=owner)
     email = address.email
@@ -142,15 +143,13 @@ class SubmissionAPIView(View):
     submission.save()
 
     # code to send an email to the above address
-    send_mail(
-        subject,
-        message,
-        'eeqsys@psu.edu',
-        [email],
-    )
-
-
-
+    # Uncomment to send and receive the emails, tired of getting hundreds of emails
+    # send_mail(
+    #     subject,
+    #     message,
+    #     'eeqsys@psu.edu',
+    #     [email],
+    # )
 
 
 
