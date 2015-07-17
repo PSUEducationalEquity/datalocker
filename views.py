@@ -13,6 +13,7 @@ from django.core.mail.message import EmailMessage
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
+from templated_email import get_templated_mail
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
 
@@ -124,7 +125,7 @@ class LockerUserAdd(View):
             if key in public_fields:
                 user_dict[key] = value                
         name = Locker.objects.get(id=kwargs['locker_id'])           
-        subject = 'Locker Access'
+        subject = 'Granted Locker Access'
         from_email = 'eeqsys@psu.edu'
         to = self.request.POST.get('email', "")
         body= 'Hello, '+ to +'\n You now have access to a locker' +' '+ name.name
@@ -132,7 +133,7 @@ class LockerUserAdd(View):
            body, 
            from_email,
            [to])                        
-        email.send()       
+        email.send()         
         return JsonResponse(user_dict)
 
 
@@ -140,13 +141,13 @@ class LockerUserAdd(View):
 class LockerUserDelete(View):
 
 
-    def post(self):      
+    def post(self , *args, **kwargs):       
         user = get_object_or_404(User, id=self.request.POST.get('id', ''))
         locker =  get_object_or_404(Locker, id=kwargs['locker_id'])  
         if user in locker.users.all():
             locker.users.remove(user)
             locker.save()
-        return HttpResponseRedirect(reverse('index'))
+        return JsonResponse({'user_id': user.id})
 
 
 class ModifyLocker(View):

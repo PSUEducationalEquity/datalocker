@@ -53,22 +53,23 @@ Locker.add = function ()
 }
 
 
-Locker.delete = function ()
+Locker.delete = function (user_id)
 {
     // submit the request
-    var id = $(this).closest("tr").attr("data-id");  
-    var deleteUrl = $("#existing-users").attr("data-url");           
+    var deleteUrl =  $("#existing-users").attr("data-delete-url");
+    var locker_id = $("#dialog-edit-users").attr("data-locker-id");
+
     Locker.deleteRequest = $.ajax({
-        url: deleteUrl,
+        url: deleteUrl.replace("/0/", "/" + locker_id +"/"),
         type: "post",      
         data: {
-            id : id,
+            id : user_id,
             csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
               }
     });
 
     Locker.deleteRequest.done(function (response, textStatus, jqXHR) {              
-        $("#existing-users").remove(response);    
+     $("#existing-users li[data-id='" + response.user_id + "']").remove();  
       Locker.deleteRequest = null;       
     });
     // callback handler: failure
@@ -95,7 +96,7 @@ Locker._build_list_entry = function (user)
     return $("<li />").attr("data-id", user.id).append( 
             $("<span />").html(user.first_name + " " + user.last_name + " ")
         ).append(
-            $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr("href", $("#existing-users").attr("data-url").replace("/0/",  "/" + user.id + "/"))
+            $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr("href", "#")
         ); 
 }
 
@@ -158,7 +159,7 @@ $(document).ready(function (){
         $("#dialog-edit-users").attr("data-locker-id", id);
         var url = $("#dialog-edit-users").find("form").attr("data-url");
         $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));        
-        Locker.buildList();
+        Locker.buildList();       
         $("#dialog-edit-users").modal('show');
     });
 
@@ -178,14 +179,11 @@ $(document).ready(function (){
     });
 
 
-    $("#dialog-edit-users form ul").on("click","a", function (event){ 
+    $("#dialog-edit-users form ul").on("click",'a', function (event){ 
         event.preventDefault();
-        alert("Hello! I am an alert box!");
-        var id = $(this).closest("tr").attr("data-id");  
-        $("#dialog-edit-users").attr("data-locker-id", id);
-        var url = $("#dialog-edit-users").find("#existing-users").attr("data-delete-url");
-        $("#dialog-edit-users").find("#existing-users li>a").attr("href", url.replace("/0/","/"+ id +"/"));      
-        Locker.delete();
+        console.log("working..")   
+        var user_id =$(this).closest("li").attr("data-id");            
+        Locker.delete(user_id);
     });
  
 
