@@ -13,6 +13,9 @@
      * @author      Paul Rentschler <par117@psu.edu>
      * @since       21 March 2014
      */
+
+
+
 Locker.add = function ()
 {
     // submit the request
@@ -123,7 +126,6 @@ Locker.buildList = function (users){
             var $users_list = $("#existing-users");
             // clear the list
             $users_list.children().remove();
-
             // build the list of Locker
             $.each(response.users, function (index, user) {  
                 $users_list.append(Locker._build_list_entry(user));     
@@ -160,6 +162,7 @@ $(document).ready(function (){
         var url = $("#dialog-edit-users").find("form").attr("data-url");
         $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));        
         Locker.buildList();       
+        
         $("#dialog-edit-users").modal('show');
     });
 

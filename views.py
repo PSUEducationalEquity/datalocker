@@ -128,7 +128,7 @@ class LockerUserAdd(View):
         subject = 'Granted Locker Access'
         from_email = 'eeqsys@psu.edu'
         to = self.request.POST.get('email', "")
-        body= 'Hello, '+ to +'\n You now have access to a locker' +' '+ name.name
+        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it:'
         email = EmailMessage(subject, 
            body, 
            from_email,
@@ -150,5 +150,20 @@ class LockerUserDelete(View):
         return JsonResponse({'user_id': user.id})
 
 
-class ModifyLocker(View):
-    pass
+
+
+  
+def modify_locker(request, name, owner, **kwargs):     
+    locker_name = Locker.objects.get(id=kwargs['locker_id']).name 
+    locker_owner = Locker.objects.get(id=kwargs['locker_id']).owner       
+    if request.method == 'POST':
+        new_locker_name = request.POST.get('edit-locker')
+        new_owner = request.POST.get('edit-owner')
+        error = ""
+        if new_locker_name:
+            locker.name(new_locker_name)        
+
+
+
+
+        return JsonResponse({'user_id': user.id})

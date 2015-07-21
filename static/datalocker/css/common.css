@@ -59,14 +59,15 @@
     box-sizing: border-box;
 }
 .onoffswitch-inner:before {
-    content: "ON";
+    content: "OFF";
     padding-left: 10px;
-    background-color: #34A7C1; color: #FFFFFF;
+    background-color: #EEEEEE; color: #999999;
+  
 }
 .onoffswitch-inner:after {
-    content: "OFF";
+    content: "ON";
     padding-right: 10px;
-    background-color: #EEEEEE; color: #999999;
+    background-color: #34A7C1; color: #FFFFFF;
     text-align: right;
 }
 .onoffswitch-switch {
