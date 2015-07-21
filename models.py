@@ -93,17 +93,6 @@ class Locker(models.Model):
         return True
 
 
-    def get_email_users(self):
-        email_user_setting = LockerSetting(
-                category='locker-user-setting',
-                setting='Email users when submissions arrive',
-                setting_identifier='email-user',
-                value=email_user,
-                locker=self,
-                )
-        email_user_setting.save()
-
-
     def get_all_fields_list(self):
         try:
             all_fields_setting = self.settings.get(category='fields-list', setting_identifier='all-fields')

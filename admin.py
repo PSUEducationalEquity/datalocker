@@ -31,6 +31,11 @@ class SettingAdmin(admin.ModelAdmin):
     list_display = ['category','setting','setting_identifier','value','locker']
 
 
+
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['id','username','email','first_name','last_name','is_superuser','is_staff']
+
 admin_site = DataLockerAdminSite(name = 'datalockeradmin')
 admin_site.register(Group, GroupAdmin)
 admin_site.register(Locker, LockerAdmin)
