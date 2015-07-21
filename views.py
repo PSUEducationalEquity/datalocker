@@ -152,18 +152,18 @@ class LockerUserDelete(View):
 
 
 
-  
-def modify_locker(request, name, owner, **kwargs):     
-    locker_name = Locker.objects.get(id=kwargs['locker_id']).name 
-    locker_owner = Locker.objects.get(id=kwargs['locker_id']).owner       
+def modify_locker(request, **kwargs): 
+    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])    
+    locker_name = locker.name 
+    locker_owner = locker.owner    
     if request.method == 'POST':
         new_locker_name = request.POST.get('edit-locker')
-        new_owner = request.POST.get('edit-owner')
-        error = ""
-        if new_locker_name:
-            locker.name(new_locker_name)        
-
-
-
-
-        return JsonResponse({'user_id': user.id})
+        new_owner = request.POST.get('edit-owner')        
+        if new_locker_name != "":
+             locker.name = new_locker_name
+             locker.save()
+        if new_owner != "":
+            user = User.objects.get(email=new_owner).username
+            locker.owner = user
+            locker.save()
+    return HttpResponseRedirect(reverse('datalocker:index'))

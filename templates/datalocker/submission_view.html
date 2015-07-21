@@ -14,11 +14,12 @@
     </ol>
         <h1>{{ object.locker.name }}</h1>
         <!--<h5>Submission Data</h5> Toolbar for next and previous items -->
-        <ul class="list-grid">
+        <dl class="dl-horizontal">
             {% for key, value in object.data_dict.items %}
-            <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
             {% endfor %}
-        </ul>
+        </dl>
     {% else %}
     <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
     {% endif %}
