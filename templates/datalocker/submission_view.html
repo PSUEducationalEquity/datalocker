@@ -35,23 +35,5 @@
         {% else %}
             <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
         {% endif %}
-    {% if user.is_authenticated %}
-    <ol class="breadcrumb">
-        <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
-        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}"
-                >All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a></li>
-        <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
-    </ol>
-        <h1>{{ object.locker.name }}</h1>
-        <!--<h5>Submission Data</h5> Toolbar for next and previous items -->
-        <dl class="dl-horizontal">
-            {% for key, value in object.data_dict.items %}
-            <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
-            {% endfor %}
-        </dl>
-    {% else %}
-    <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
-    {% endif %}
     </div>
 {% endblock %}
