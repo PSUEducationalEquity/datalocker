@@ -20,7 +20,7 @@
                 <a class="btn btn-default {% if older_disabled %}disabled{% endif %}" role="group" aria-label="older submission button" title="Older Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.older %}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
                 <a class="btn btn-default {% if oldest_disabled %}disabled{% endif %}" role="group" aria-label="oldest submission button" title="Oldest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.oldest %}"><span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span></a>
             </div>
-            <dl class="sub-list">
+            <dl class="dl-horizontal">
                 {% for key, value in object.data_dict.items %}
                 <dt>{{ key }}</dt>
                 <dd>{{ value }}</dd>
