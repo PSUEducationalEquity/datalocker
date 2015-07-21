@@ -38,6 +38,20 @@
                 <td>
                     <button type="button" class="btn btn-info btn-sm" role="edit-users">Users</button>
                     <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
+        </thead>
+        <tbody>
+            {% for locker in my_lockers_list %}
+            {% if locker.owner == user.username %}
+            <tr data-id="{{locker.id}}">
+                <td>
+                  <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                </td>
+                <td>
+                    {{ locker.latest_submission }}
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info btn-sm" role="edit-users" >Users</button>
+                    <button type="button" class="btn btn-info btn-sm" role="edit-locker">Edit Locker</button>
                 </td>
             </tr>
             {% endif %}
@@ -75,8 +89,8 @@
 {% endblock %}
 {% block dialogs %}
 <!-- Modal for editing the users of the locker -->
-  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true">
-    <form method="POST" name="modalForm" action="{% url 'datalocker:index'  %}">
+  <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true" data-locker-id="0">
+    <form method="POST" name="modalForm"  action="" data-url="{% url 'datalocker:locker_user_add' 0 %}">
 
       {% csrf_token %}
       <div class="modal-dialog">
@@ -90,7 +104,7 @@
           <div class="modal-body">
             <div>
               <h5 clss="modal-title">Existing Users</h5>
-              <ul id="existing-users">
+              <ul id="existing-users" data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}" data-url="{% url 'datalocker:locker_users' 0 %}">
               </ul>
               <label for="email">
               <input type="text" name="email" id="email"  placeholder="Email Address">
@@ -102,20 +116,18 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary btn-sm save-button pull-left" data-dismiss="modal"/>Done</button>
+            <button type="button" class="btn btn-primary btn-sm save-button pull-left" data-dismiss="modal" />Done</button>
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </form>
   </div>
-
 <!-- Modal for editing the locker -->
-  <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true">
-    <form method="POST" name="modalLocker" action="{% url 'datalocker:index' %}">
+  <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true" data-locker-id="0">
+    <form method="POST" name="modalLocker"  data-url="{% url 'datalocker:modify_locker' 0 %}">
       {% csrf_token %}
       <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
@@ -129,13 +141,22 @@
              <label for="edit-owner">Edit Owner: </label>
                <input type="text" name="edit-owner" id="edit-owner"><br/>
             </div>
-               <input type="text" name="edit-locker" id="edit-locker"><br/>
-             <label for="edit-owner">Edit Owner: </label>
-               <input type="text" name="edit-owner" id="edit-owner"><br/>
-
+            <div class="form-group">
+             <label for="edit-locker-name">Name</label>
+               <input type="text" name="edit-locker" class="form-control" id="edit-locker"  placeholder="New Locker Name"><br/>
             </div>
+            <div class="form-group">
+             <label for="edit-owner">Owner</label>
+               <input type="text" name="edit-owner" class="form-control"  id="edit-owner" placeholder="New Locker Owner"><br/>
+            </div>
+            <div class="checkbox">
+              <label>
+               <input type="checkbox" name="edit-commenting"  id="edit-commenting"> Allow Commenting
+               </label>
+            </div>
+          </div>
           <div class="modal-footer">
-            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" />
+            <input type="submit" class="btn btn-primary btn-sm save-button pull-left" value="Done" />
             <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
           </div>
         </div>

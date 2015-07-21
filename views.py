@@ -1,20 +1,28 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, render_to_response
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, render_to_response , get_object_or_404
 from django.views import generic
 from django.views.generic import View
 from django.db.models.query import QuerySet
 from django.db.models import Max
+from django.forms.models import model_to_dict
 from django.utils.text import slugify
+from django.core.mail.message import EmailMessage
+from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
+from templated_email import get_templated_mail
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
 
 import datetime, json, requests
 
 
-public_fields = 'id', 'email','locker'
+public_fields = ['id', 'email', 'first_name', 'last_name']
+
 
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
@@ -169,47 +177,76 @@ class SubmissionView(generic.DetailView):
 
 
 
-
-#class LockerUserAdd(View):
-
-#class LockerUserAdd(view):
-
-
-    #def post(self, *args, **kwargs)
-    #    user = get_object_or_404(User, id=kwargs['locker_id'])
-    #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    #    user = Locker.objects.get(User, id=kwargs['locker_id'])
-    #    user = []
-    #    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
-    #    for key, value in user:
-    #       if something:
-    #           key.model_to_dict().iteritems()
-    #    Locker.user.add()
-    #    Locker.save()
-    #    name = Locker.objects.get(id=kwargs['locker_id'])
-    #    subject = 'Locker Access'
-    #    from_email = 'eeqsys@psu.edu'
-    #    to = self.request.POST.get('email', "")_
-    #    body= 'Hello,\nYou now have access to a locker' +' '+ name.name
-    #    email = EmailMessage(subject,
-    #            body,
-    #            from_email,
-    #            [to])
-    #    email.send()
-    #    Locker.user.add()
-    #    Locker.save()
-    #return jsonResponse()
-
-
-    #    Locker.User.add()
+def locker_users(request, locker_id):
+    if request.is_ajax():
+        locker = get_object_or_404(Locker, pk=locker_id)
+        users = []
+        for user in locker.users.all():
+            user_dict = {}
+            for key, value in model_to_dict(user).iteritems():
+                if key in public_fields:
+                    user_dict[key] = value
+            users.append(user_dict)
+        return JsonResponse({'users': users})
+    else:
+        return HttpResponseRedirect(reverse('index'))
 
 
 
-#class LockerUserDelete(view):
+
+class LockerUserAdd(View):
 
 
-    # def post(self, *args, **kwargs)
-    #    user =  get_object_or_404(User, id=kwargs['locker_id'])
-    #    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    #    Locker.user.remove()
-    #    return HttpResponseRedirect(reverse('datalocker:index', kwargs={'locker_id': self.kwargs['locker_id']}))
+    def post(self, *args, **kwargs):
+        user = get_object_or_404(User, email=self.request.POST.get('email', ''))
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+        if not user in locker.users.all():
+            locker.users.add(user)
+            locker.save()
+        user_dict = {}
+        for key,value in model_to_dict(user).iteritems():
+            if key in public_fields:
+                user_dict[key] = value
+        name = Locker.objects.get(id=kwargs['locker_id'])
+        subject = 'Granted Locker Access'
+        from_email = 'eeqsys@psu.edu'
+        to = self.request.POST.get('email', "")
+        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it:'
+        email = EmailMessage(subject,
+           body,
+           from_email,
+           [to])
+        email.send()
+        return JsonResponse(user_dict)
+
+
+
+class LockerUserDelete(View):
+
+
+    def post(self , *args, **kwargs):
+        user = get_object_or_404(User, id=self.request.POST.get('id', ''))
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+        if user in locker.users.all():
+            locker.users.remove(user)
+            locker.save()
+        return JsonResponse({'user_id': user.id})
+
+
+
+
+
+def modify_locker(request, name, owner, **kwargs):
+    locker_name = Locker.objects.get(id=kwargs['locker_id']).name
+    locker_owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    if request.method == 'POST':
+        new_locker_name = request.POST.get('edit-locker')
+        new_owner = request.POST.get('edit-owner')
+        error = ""
+        if new_locker_name:
+            locker.name(new_locker_name)
+
+
+
+
+        return JsonResponse({'user_id': user.id})
