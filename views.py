@@ -1,4 +1,4 @@
-
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
@@ -13,14 +13,14 @@ from django.core.mail.message import EmailMessage
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
-from templated_email import get_templated_mail
 
-from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet
+from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
 
-import json
+import datetime, json, requests
 
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
+
 
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
@@ -33,7 +33,7 @@ class LockerListView(generic.ListView):
         return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
 
 
- 
+
 
 class LockerSubmissionView(generic.ListView):
     template_name = 'datalocker/submission_list.html'
@@ -49,7 +49,7 @@ class LockerSubmissionView(generic.ListView):
         context['selected_fields'] = self.selected_fields
         context['column_headings'] = ['Submitted Date', ] + self.selected_fields
         context['data'] = []
-        for submission in self.locker.submissions.all():
+        for submission in self.locker.submissions.all().order_by('-timestamp'):
             entry = [submission.id, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
                 if field in self.selected_fields:
@@ -84,6 +84,82 @@ class LockerSubmissionView(generic.ListView):
 
 
 
+class SubmissionAPIView(View):
+    # currently adds a locker with the following inputs:
+    # form_identifier of 'identifier'
+    # form_url of 'url'
+    # name of 'name'
+    # owner of 'owner'
+    # all values are dummy values, we need to pull the values off of the web form
+    # creation
+    def create_locker(identifier, name, url, owner):
+        locker, created = Locker.objects.get_or_create(
+            form_identifier=identifier,
+            defaults={
+                'name':name,
+                'form_url':url,
+                'owner': owner,
+            }
+        )
+        return locker
+
+    locker = []
+    url = 'http://cookie.jsontest.com/'
+    response = requests.get(url)
+    data = response.json()
+    data = json.dumps(data)
+    identifier = "4051"
+    owner = "das66"
+    users = []
+    name = "Python Created Locker"
+    address = User.objects.get(username=owner)
+    email = address.email
+    submission = Submission()
+    lockerurl = 'http://10.18.55.20:8000/datalocker/'
+
+    try:
+        exists = Locker.objects.get(form_identifier=identifier)
+        archived = Locker.objects.get(form_identifier=identifier).archive_timestamp
+        if exists and archived != None:
+            identifier += '-active'
+            create_locker(identifier, name, url, owner)
+            submission.locker = Locker.objects.get(form_identifier=identifier)
+            lockerid = Locker.objects.get(form_identifier=identifier).id
+            record = Submission.objects.all().order_by('-id')[0]
+            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+            subject = 'New Form Submission Recevied'
+            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
+        elif exists and archived == None:
+            create_locker(identifier, name, url, owner)
+            submission.locker = Locker.objects.get(form_identifier=identifier)
+            lockerid = Locker.objects.get(form_identifier=identifier).id
+            record = Submission.objects.all().order_by('-id')[0]
+            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+            subject = 'New Form Submission Recevied'
+            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
+    except:
+        create_locker(identifier, name, url, owner)
+        submission.locker = Locker.objects.get(form_identifier=identifier)
+        lockerid = Locker.objects.get(form_identifier=identifier).id
+        record = Submission.objects.all().order_by('-id')[0]
+        lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+        subject = 'New Locker Created'
+        message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
+    submission.data=data
+    submission.save()
+
+    # code to send an email to the above address
+    # Uncomment to send and receive the emails, tired of getting hundreds of emails
+    # send_mail(
+    #     subject,
+    #     message,
+    #     'eeqsys@psu.edu',
+    #     [email],
+    # )
+
+
+
+
 class SubmissionView(generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
@@ -91,11 +167,15 @@ class SubmissionView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
+        context['oldest_disabled'] = True if self.object.id == self.object.oldest() else False
+        context['older_disabled'] = True if self.object.id == self.object.older() else False
+        context['newer_disabled'] = True if self.object.id == self.object.newer() else False
+        context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         return context
 
 
 
-def locker_users(request, locker_id):    
+def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
         users = []
@@ -111,29 +191,30 @@ def locker_users(request, locker_id):
 
 
 
+
 class LockerUserAdd(View):
-    
-    
-    def post(self, *args, **kwargs):        
+
+
+    def post(self, *args, **kwargs):
         user = get_object_or_404(User, email=self.request.POST.get('email', ''))
-        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])               
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
         if not user in locker.users.all():
-            locker.users.add(user)        
+            locker.users.add(user)
             locker.save()
         user_dict = {}
         for key,value in model_to_dict(user).iteritems():
             if key in public_fields:
-                user_dict[key] = value                
-        name = Locker.objects.get(id=kwargs['locker_id'])           
+                user_dict[key] = value
+        name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
         from_email = 'eeqsys@psu.edu'
         to = self.request.POST.get('email', "")
         body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it:'
-        email = EmailMessage(subject, 
-           body, 
+        email = EmailMessage(subject,
+           body,
            from_email,
-           [to])                        
-        email.send()         
+           [to])
+        email.send()
         return JsonResponse(user_dict)
 
 
@@ -141,9 +222,9 @@ class LockerUserAdd(View):
 class LockerUserDelete(View):
 
 
-    def post(self , *args, **kwargs):       
+    def post(self , *args, **kwargs):
         user = get_object_or_404(User, id=self.request.POST.get('id', ''))
-        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])  
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
         if user in locker.users.all():
             locker.users.remove(user)
             locker.save()
@@ -152,13 +233,13 @@ class LockerUserDelete(View):
 
 
 
-def modify_locker(request, **kwargs): 
-    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])    
-    locker_name = locker.name 
-    locker_owner = locker.owner    
+def modify_locker(request, **kwargs):
+    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+    locker_name = locker.name
+    locker_owner = locker.owner
     if request.method == 'POST':
         new_locker_name = request.POST.get('edit-locker')
-        new_owner = request.POST.get('edit-owner')        
+        new_owner = request.POST.get('edit-owner')
         if new_locker_name != "":
              locker.name = new_locker_name
              locker.save()
