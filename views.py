@@ -1,5 +1,4 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
-from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
@@ -14,7 +13,6 @@ from django.core.mail.message import EmailMessage
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
-from templated_email import get_templated_mail
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
 

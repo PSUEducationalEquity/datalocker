@@ -61,11 +61,6 @@ Locker.add = function ()
 Locker.delete = function (user_id)
 {
     // submit the request
-    var email = $("#email").val();
-    var deleteUrl = $("#tag-list").attr("data-url")
-    Locker.deleteRequest = $.ajax({
-        url: deleteUrl,
-        type: "post",
     var deleteUrl =  $("#existing-users").attr("data-delete-url");
     var locker_id = $("#dialog-edit-users").attr("data-locker-id");
 
