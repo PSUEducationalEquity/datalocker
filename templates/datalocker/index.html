@@ -150,11 +150,7 @@
              <label for="edit-owner">Owner</label>
                <input type="text" name="edit-owner" class="form-control"  id="edit-owner" placeholder="New Locker Owner"><br/>
             </div>
-            <div class="checkbox">
-              <label>
-               <input type="checkbox" name="edit-commenting"  id="edit-commenting"> Allow Commenting
-               </label>
-            </div>
+               <input type="checkbox" name="edit-commenting"  id="edit-commenting"> <label for="edit-commenting"> Allow Commenting</label>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" value="Done" />
@@ -174,7 +170,6 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
-
         $('#show-hide').click(function() {
           $('.archived').toggle();
         });
