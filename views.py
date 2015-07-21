@@ -108,7 +108,7 @@ class SubmissionAPIView(View):
     data = response.json()
     data = json.dumps(data)
     identifier = "4051"
-    owner = "das66"
+    owner = "hay110"
     users = []
     name = "Python Created Locker"
     address = User.objects.get(username=owner)
@@ -149,12 +149,12 @@ class SubmissionAPIView(View):
 
     # code to send an email to the above address
     # Uncomment to send and receive the emails, tired of getting hundreds of emails
-    # send_mail(
-    #     subject,
-    #     message,
-    #     'eeqsys@psu.edu',
-    #     [email],
-    # )
+    send_mail(
+        subject,
+        message,
+        'eeqsys@psu.edu',
+        [email],
+    )
 
 
 
@@ -207,8 +207,10 @@ class LockerUserAdd(View):
         name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
         from_email = 'eeqsys@psu.edu'
+        lockerurl = 'http://10.18.55.20:8000/datalocker/'
+        lockerurl += str(kwargs['locker_id']) + '/submissions'
         to = self.request.POST.get('email', "")
-        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it:'
+        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it: ' + lockerurl
         email = EmailMessage(subject,
            body,
            from_email,
