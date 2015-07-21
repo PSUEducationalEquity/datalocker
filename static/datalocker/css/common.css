@@ -14,6 +14,20 @@
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
+.dl-horizontal dt {
+  float: left;
+  width: 500px;
+  clear: left;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size:16px;
+}
+.dl-horizontal dd {
+  margin-left: 200px;
+  line-height: 2.5;
+  font-size:16px;
+}
 .pagination {
   margin: .5em;
 }
@@ -45,8 +59,6 @@
   padding-bottom: 1em;
 }
 
-
-
 /*-----------CCS for the Toggle Switch -------------------------*/
 
 .onoffswitch {
@@ -73,7 +85,7 @@
     content: "OFF";
     padding-left: 10px;
     background-color: #EEEEEE; color: #999999;
-  
+
 }
 .onoffswitch-inner:after {
     content: "ON";
@@ -87,13 +99,13 @@
     position: absolute; top: 0; bottom: 0;
     right: 56px;
     border: 2px solid #999999; border-radius: 20px;
-    transition: all 0.3s ease-in 0s; 
+    transition: all 0.3s ease-in 0s;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
     margin-left: 0;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px; 
+    right: 0px;
 }
 
 /*-----------End code for the toggle switch --------*/
