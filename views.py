@@ -20,6 +20,8 @@ import datetime, json, requests
 
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
+from_email = 'eeqsys@psu.edu'
+site_url = 'http://10.18.55.20:8000/datalocker/'
 
 
 class LockerListView(generic.ListView):
@@ -114,7 +116,6 @@ class SubmissionAPIView(View):
     address = User.objects.get(username=owner)
     email = address.email
     submission = Submission()
-    lockerurl = 'http://10.18.55.20:8000/datalocker/'
 
     try:
         exists = Locker.objects.get(form_identifier=identifier)
@@ -125,25 +126,25 @@ class SubmissionAPIView(View):
             submission.locker = Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
             record = Submission.objects.all().order_by('-id')[0]
-            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+            site_url += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
-            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
+            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + site_url
         elif exists and archived == None:
             create_locker(identifier, name, url, owner)
             submission.locker = Locker.objects.get(form_identifier=identifier)
             lockerid = Locker.objects.get(form_identifier=identifier).id
             record = Submission.objects.all().order_by('-id')[0]
-            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+            site_url += str(lockerid) + '/submissions/' + str(record.id) + '/view'
             subject = 'New Form Submission Recevied'
-            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
+            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + site_url
     except:
         create_locker(identifier, name, url, owner)
         submission.locker = Locker.objects.get(form_identifier=identifier)
         lockerid = Locker.objects.get(form_identifier=identifier).id
         record = Submission.objects.all().order_by('-id')[0]
-        lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
+        site_url += str(lockerid) + '/submissions/' + str(record.id) + '/view'
         subject = 'New Locker Created'
-        message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
+        message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + site_url
     submission.data=data
     submission.save()
 
@@ -152,7 +153,7 @@ class SubmissionAPIView(View):
     send_mail(
         subject,
         message,
-        'eeqsys@psu.edu',
+        from_email,
         [email],
     )
 
@@ -206,11 +207,10 @@ class LockerUserAdd(View):
                 user_dict[key] = value
         name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
-        from_email = 'eeqsys@psu.edu'
-        lockerurl = 'http://10.18.55.20:8000/datalocker/'
-        lockerurl += str(kwargs['locker_id']) + '/submissions'
+        site_url = 'http://10.18.55.20:8000/datalocker/'
+        site_url += str(kwargs['locker_id']) + '/submissions'
         to = self.request.POST.get('email', "")
-        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it: ' + lockerurl
+        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it: ' + site_url
         email = EmailMessage(subject,
            body,
            from_email,
@@ -232,6 +232,44 @@ class LockerUserDelete(View):
         return JsonResponse({'user_id': user.id})
 
 
+
+
+def archive_locker(request, **kwargs):
+    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+    owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    if request.method == 'POST':
+        locker.archive_timestamp = datetime.datetime.now()
+        locker.save()
+    subject = 'Locker Has Been Archived'
+    message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
+    address = User.objects.get(username=owner)
+    email = address.email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [email],
+    )
+    return HttpResponseRedirect(reverse('datalocker:index'))
+
+
+def unarchive_locker(request, **kwargs):
+    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+    owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    if request.method == 'POST':
+        locker.archive_timestamp = None
+        locker.save()
+    subject = 'Locker Has Been Unarchived'
+    message = "One of your lockers has been archived. The locker that has been archived is " + locker.name
+    address = User.objects.get(username=owner)
+    email = address.email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [email],
+    )
+    return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 def modify_locker(request, **kwargs):

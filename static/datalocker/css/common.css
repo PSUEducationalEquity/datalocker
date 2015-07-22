@@ -15,6 +15,9 @@
     $GENERAL
 \*------------------------------------*/
 /* Automatically hides archived classes by default on page load */
+.archive-button {
+  float: right;
+}
 .archived {
   display: none;
 }

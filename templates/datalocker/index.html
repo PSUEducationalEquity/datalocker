@@ -38,6 +38,7 @@
                   <td>
                     <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
                     <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
+                    <button type="button" class="btn btn-default btn-xs archive-button" id="unarchive-button" role="unarchive-locker" title="UnArchive this locker">UnArchive Locker</button>
                   </td>
                 </tr>
               {% else %}
@@ -49,6 +50,7 @@
                   <td>
                     <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
                     <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
+                    <button type="button" class="btn btn-default btn-xs archive-button" id="archive-button" role="archive-locker" title="Archive this locker">Archive Locker</button>
                   </td>
                 </tr>
               {% endif %}
@@ -179,4 +181,6 @@
             src=" {% static 'datalocker/js/tablesorter.js' %}" ></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/locker.js' %}" ></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/archiving.js' %}"></script>
 {% endblock site-scripts %}

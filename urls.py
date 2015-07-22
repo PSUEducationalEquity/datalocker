@@ -3,10 +3,14 @@ from django.conf.urls import patterns, url
 from datalocker import views
 
 urlpatterns = patterns('',
-    url(r'^(?P<locker_id>[0-9]+)/users$', views.locker_users,
-        name='locker_users'),
+    url(r'^(?P<locker_id>[0-9]+)/archive$', views.archive_locker,
+        name='archive_locker'),
+    url(r'^(?P<locker_id>[0-9]+)/unarchive$', views.unarchive_locker,
+        name='unarchive_locker'),
     url(r'^(?P<locker_id>[0-9]+)/modify$', views.modify_locker,
         name='modify_locker'),
+    url(r'^(?P<locker_id>[0-9]+)/users$', views.locker_users,
+        name='locker_users'),
     url(r'^(?P<locker_id>[0-9]+)/users/delete$', views.LockerUserDelete.as_view(),
         name='locker_user_delete'),
     url(r'^(?P<locker_id>[0-9]+)/users/add$', views.LockerUserAdd.as_view(),
