@@ -6,28 +6,44 @@
  * is the button run by the top onClick function. The button with the id="unarchive-button"
  * is the button run by the second onClick function.
  */
+Locker.archive = function(id){
+    $.ajax({
+        url: '/datalocker/' + id + '/archive',
+        type: 'POST',
+        data: {
+            id: id,
+            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+        },
+        success: function(data){
+            $('#locker-list tr[data-id=' + id + "]").remove();
+        }
+    });
+}
+
+Locker.unarchive = function(id) {
+    $.ajax({
+        url: '/datalocker/' + id + '/unarchive',
+        type: 'POST',
+        data: {
+            id: id,
+            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+        },
+        success: function(data){
+            $('#locker-list tr[data-id=' + id + "]").remove();
+        }
+    });
+}
 
 $(document).ready(function(){
     $('#archive-button').click(function(){
+        event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
-        $.ajax({
-            url: '/datalocker/' + id + '/archive',
-            type: 'POST',
-            data: {
-                id: id,
-                csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-            }
-        });
+        Locker.archive(id);
+
     });
     $('#unarchive-button').click(function(){
+        event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
-        $.ajax({
-            url: '/datalocker/' + id + '/unarchive',
-            type: 'POST',
-            data: {
-                id: id,
-                csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-            }
-        });
+        Locker.unarchive(id);
     });
 });
