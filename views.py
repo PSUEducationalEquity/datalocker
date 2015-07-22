@@ -253,6 +253,23 @@ def archive_locker(request, **kwargs):
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+def modify_locker(request, **kwargs):
+    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+    locker_name = locker.name
+    locker_owner = locker.owner
+    if request.method == 'POST':
+        new_locker_name = request.POST.get('edit-locker')
+        new_owner = request.POST.get('edit-owner')
+        if new_locker_name != "":
+             locker.name = new_locker_name
+             locker.save()
+        if new_owner != "":
+            user = User.objects.get(email=new_owner).username
+            locker.owner = user
+            locker.save()
+    return HttpResponseRedirect(reverse('datalocker:index'))
+
+
 def unarchive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
@@ -272,18 +289,4 @@ def unarchive_locker(request, **kwargs):
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-def modify_locker(request, **kwargs):
-    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    locker_name = locker.name
-    locker_owner = locker.owner
-    if request.method == 'POST':
-        new_locker_name = request.POST.get('edit-locker')
-        new_owner = request.POST.get('edit-owner')
-        if new_locker_name != "":
-             locker.name = new_locker_name
-             locker.save()
-        if new_owner != "":
-            user = User.objects.get(email=new_owner).username
-            locker.owner = user
-            locker.save()
-    return HttpResponseRedirect(reverse('datalocker:index'))
+
