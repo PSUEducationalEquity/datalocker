@@ -21,6 +21,9 @@
 .archived {
   display: none;
 }
+.archived .js-archived-label {
+  display: inline;
+}
 .dl-horizontal dt {
   float: left;
   width: 500px;
@@ -37,6 +40,9 @@
 }
 .header {
   background-color: #AAAAAA
+}
+.js-archived-label {
+  display: none;
 }
 .pagination {
   margin: .5em;

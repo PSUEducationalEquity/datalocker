@@ -237,9 +237,8 @@ class LockerUserDelete(View):
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
-    if request.method == 'POST':
-        locker.archive_timestamp = datetime.datetime.now()
-        locker.save()
+    locker.archive_timestamp = datetime.datetime.now()
+    locker.save()
     subject = 'Locker Has Been Archived'
     message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
     address = User.objects.get(username=owner)
@@ -250,7 +249,10 @@ def archive_locker(request, **kwargs):
         from_email,
         [email],
     )
-    return HttpResponseRedirect(reverse('datalocker:index'))
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 def modify_locker(request, **kwargs):

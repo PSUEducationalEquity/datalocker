@@ -6,44 +6,60 @@
  * is the button run by the top onClick function. The button with the id="unarchive-button"
  * is the button run by the second onClick function.
  */
-Locker.archive = function(id){
-    $.ajax({
-        url: '/datalocker/' + id + '/archive',
-        type: 'POST',
-        data: {
-            id: id,
-            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-        },
-        success: function(data){
-            $('#locker-list tr[data-id=' + id + "]").remove();
-        }
-    });
-}
+(function (Locker, $, undefined)
+{
 
-Locker.unarchive = function(id) {
-    $.ajax({
-        url: '/datalocker/' + id + '/unarchive',
-        type: 'POST',
-        data: {
-            id: id,
-            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-        },
-        success: function(data){
-            $('#locker-list tr[data-id=' + id + "]").remove();
-        }
-    });
-}
+    Locker.archive = function(id){
+        $.ajax({
+            url: '/datalocker/' + id + '/archive',
+            type: 'POST',
+            data: {
+                id: id,
+                csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(data){
+                $("#locker-list tr[data-id='" + id + "']").addClass('archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html('Unarchive Locker');
+            }
+        });
+    }
+
+    Locker.unarchive = function(id) {
+        $.ajax({
+            url: '/datalocker/' + id + '/unarchive',
+            type: 'POST',
+            data: {
+                id: id,
+                csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(data){
+                $('#locker-list tr[data-id=' + id + "]").removeClass('archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html('Archive Locker');
+            }
+        });
+    }
+}( window.Locker = window.Locker || {}, jQuery));
 
 $(document).ready(function(){
-    $('#archive-button').click(function(){
+    $("[role='archive-locker']").on("click", function (event){
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
-        Locker.archive(id);
-
+        if ($(this).html() == "Archive Locker"){
+            Locker.archive(id);
+        }
+        else {
+            Locker.unarchive(id);
+        }
     });
-    $('#unarchive-button').click(function(){
-        event.preventDefault();
-        var id = $(this).closest("tr").attr("data-id");
-        Locker.unarchive(id);
+    $("#show-hide").click(function() {
+      $('.archived').toggle();
+      if ($(this).html() == "Show Archived Lockers"){
+            $(this).addClass('active');
+            $(this).html('Hide Archived Lockers');
+        }
+        else {
+            $(this).removeClass('active');
+            $(this).html('Show Archived Lockers');
+        }
     });
 });

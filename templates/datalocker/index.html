@@ -10,7 +10,7 @@
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
         <div style="float:right; margin-top:0;">
-          <button name="show-hide-lockers" id="show-hide" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show/Hide</button>
+          <button name="show-hide-lockers" id="show-hide" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
         </div>
       </ol>
       <h1><i>My Lockers</i></h1>
@@ -32,25 +32,26 @@
                 <tr class="archived" data-id="{{ locker.id }}">
                   <td>
                       <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                      <span class="label label-warning" style="margin-left:.5em;">Archived</span>
+                      <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
                   </td>
                   <td>{{ locker.latest_submission }}</td>
                   <td>
                     <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
                     <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
-                    <button type="button" class="btn btn-default btn-xs archive-button" id="unarchive-button" role="unarchive-locker" title="UnArchive this locker" data-id="unarchive-{{ locker.id }}">UnArchive Locker</button>
+                    <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Unarchive Locker</button>
                   </td>
                 </tr>
               {% else %}
                 <tr data-id="{{ locker.id }}">
                   <td>
                       <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                      <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
                   </td>
                   <td>{{ locker.latest_submission }}</td>
                   <td>
                     <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
                     <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
-                    <button type="button" class="btn btn-default btn-xs archive-button" id="archive-button" role="archive-locker" title="Archive this locker" data-id="archive-{{ locker.id }}">Archive Locker</button>
+                    <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Archive Locker</button>
                   </td>
                 </tr>
               {% endif %}
@@ -172,9 +173,6 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
-        $('#show-hide').click(function() {
-          $('.archived').toggle();
-        });
       });
     </script>
     <script type="text/javascript"
