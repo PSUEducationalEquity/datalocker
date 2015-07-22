@@ -32,6 +32,9 @@
   line-height: 2.5;
   font-size:16px;
 }
+.header {
+  background-color: #AAAAAA
+}
 .pagination {
   margin: .5em;
 }
