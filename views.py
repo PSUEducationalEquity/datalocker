@@ -1,10 +1,8 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response , get_object_or_404
-from django.views import generic
-from django.views.generic import View
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
@@ -13,6 +11,9 @@ from django.core.mail.message import EmailMessage
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
+from django.views import generic
+from django.views.generic import View
+from django.views.decorators.http import require_http_methods
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
 
@@ -85,77 +86,38 @@ class LockerSubmissionView(generic.ListView):
 
 
 
-class SubmissionAPIView(View):
-    # currently adds a locker with the following inputs:
-    # form_identifier of 'identifier'
-    # form_url of 'url'
-    # name of 'name'
-    # owner of 'owner'
-    # all values are dummy values, we need to pull the values off of the web form
-    # creation
-    def create_locker(identifier, name, url, owner):
-        locker, created = Locker.objects.get_or_create(
-            form_identifier=identifier,
-            defaults={
-                'name':name,
-                'form_url':url,
-                'owner': owner,
+@require_http_methods(["POST"])
+def form_submission_view(request, **kwargs):
+    """
+    Handles form submissions from outside applications to be saved in lockers.
+    """
+    locker, created = Locker.objects.get_or_create(
+        form_identifier=request.POST.get('form-id', ''),
+        archive_timestamp=None,
+        defaults={
+            'name': request.POST.get('name', 'New Locker'),
+            'form_url': request.POST.get('url', ''),
+            'owner': request.POST.get('owner', ''),
             }
         )
-        return locker
-
-    locker = []
-    url = 'http://cookie.jsontest.com/'
-    response = requests.get(url)
-    data = response.json()
-    data = json.dumps(data)
-    identifier = "4051"
-    owner = "das66"
-    users = []
-    name = "Python Created Locker"
-    address = User.objects.get(username=owner)
-    email = address.email
-    submission = Submission()
-
-    try:
-        exists = Locker.objects.get(form_identifier=identifier)
-        archived = Locker.objects.get(form_identifier=identifier).archive_timestamp
-        if exists and archived != None:
-            identifier += '-active'
-            create_locker(identifier, name, url, owner)
-            submission.locker = Locker.objects.get(form_identifier=identifier)
-            lockerid = Locker.objects.get(form_identifier=identifier).id
-            record = Submission.objects.all().order_by('-id')[0]
-            site_url += str(lockerid) + '/submissions/' + str(record.id) + '/view'
-            subject = 'New Form Submission Recevied'
-            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + site_url
-        elif exists and archived == None:
-            create_locker(identifier, name, url, owner)
-            submission.locker = Locker.objects.get(form_identifier=identifier)
-            lockerid = Locker.objects.get(form_identifier=identifier).id
-            record = Submission.objects.all().order_by('-id')[0]
-            site_url += str(lockerid) + '/submissions/' + str(record.id) + '/view'
-            subject = 'New Form Submission Recevied'
-            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + site_url
-    except:
-        create_locker(identifier, name, url, owner)
-        submission.locker = Locker.objects.get(form_identifier=identifier)
-        lockerid = Locker.objects.get(form_identifier=identifier).id
-        record = Submission.objects.all().order_by('-id')[0]
-        site_url += str(lockerid) + '/submissions/' + str(record.id) + '/view'
-        subject = 'New Locker Created'
-        message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + site_url
-    submission.data=data
+    submission = Submission(
+        locker = locker,
+        data = request.POST.get('data', ''),
+        )
     submission.save()
 
-    # code to send an email to the above address
-    # Uncomment to send and receive the emails, tired of getting hundreds of emails
-    send_mail(
-        subject,
-        message,
-        from_email,
-        [email],
-    )
+    address = User.objects.get(username=request.POST.get('owner', '')).email
+    subject = "%s - new submission - Data Locker" % request.POST.get('name', 'New Locker')
+    message = "Data Locker: new form submission saved\n\n" \
+        "Form: %s\n\n" \
+        "View submission: %s\n" \
+        "View all submissions: %s\n" % (
+            request.POST.get('name', 'New Locker'),
+            reverse('datalocker:submissions_view', kwargs={'locker_id': locker.id, 'pk': submission.id}),
+            reverse('datalocker:submissions_list', kwargs={'locker_id': locker.id,}),
+            )
+    send_mail(subject, message, from_email, [address])
+    return HttpResponse(status=201)
 
 
 
