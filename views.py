@@ -207,7 +207,6 @@ class LockerUserAdd(View):
                 user_dict[key] = value
         name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
-        site_url = 'http://10.18.55.20:8000/datalocker/'
         site_url += str(kwargs['locker_id']) + '/submissions'
         to = self.request.POST.get('email', "")
         body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it: ' + site_url
