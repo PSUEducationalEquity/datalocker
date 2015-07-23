@@ -181,12 +181,10 @@ class Submission(models.Model):
         auto_now_add=True,
         )
     data = models.TextField(blank=True)
-
-
-    # deleted = models.DateTimeField(
-    #     auto_now=False,
-    #     auto_now_add=True,
-    #     )
+    deleted = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=True,
+        )
 
     def __str__(self):
         return str(self.locker)
