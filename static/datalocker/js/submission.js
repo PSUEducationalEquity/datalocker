@@ -11,43 +11,41 @@
 
 
 
-Submission.delete = function ()
+Submission.delete = function (locker_id, id)
 {
     // submit the request
-    var id = $("tr").attr("data-id");
-    var deleteUrl = $("#delete_undelete_form").attr("data-url");           
+   
+    
     Submission.addRequest = $.ajax({
-        url: deleteUrl,
+        url: '/datalocker/'+locker_id+'/submissions/' + id + '/delete_submission',
         type: "post",
         data: {
             id: id,
             csrfmiddlewaretoken: $("#delete_undelete_form").find("input[name='csrfmiddlewaretoken']").val()
               },
         success: function(data){
-            $("#submission-list tr[data-id'"id +"']").addClass('delete');
-            $("#submission-list tr[data-id'"+id +"'] button[role='delete']").html('Undelete');      
+            $("#submission-list tr[data-id='" + id +"']").addClass('deleted');
+            $("#submission-list tr[data-id='" + id +"'] button[role='delete']").html('Undelete');      
 
         }
     });      
 }
 
 
-Submission.undelete = function ()
+Submission.undelete = function (locker_id, id)
 {
-    // submit the request
-    var undeleteUrl =  $("#existing-users").attr("data-delete-url");
-    var id = $("tr").attr("data-id");
+    // submit the request   
 
     Submission.undeleteRequest = $.ajax({
-        url: undeleteUrl.replace("/0/", "/" + Submission_id +"/"),
+        url: '/datalocker/'+locker_id+'/submissions/' + id + '/undelete_submission',
         type: "post",      
         data: {
             id : id,
             csrfmiddlewaretoken: $("#delete_undelete_form").find("input[name='csrfmiddlewaretoken']").val()
               },
         success: function(data){
-            $("#submission-list tr[data-id'"+id +"']").removeClass('delete');
-            $("#submission-list tr[data-id'"+id +"'] button[role='delete']").html('Delete');      
+            $("#submission-list tr[data-id='"+id +"']").removeClass('deleted');
+            $("#submission-list tr[data-id='"+id +"'] button[role='delete']").html('Delete');      
 
         }     
     });    
@@ -56,24 +54,24 @@ Submission.undelete = function ()
 
 
 $(document).ready(function (){   
-    $('#delete').click(function(){
+   
     $("[role='delete']").on("click", function (event){
         event.preventDefault();        
-        Submission.delete(id);
+        var id = $(this).closest("tr").attr("data-id");
+        var locker_id = $(this).closest("tr").attr("locker-id");       
         if ($(this).html() == "Delete"){
-            Submission.delete(id);
+            Submission.delete(locker_id, id );
+            $(this).html('Undelete');
         }
         else {
-            Submission.undelete(id);
+            Submission.undelete(locker_id, id);  
+             $(this).html('Delete');          
         }
      });
-    $('#unarchive-button').click(function(){
-        event.preventDefault();
-        Submission.unarchive(id);
-});
-    $(".onoffswitch-checkbox").on("click", function (event) {       
-      $("#delete").toggle();
-    });
-  
 
+    $(".onoffswitch-checkbox").on("click", function (event) {       
+        var id = $(this).closest("tr").attr("data-id");
+      $(".delete-button").toggle();
+      $(".deleted").toggle();
+    });
 });

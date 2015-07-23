@@ -50,7 +50,7 @@ class LockerSubmissionView(generic.ListView):
         context['column_headings'] = ['Submitted Date', ] + self.selected_fields
         context['data'] = []
         for submission in self.locker.submissions.all().order_by('-timestamp'):
-            entry = [submission.id, submission.timestamp, ]
+            entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
                 if field in self.selected_fields:
                     entry.append(value)
@@ -82,80 +82,6 @@ class LockerSubmissionView(generic.ListView):
         return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
 
 
-
-
-class SubmissionAPIView(View):
-    # currently adds a locker with the following inputs:
-    # form_identifier of 'identifier'
-    # form_url of 'url'
-    # name of 'name'
-    # owner of 'owner'
-    # all values are dummy values, we need to pull the values off of the web form
-    # creation
-    def create_locker(identifier, name, url, owner):
-        locker, created = Locker.objects.get_or_create(
-            form_identifier=identifier,
-            defaults={
-                'name':name,
-                'form_url':url,
-                'owner': owner,
-            }
-        )
-        return locker
-
-    locker = []
-    url = 'http://cookie.jsontest.com/'
-    response = requests.get(url)
-    data = response.json()
-    data = json.dumps(data)
-    identifier = "4051"
-    owner = "das66"
-    users = []
-    name = "Python Created Locker"
-    address = User.objects.get(username=owner)
-    email = address.email
-    submission = Submission()
-    lockerurl = 'http://10.18.55.20:8000/datalocker/'
-
-    try:
-        exists = Locker.objects.get(form_identifier=identifier)
-        archived = Locker.objects.get(form_identifier=identifier).archive_timestamp
-        if exists and archived != None:
-            identifier += '-active'
-            create_locker(identifier, name, url, owner)
-            submission.locker = Locker.objects.get(form_identifier=identifier)
-            lockerid = Locker.objects.get(form_identifier=identifier).id
-            record = Submission.objects.all().order_by('-id')[0]
-            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
-            subject = 'New Form Submission Recevied'
-            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
-        elif exists and archived == None:
-            create_locker(identifier, name, url, owner)
-            submission.locker = Locker.objects.get(form_identifier=identifier)
-            lockerid = Locker.objects.get(form_identifier=identifier).id
-            record = Submission.objects.all().order_by('-id')[0]
-            lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
-            subject = 'New Form Submission Recevied'
-            message = 'There was a recent submission to the ' + name + '\nView your new submissions at ' + lockerurl
-    except:
-        create_locker(identifier, name, url, owner)
-        submission.locker = Locker.objects.get(form_identifier=identifier)
-        lockerid = Locker.objects.get(form_identifier=identifier).id
-        record = Submission.objects.all().order_by('-id')[0]
-        lockerurl += str(lockerid) + '/submissions/' + str(record.id) + '/view'
-        subject = 'New Locker Created'
-        message = 'A new locker ' + name + ' was created due to a new form submission \nView your new submissions at ' + lockerurl
-    submission.data=data
-    submission.save()
-
-    # code to send an email to the above address
-    # Uncomment to send and receive the emails, tired of getting hundreds of emails
-    # send_mail(
-    #     subject,
-    #     message,
-    #     'eeqsys@psu.edu',
-    #     [email],
-    # )
 
 
 
@@ -251,15 +177,19 @@ def modify_locker(request, **kwargs):
 
 
 def delete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['submission_id'])    
-    if request.method == 'POST':     
-        submission.deleted = datetime.datetime.now()
-        submission.save() 
-    return HttpResponseRedirect(reverse('datalocker:submission_list'))
+    submission = get_object_or_404(Submission, id=kwargs['pk'])   
+    submission.deleted = datetime.datetime.now()
+    submission.save() 
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:submission_list'))
 
 def undelete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['submission_id'])    
-    if request.method == 'POST':     
-        submission.deleted = datetime.datetime.now()
-        submission.save() 
-    return HttpResponseRedirect(reverse('datalocker:submission_list'))
+    submission = get_object_or_404(Submission, id=kwargs['pk'])           
+    submission.deleted = None
+    submission.save() 
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:submission_list'))

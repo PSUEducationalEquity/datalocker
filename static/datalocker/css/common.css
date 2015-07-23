@@ -47,13 +47,20 @@
   }
   
 
-  .dl-horizontal dd {
-    margin-left: 150px;
-    line-height: 2.5;
-    font-size:16px;
-  }
-#delete{
+.dl-horizontal dd {
+  margin-left: 150px;
+  line-height: 2.5;
+  font-size:16px;
+}
+.delete-button{
 display: none;
+}
+.deleted{
+  display: none;
+  text-decoration: line-through;
+}
+.undeleted-submission{
+  display: none;
 }
 /*-----------CCS for the Toggle Switch -------------------------*/
 .label_for_toggle{
