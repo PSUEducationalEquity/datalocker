@@ -274,9 +274,8 @@ def modify_locker(request, **kwargs):
 def unarchive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
-    if request.method == 'POST':
-        locker.archive_timestamp = None
-        locker.save()
+    locker.archive_timestamp = None
+    locker.save()
     subject = 'Locker Has Been Unarchived'
     message = "One of your lockers has been archived. The locker that has been archived is " + locker.name
     address = User.objects.get(username=owner)
