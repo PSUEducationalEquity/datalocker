@@ -1,3 +1,4 @@
+
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
@@ -11,14 +12,17 @@
         <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
     </ol>  
        {% if locker.owner = user.username %}
-     <div class="onoffswitch">
+
+  <div class="onoffswitch">
     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
     <label class="onoffswitch-label" for="myonoffswitch">
-        <span class="onoffswitch-inner"></span>
-        <span class="onoffswitch-switch"></span>
+       <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span> 
     </label>
 </div>
-
+       <div class="label_for_toggle">
+        Maintenance Mode 
+       </div>
         {% endif %}
         <h1>{{ locker.name }}</h1>
 
@@ -32,7 +36,7 @@
             </thead>
             <tbody>
               {% for submission in data %}
-                <tr  >
+                <tr class="delete" data-id="{{submission.0 }}" >
                   {% for value in submission %}
                     {% if forloop.counter > 1 %}
                       <td>
@@ -44,9 +48,16 @@
                         {% endif %}
 
                     {% endif %}
-                  {% endfor %}</td>
+                  {% endfor %}</td>                      
+                      </a>  
+                      {% if submission.deleted == null %}
                       <td>
-                      </a><input type="button" value="Delete" id="delete" class="delete" /></td>
+                        <form method="POST" id="delete_undelete_form" data-url="{% url 'datalocker:delete_submission' locker.id submission.0  %}" >
+                         {% csrf_token %}
+                         <input type="submit" value="Delete" id="delete"  />
+                      </td>
+                        </form>
+                      {% endif %}
                 </tr>
               {% endfor %}
             </tbody>
@@ -98,21 +109,13 @@
 {% block site-scripts %}
     {{ block.super }}
     <!-- JavaScript code to run the modal into the page when the button
-    is pressed -->
-    <script type="text/javascript">
-      $(document).ready(function (){
-        $("button[role='filter-results']").on("click", function (event){
-          $("#dialog-filter-results").modal('show');
-        });
-        $(".onoffswitch-checkbox").on("click", function (event) {       
-            $(".delete").toggle();
-        });
-      });
-    </script>
+    is pressed -->  
     <script type="text/javascript"
             src=" {% static 'datalocker/js/sortable.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/select-all.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/submission.js' %}"></script>
 {% endblock site-scripts %}
 
 

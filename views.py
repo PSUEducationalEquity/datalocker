@@ -248,3 +248,18 @@ def modify_locker(request, **kwargs):
             locker.owner = user
             locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
+
+
+def delete_submission(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['submission_id'])    
+    if request.method == 'POST':     
+        submission.deleted = datetime.datetime.now()
+        submission.save() 
+    return HttpResponseRedirect(reverse('datalocker:submission_list'))
+
+def undelete_submission(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['submission_id'])    
+    if request.method == 'POST':     
+        submission.deleted = datetime.datetime.now()
+        submission.save() 
+    return HttpResponseRedirect(reverse('datalocker:submission_list'))

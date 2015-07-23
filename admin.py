@@ -16,7 +16,7 @@ class DataLockerAdminSite(AdminSite):
 
 # Register your models here.
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ['id','locker','timestamp','data']
+    list_display = ['id','locker','timestamp','data','deleted']
 
 
 

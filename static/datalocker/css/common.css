@@ -36,24 +36,32 @@
 
   .dl-horizontal dt {
     float: left;
-    width: 500px;  
+    width: 550px;  
     clear: left;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-align: justify;
+    padding-left: 2em;
+    /*text-overflow: ellipsis;*/
+   /* white-space: nowrap;*/
     font-size:16px;
    
   }
+  
+
   .dl-horizontal dd {
-    margin-left: 200px;
+    margin-left: 150px;
     line-height: 2.5;
     font-size:16px;
   }
-.delete{
+#delete{
 display: none;
 }
 /*-----------CCS for the Toggle Switch -------------------------*/
-
+.label_for_toggle{
+  display: block;
+  position: relative;
+  float: right;
+  padding-right: 10px;
+}
 .onoffswitch {
     position: relative; float: right;width: 90px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
