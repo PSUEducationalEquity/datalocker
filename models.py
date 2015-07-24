@@ -181,11 +181,9 @@ class Submission(models.Model):
         auto_now_add=True,
         )
     data = models.TextField(blank=True)
-
-
     deleted = models.DateTimeField(
         blank=True,
-        null=True, 
+        null=True,
         )
 
     def __str__(self):
@@ -227,5 +225,3 @@ class Submission(models.Model):
     def newest(self):
         newestSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
         return newestSubmission.id
-
-    

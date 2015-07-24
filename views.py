@@ -1,10 +1,8 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response , get_object_or_404
-from django.views import generic
-from django.views.generic import View
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
@@ -13,6 +11,9 @@ from django.core.mail.message import EmailMessage
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
+from django.views import generic
+from django.views.generic import View
+from django.views.decorators.http import require_http_methods
 
 from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
 
@@ -20,6 +21,7 @@ import datetime, json, requests
 
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
+from_email = 'eeqsys@psu.edu'
 
 
 class LockerListView(generic.ListView):
@@ -29,7 +31,6 @@ class LockerListView(generic.ListView):
 
     def get_queryset(self):
         # Return all lockers for the current user
-        lastest_submission = Locker.objects.all()
         return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
 
 
@@ -85,6 +86,41 @@ class LockerSubmissionView(generic.ListView):
 
 
 
+@require_http_methods(["POST"])
+def form_submission_view(request, **kwargs):
+    """
+    Handles form submissions from outside applications to be saved in lockers.
+    """
+    locker, created = Locker.objects.get_or_create(
+        form_identifier=request.POST.get('form-id', ''),
+        archive_timestamp=None,
+        defaults={
+            'name': request.POST.get('name', 'New Locker'),
+            'form_url': request.POST.get('url', ''),
+            'owner': request.POST.get('owner', ''),
+            }
+        )
+    submission = Submission(
+        locker = locker,
+        data = request.POST.get('data', ''),
+        )
+    submission.save()
+
+    address = User.objects.get(username=request.POST.get('owner', '')).email
+    subject = "%s - new submission - Data Locker" % request.POST.get('name', 'New Locker')
+    message = "Data Locker: new form submission saved\n\n" \
+        "Form: %s\n\n" \
+        "View submission: %s\n" \
+        "View all submissions: %s\n" % (
+            request.POST.get('name', 'New Locker'),
+            reverse('datalocker:submissions_view', kwargs={'locker_id': locker.id, 'pk': submission.id}),
+            reverse('datalocker:submissions_list', kwargs={'locker_id': locker.id,}),
+            )
+    send_mail(subject, message, from_email, [address])
+    return HttpResponse(status=201)
+
+
+
 
 class SubmissionView(generic.DetailView):
     template_name = 'datalocker/submission_view.html'
@@ -133,15 +169,15 @@ class LockerUserAdd(View):
                 user_dict[key] = value
         name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
-        from_email = 'eeqsys@psu.edu'
         to = self.request.POST.get('email', "")
-        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it:'
+        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name
         email = EmailMessage(subject,
            body,
            from_email,
            [to])
         email.send()
         return JsonResponse(user_dict)
+
 
 
 
@@ -155,6 +191,29 @@ class LockerUserDelete(View):
             locker.users.remove(user)
             locker.save()
         return JsonResponse({'user_id': user.id})
+
+
+
+
+def archive_locker(request, **kwargs):
+    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+    owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    locker.archive_timestamp = datetime.datetime.now()
+    locker.save()
+    subject = 'Locker Has Been Archived'
+    message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
+    address = User.objects.get(username=owner)
+    email = address.email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [email],
+    )
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 
@@ -176,19 +235,44 @@ def modify_locker(request, **kwargs):
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+
+
+def unarchive_locker(request, **kwargs):
+    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+    owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    locker.archive_timestamp = None
+    locker.save()
+    subject = 'Locker Has Been Unarchived'
+    message = "One of your lockers has been archived. The locker that has been archived is " + locker.name
+    address = User.objects.get(username=owner)
+    email = address.email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [email],
+    )
+    return HttpResponseRedirect(reverse('datalocker:index'))
+
+
+
+
 def delete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])   
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
     submission.deleted = datetime.datetime.now()
-    submission.save() 
+    submission.save()
     if request.is_ajax():
         return JsonResponse({})
     else:
         return HttpResponseRedirect(reverse('datalocker:submission_list'))
 
+
+
+
 def undelete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])           
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
     submission.deleted = None
-    submission.save() 
+    submission.save()
     if request.is_ajax():
         return JsonResponse({})
     else:
