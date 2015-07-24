@@ -1,4 +1,4 @@
-
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.forms.models import model_to_dict
@@ -11,6 +11,7 @@ from collections import OrderedDict
 from .models import User
 
 import datetime, json
+
 
 
 ##
@@ -36,7 +37,6 @@ class LockerQuerySet(models.query.QuerySet):
             return Locker.objects.filter(owner=user) | Locker.objects.filter(users=user)
         else:
             return Locker.objects.filter(owner=user)
-
 
 
 
@@ -91,6 +91,7 @@ class Locker(models.Model):
         if archive_timestamp is None:
             return False
         return True
+
 
     def get_all_fields_list(self):
         try:
@@ -148,6 +149,7 @@ class Locker(models.Model):
 
 
 
+
 class LockerSetting(models.Model):
     category = models.CharField(max_length=255)
     setting = models.CharField(max_length=255)
@@ -179,7 +181,10 @@ class Submission(models.Model):
         auto_now_add=True,
         )
     data = models.TextField(blank=True)
-
+    deleted = models.DateTimeField(
+        blank=True,
+        null=True,
+        )
 
     def __str__(self):
         return str(self.locker)
@@ -194,3 +199,29 @@ class Submission(models.Model):
         result = model_to_dict(self)
         result['data'] = self.data_dict()
         return result
+
+
+    def newer(self):
+        try:
+            nextSubmission = Submission.objects.filter(locker=self.locker, id__gt=self.id)[0]
+        except IndexError:
+            nextSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
+        return nextSubmission.id
+
+
+    def older(self):
+        try:
+            lastSubmission = Submission.objects.filter(locker=self.locker, id__lt=self.id).order_by('-id')[0]
+        except IndexError:
+            lastSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
+        return lastSubmission.id
+
+
+    def oldest(self):
+        oldestSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
+        return oldestSubmission.id
+
+
+    def newest(self):
+        newestSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
+        return newestSubmission.id

@@ -1,4 +1,5 @@
 # History
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 
 ## 1.0 (2015-07-08)
 

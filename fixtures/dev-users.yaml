@@ -1,12 +1,13 @@
+###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 ---
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: par117@psu.edu
     first_name: Paul
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2015-01-14 15:08:22-05:00'
+    last_login: '2015-01-14 15:08:22+05:00'
     last_name: Rentschler
     password: pbkdf2_sha256$10000$IF2EIwH9oGe7$4TtpR9H/lvTi4UNi50kXFqz9NORd3wsq26SZXf5A1mg=
     user_permissions: []
@@ -14,13 +15,13 @@
   model: auth.user
   pk: 1
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: das66@psu.edu
     first_name: Dominick
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2014-08-14 13:59:38-05:00'
+    last_login: '2014-08-14 13:59:38+05:00'
     last_name: Stuck
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
     user_permissions: []
@@ -28,13 +29,13 @@
   model: auth.user
   pk: 2
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: hay110@psu.edu
     first_name: Hunter
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2014-08-14 13:59:38-05:00'
+    last_login: '2014-08-14 13:59:38+05:00'
     last_name: Yohn
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
     user_permissions: []
@@ -42,13 +43,13 @@
   model: auth.user
   pk: 3
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: map15@southhills.edu
     first_name: Matt
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2014-08-14 13:59:38-05:00'
+    last_login: '2014-08-14 13:59:38+05:00'
     last_name: Penning
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
     user_permissions: []
@@ -56,13 +57,13 @@
   model: auth.user
   pk: 4
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: coy16@southhills.edu
     first_name: Cory
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2014-08-14 13:59:38-05:00'
+    last_login: '2014-08-14 13:59:38+05:00'
     last_name: Yoder
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
     user_permissions: []
@@ -70,13 +71,13 @@
   model: auth.user
   pk: 5
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: dah16@southhills.edu
     first_name: Dustin
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2014-08-14 13:59:38-05:00'
+    last_login: '2014-08-14 13:59:38+05:00'
     last_name: Hagans
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
     user_permissions: []
@@ -84,13 +85,13 @@
   model: auth.user
   pk: 6
 - fields:
-    date_joined: '2014-08-14 13:59:38-05:00'
+    date_joined: '2014-08-14 13:59:38+05:00'
     email: cas11@southhills.edu
     first_name: Chase
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: '2014-08-14 13:59:38-05:00'
+    last_login: '2014-08-14 13:59:38+05:00'
     last_name: Smith
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
     user_permissions: []

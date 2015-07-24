@@ -1,3 +1,4 @@
+<!--Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.-->
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
@@ -5,22 +6,34 @@
 
 {% block content %}
     <div class="container-fluid">
-    {% if user.is_authenticated %}
-    <ol class="breadcrumb">
-        <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
-        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}"
-                >All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a></li>
-        <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
-    </ol>
-        <h1>{{ object.locker.name }}</h1>
-        <h5>Submission Data</h5>
-        <ul class="list-grid">
-            {% for key, value in object.data_dict.items %}
-            <li class="list-group-item data-listing rounding"><p class="submission-heading">{{ key }}</p>{{ value }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-    <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
-    {% endif %}
+        {% if user.is_authenticated %}
+            <ol class="breadcrumb">
+                <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
+                <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}"
+                        >All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a></li>
+                <li class="active"><span class="sr-only">{{ object.locker.name }}</span>Submission</li>
+            </ol>
+            <h1>{{ object.locker.name }}</h1>
+            <div class="pagination">
+                <a class="btn btn-default {% if newest_disabled %}disabled{% endif %}" role="group" aria-label="newest submission button" title="Newest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.newest %}"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span></a>
+                <a class="btn btn-default {% if newer_disabled %}disabled{% endif %}" role="group" aria-label="newer submission button" title="Newer Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.newer %}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
+                <a class="btn btn-default {% if older_disabled %}disabled{% endif %}" role="group" aria-label="older submission button" title="Older Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.older %}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
+                <a class="btn btn-default {% if oldest_disabled %}disabled{% endif %}" role="group" aria-label="oldest submission button" title="Oldest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.oldest %}"><span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span></a>
+            </div>
+            <dl class="dl-horizontal">
+                {% for key, value in object.data_dict.items %}
+                <dt>{{ key }}</dt>
+                <dd>{{ value }}</dd>
+                {% endfor %}
+            </dl>
+            <div class="pagination">
+                <a class="btn btn-default {% if newest_disabled %}disabled{% endif %}" role="group" aria-label="newest submission button" title="Newest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.newest %}"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span></a>
+                <a class="btn btn-default {% if newer_disabled %}disabled{% endif %}" role="group" aria-label="newer submission button" title="Newer Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.newer %}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
+                <a class="btn btn-default {% if older_disabled %}disabled{% endif %}" role="group" aria-label="older submission button" title="Older Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.older %}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
+                <a class="btn btn-default {% if oldest_disabled %}disabled{% endif %}" role="group" aria-label="oldest submission button" title="Oldest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.oldest %}"><span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span></a>
+            </div>
+        {% else %}
+            <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
+        {% endif %}
     </div>
 {% endblock %}
