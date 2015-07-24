@@ -51,7 +51,7 @@ $(document).ready(function(){
             Locker.unarchive(id);
         }
     });
-    $("#show-hide").click(function() {
+    $("#show-hide-archived").click(function() {
       $('.archived').toggle();
       if ($(this).html() == "Show Archived Lockers"){
             $(this).addClass('active');
