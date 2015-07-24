@@ -1,5 +1,5 @@
 /** Data Locker common styles **/
-/**Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+
 /*------------------------------------*\
     $CONTENTS
 \*------------------------------------*/
@@ -11,31 +11,41 @@
  * FOOTER...............Styling specifically for the page footer
  */
 
+
+
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
 /* Automatically hides archived classes by default on page load */
-.archive-button {
-  float: right;
-}
 .archived {
   display: none;
+}
+.archive-button {
+  float: right;
 }
 .archived .js-archived-label {
   display: inline;
 }
-.dl-horizontal dt {
-  float: left;
-  width: 500px;
-  clear: left;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size:16px;
+.deleted{
+  display: none;
+  text-decoration: line-through;
+}
+.delete-button{
+display: none;
 }
 .dl-horizontal dd {
-  margin-left: 200px;
+  margin-left: 150px;
   line-height: 2.5;
+  font-size:16px;
+}
+.dl-horizontal dt {
+  float: left;
+  width: 550px;
+  clear: left;
+  text-align: justify;
+  padding-left: 2em;
+  /*text-overflow: ellipsis;*/
+ /* white-space: nowrap;*/
   font-size:16px;
 }
 .header {
@@ -57,13 +67,6 @@
   font-size: 12px;
   font-weight: normal;
 }
-.sub-list {
-  margin-left: 2em;
-  font-size: 16px;
-}
-.sub-list dd {
-  padding-bottom: 1em;
-}
 .submission-heading {
   font-weight: bold;
 }
@@ -74,9 +77,16 @@
 .sub-list dd {
   padding-bottom: 1em;
 }
-
+.undeleted-submission{
+  display: none;
+}
 /*-----------CCS for the Toggle Switch -------------------------*/
-
+.label_for_toggle{
+  display: block;
+  position: relative;
+  float: right;
+  padding-right: 10px;
+}
 .onoffswitch {
     position: relative; float: right;width: 90px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
@@ -110,7 +120,7 @@
     text-align: right;
 }
 .onoffswitch-switch {
-    display: block; width: 15px; margin: 7px;
+    display: block; width: 16px; margin: 6px;
     background: #FFFFFF;
     position: absolute; top: 0; bottom: 2px;
     right: 56px;

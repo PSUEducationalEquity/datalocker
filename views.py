@@ -22,7 +22,6 @@ import datetime, json, requests
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
 from_email = 'eeqsys@psu.edu'
-site_url = 'http://10.18.55.20:8000/datalocker/'
 
 
 class LockerListView(generic.ListView):
@@ -52,7 +51,7 @@ class LockerSubmissionView(generic.ListView):
         context['column_headings'] = ['Submitted Date', ] + self.selected_fields
         context['data'] = []
         for submission in self.locker.submissions.all().order_by('-timestamp'):
-            entry = [submission.id, submission.timestamp, ]
+            entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
                 if field in self.selected_fields:
                     entry.append(value)
@@ -82,6 +81,7 @@ class LockerSubmissionView(generic.ListView):
         selected_fields_setting.value = json.dumps(selected_fields)
         selected_fields_setting.save()
         return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
+
 
 
 
@@ -169,15 +169,15 @@ class LockerUserAdd(View):
                 user_dict[key] = value
         name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
-        site_url += str(kwargs['locker_id']) + '/submissions'
         to = self.request.POST.get('email', "")
-        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name +  '\n'+'You may click here to view it: ' + site_url
+        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name
         email = EmailMessage(subject,
            body,
            from_email,
            [to])
         email.send()
         return JsonResponse(user_dict)
+
 
 
 
@@ -216,6 +216,8 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+
+
 def modify_locker(request, **kwargs):
     locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
     locker_name = locker.name
@@ -231,6 +233,8 @@ def modify_locker(request, **kwargs):
             locker.owner = user
             locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
+
+
 
 
 def unarchive_locker(request, **kwargs):
@@ -252,3 +256,24 @@ def unarchive_locker(request, **kwargs):
 
 
 
+
+def delete_submission(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    submission.deleted = datetime.datetime.now()
+    submission.save()
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:submission_list'))
+
+
+
+
+def undelete_submission(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    submission.deleted = None
+    submission.save()
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:submission_list'))

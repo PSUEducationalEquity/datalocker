@@ -5,7 +5,6 @@
 {% block page-meta-title %}My Lockers{% endblock page-meta-title %}
 
 {% block content %}
-
     <div class="container-fluid">
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
@@ -19,81 +18,81 @@
         {% if my_lockers_list|length == 0 %}
           <p>You have no lockers.</p>
         {% endif %}
-      <table class="table table-striped table-hover listing tablesorter" id="locker-list" name="locker listing">
-        <thead>
-          <tr class="header">
-            <th>Form Name</th>
-            <th colspan="2" style="text-align:left;">Latest Submission</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for locker in my_lockers_list %}
-            {% if locker.owner == user.username %}
-              {% if locker.archive_timestamp != null %}
-                <tr class="archived" data-id="{{ locker.id }}">
-                  <td>
-                      <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                      <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
-                  </td>
-                  <td>{{ locker.latest_submission }}</td>
-                  <td>
-                    <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
-                    <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
-                    <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Unarchive Locker</button>
-                  </td>
-                </tr>
-              {% else %}
-                <tr data-id="{{ locker.id }}">
-                  <td>
-                      <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                      <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
-                  </td>
-                  <td>{{ locker.latest_submission }}</td>
-                  <td>
-                    <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
-                    <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
-                    <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Archive Locker</button>
-                  </td>
-                </tr>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
-      <hr />
-      <div class="shared">
-        <h1><i>Lockers Shared with Me</i></h1>
-        <table class="table table-striped table-hover listing tablesorter" id="shared-locker-list" name="shared locker listing">
+        <table class="table table-striped table-hover listing tablesorter" id="locker-list" name="locker listing">
           <thead>
             <tr class="header">
               <th>Form Name</th>
-              <th>Latest Submission</th>
+            <th colspan="2" style="text-align:left;">Latest Submission</th>
             </tr>
           </thead>
           <tbody>
             {% for locker in my_lockers_list %}
-              {% if locker.owner != user.username %}
+              {% if locker.owner == user.username %}
                 {% if locker.archive_timestamp != null %}
-                <tr class="archived" data-id="{{ locker.id }}">
-                  <td>
-                      <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                      <span class="label label-warning" style="margin-left:.5em;">Archived</span>
-                  </td>
-                  <td>{{ locker.latest_submission }}</td>
-                </tr>
+                  <tr class="archived" data-id="{{ locker.id }}">
+                    <td>
+                        <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                        <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
+                    </td>
+                    <td>{{ locker.latest_submission }}</td>
+                    <td>
+                      <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
+                      <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
+                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Unarchive Locker</button>
+                    </td>
+                  </tr>
                 {% else %}
-                <tr data-id="{{ locker.id }}">
-                  <td>
-                      <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                  </td>
-                  <td>{{ locker.latest_submission }}</td>
-                </tr>
+                  <tr data-id="{{ locker.id }}">
+                    <td>
+                        <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                        <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
+                    </td>
+                    <td>{{ locker.latest_submission }}</td>
+                    <td>
+                      <button type="button" class="btn btn-info btn-sm" role="edit-users" title="Edit users for this locker">Users</button>
+                      <button type="button" class="btn btn-info btn-sm" role="edit-locker" title="Edit this locker">Edit Locker</button>
+                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Archive Locker</button>
+                    </td>
+                  </tr>
                 {% endif %}
               {% endif %}
             {% endfor %}
           </tbody>
         </table>
-      </div>
+        <hr />
+        <div class="shared">
+          <h1><i>Lockers Shared with Me</i></h1>
+          <table class="table table-striped table-hover listing tablesorter" id="shared-locker-list" name="shared locker listing">
+            <thead>
+              <tr class="header">
+                <th>Form Name</th>
+                <th>Latest Submission</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for locker in my_lockers_list %}
+                {% if locker.owner != user.username %}
+                  {% if locker.archive_timestamp != null %}
+                    <tr class="archived" data-id="{{ locker.id }}">
+                      <td>
+                          <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                          <span class="label label-warning" style="margin-left:.5em;">Archived</span>
+                      </td>
+                      <td>{{ locker.latest_submission }}</td>
+                    </tr>
+                  {% else %}
+                    <tr data-id="{{ locker.id }}">
+                      <td>
+                          <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                      </td>
+                      <td>{{ locker.latest_submission }}</td>
+                    </tr>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       {% else %}
         <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view the lockers you have access to</h4>
       {% endif %}
@@ -103,7 +102,7 @@
 
 <!-- MODALS CODE -->
 {% block dialogs %}
-<!-- Modal for editing the users of the locker -->
+<!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-users" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-users" aria-hidden="true" data-locker-id="0">
     <form method="POST" name="modalForm"  action="" data-url="{% url 'datalocker:locker_user_add' 0 %}">
       {% csrf_token %}
@@ -119,13 +118,9 @@
               <h5 clss="modal-title">Existing Users</h5>
               <ul id="existing-users" data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}" data-url="{% url 'datalocker:locker_users' 0 %}">
               </ul>
-              <label for="email">
+              <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text" name="email" id="email"  placeholder="Email Address">
-              <button type="submit" class="btn btn-info btn-sm" id="button-add-user" data-url="{% url 'datalocker:index' }">Add</button></label>
-            </div>
-            <div>
-              <input type="checkbox" name="email-users" id="email-users" />
-              <label for="email-users">Email users about new submissions</label>
+              <button type="submit" class="btn btn-info btn-sm" id="button-add-user">Add</button>
             </div>
           </div>
           <div class="modal-footer">
@@ -136,7 +131,8 @@
       </div>
     </form>
   </div>
-<!-- Modal for editing the locker -->
+
+<!-- Modal for filtering out the data shown in the submission list -->
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog" aria-labelledby="dialog-edit-locker-title" aria-hidden="true" data-locker-id="0">
     <form method="POST" name="modalLocker"  data-url="{% url 'datalocker:modify_locker' 0 %}">
       {% csrf_token %}

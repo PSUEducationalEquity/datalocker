@@ -21,7 +21,6 @@ Locker.add = function ()
 {
     // submit the request
     var email = $("#email").val();
-    var addUrl = $("#tag-list").attr("data-url")
     var addUrl = $("#dialog-edit-users form").attr("action");
     Locker.addRequest = $.ajax({
         url: addUrl,
