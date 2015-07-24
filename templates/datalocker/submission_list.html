@@ -10,18 +10,18 @@
     <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
         <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
-    </ol>  
+    </ol>
        {% if locker.owner = user.username %}
 
   <div class="onoffswitch">
     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
     <label class="onoffswitch-label" for="myonoffswitch">
        <span class="onoffswitch-inner"></span>
-        <span class="onoffswitch-switch"></span> 
+        <span class="onoffswitch-switch"></span>
     </label>
 </div>
        <div class="label_for_toggle">
-        Maintenance Mode 
+        Maintenance Mode
        </div>
         {% endif %}
         <h1>{{ locker.name }}</h1>
@@ -34,14 +34,14 @@
               {% endfor %}
             </thead>
             <tbody>
-              {% for submission in data %}               
+              {% for submission in data %}
                 <tr data-id="{{submission.0 }}" locker-id="{{locker.id}}" class="{% if submission.1 %}deleted{% else %}{% endif %}">
                   {% for value in submission %}
                     {% if forloop.counter > 2 %}
                       <td>
                         {% if forloop.counter == 3 %}
                           <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}" style="display:block;"
-                           >{{ value }}</a> 
+                           >{{ value }}</a>
                         {% else %}
                           {{ value }}
                         {% endif %}
@@ -49,10 +49,10 @@
                     {% endif %}
                   {% endfor %}
                       <td>
-                       
-                        <button type="button" role="delete" class="delete-button">{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button> 
+
+                        <button type="button" role="delete" class="delete-button">{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
                       </td>
-                </tr>   
+                </tr>
               {% endfor %}
             </tbody>
         </table>
@@ -105,7 +105,15 @@
 {% block site-scripts %}
     {{ block.super }}
     <!-- JavaScript code to run the modal into the page when the button
-    is pressed -->  
+    is pressed -->
+    <script type="text/javascript">
+      $(document).ready(function (){
+        $("button[role='filter-results']").on("click", function (event){
+          $("#dialog-filter-results").modal('show');
+        });
+        $('#submission-list').tablesorter();
+      });
+    </script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/sortable.js' %}"></script>
     <script type="text/javascript"
