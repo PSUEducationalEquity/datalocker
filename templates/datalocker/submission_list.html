@@ -10,9 +10,11 @@
     <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
         <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
+        <div style="float:right; margin-top:0;">
+        <button type="button" class="btn btn-default btn-xs" role="filter-results">Fields to Display</button>
+        </div>
     </ol>
-        <h1>{{ locker.name }}</h1><hr />
-        <button type="button" class="btn btn-info btn-sm" role="filter-results">Fields to Display</button>
+        <h1 style="float:left;">{{ locker.name }}</h1>
     </ol>
        {% if locker.owner = user.username %}
        <div class="onoffswitch">
