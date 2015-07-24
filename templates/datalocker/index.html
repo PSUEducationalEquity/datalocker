@@ -10,7 +10,8 @@
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
         <div style="float:right; margin-top:0;">
-          <button name="show-hide-lockers" id="show-hide" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
+          <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
+          <button name="show-hide-shared" id="show-hide-shared" class="btn btn-default btn-xs" title="Show/Hide Shared Lockers">Hide Shared Lockers</button>
         </div>
       </ol>
       <h1><i>My Lockers</i></h1>
@@ -60,37 +61,39 @@
         </tbody>
       </table>
       <hr />
-      <h1><i>Lockers Shared with Me</i></h1>
-      <table class="table table-striped table-hover listing tablesorter" id="shared-locker-list" name="shared locker listing">
-        <thead>
-          <tr class="header">
-            <th>Form Name</th>
-            <th>Latest Submission</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for locker in my_lockers_list %}
-            {% if locker.owner != user.username %}
-              {% if locker.archive_timestamp != null %}
-              <tr class="archived" data-id="{{ locker.id }}">
-                <td>
-                    <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                    <span class="label label-warning" style="margin-left:.5em;">Archived</span>
-                </td>
-                <td>{{ locker.latest_submission }}</td>
-              </tr>
-              {% else %}
-              <tr data-id="{{ locker.id }}">
-                <td>
-                    <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                </td>
-                <td>{{ locker.latest_submission }}</td>
-              </tr>
+      <div class="shared">
+        <h1><i>Lockers Shared with Me</i></h1>
+        <table class="table table-striped table-hover listing tablesorter" id="shared-locker-list" name="shared locker listing">
+          <thead>
+            <tr class="header">
+              <th>Form Name</th>
+              <th>Latest Submission</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for locker in my_lockers_list %}
+              {% if locker.owner != user.username %}
+                {% if locker.archive_timestamp != null %}
+                <tr class="archived" data-id="{{ locker.id }}">
+                  <td>
+                      <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                      <span class="label label-warning" style="margin-left:.5em;">Archived</span>
+                  </td>
+                  <td>{{ locker.latest_submission }}</td>
+                </tr>
+                {% else %}
+                <tr data-id="{{ locker.id }}">
+                  <td>
+                      <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                  </td>
+                  <td>{{ locker.latest_submission }}</td>
+                </tr>
+                {% endif %}
               {% endif %}
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% else %}
         <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view the lockers you have access to</h4>
       {% endif %}
@@ -173,6 +176,17 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
+        $("#show-hide-shared").click(function() {
+          $('.shared').toggle();
+          if ($(this).html() == "Show Shared Lockers"){
+                $(this).removeClass('active');
+                $(this).html('Hide Shared Lockers');
+            }
+            else {
+                $(this).addClass('active');
+                $(this).html('Show Shared Lockers');
+            }
+        });
       });
     </script>
     <script type="text/javascript"
