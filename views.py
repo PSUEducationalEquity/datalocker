@@ -13,9 +13,11 @@ from django.template.loader import get_template
 from django.template import Context
 from django.views import generic
 from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .models import Locker, Submission, LockerManager, LockerSetting, LockerQuerySet, User
+from .models import Locker, LockerManager, LockerQuerySet, LockerSetting
+from .models import Submission
 
 import datetime, json, requests
 
@@ -85,38 +87,63 @@ class LockerSubmissionView(generic.ListView):
 
 
 
-
+@csrf_exempt
 @require_http_methods(["POST"])
 def form_submission_view(request, **kwargs):
     """
     Handles form submissions from outside applications to be saved in lockers.
     """
+    safe_values = {
+        'identifier': request.POST.get('form-id', ''),
+        'name': request.POST.get('name', 'New Locker'),
+        'url': request.POST.get('url', ''),
+        'owner': request.POST.get('owner', ''),
+        'data': request.POST.get('data', ''),
+        }
     locker, created = Locker.objects.get_or_create(
-        form_identifier=request.POST.get('form-id', ''),
+        form_identifier=save_values['form-id'],
         archive_timestamp=None,
         defaults={
-            'name': request.POST.get('name', 'New Locker'),
-            'form_url': request.POST.get('url', ''),
-            'owner': request.POST.get('owner', ''),
+            'name': save_values['name'],
+            'form_url': save_values['url'],
+            'owner': save_values['owner'],
             }
         )
     submission = Submission(
         locker = locker,
-        data = request.POST.get('data', ''),
+        data = save_values['data'],
         )
     submission.save()
 
-    address = User.objects.get(username=request.POST.get('owner', '')).email
-    subject = "%s - new submission - Data Locker" % request.POST.get('name', 'New Locker')
-    message = "Data Locker: new form submission saved\n\n" \
-        "Form: %s\n\n" \
-        "View submission: %s\n" \
-        "View all submissions: %s\n" % (
-            request.POST.get('name', 'New Locker'),
-            reverse('datalocker:submissions_view', kwargs={'locker_id': locker.id, 'pk': submission.id}),
-            reverse('datalocker:submissions_list', kwargs={'locker_id': locker.id,}),
-            )
-    send_mail(subject, message, from_email, [address])
+    try:
+        address = User.objects.get(username=save_values['owner']).email
+    except User.DoesNotExist:
+        ### TODO: do something about this as the locker's owner doesn't have
+        ###       an account so therefore likely won't be able to access it.
+        ###       Might have to alert an administrator so they can assign
+        ###       the locker to someone or create an account for the owner.
+        pass
+    else:
+        subject = "%s - new submission - Data Locker" % save_values['name']
+        message = "Data Locker: new form submission saved\n\n" \
+            "Form: %s\n\n" \
+            "View submission: %s\n" \
+            "View all submissions: %s\n" % (
+                request.POST.get('name', 'New Locker'),
+                reverse(
+                    'datalocker:submissions_view',
+                    kwargs={'locker_id': locker.id, 'pk': submission.id}
+                    ),
+                reverse(
+                    'datalocker:submissions_list',
+                    kwargs={'locker_id': locker.id,}
+                    ),
+                )
+        try:
+            send_mail(subject, message, from_email, [address])
+        except Exception, e:
+            ### TODO: log the failure here
+            pass
     return HttpResponse(status=201)
 
 
