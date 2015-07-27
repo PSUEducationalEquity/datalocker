@@ -203,25 +203,25 @@ class Submission(models.Model):
 
     def newer(self):
         try:
-            nextSubmission = Submission.objects.filter(locker=self.locker, id__gt=self.id)[0]
+            nextSubmission = Submission.objects.filter(locker=self.locker, timestamp__gt=self.timestamp).order_by('timestamp')[0]
         except IndexError:
-            nextSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
+            nextSubmission = Submission.objects.filter(locker=self.locker).order_by('-timestamp')[0]
         return nextSubmission.id
 
 
     def older(self):
         try:
-            lastSubmission = Submission.objects.filter(locker=self.locker, id__lt=self.id).order_by('-id')[0]
+            lastSubmission = Submission.objects.filter(locker=self.locker, timestamp__lt=self.timestamp).order_by('-timestamp')[0]
         except IndexError:
-            lastSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
+            lastSubmission = Submission.objects.filter(locker=self.locker).order_by('timestamp')[0]
         return lastSubmission.id
 
 
     def oldest(self):
-        oldestSubmission = Submission.objects.filter(locker=self.locker).order_by('id')[0]
+        oldestSubmission = Submission.objects.filter(locker=self.locker).earliest('timestamp')
         return oldestSubmission.id
 
 
     def newest(self):
-        newestSubmission = Submission.objects.filter(locker=self.locker).order_by('-id')[0]
+        newestSubmission = Submission.objects.filter(locker=self.locker).latest('timestamp')
         return newestSubmission.id
