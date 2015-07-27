@@ -16,11 +16,7 @@ class Command(NoArgsCommand):
         now = datetime.datetime.now(timezone.utc)
         oldest_date = now - datetime.timedelta(days=3)
         submissions = Submission.objects.filter(deleted__lt=oldest_date)        
-    	for submission in submissions:     
-            # if submission.deleted != None:
-            #     deleted_time = submission.deleted 
-            #     time = now - deleted_time
-            #     if time >= oldest_date:
+    	for submission in submissions:             
             submission.delete()       
 
 
