@@ -27,8 +27,9 @@ Locker.add = function ()
         type: "post",
         data: {
             email: email,
-            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-              }
+            csrfmiddlewaretoken: 
+                $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+            }
     });
 
     // callback handler: success
@@ -56,6 +57,35 @@ Locker.add = function ()
     });
 }
 
+Locker.archive = function(id){
+        $.ajax({
+            url: '/datalocker/' + id + '/archive',
+            type: 'POST',
+            data: {
+                id: id,
+                csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(data){
+                $("#locker-list tr[data-id='" + id + "']").addClass('archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html('Unarchive Locker');
+            }
+        });
+    }
+
+Locker.unarchive = function(id) {
+    $.ajax({
+        url: '/datalocker/' + id + '/unarchive',
+        type: 'POST',
+        data: {
+            id: id,
+            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+        },
+        success: function(data){
+            $('#locker-list tr[data-id=' + id + "]").removeClass('archived');
+            $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html('Archive Locker');
+            }
+        });
+    }
 
 Locker.delete = function (user_id)
 {
@@ -142,8 +172,8 @@ Locker.buildList = function (users){
             }
             Locker.dataRequest = null;
         });
-    }
-}
+    }    
+} 
 }( window.Locker = window.Locker || {}, jQuery));
 
 
@@ -174,11 +204,32 @@ $(document).ready(function (){
         Locker.add();
     });
 
-
     $("#dialog-edit-users form ul").on("click",'a', function (event){
         event.preventDefault();
         console.log("working..")
         var user_id =$(this).closest("li").attr("data-id");
         Locker.delete(user_id);
+    });
+
+    $("[role='archive-locker']").on("click", function (event){
+        event.preventDefault();
+        var id = $(this).closest("tr").attr("data-id");
+        if ($(this).html() == "Archive Locker"){
+            Locker.archive(id);
+        }
+        else {
+            Locker.unarchive(id);
+        }
+    });
+    $("#show-hide-archived").click(function() {
+      $('.archived').toggle();
+      if ($(this).html() == "Show Archived Lockers"){
+            $(this).addClass('active');
+            $(this).html('Hide Archived Lockers');
+        }
+        else {
+            $(this).removeClass('active');
+            $(this).html('Show Archived Lockers');
+        }
     });
 });

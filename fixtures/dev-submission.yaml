@@ -1,4 +1,4 @@
-###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
+### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 ---
 - fields:
     locker: 1
@@ -120,3 +120,4 @@
     data: '{"Name of College or Institution:": "Mifflin County High School", "Attendance": "Will Attend", "Name of representatice attending": "David Hains", "Phone Number": "894-569-1204", "E-Mail address": "eeqdev+dl-dhains@psu.edu", "Name of additional representative attending": "Chase Wonderman", "Additional representatives E-mail address": "eeqdev+dl-cwonderman@psu.edu", "Additional representatives phone number": "894-569-1206", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "No", "If not, will you need a parking permit?": "Yes"}'
   model: datalocker.Submission
   pk: 18
+  ---
