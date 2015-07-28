@@ -1,23 +1,22 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.core.mail.message import EmailMessage
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response , get_object_or_404
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
-from django.utils.text import slugify
-from django.core.mail.message import EmailMessage
-from django.core.mail import send_mail
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, render_to_response , get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
+from django.utils.text import slugify
 from django.views import generic
-from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.views.generic import View
 
-from .models import Locker, LockerManager, LockerQuerySet, LockerSetting
-from .models import Submission
+from .models import Locker, LockerManager,LockerSetting, LockerQuerySet,  Submission
 
 import datetime, json, requests
 
@@ -26,63 +25,38 @@ public_fields = ['id', 'email', 'first_name', 'last_name']
 from_email = 'eeqsys@psu.edu'
 
 
-class LockerListView(generic.ListView):
-    context_object_name = 'my_lockers_list'
-    template_name = 'datalocker/index.html'
+
+def archive_locker(request, **kwargs):
+    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+    owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    locker.archive_timestamp = datetime.datetime.now()
+    locker.save()
+    subject = 'Locker Has Been Archived'
+    message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
+    address = User.objects.get(username=owner)
+    email = address.email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [email],
+    )
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-    def get_queryset(self):
-        # Return all lockers for the current user
-        return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
 
 
-
-
-class LockerSubmissionView(generic.ListView):
-    template_name = 'datalocker/submission_list.html'
-
-
-    def get_context_data(self, **kwargs):
-        context = super(LockerSubmissionView, self).get_context_data(**kwargs)
-        self.locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        context['locker'] = self.locker
-        self.fields_list = self.locker.get_all_fields_list()
-        context['fields_list'] = self.fields_list
-        self.selected_fields = self.locker.get_selected_fields_list()
-        context['selected_fields'] = self.selected_fields
-        context['column_headings'] = ['Submitted Date', ] + self.selected_fields
-        context['data'] = []
-        for submission in self.locker.submissions.all().order_by('-timestamp'):
-            entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
-            for field, value in submission.data_dict().iteritems():
-                if field in self.selected_fields:
-                    entry.append(value)
-            context['data'].append(entry)
-        return context
-
-
-    def get_queryset(self):
-         # Return all submissions for selected locker
-        return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
-
-
-    def post(self, *args, **kwargs):
-        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        selected_fields = []
-        for field in locker.get_all_fields_list():
-            if slugify(field) in self.request.POST:
-                selected_fields.append(field)
-        selected_fields_setting, created = LockerSetting.objects.get_or_create(
-            category='fields-list',
-            setting_identifier='selected-fields',
-            locker=locker,
-            defaults={
-                'setting': 'User-defined list of fields to display in tabular view',
-                }
-            )
-        selected_fields_setting.value = json.dumps(selected_fields)
-        selected_fields_setting.save()
-        return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
+def delete_submission(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    submission.deleted = datetime.datetime.now()
+    submission.save()
+    if request.is_ajax():
+        return JsonResponse({})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:submission_list'))
 
 
 
@@ -149,18 +123,64 @@ def form_submission_view(request, **kwargs):
 
 
 
-class SubmissionView(generic.DetailView):
-    template_name = 'datalocker/submission_view.html'
-    model = Submission
+class LockerListView(generic.ListView):
+    context_object_name = 'my_lockers_list'
+    template_name = 'datalocker/index.html'
+
+
+    def get_queryset(self):
+        # Return all lockers for the current user
+        return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
+
+
+
+
+class LockerSubmissionView(generic.ListView):
+    template_name = 'datalocker/submission_list.html'
 
 
     def get_context_data(self, **kwargs):
-        context = super(SubmissionView, self).get_context_data(**kwargs)
-        context['oldest_disabled'] = True if self.object.id == self.object.oldest() else False
-        context['older_disabled'] = True if self.object.id == self.object.older() else False
-        context['newer_disabled'] = True if self.object.id == self.object.newer() else False
-        context['newest_disabled'] = True if self.object.id == self.object.newest() else False
+        context = super(LockerSubmissionView, self).get_context_data(**kwargs)
+        self.locker = Locker.objects.get(pk=self.kwargs['locker_id'])
+        context['locker'] = self.locker
+        self.fields_list = self.locker.get_all_fields_list()
+        context['fields_list'] = self.fields_list
+        self.selected_fields = self.locker.get_selected_fields_list()
+        context['selected_fields'] = self.selected_fields
+        context['column_headings'] = ['Submitted Date', ] + self.selected_fields
+        context['data'] = []
+        for submission in self.locker.submissions.all().order_by('-timestamp'):
+            entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
+            for field, value in submission.data_dict().iteritems():
+                if field in self.selected_fields:
+                    entry.append(value)
+            context['data'].append(entry)
         return context
+
+
+    def get_queryset(self):
+         # Return all submissions for selected locker
+        return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
+
+
+    def post(self, *args, **kwargs):
+        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
+        selected_fields = []
+        for field in locker.get_all_fields_list():
+            if slugify(field) in self.request.POST:
+                selected_fields.append(field)
+        selected_fields_setting, created = LockerSetting.objects.get_or_create(
+            category='fields-list',
+            setting_identifier='selected-fields',
+            locker=locker,
+            defaults={
+                'setting': 'User-defined list of fields to display in tabular view',
+                }
+            )
+        selected_fields_setting.value = json.dumps(selected_fields)
+        selected_fields_setting.save()
+        return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
+
 
 
 
@@ -222,25 +242,23 @@ class LockerUserDelete(View):
 
 
 
-def archive_locker(request, **kwargs):
-    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    owner = Locker.objects.get(id=kwargs['locker_id']).owner
-    locker.archive_timestamp = datetime.datetime.now()
-    locker.save()
-    subject = 'Locker Has Been Archived'
-    message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
-    address = User.objects.get(username=owner)
-    email = address.email
-    send_mail(
-        subject,
-        message,
-        from_email,
-        [email],
-    )
-    if request.is_ajax():
-        return JsonResponse({})
-    else:
-        return HttpResponseRedirect(reverse('datalocker:index'))
+
+
+
+
+
+class SubmissionView(generic.DetailView):
+    template_name = 'datalocker/submission_view.html'
+    model = Submission
+
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionView, self).get_context_data(**kwargs)
+        context['oldest_disabled'] = True if self.object.id == self.object.oldest() else False
+        context['older_disabled'] = True if self.object.id == self.object.older() else False
+        context['newer_disabled'] = True if self.object.id == self.object.newer() else False
+        context['newest_disabled'] = True if self.object.id == self.object.newest() else False
+        return context
 
 
 
@@ -280,18 +298,6 @@ def unarchive_locker(request, **kwargs):
         [email],
     )
     return HttpResponseRedirect(reverse('datalocker:index'))
-
-
-
-
-def delete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])
-    submission.deleted = datetime.datetime.now()
-    submission.save()
-    if request.is_ajax():
-        return JsonResponse({})
-    else:
-        return HttpResponseRedirect(reverse('datalocker:submission_list'))
 
 
 
