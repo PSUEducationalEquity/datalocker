@@ -5,6 +5,7 @@
 {% block page-meta-title %}My Lockers{% endblock page-meta-title %}
 
 {% block content %}
+    <h1 class="hidden">Data lockers</h1>
     <div class="container-fluid">
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
@@ -12,7 +13,7 @@
           <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>         
         </div>
       </ol>
-      <h1><i>My Lockers</i></h1>
+      <h2 class="italic">My Lockers</h2>
       {% if user.is_authenticated %}
         {% if my_lockers_list|length == 0 %}
           <p>You have no lockers.</p>
@@ -35,9 +36,9 @@
                     </td>
                     <td>{{ locker.latest_submission }}</td>
                     <td>
-                      <button type="button" class="btn btn-info btn-xs edit-button" role="edit-users" title="Edit users for this locker">Users</button>
-                      <button type="button" class="btn btn-info btn-xs edit-button" role="edit-locker" title="Edit this locker">Edit Locker</button>
-                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Unarchive Locker</button>
+                      <button type="button" class="btn btn-info btn-xs " role="edit-users" title="Edit users for this locker">Users</button>
+                      <button type="button" class="btn btn-info btn-xs " role="edit-locker" title="Edit this locker">Edit Locker</button>
+                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Unarchive</button>
                     </td>
                   </tr>
                 {% else %}
@@ -48,9 +49,9 @@
                     </td>
                     <td>{{ locker.latest_submission }}</td>
                     <td>
-                      <button type="button" class="btn btn-info btn-xs edit-button" role="edit-users" title="Edit users for this locker">Users</button>
-                      <button type="button" class="btn btn-info btn-xs edit-button" role="edit-locker" title="Edit this locker">Edit Locker</button>
-                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Archive Locker</button>
+                      <button type="button" class="btn btn-primary btn-xs edit-button" role="edit-users" title="Edit users for this locker">Users</button>
+                      <button type="button" class="btn btn-info btn-xs edit-button" role="edit-locker" title="Edit this locker">Edit </button>
+                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Archive</button>
                     </td>
                   </tr>
                 {% endif %}
@@ -60,7 +61,7 @@
         </table>
         <hr />
         <div class="shared">
-          <h1><i>Lockers Shared with Me</i></h1>
+          <h2 class="italic">Lockers Shared with Me</h2>
           <table class="table table-striped table-hover listing tablesorter" id="shared-locker-list" name="shared locker listing">
             <thead>
               <tr>
@@ -140,7 +141,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="dialog-edit-locker-title">Edit Locker </h4>
+            <h4 class="modal-title" id="dialog-edit-locker-title">Edit Locker</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -170,23 +171,11 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
-        $("#show-hide-shared").on("click", function() {
-          $('.shared').toggle();
-          if ($(this).html() == "Show Shared Lockers")
-            {
-              $(this).removeClass('active');
-              $(this).html('Hide Shared Lockers');
-            }
-          else 
-            {
-              $(this).addClass('active');
-              $(this).html('Show Shared Lockers');
-            }
-        });
+        
       });
     </script>
     <script type="text/javascript"
-            src=" {% static 'datalocker/js/tablesorter.js' %}" ></script>
+            src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
-            src=" {% static 'datalocker/js/locker.js' %}" ></script>    
+            src=" {% static 'datalocker/js/locker.js' %}"></script>    
 {% endblock site-scripts %}

@@ -143,6 +143,14 @@ display: none;
   margin-right: .5em;
 }
 
+h1.hidden {
+  visibility: hidden;
+}
+
+h2.italic {
+  font-style: italic;
+}
+
 .pagination {
   margin: .5em;
 }
