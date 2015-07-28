@@ -1,4 +1,4 @@
-<!--Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.-->
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
@@ -9,8 +9,7 @@
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
         <div style="float:right; margin-top:0;">
-          <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
-          <button name="show-hide-shared" id="show-hide-shared" class="btn btn-default btn-xs" title="Show/Hide Shared Lockers">Hide Shared Lockers</button>
+          <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>         
         </div>
       </ol>
       <h1><i>My Lockers</i></h1>
@@ -32,7 +31,7 @@
                   <tr class="archived" data-id="{{ locker.id }}">
                     <td>
                         <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                        <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
+                        <span class="label label-default js-archived-label" style="margin-left:.5em;">Archived</span>
                     </td>
                     <td>{{ locker.latest_submission }}</td>
                     <td>
@@ -76,7 +75,7 @@
                     <tr class="archived" data-id="{{ locker.id }}">
                       <td>
                           <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                          <span class="label label-warning" style="margin-left:.5em;">Archived</span>
+                          <span class="label label-default" style="margin-left:.5em;">Archived</span>
                       </td>
                       <td>{{ locker.latest_submission }}</td>
                     </tr>
@@ -146,13 +145,12 @@
           <div class="modal-body">
             <div class="form-group">
              <label for="edit-locker-name">Name</label>
-               <input type="text" name="edit-locker" class="form-control" id="edit-locker"  placeholder="New Locker Name"><br/>
+               <input type="text" name="edit-locker" class="form-control" id="edit-locker" ><br/>
             </div>
             <div class="form-group">
              <label for="edit-owner">Owner</label>
-               <input type="text" name="edit-owner" class="form-control"  id="edit-owner" placeholder="New Locker Owner"><br/>
-            </div>
-               <input type="checkbox" name="edit-commenting"  id="edit-commenting"> <label for="edit-commenting"> Allow Commenting</label>
+               <input type="text" name="edit-owner" class="form-control"  id="edit-owner" ><br/>
+            </div>        
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" value="Done" />
@@ -172,15 +170,17 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
-        $("#show-hide-shared").click(function() {
+        $("#show-hide-shared").on("click", function() {
           $('.shared').toggle();
-          if ($(this).html() == "Show Shared Lockers"){
-                $(this).removeClass('active');
-                $(this).html('Hide Shared Lockers');
+          if ($(this).html() == "Show Shared Lockers")
+            {
+              $(this).removeClass('active');
+              $(this).html('Hide Shared Lockers');
             }
-            else {
-                $(this).addClass('active');
-                $(this).html('Show Shared Lockers');
+          else 
+            {
+              $(this).addClass('active');
+              $(this).html('Show Shared Lockers');
             }
         });
       });
@@ -188,7 +188,5 @@
     <script type="text/javascript"
             src=" {% static 'datalocker/js/tablesorter.js' %}" ></script>
     <script type="text/javascript"
-            src=" {% static 'datalocker/js/locker.js' %}" ></script>
-    <script type="text/javascript"
-            src=" {% static 'datalocker/js/archiving.js' %}"></script>
+            src=" {% static 'datalocker/js/locker.js' %}" ></script>    
 {% endblock site-scripts %}

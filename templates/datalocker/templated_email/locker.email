@@ -1,7 +1,0 @@
-{% block subject %}
-{{name}}
-{% endblock %}
-
-{% block html %}
-This is an <strong>html</strong> message.
-{% endblock %}

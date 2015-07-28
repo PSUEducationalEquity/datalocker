@@ -8,8 +8,6 @@ from django.db.models.query import QuerySet
 
 from collections import OrderedDict
 
-from .models import User
-
 import datetime, json
 
 
@@ -95,18 +93,25 @@ class Locker(models.Model):
 
     def get_all_fields_list(self):
         try:
-            all_fields_setting = self.settings.get(category='fields-list', setting_identifier='all-fields')
+            all_fields_setting = self.settings.get(
+                category='fields-list', 
+                setting_identifier='all-fields'
+                )
         except LockerSetting.DoesNotExist:
             all_fields = []
         else:
             all_fields = json.loads(all_fields_setting.value)
 
         try:
-            last_updated_setting = self.settings.get(category='fields-list', setting_identifier='last-updated')
+            last_updated_setting = self.settings.get(
+                category='fields-list', 
+                setting_identifier='last-updated'
+                )
         except LockerSetting.DoesNotExist:
             submissions = self.submissions.all()
         else:
-            submissions = self.submissions.filter(timestamp__gte=last_updated_setting.value)
+            submissions = self.submissions.filter(
+                timestamp__gte=last_updated_setting.value)
 
         for submission in submissions:
             fields = submission.data_dict().keys()
@@ -140,7 +145,10 @@ class Locker(models.Model):
 
     def get_selected_fields_list(self):
         try:
-            selected_fields_setting = self.settings.get(category='fields-list', setting_identifier='selected-fields')
+            selected_fields_setting = self.settings.get(
+                category='fields-list', 
+                setting_identifier='selected-fields'
+                )
         except LockerSetting.DoesNotExist:
             selected_fields = []
         else:
@@ -160,7 +168,7 @@ class LockerSetting(models.Model):
         related_name="settings",
         on_delete=models.PROTECT,
         )
-
+   
 
 
 ##
@@ -203,25 +211,33 @@ class Submission(models.Model):
 
     def newer(self):
         try:
-            nextSubmission = Submission.objects.filter(locker=self.locker, timestamp__gt=self.timestamp).order_by('timestamp')[0]
+            nextSubmission = Submission.objects.filter(
+                locker=self.locker, 
+                timestamp__gt=self.timestamp).order_by('timestamp')[0]
         except IndexError:
-            nextSubmission = Submission.objects.filter(locker=self.locker).order_by('-timestamp')[0]
+            nextSubmission = Submission.objects.filter(
+                locker=self.locker).order_by('-timestamp')[0]
         return nextSubmission.id
 
 
     def older(self):
         try:
-            lastSubmission = Submission.objects.filter(locker=self.locker, timestamp__lt=self.timestamp).order_by('-timestamp')[0]
+            lastSubmission = Submission.objects.filter(
+                locker=self.locker, 
+                timestamp__lt=self.timestamp).order_by('-timestamp')[0]
         except IndexError:
-            lastSubmission = Submission.objects.filter(locker=self.locker).order_by('timestamp')[0]
+            lastSubmission = Submission.objects.filter(
+                locker=self.locker).order_by('timestamp')[0]
         return lastSubmission.id
 
 
     def oldest(self):
-        oldestSubmission = Submission.objects.filter(locker=self.locker).earliest('timestamp')
+        oldestSubmission = Submission.objects.filter(
+            locker=self.locker).earliest('timestamp')
         return oldestSubmission.id
 
 
     def newest(self):
-        newestSubmission = Submission.objects.filter(locker=self.locker).latest('timestamp')
+        newestSubmission = Submission.objects.filter(
+            locker=self.locker).latest('timestamp')
         return newestSubmission.id

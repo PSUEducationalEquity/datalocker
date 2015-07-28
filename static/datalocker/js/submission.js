@@ -1,7 +1,8 @@
+// Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+
 (function (Submission, $, undefined)
 {
     // the AJAX objects that handles server communication
-    Submission.dataRequest;
     Submission.addRequest;
     Submission.deleteRequest;
 
@@ -17,8 +18,9 @@ Submission.delete = function (locker_id, id)
         type: "post",
         data: {
             id: id,
-            csrfmiddlewaretoken: $("#delete_undelete_form").find("input[name='csrfmiddlewaretoken']").val()
-              },
+            csrfmiddlewaretoken: 
+            $("#delete_undelete_form").find("input[name='csrfmiddlewaretoken']").val()
+            },
         success: function(data){
             $("#submission-list tr[data-id='" + id +"']").addClass('deleted');
             $("#submission-list tr[data-id='" + id +"'] button[role='delete']").html('Undelete');
@@ -31,7 +33,7 @@ Submission.delete = function (locker_id, id)
 Submission.undelete = function (locker_id, id)
 {
     // submit the request
-    Submission.undeleteRequest = $.ajax({
+    Submission.deleteRequest = $.ajax({
         url: '/datalocker/'+locker_id+'/submissions/' + id + '/undelete_submission',
         type: "post",
         data: {

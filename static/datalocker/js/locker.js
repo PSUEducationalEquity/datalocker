@@ -7,117 +7,122 @@
     Locker.deleteRequest;
 
     /**
-     * 
+     *  Builds a list of users,also archives/unarchives lockers
+     *      
     */
 
 
 
-Locker.add = function ()
-{
-    // submit the request
-    var email = $("#email").val();
-    var addUrl = $("#dialog-edit-users form").attr("action");
-    Locker.addRequest = $.ajax({
-        url: addUrl,
-        type: "post",
-        data: {
-            email: email,
-            csrfmiddlewaretoken: 
-                $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-            }
-    });
-
+    Locker.add = function ()
+       {   // submit the request
+            var email = $("#email").val();
+            var addUrl = $("#dialog-edit-users form").attr("action");
+            Locker.addRequest = $.ajax({
+                url: addUrl,
+                type: "post",
+                data: {
+                    email: email,
+                    csrfmiddlewaretoken: $("#dialog-edit-users").find(
+                        "input[name='csrfmiddlewaretoken']").val()
+                    }
+            });
     // callback handler: success
-    Locker.addRequest.done(function (response, textStatus, jqXHR) {
-            $("#email").val("");
-            $("#existing-users").append(Locker._build_list_entry(response));
-            $("email").focus();
-          Locker.addRequest = null;
-    });
-    // callback handler: failure
-    Locker.addRequest.fail(function (jqXHR, textStatus, errorThrown) {
-        if (errorThrown != "abort") {
-            if (jqXHR.status == 400 || jqXHR.status == 404) {
-                Locker.errorHandler(jqXHR, 'adding');
+            Locker.addRequest.done(function (response, textStatus, jqXHR) {
+                    $("#email").val("");
+                    $("#existing-users").append(Locker._build_list_entry(response));
+                    $("email").focus();
+                  Locker.addRequest = null;
+            });
+            // callback handler: failure
+            Locker.addRequest.fail(function (jqXHR, textStatus, errorThrown) {
+                if (errorThrown != "abort") {
+                    if (jqXHR.status == 400 || jqXHR.status == 404) {
+                        Locker.errorHandler(jqXHR, 'adding');
 
-            } else {
-                console.error(
-                    "Locker.add in Locker.js AJAX error: "
-                        + textStatus,
-                    errorThrown
-                );
-            }
+                    } else {
+                        console.error(
+                            "Locker.add in Locker.js AJAX error: "
+                                + textStatus,
+                            errorThrown
+                        );
+                    }
+                }
+                Locker.addRequest = null;
+            });
         }
-        Locker.addRequest = null;
-    });
-}
 
-Locker.archive = function(id){
+    Locker.archive = function(id)
+        {
+            $.ajax({
+                url: '/datalocker/' + id + '/archive',
+                type: 'POST',
+                data: {
+                    id: id,
+                    csrfmiddlewaretoken: $("#dialog-edit-users").find(
+                        "input[name='csrfmiddlewaretoken']").val()
+                },
+                success: function(data){
+                    $("#locker-list tr[data-id='" + id + "']").addClass('archived');
+                    $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                        'Unarchive Locker');
+                }
+            });
+        }
+
+    Locker.unarchive = function(id) {
         $.ajax({
-            url: '/datalocker/' + id + '/archive',
+            url: '/datalocker/' + id + '/unarchive',
             type: 'POST',
             data: {
                 id: id,
-                csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
+                csrfmiddlewaretoken: $("#dialog-edit-users").find(
+                    "input[name='csrfmiddlewaretoken']").val()
             },
             success: function(data){
-                $("#locker-list tr[data-id='" + id + "']").addClass('archived');
-                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html('Unarchive Locker');
-            }
-        });
-    }
-
-Locker.unarchive = function(id) {
-    $.ajax({
-        url: '/datalocker/' + id + '/unarchive',
-        type: 'POST',
-        data: {
-            id: id,
-            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-        },
-        success: function(data){
-            $('#locker-list tr[data-id=' + id + "]").removeClass('archived');
-            $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html('Archive Locker');
-            }
-        });
-    }
-
-Locker.delete = function (user_id)
-{
-    // submit the request
-    var deleteUrl =  $("#existing-users").attr("data-delete-url");
-    var locker_id = $("#dialog-edit-users").attr("data-locker-id");
-
-    Locker.deleteRequest = $.ajax({
-        url: deleteUrl.replace("/0/", "/" + locker_id +"/"),
-        type: "post",
-        data: {
-            id : user_id,
-            csrfmiddlewaretoken: $("#dialog-edit-users").find("input[name='csrfmiddlewaretoken']").val()
-              }
-    });
-
-    Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
-     $("#existing-users li[data-id='" + response.user_id + "']").remove();
-      Locker.deleteRequest = null;
-    });
-    // callback handler: failure
-    Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
-        if (errorThrown != "abort") {
-            if (jqXHR.status == 400 || jqXHR.status == 404) {
-                Locker.errorHandler(jqXHR, 'deleting');
-
-            } else {
-                console.error(
-                    "Locker.delete in Locker.js AJAX error: "
-                        + textStatus,
-                errorThrown
-                );
-            }
+                $('#locker-list tr[data-id=' + id + "]").removeClass('archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                    'Archive Locker');
+                }
+            });
         }
-        Locker.deleteRequest = null;
-    });
-}
+
+    Locker.delete = function (user_id)
+        {
+            // submit the request
+            var deleteUrl =  $("#existing-users").attr("data-delete-url");
+            var locker_id = $("#dialog-edit-users").attr("data-locker-id");
+
+            Locker.deleteRequest = $.ajax({
+                url: deleteUrl.replace("/0/", "/" + locker_id +"/"),
+                type: "post",
+                data: {
+                    id : user_id,
+                    csrfmiddlewaretoken: $("#dialog-edit-users").find(
+                        "input[name='csrfmiddlewaretoken']").val()
+                      }
+            });
+
+            Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
+             $("#existing-users li[data-id='" + response.user_id + "']").remove();
+              Locker.deleteRequest = null;
+            });
+            // callback handler: failure
+            Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
+                if (errorThrown != "abort") {
+                    if (jqXHR.status == 400 || jqXHR.status == 404) {
+                        Locker.errorHandler(jqXHR, 'deleting');
+
+                    } else {
+                        console.error(
+                            "Locker.delete in Locker.js AJAX error: "
+                                + textStatus,
+                        errorThrown
+                        );
+                    }
+                }
+                Locker.deleteRequest = null;
+            });
+        }
 
 
 Locker._build_list_entry = function (user)
@@ -134,7 +139,8 @@ Locker.buildList = function (users){
 
      // get the url to use
     var locker_id = $("#dialog-edit-users").attr("data-locker-id");
-    var url = $("#existing-users").attr("data-url").replace("/0/", "/" + locker_id +"/");
+    var url = $("#existing-users").attr("data-url").replace(
+        "/0/", "/" + locker_id +"/");
 
     // submit the request (if none are pending)
     if (!Locker.dataRequest && url) {
@@ -179,7 +185,8 @@ $(document).ready(function (){
         var id = $(this).closest("tr").attr("data-id");
         $("#dialog-edit-users").attr("data-locker-id", id);
         var url = $("#dialog-edit-users").find("form").attr("data-url");
-        $("#dialog-edit-users").find("form").attr("action", url.replace("/0/","/"+ id +"/"));
+        $("#dialog-edit-users").find("form").attr(
+            "action", url.replace("/0/","/"+ id +"/"));
         Locker.buildList();
         $("#dialog-edit-users").modal('show');
     });
@@ -189,7 +196,8 @@ $(document).ready(function (){
         var id = $(this).closest("tr").attr("data-id");
         $("#dialog-edit-locker").attr("data-locker-id", id);
         var url = $("#dialog-edit-locker").find("form").attr("data-url");
-        $("#dialog-edit-locker").find("form").attr("action", url.replace("/0/","/"+ id +"/"));
+        $("#dialog-edit-locker").find("form").attr(
+            "action", url.replace("/0/","/"+ id +"/"));
         $("#dialog-edit-locker").modal('show');
     });
 
@@ -199,9 +207,8 @@ $(document).ready(function (){
         Locker.add();
     });
 
-    $("#dialog-edit-users form ul").on("click",'a', function (event){
-        event.preventDefault();
-        console.log("working..")
+    $("#dialog-edit-users form ul").on("click","a", function (event){
+        event.preventDefault();      
         var user_id =$(this).closest("li").attr("data-id");
         Locker.delete(user_id);
     });
@@ -215,7 +222,7 @@ $(document).ready(function (){
         else {
             Locker.unarchive(id);
         }
-    });
+    }); 
     $("#show-hide-archived").click(function() {
       $('.archived').toggle();
       if ($(this).html() == "Show Archived Lockers"){

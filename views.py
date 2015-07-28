@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response , get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
+from django.utils import timezone
 from django.utils.text import slugify
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
@@ -23,25 +24,26 @@ import datetime, json, requests
 
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
-from_email = 'eeqsys@psu.edu'
+
 
 
 
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
-    locker.archive_timestamp = datetime.datetime.now()
+    locker.archive_timestamp = timezone.now() 
     locker.save()
-    # subject = 'Locker Has Been Archived'
-    # message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
-    # address = User.objects.get(username=owner)
-    # email = address.email
-    # send_mail(
-    #     subject,
-    #     message,
-    #     from_email,
-    #     [email],
-    # )
+    """ subject = 'Locker Has Been Archived'
+     message = "One of your lockers has been archived. The locker that has been archived is " 
+     + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
+     address = User.objects.get(username=owner)
+     email = address.email
+     send_mail(
+         subject,
+         message,
+         from_email,
+         [email],
+     )"""
     if request.is_ajax():
         return JsonResponse({})
     else:
@@ -52,7 +54,7 @@ def archive_locker(request, **kwargs):
 
 def delete_submission(request, **kwargs):
     submission = get_object_or_404(Submission, id=kwargs['pk'])
-    submission.deleted = datetime.datetime.now()
+    submission.deleted = timezone.now() 
     submission.save()
     if request.is_ajax():
         return JsonResponse({})
@@ -93,10 +95,10 @@ def form_submission_view(request, **kwargs):
     try:
         address = User.objects.get(username=save_values['owner']).email
     except User.DoesNotExist:
-        ### TODO: do something about this as the locker's owner doesn't have
-        ###       an account so therefore likely won't be able to access it.
-        ###       Might have to alert an administrator so they can assign
-        ###       the locker to someone or create an account for the owner.
+        """ TODO: do something about this as the locker's owner doesn't have
+               an account so therefore likely won't be able to access it.
+               Might have to alert an administrator so they can assign
+               the locker to someone or create an account for the owner. """
         pass
     else:
         subject = "%s - new submission - Data Locker" % save_values['name']
@@ -117,7 +119,7 @@ def form_submission_view(request, **kwargs):
         try:
             send_mail(subject, message, from_email, [address])
         except Exception, e:
-            ### TODO: log the failure here
+            """ TODO: log the failure here """
             pass
     return HttpResponse(status=201)
 
@@ -130,8 +132,9 @@ class LockerListView(generic.ListView):
 
 
     def get_queryset(self):
-        # Return all lockers for the current user
-        return Locker.objects.active().has_access(self.request.user).annotate(latest_submission= Max('submissions__timestamp')).order_by('name')
+        """ Return all lockers for the current user """
+        return Locker.objects.active().has_access(self.request.user).annotate(
+            latest_submission= Max('submissions__timestamp')).order_by('name')
 
 
 
@@ -215,15 +218,15 @@ class LockerUserAdd(View):
         for key,value in model_to_dict(user).iteritems():
             if key in public_fields:
                 user_dict[key] = value
-        name = Locker.objects.get(id=kwargs['locker_id'])
-        subject = 'Granted Locker Access'
-        to = self.request.POST.get('email', "")
-        body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name
-        email = EmailMessage(subject,
-           body,
-           from_email,
-           [to])
-        email.send()
+        # name = Locker.objects.get(id=kwargs['locker_id'])
+        # subject = 'Granted Locker Access'
+        # to = self.request.POST.get('email', "")
+        # body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name
+        # email = EmailMessage(subject,
+        #    body,
+        #    from_email,
+        #    [to])
+        # email.send()
         return JsonResponse(user_dict)
 
 
@@ -288,16 +291,6 @@ def unarchive_locker(request, **kwargs):
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
     locker.archive_timestamp = None
     locker.save()
-    # subject = 'Locker Has Been Unarchived'
-    # message = "One of your lockers has been archived. The locker that has been archived is " + locker.name
-    # address = User.objects.get(username=owner)
-    # email = address.email
-    # send_mail(
-    #     subject,
-    #     message,
-    #     from_email,
-    #     [email],
-    # )
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 

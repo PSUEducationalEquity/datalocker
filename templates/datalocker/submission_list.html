@@ -1,4 +1,4 @@
-<!--Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.-->
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
@@ -8,10 +8,16 @@
     <div class="container-fluid">
     {% if user.is_authenticated %}
       <ol class="breadcrumb">
-        <li><a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a></li>
-        <li class="active">All Submissions<span class="sr-only"> for {{ locker.name }}</span></li>
+        <li>
+          <a href="{% url 'datalocker:index' %}"><span class="sr-only">List of </span>My Lockers</a>
+        </li>
+        <li class="active">All Submissions
+          <span class="sr-only"> for {{ locker.name }}</span>
+        </li>
         <div style="float:right; margin-top:0;">
-        <button type="button" class="btn btn-default btn-xs" role="filter-results">Fields to Display</button>
+        <button type="button" class="btn btn-default btn-xs" role="filter-results">
+          Fields to Display
+        </button>
         </div>
       </ol>
       <h1 style="float:left;">{{ locker.name }}</h1>

@@ -5,13 +5,10 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-
 from datalocker.models import Locker, Submission
 
 import datetime, json
 
-
-# Create your tests here.
 
 class LockerManagerTestCase(TestCase):
     fixtures = [
@@ -174,7 +171,8 @@ class SubmissionViewTestCase(TestCase):
 
     def test_submission_view_archive_locker_create_new_locker(self):
         """
-        Form submission should create a new locker because the original was archived and save the submission.
+        Form submission should create a new locker because 
+        the original was archived and save the submission.
         """
         user = User(
             username='das66',
@@ -210,4 +208,3 @@ class SubmissionViewTestCase(TestCase):
             self.assertTrue(False)
         else:
             self.assertEqual(len(Locker.objects.all()), 2)
-
