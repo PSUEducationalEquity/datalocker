@@ -1,4 +1,4 @@
-// Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+/*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
 (function (Submission, $, undefined)
 {
@@ -18,12 +18,13 @@ Submission.delete = function (locker_id, id)
         type: "post",
         data: {
             id: id,
-            csrfmiddlewaretoken: 
-            $("#delete_undelete_form").find("input[name='csrfmiddlewaretoken']").val()
+            csrfmiddlewaretoken: $("#delete_undelete_form").find(
+               "input[name='csrfmiddlewaretoken']").val()
             },
         success: function(data){
             $("#submission-list tr[data-id='" + id +"']").addClass('deleted');
-            $("#submission-list tr[data-id='" + id +"'] button[role='delete']").html('Undelete');
+            $("#submission-list tr[data-id='" + id +"'] button[role='delete']").html(
+                'Undelete');
 
         }
     });
@@ -38,11 +39,13 @@ Submission.undelete = function (locker_id, id)
         type: "post",
         data: {
             id : id,
-            csrfmiddlewaretoken: $("#delete_undelete_form").find("input[name='csrfmiddlewaretoken']").val()
+            csrfmiddlewaretoken: $("#delete_undelete_form").find(
+                "input[name='csrfmiddlewaretoken']").val()
               },
         success: function(data){
             $("#submission-list tr[data-id='"+id +"']").removeClass('deleted');
-            $("#submission-list tr[data-id='"+id +"'] button[role='delete']").html('Delete');
+            $("#submission-list tr[data-id='"+id +"'] button[role='delete']").html(
+                'Delete');
 
         }
     });
@@ -55,11 +58,10 @@ $(document).ready(function (){
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         var locker_id = $(this).closest("tr").attr("locker-id");
-        if ($(this).html() == "Delete"){
+        if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id );
             $(this).html('Undelete');
-        }
-        else {
+        } else {        
             Submission.undelete(locker_id, id);
              $(this).html('Delete');
         }

@@ -1,4 +1,4 @@
-// Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+/*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
 /**
  * Select-all script to use a single checkbox to select or deselect every checkbox
@@ -11,7 +11,8 @@ $(document).ready(function() {
    $("body").on("click", "[role='select-all']", function (event)  
     {  
         var target = $(this).attr("data-target");
-        $("#" + target + " input[type='checkbox']").prop("checked", $(this).prop("checked"));
+        $("#" + target + " input[type='checkbox']").prop(
+        	"checked", $(this).prop("checked"));
     });
 
     if ($('.checkbox-inputs:checked').length == $('.checkbox-inputs').length){

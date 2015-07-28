@@ -1,4 +1,4 @@
-// Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+/*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 (function (Locker, $, undefined)
 {
     // the AJAX objects that handles server communication
@@ -13,8 +13,8 @@
 
 
 
-    Locker.add = function ()
-       {   // submit the request
+    Locker.add = function () {
+           // submit the request
             var email = $("#email").val();
             var addUrl = $("#dialog-edit-users form").attr("action");
             Locker.addRequest = $.ajax({
@@ -51,8 +51,7 @@
             });
         }
 
-    Locker.archive = function(id)
-        {
+    Locker.archive = function(id) {        
             $.ajax({
                 url: '/datalocker/' + id + '/archive',
                 type: 'POST',
@@ -61,16 +60,16 @@
                     csrfmiddlewaretoken: $("#dialog-edit-users").find(
                         "input[name='csrfmiddlewaretoken']").val()
                 },
-                success: function(data){
+                success: function(data) {
                     $("#locker-list tr[data-id='" + id + "']").addClass('archived');
                     $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                        'Unarchive Locker');
+                        'Unarchive');
                 }
             });
         }
 
     Locker.unarchive = function(id) {
-        $.ajax({
+            $.ajax({
             url: '/datalocker/' + id + '/unarchive',
             type: 'POST',
             data: {
@@ -78,16 +77,15 @@
                 csrfmiddlewaretoken: $("#dialog-edit-users").find(
                     "input[name='csrfmiddlewaretoken']").val()
             },
-            success: function(data){
+            success: function(data) {
                 $('#locker-list tr[data-id=' + id + "]").removeClass('archived');
                 $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                    'Archive Locker');
+                    'Archive');
                 }
             });
         }
 
-    Locker.delete = function (user_id)
-        {
+    Locker.delete = function (user_id) {
             // submit the request
             var deleteUrl =  $("#existing-users").attr("data-delete-url");
             var locker_id = $("#dialog-edit-users").attr("data-locker-id");
@@ -125,17 +123,17 @@
         }
 
 
-Locker._build_list_entry = function (user)
-{
+Locker._build_list_entry = function (user) {
     return $("<li />").attr("data-id", user.id).append(
             $("<span />").html(user.first_name + " " + user.last_name + " ")
         ).append(
-            $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr("href", "#")
+            $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr(
+                "href", "#")
         );
 }
 
 
-Locker.buildList = function (users){
+Locker.buildList = function (users) {
 
      // get the url to use
     var locker_id = $("#dialog-edit-users").attr("data-locker-id");
@@ -143,7 +141,7 @@ Locker.buildList = function (users){
         "/0/", "/" + locker_id +"/");
 
     // submit the request (if none are pending)
-    if (!Locker.dataRequest && url) {
+    if (!Locker.dataRequest && url) {       
         Locker.dataRequest = $.ajax({
             url: url,
             type: "get",
@@ -178,9 +176,10 @@ Locker.buildList = function (users){
 }( window.Locker = window.Locker || {}, jQuery));
 
 
-$(document).ready(function (){
+$(document).ready(function ()
+{
     //Opens the users modal dialog
-    $("button[role='edit-users']").on("click", function (event){
+    $("button[role='edit-users']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         $("#dialog-edit-users").attr("data-locker-id", id);
@@ -192,7 +191,8 @@ $(document).ready(function (){
     });
 
     //Opens the edit lockers modal dialog
-    $("button[role='edit-locker']").on("click", function (event){
+    $("button[role='edit-locker']").on("click", function (event) {
+        event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         $("#dialog-edit-locker").attr("data-locker-id", id);
         var url = $("#dialog-edit-locker").find("form").attr("data-url");
@@ -201,35 +201,33 @@ $(document).ready(function (){
         $("#dialog-edit-locker").modal('show');
     });
 
-    //Calls the add function
-    $("#dialog-edit-users form").on("submit", function (event){
+    //Handles the 'add' button for the edit users dialog
+    $("#dialog-edit-users form").on("submit", function (event) {
         event.preventDefault();
-        Locker.add();
+        Locker.add();   
     });
 
-    $("#dialog-edit-users form ul").on("click","a", function (event){
+    $("#dialog-edit-users form ul").on("click","a", function (event) {
         event.preventDefault();      
-        var user_id =$(this).closest("li").attr("data-id");
+        var user_id = $(this).closest("li").attr("data-id");
         Locker.delete(user_id);
     });
 
-    $("[role='archive-locker']").on("click", function (event){
+    $("[role='archive-locker']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
-        if ($(this).html() == "Archive Locker"){
+        if ($(this).html() == "Archive") {
             Locker.archive(id);
-        }
-        else {
+        } else {
             Locker.unarchive(id);
         }
     }); 
     $("#show-hide-archived").click(function() {
       $('.archived').toggle();
-      if ($(this).html() == "Show Archived Lockers"){
+      if ($(this).html() == "Show Archived Lockers") {
             $(this).addClass('active');
             $(this).html('Hide Archived Lockers');
-        }
-        else {
+        } else {        
             $(this).removeClass('active');
             $(this).html('Show Archived Lockers');
         }

@@ -163,11 +163,13 @@ class LockerSubmissionView(generic.ListView):
 
 
     def get_queryset(self):
-         # Return all submissions for selected locker
-        return Submission.objects.filter(locker_id=self.kwargs['locker_id']).order_by('-timestamp')
+        """ Return all submissions for selected locker """
+        return Submission.objects.filter(
+            locker_id=self.kwargs['locker_id']).order_by('-timestamp')
 
 
     def post(self, *args, **kwargs):
+        """ Submits the selected data from the fields list """
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         selected_fields = []
         for field in locker.get_all_fields_list():
@@ -183,7 +185,8 @@ class LockerSubmissionView(generic.ListView):
             )
         selected_fields_setting.value = json.dumps(selected_fields)
         selected_fields_setting.save()
-        return HttpResponseRedirect(reverse('datalocker:submissions_list', kwargs={'locker_id': self.kwargs['locker_id']}))
+        return HttpResponseRedirect(reverse('datalocker:submissions_list', 
+            kwargs={'locker_id': self.kwargs['locker_id']}))
 
 
 
