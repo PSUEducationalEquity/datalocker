@@ -1,4 +1,4 @@
-//Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
+// Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.
 (function (Locker, $, undefined)
 {
     // the AJAX objects that handles server communication
@@ -7,13 +7,8 @@
     Locker.deleteRequest;
 
     /**
-     * Adds a new tag to the student via AJAX
-     *
-     * @return      void
-     * @access      private
-     * @author      Paul Rentschler <par117@psu.edu>
-     * @since       21 March 2014
-     */
+     * 
+    */
 
 
 

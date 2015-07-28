@@ -1,4 +1,5 @@
-###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
+### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
+
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMessage
@@ -31,16 +32,16 @@ def archive_locker(request, **kwargs):
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
     locker.archive_timestamp = datetime.datetime.now()
     locker.save()
-    subject = 'Locker Has Been Archived'
-    message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
-    address = User.objects.get(username=owner)
-    email = address.email
-    send_mail(
-        subject,
-        message,
-        from_email,
-        [email],
-    )
+    # subject = 'Locker Has Been Archived'
+    # message = "One of your lockers has been archived. The locker that has been archived is " + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
+    # address = User.objects.get(username=owner)
+    # email = address.email
+    # send_mail(
+    #     subject,
+    #     message,
+    #     from_email,
+    #     [email],
+    # )
     if request.is_ajax():
         return JsonResponse({})
     else:
@@ -287,16 +288,16 @@ def unarchive_locker(request, **kwargs):
     owner = Locker.objects.get(id=kwargs['locker_id']).owner
     locker.archive_timestamp = None
     locker.save()
-    subject = 'Locker Has Been Unarchived'
-    message = "One of your lockers has been archived. The locker that has been archived is " + locker.name
-    address = User.objects.get(username=owner)
-    email = address.email
-    send_mail(
-        subject,
-        message,
-        from_email,
-        [email],
-    )
+    # subject = 'Locker Has Been Unarchived'
+    # message = "One of your lockers has been archived. The locker that has been archived is " + locker.name
+    # address = User.objects.get(username=owner)
+    # email = address.email
+    # send_mail(
+    #     subject,
+    #     message,
+    #     from_email,
+    #     [email],
+    # )
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 

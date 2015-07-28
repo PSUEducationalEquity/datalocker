@@ -1,4 +1,5 @@
-###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
+### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
+
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
@@ -16,27 +17,54 @@ class DataLockerAdminSite(AdminSite):
 
 # Register your models here.
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ['id','locker','timestamp','data','deleted']
+    list_display = ['id',
+        'locker',
+        'timestamp',
+        'data',
+        'deleted'
+        ]
 
 
 
 
 class LockerAdmin(admin.ModelAdmin):
-    list_display = ['id','form_url','form_identifier','owner','name','create_timestamp','archive_timestamp']
+    list_display = ['id',
+        'form_url',
+        'form_identifier',
+        'owner',
+        'name',
+        'create_timestamp',
+        'archive_timestamp'
+        ]
 
 
 
 
 class SettingAdmin(admin.ModelAdmin):
-    list_display = ['category','setting','setting_identifier','value','locker']
+    list_display = ['category',
+        'setting',
+        'setting_identifier',
+        'value',
+        'locker'
+        ]
 
 
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id','username','email','first_name','last_name','is_superuser','is_staff']
+    list_display = ['id',
+        'username',
+        'email',
+        'first_name',
+        'last_name',
+        'is_superuser',
+        'is_staff'
+        ]
 
-admin_site = DataLockerAdminSite(name = 'datalockeradmin')
+
+
+
+admin_site = DataLockerAdminSite(name='datalockeradmin')
 admin_site.register(Group, GroupAdmin)
 admin_site.register(Locker, LockerAdmin)
 admin_site.register(Submission, SubmissionAdmin)
