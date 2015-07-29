@@ -256,4 +256,7 @@ $(document).ready(function () {
             $(this).html('Show Archived Lockers');
         }
     });
+
+    // Enables tablesorter JS on the tablesorter tables
+    $('.tablesorter').tablesorter();
 });
