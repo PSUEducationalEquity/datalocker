@@ -21,12 +21,12 @@
       <div class="pagination">
         {% include "datalocker/pagination_template.html" %}
       </div>
-      <dl class="dl-horizontal">
+      <ul class="submission-view">
         {% for key, value in object.data_dict.items %}
-          <dt>{{ key }}</dt>
-          <dd>{{ value }}</dd>
+          <li class="header">{{ key }}</li>
+          <li class="information">{{ value }}</li>
         {% endfor %}
-      </dl>
+      </ul>
       <div class="pagination">
         {% include "datalocker/pagination_template.html" %}
       </div>
