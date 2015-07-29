@@ -128,12 +128,12 @@ class LockerListView(generic.ListView):
 
 
 
-class LockerSubmissionView(generic.ListView):
+class LockerSubmissionsListView(generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
     def get_context_data(self, **kwargs):
-        context = super(LockerSubmissionView, self).get_context_data(**kwargs)
+        context = super(LockerSubmissionsListView, self).get_context_data(**kwargs)
         self.locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         context['locker'] = self.locker
         self.fields_list = self.locker.get_all_fields_list()
