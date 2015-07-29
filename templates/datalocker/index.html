@@ -45,7 +45,7 @@
                   <tr data-id="{{ locker.id }}">
                     <td>
                         <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                        <span class="label label-warning js-archived-label" style="margin-left:.5em;">Archived</span>
+                        <span class="label label-default js-archived-label" style="margin-left:.5em;">Archived</span>
                     </td>
                     <td>{{ locker.latest_submission }}</td>
                     <td>
