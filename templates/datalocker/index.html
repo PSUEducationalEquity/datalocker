@@ -10,7 +10,7 @@
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
         <div style="float:right; margin-top:0;">
-          <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>         
+          <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
         </div>
       </ol>
       <h2 class="italic">My Lockers</h2>
@@ -151,7 +151,7 @@
             <div class="form-group">
              <label for="edit-owner">Owner</label>
                <input type="text" name="edit-owner" class="form-control"  id="edit-owner" ><br/>
-            </div>        
+            </div>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" value="Done" />
@@ -171,11 +171,10 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
-        
       });
     </script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
-            src=" {% static 'datalocker/js/locker.js' %}"></script>    
+            src=" {% static 'datalocker/js/locker.js' %}"></script>
 {% endblock site-scripts %}

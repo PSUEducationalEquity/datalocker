@@ -1,0 +1,10 @@
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+
+{# This is a generic template for pagination #}
+
+<div class="pagination">
+  <a class="btn btn-default {% if newest_disabled %}disabled{% endif %}" role="group" aria-label="newest submission button" title="Newest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.newest %}"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span></a>
+  <a class="btn btn-default {% if newer_disabled %}disabled{% endif %}" role="group" aria-label="newer submission button" title="Newer Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.newer %}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
+  <a class="btn btn-default {% if older_disabled %}disabled{% endif %}" role="group" aria-label="older submission button" title="Older Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.older %}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
+  <a class="btn btn-default {% if oldest_disabled %}disabled{% endif %}" role="group" aria-label="oldest submission button" title="Oldest Submission" href="{% url 'datalocker:submissions_view' object.locker.id object.oldest %}"><span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span></a>
+</div>

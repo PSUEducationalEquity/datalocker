@@ -19,18 +19,25 @@ import datetime, json
 
 class LockerQuerySet(models.query.QuerySet):
     def active(self):
+        """
+        If the locker  doesn't have an archived timestamp,
+        the locker is active
+        """
         return self.filter(archive_timestamp = None)
 
 
     def archived(self):
+        """
+        If the locker does have an archived timestamp,
+        then the locker is archived
+        """
         return self.filter(archive_timestamp__isnull = False)
 
 
     def has_access(self, user):
         """
-        We will need to know the id of the user from the auth_user table.
-        We will then need to cross reference that user id
-        with the allowed user id in the datalocker_locker_user table
+        Owners automatically have access , this allows
+        the owners to gives users access
         """
         if user.is_authenticated():
             return Locker.objects.filter(owner=user) | Locker.objects.filter(users=user)
@@ -49,6 +56,7 @@ class LockerManager(models.Manager):
             return getattr(self.__class__,attr, *args)
         except AttributeError:
             return getattr(self.get_query_set(), attr, *args)
+
 
 
 
@@ -77,8 +85,6 @@ class Locker(models.Model):
         null=True,
         blank=True,
         )
-
-
     objects = LockerManager()
 
 
@@ -93,9 +99,12 @@ class Locker(models.Model):
 
 
     def get_all_fields_list(self):
+        """
+        This gets all of the feilds that were submitted to the form
+        """
         try:
             all_fields_setting = self.settings.get(
-                category='fields-list', 
+                category='fields-list',
                 setting_identifier='all-fields'
                 )
         except LockerSetting.DoesNotExist:
@@ -105,7 +114,7 @@ class Locker(models.Model):
 
         try:
             last_updated_setting = self.settings.get(
-                category='fields-list', 
+                category='fields-list',
                 setting_identifier='last-updated'
                 )
         except LockerSetting.DoesNotExist:
@@ -145,9 +154,13 @@ class Locker(models.Model):
 
 
     def get_selected_fields_list(self):
+        """
+        Get's the selected fields off of the Submission List Page,
+        and inserts them into the table
+        """
         try:
             selected_fields_setting = self.settings.get(
-                category='fields-list', 
+                category='fields-list',
                 setting_identifier='selected-fields'
                 )
         except LockerSetting.DoesNotExist:
@@ -169,7 +182,7 @@ class LockerSetting(models.Model):
         related_name="settings",
         on_delete=models.PROTECT,
         )
-   
+
 
 
 ##
@@ -195,11 +208,15 @@ class Submission(models.Model):
         null=True,
         )
 
+
     def __str__(self):
         return str(self.locker)
 
 
     def data_dict(self):
+        """
+        Returns the data into Json format
+        """
         data = json.loads(self.data, object_pairs_hook=OrderedDict)
         return data
 
@@ -211,9 +228,12 @@ class Submission(models.Model):
 
 
     def newer(self):
+        """
+        NEEDS DESCRIPTION!!
+        """
         try:
             nextSubmission = Submission.objects.filter(
-                locker=self.locker, 
+                locker=self.locker,
                 timestamp__gt=self.timestamp).order_by('timestamp')[0]
         except IndexError:
             nextSubmission = Submission.objects.filter(
@@ -222,9 +242,12 @@ class Submission(models.Model):
 
 
     def older(self):
+        """
+        NEEDS DESCRIPTION!!
+        """
         try:
             lastSubmission = Submission.objects.filter(
-                locker=self.locker, 
+                locker=self.locker,
                 timestamp__lt=self.timestamp).order_by('-timestamp')[0]
         except IndexError:
             lastSubmission = Submission.objects.filter(
@@ -233,12 +256,18 @@ class Submission(models.Model):
 
 
     def oldest(self):
+        """
+        NEEDS DESCRIPTION!!
+        """
         oldestSubmission = Submission.objects.filter(
             locker=self.locker).earliest('timestamp')
         return oldestSubmission.id
 
 
     def newest(self):
+        """
+        NEEDS DESCRIPTION!!
+        """
         newestSubmission = Submission.objects.filter(
             locker=self.locker).latest('timestamp')
         return newestSubmission.id

@@ -30,20 +30,9 @@ public_fields = ['id', 'email', 'first_name', 'last_name']
 
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    owner = Locker.objects.get(id=kwargs['locker_id']).owner
-    locker.archive_timestamp = timezone.now() 
+    owner = locker.owner
+    locker.archive_timestamp = timezone.now()
     locker.save()
-    """ subject = 'Locker Has Been Archived'
-     message = "One of your lockers has been archived. The locker that has been archived is " 
-     + str(locker.name) + " and it was archived at " + str(locker.archive_timestamp)
-     address = User.objects.get(username=owner)
-     email = address.email
-     send_mail(
-         subject,
-         message,
-         from_email,
-         [email],
-     )"""
     if request.is_ajax():
         return JsonResponse({})
     else:
@@ -54,7 +43,7 @@ def archive_locker(request, **kwargs):
 
 def delete_submission(request, **kwargs):
     submission = get_object_or_404(Submission, id=kwargs['pk'])
-    submission.deleted = timezone.now() 
+    submission.deleted = timezone.now()
     submission.save()
     if request.is_ajax():
         return JsonResponse({})
@@ -185,9 +174,8 @@ class LockerSubmissionView(generic.ListView):
             )
         selected_fields_setting.value = json.dumps(selected_fields)
         selected_fields_setting.save()
-        return HttpResponseRedirect(reverse('datalocker:submissions_list', 
+        return HttpResponseRedirect(reverse('datalocker:submissions_list',
             kwargs={'locker_id': self.kwargs['locker_id']}))
-
 
 
 
@@ -203,14 +191,12 @@ def locker_users(request, locker_id):
             users.append(user_dict)
         return JsonResponse({'users': users})
     else:
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 
 
 class LockerUserAdd(View):
-
-
     def post(self, *args, **kwargs):
         user = get_object_or_404(User, email=self.request.POST.get('email', ''))
         locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -221,14 +207,11 @@ class LockerUserAdd(View):
         for key,value in model_to_dict(user).iteritems():
             if key in public_fields:
                 user_dict[key] = value
-        # name = Locker.objects.get(id=kwargs['locker_id'])
+        # locker_name = Locker.objects.get(id=kwargs['locker_id'])
         # subject = 'Granted Locker Access'
         # to = self.request.POST.get('email', "")
-        # body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  name.name
-        # email = EmailMessage(subject,
-        #    body,
-        #    from_email,
-        #    [to])
+        # body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  locker_name.name
+        # email = EmailMessage(subject, body, from_email, [to])
         # email.send()
         return JsonResponse(user_dict)
 
@@ -236,8 +219,6 @@ class LockerUserAdd(View):
 
 
 class LockerUserDelete(View):
-
-
     def post(self , *args, **kwargs):
         user = get_object_or_404(User, id=self.request.POST.get('id', ''))
         locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -269,21 +250,20 @@ class SubmissionView(generic.DetailView):
 
 
 
-
+@require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
     locker_name = locker.name
     locker_owner = locker.owner
-    if request.method == 'POST':
-        new_locker_name = request.POST.get('edit-locker')
-        new_owner = request.POST.get('edit-owner')
-        if new_locker_name != "":
-             locker.name = new_locker_name
-             locker.save()
-        if new_owner != "":
-            user = User.objects.get(email=new_owner).username
-            locker.owner = user
-            locker.save()
+    new_locker_name = request.POST.get('edit-locker')
+    new_owner = request.POST.get('edit-owner')
+    if new_locker_name != "":
+         locker.name = new_locker_name
+         locker.save()
+    if new_owner != "":
+        user = User.objects.get(email=new_owner).username
+        locker.owner = user
+        locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
@@ -291,7 +271,7 @@ def modify_locker(request, **kwargs):
 
 def unarchive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    owner = Locker.objects.get(id=kwargs['locker_id']).owner
+    owner = locker.owner
     locker.archive_timestamp = None
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))

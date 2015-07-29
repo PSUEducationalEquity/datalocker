@@ -5,7 +5,7 @@
 \*------------------------------------*/
 /**
  * CONTENTS.............You're reading it!
- * ARCHIVED.............Automatically hides archived classes by default on page load 
+ * ARCHIVED.............Automatically hides archived classes by default on page load
  * TOGGLESWITCH.........Toggle Switch the stying when entering and exiting maintenance mode
  * GENERAL..............General styles
  * ACCESSIBILITY........Improve the accessibility of certain structures
@@ -138,10 +138,7 @@ display: none;
   font-size:16px;
 }
 
-.edit-button {
-  float: right;
-  margin-right: .5em;
-}
+
 
 h1.hidden {
   visibility: hidden;
