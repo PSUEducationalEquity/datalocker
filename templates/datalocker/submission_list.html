@@ -5,73 +5,68 @@
 {% block page-meta-title %}Submissions{% endblock page-meta-title %}
 
 {% block content %}
-    <div class="container-fluid">
-    {% if user.is_authenticated %}
-      <ol class="breadcrumb">
-        <li>
-          <a href="{% url 'datalocker:index' %}">
-          <span class="sr-only">List of </span>My Lockers</a>
-        </li>
-        <li class="active">All Submissions
-          <span class="sr-only"> for {{ locker.name }}</span>
-        </li>
-      </ol>
-      <h1 style="float:left;">{{ locker.name }}</h1>
-     {% if locker.owner = user.username %}
-        <div class="onoffswitch">
-          <input type="checkbox" name="onoffswitch"
-            class="onoffswitch-checkbox" id="myonoffswitch" checked>
-          <label class="onoffswitch-label" for="myonoffswitch">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
-          </label>
-        </div>
-   <!--     <div class="label_for_toggle">
-        Maintenance Mode
-       </div> -->
-      {% endif %}
-      <button type="button" class="btn btn-default btn-xs" role="filter-results">
-        Fields to Display</button>
-      <table class="table table-striped table-hover listing sortable"
-        name="submission listing" id="submission-list">
-        <caption>Form Submissions</caption>
-        <thead>
-          {% for heading in column_headings %}
-            <th>{{ heading }}</th>
-          {% endfor %}
-        </thead>
-        <tbody>
-          {% for submission in data %}
-            <tr data-id="{{submission.0 }}" locker-id="{{locker.id}}"
-              class="{% if submission.1 %}deleted{% else %}{% endif %}">
-              {% for value in submission %}
-                {% if forloop.counter > 2 %}
-                  <td>
-                    {% if forloop.counter == 3 %}
-                      <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
-                        style="display:block;">{{ value }}</a>
-                    {% else %}
-                      {{ value }}
-                    {% endif %}
-                  </td>
-                {% endif %}
-              {% endfor %}
-              <td>
-                <button type="button" role="delete-submission" class="delete-submission">
-                  {% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">
-        log in</a> to view the submissions for this locker</h4>
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li>
+        <a href="{% url 'datalocker:index' %}">
+        <span class="sr-only">List of </span>My Lockers</a>
+      </li>
+      <li class="active">All Submissions
+        <span class="sr-only"> for {{ locker.name }}</span>
+      </li>
+    </ol>
+    <h1 style="float:left;">{{ locker.name }}</h1>
+   {% if locker.owner = user.username %}
+      <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitch"
+          class="onoffswitch-checkbox" id="myonoffswitch" checked>
+        <label class="onoffswitch-label" for="myonoffswitch">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+      </div>
+ <!--     <div class="label_for_toggle">
+      Maintenance Mode
+     </div> -->
     {% endif %}
-    </div>
-    <form method="POST" id="delete_undelete_form">
-     {% csrf_token %}
-    </form>
+    <button type="button" class="btn btn-default btn-xs" role="filter-results">
+      Fields to Display</button>
+    <table class="table table-striped table-hover listing sortable"
+      name="submission listing" id="submission-list">
+      <caption>Form Submissions</caption>
+      <thead>
+        {% for heading in column_headings %}
+          <th>{{ heading }}</th>
+        {% endfor %}
+      </thead>
+      <tbody>
+        {% for submission in data %}
+          <tr data-id="{{submission.0 }}" locker-id="{{locker.id}}"
+            class="{% if submission.1 %}deleted{% else %}{% endif %}">
+            {% for value in submission %}
+              {% if forloop.counter > 2 %}
+                <td>
+                  {% if forloop.counter == 3 %}
+                    <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
+                      style="display:block;">{{ value }}</a>
+                  {% else %}
+                    {{ value }}
+                  {% endif %}
+                </td>
+              {% endif %}
+            {% endfor %}
+            <td>
+              <button type="button" role="delete-submission" class="delete-submission">
+                {% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <form method="POST" id="delete_undelete_form">
+   {% csrf_token %}
+  </form>
 {% endblock %}
 
 
