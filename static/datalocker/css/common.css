@@ -141,7 +141,12 @@ display: none;
   font-size:16px;
 }
 
-
+.filter-results {
+  left: 130px;
+  margin: 1em;
+  position: absolute;
+  top: 192px;
+}
 
 h1.hidden {
   visibility: hidden;
