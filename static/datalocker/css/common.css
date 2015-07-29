@@ -46,15 +46,12 @@
     $TOGGLESWITCH
 \*------------------------------------*/
 
-.label-for-toggle{
-  display: block;
-  position: relative;
-  float: right;
-  padding-right: 10px;
+.maintenance-mode-switch {
+  float:right;
 }
 
 .onoffswitch {
-    position: relative; float: right;width: 90px;
+    position: relative; width: 90px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 
