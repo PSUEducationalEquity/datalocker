@@ -18,17 +18,19 @@
 /*------------------------------------*\
     $ARCHIVED
 \*------------------------------------*/
-
-.archived {
-  display: none;
-}
-
 .archive-button {
   float: right;
   margin-right: .5em;
 }
 
-.archived .js-archived-label {
+.button-archived-showhide .is-active {
+  display: active;
+}
+.is-archived {
+  display: none;
+}
+
+.is-archived .js-archived-label {
   display: inline;
 }
 
