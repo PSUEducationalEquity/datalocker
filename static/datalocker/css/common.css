@@ -114,7 +114,9 @@
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
-
+caption {
+  font-size: 1.75em;
+}
 .deleted{
   display: none;
   text-decoration: line-through;
