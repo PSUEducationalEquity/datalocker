@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
+
 from __future__ import unicode_literals
 
 from django.db import models, migrations
