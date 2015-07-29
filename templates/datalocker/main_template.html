@@ -16,12 +16,12 @@
 
     {% block site-styles %}
       <link type="text/css" rel="stylesheet"
-            href="{% static 'datalocker/css/bootstrap-3.3.5.min.css' %}" />  
+            href="{% static 'datalocker/css/bootstrap-3.3.5.min.css' %}" />
       <link type="{text/css" rel="stylesheet"
             href="{% static 'datalocker/css/tablesorter.css' %}" />
       <link type="text/css" rel="stylesheet"
             href="{% static 'datalocker/css/common.css' %}" />
-    
+
     {% endblock site-styles %}
   </head>
 
@@ -124,7 +124,7 @@
                       </li>
 
                     {% else %}
-                      <li><a href="/datalocker/admin/login/?next=/datalocker/">Log In</a></li>
+                      <li><a href="{% block login-url %}{% url 'admin:login' %}{% endblock %}">Log In</a></li>
                     {% endif %}
                   </ul>
                 {% endblock personal-bar-wrapper %}
