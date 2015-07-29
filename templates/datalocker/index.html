@@ -10,7 +10,7 @@
       <ol class="breadcrumb">
         <li class="active"><span class="sr-only">List of </span>My Lockers</li>
         <div style="float:right; margin-top:0;">
-          <button name="show-hide-lockers" id="show-hide-archived" class="btn btn-default btn-xs" title="Show/Hide Archived Lockers">Show Archived Lockers</button>         
+          <button name="show-hide-lockers" class="btn btn-default btn-xs button-archived-showhide" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
         </div>
       </ol>
       <h2 class="italic">My Lockers</h2>
@@ -29,7 +29,7 @@
             {% for locker in my_lockers_list %}
               {% if locker.owner == user.username %}
                 {% if locker.archive_timestamp != null %}
-                  <tr class="archived" data-id="{{ locker.id }}">
+                  <tr class="list-lockers is-archived" data-id="{{ locker.id }}">
                     <td>
                         <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
                         <span class="label label-default js-archived-label" style="margin-left:.5em;">Archived</span>
@@ -38,7 +38,7 @@
                     <td>
                       <button type="button" class="btn btn-info btn-xs " role="edit-users" title="Edit users for this locker">Users</button>
                       <button type="button" class="btn btn-info btn-xs " role="edit-locker" title="Edit this locker">Edit Locker</button>
-                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Unarchive</button>
+                      <button type="button" class="btn btn-default btn-xs archive-button" id="unarchive-locker" role="archive-locker" data-url="{% url 'datalocker:unarchive_locker' 0 %}">Unarchive</button>
                     </td>
                   </tr>
                 {% else %}
@@ -51,7 +51,7 @@
                     <td>
                       <button type="button" class="btn btn-primary btn-xs edit-button" role="edit-users" title="Edit users for this locker">Users</button>
                       <button type="button" class="btn btn-info btn-xs edit-button" role="edit-locker" title="Edit this locker">Edit </button>
-                      <button type="button" class="btn btn-default btn-xs archive-button" role="archive-locker">Archive</button>
+                      <button type="button" class="btn btn-default btn-xs archive-button" id="archive-locker" role="archive-locker" data-url="{% url 'datalocker:archive_locker' 0 %}">Archive</button>
                     </td>
                   </tr>
                 {% endif %}
@@ -73,7 +73,7 @@
               {% for locker in my_lockers_list %}
                 {% if locker.owner != user.username %}
                   {% if locker.archive_timestamp != null %}
-                    <tr class="archived" data-id="{{ locker.id }}">
+                    <tr class="list-lockers is-archived" data-id="{{ locker.id }}">
                       <td>
                           <a style="float:left;" href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
                           <span class="label label-default" style="margin-left:.5em;">Archived</span>
@@ -151,7 +151,7 @@
             <div class="form-group">
              <label for="edit-owner">Owner</label>
                <input type="text" name="edit-owner" class="form-control"  id="edit-owner" ><br/>
-            </div>        
+            </div>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm save-button pull-left" value="Done" />
@@ -171,11 +171,11 @@
       $(document).ready(function (){
         $('#locker-list').tablesorter();
         $('#shared-locker-list').tablesorter();
-        
+
       });
     </script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
-            src=" {% static 'datalocker/js/locker.js' %}"></script>    
+            src=" {% static 'datalocker/js/locker.js' %}"></script>
 {% endblock site-scripts %}

@@ -1,3 +1,13 @@
+/*
+  tablesorter style rules
+  in order to use the styling for table sorter you need a table defined with
+  a thead and tbody tags. You will need to apply the class header to all the
+  tr tags in the thead sections of the table.
+ */
+
+/*------------------------------------*\
+    $TABLESORTER
+\*------------------------------------*/
 table.tablesorter thead tr .header
 {
 	background-image: url(../img/bg.gif);
@@ -13,9 +23,4 @@ table.tablesorter thead tr .headerSortUp
 table.tablesorter thead tr .headerSortDown
 {
 	background-image: url(../img/desc.gif);
-}
-table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp
-{
-	/*color: #000;*/
-/*    background-color: #3399FF*/
 }

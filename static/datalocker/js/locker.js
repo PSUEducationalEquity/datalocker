@@ -8,7 +8,7 @@
 
     /**
      *  Builds a list of users,also archives/unarchives lockers
-     *      
+     *
     */
 
 
@@ -51,26 +51,11 @@
             });
         }
 
-    Locker.archive = function(id) {        
-            $.ajax({
-                url: '/datalocker/' + id + '/archive',
-                type: 'POST',
-                data: {
-                    id: id,
-                    csrfmiddlewaretoken: $("#dialog-edit-users").find(
-                        "input[name='csrfmiddlewaretoken']").val()
-                },
-                success: function(data) {
-                    $("#locker-list tr[data-id='" + id + "']").addClass('archived');
-                    $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                        'Unarchive');
-                }
-            });
-        }
-
-    Locker.unarchive = function(id) {
-            $.ajax({
-            url: '/datalocker/' + id + '/unarchive',
+    /* Adds the ability to archive a locker */
+    Locker.archive = function(id) {
+        archiveUrl = $("#archive-locker").attr("data-url");
+        $.ajax({
+            url: archiveUrl.replace("/0/", "/" + id +"/"),
             type: 'POST',
             data: {
                 id: id,
@@ -78,12 +63,44 @@
                     "input[name='csrfmiddlewaretoken']").val()
             },
             success: function(data) {
-                $('#locker-list tr[data-id=' + id + "]").removeClass('archived');
+                $("#locker-list tr[data-id='" + id + "']").addClass('list-lockers is-archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                    'Unarchive');
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.error(
+                    "Locker.archive in Locker.js AJAX error: "
+                    + textStatus,
+                    errorThrown
+                );
+            }
+        });
+    }
+
+    Locker.unarchive = function(id) {
+        unarchiveUrl = $("#unarchive-locker").attr("data-url");
+        $.ajax({
+            url: unarchiveUrl.replace("/0/", "/" + id +"/"),
+            type: 'POST',
+            data: {
+                id: id,
+                csrfmiddlewaretoken: $("#dialog-edit-users").find(
+                    "input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(data) {
+                $('#locker-list tr[data-id=' + id + "]").removeClass('list-lockers is-archived');
                 $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
                     'Archive');
-                }
-            });
-        }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.error(
+                    "Locker.archive in Locker.js AJAX error: "
+                    + textStatus,
+                    errorThrown
+                );
+            }
+        });
+    }
 
     Locker.delete = function (user_id) {
             // submit the request
@@ -141,7 +158,7 @@ Locker.buildList = function (users) {
         "/0/", "/" + locker_id +"/");
 
     // submit the request (if none are pending)
-    if (!Locker.dataRequest && url) {       
+    if (!Locker.dataRequest && url) {
         Locker.dataRequest = $.ajax({
             url: url,
             type: "get",
@@ -171,8 +188,8 @@ Locker.buildList = function (users) {
             }
             Locker.dataRequest = null;
         });
-    }    
-} 
+    }
+}
 }( window.Locker = window.Locker || {}, jQuery));
 
 
@@ -204,11 +221,11 @@ $(document).ready(function ()
     //Handles the 'add' button for the edit users dialog
     $("#dialog-edit-users form").on("submit", function (event) {
         event.preventDefault();
-        Locker.add();   
+        Locker.add();
     });
 
     $("#dialog-edit-users form ul").on("click","a", function (event) {
-        event.preventDefault();      
+        event.preventDefault();
         var user_id = $(this).closest("li").attr("data-id");
         Locker.delete(user_id);
     });
@@ -221,14 +238,15 @@ $(document).ready(function ()
         } else {
             Locker.unarchive(id);
         }
-    }); 
-    $("#show-hide-archived").click(function() {
-      $('.archived').toggle();
+    });
+    $(".button-archived-showhide").click(function() {
       if ($(this).html() == "Show Archived Lockers") {
-            $(this).addClass('active');
+            $('.is-archived').show();
+            $(this).addClass('button-archived-showhide is-active');
             $(this).html('Hide Archived Lockers');
-        } else {        
-            $(this).removeClass('active');
+        } else {
+            $('.is-archived').hide();
+            $(this).removeClass('button-archived-showhide is-active');
             $(this).html('Show Archived Lockers');
         }
     });
