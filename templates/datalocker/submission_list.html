@@ -15,8 +15,6 @@
         <li class="active">All Submissions
           <span class="sr-only"> for {{ locker.name }}</span>
         </li>
-        <div style="float:right; margin-top:0;">
-        </div>
       </ol>
       <h1 style="float:left;">{{ locker.name }}</h1>
      {% if locker.owner = user.username %}
@@ -28,9 +26,9 @@
               <span class="onoffswitch-switch"></span>
           </label>
         </div>
-       <div class="label_for_toggle">
+   <!--     <div class="label_for_toggle">
         Maintenance Mode
-       </div>
+       </div> -->
       {% endif %}
       <button type="button" class="btn btn-default btn-xs" role="filter-results">
         Fields to Display</button>
@@ -59,7 +57,7 @@
                 {% endif %}
               {% endfor %}
               <td>
-                <button type="button" role="delete" class="delete-button">
+                <button type="button" role="delete-submission" class="delete-submission">
                   {% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
               </td>
             </tr>
