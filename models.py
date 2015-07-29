@@ -229,7 +229,10 @@ class Submission(models.Model):
 
     def newer(self):
         """
-        NEEDS DESCRIPTION!!
+        Searches through all the submissions in the database for the indicated
+        Locker and it will order them by timestamp and filter the first one with
+        a newer timestamp. If there isn't one newer it will return the current
+        Locker object to avoid and Index Out of Range Error.
         """
         try:
             nextSubmission = Submission.objects.filter(
@@ -243,7 +246,10 @@ class Submission(models.Model):
 
     def older(self):
         """
-        NEEDS DESCRIPTION!!
+        Searches through all the submissions in the database for the indicated
+        Locker and it will order them by descending timestamp and filter
+        the first one with an older timestamp. If there isn't an older one it
+        will return the current Locker object to avoid and Index Out of Range Error.
         """
         try:
             lastSubmission = Submission.objects.filter(
@@ -257,7 +263,9 @@ class Submission(models.Model):
 
     def oldest(self):
         """
-        NEEDS DESCRIPTION!!
+        Searches through all the submissions in the database for the indicated
+        Locker and it will order them by timestamp and filter the Locker object
+        with the earliest timestamp.
         """
         oldestSubmission = Submission.objects.filter(
             locker=self.locker).earliest('timestamp')
@@ -266,7 +274,9 @@ class Submission(models.Model):
 
     def newest(self):
         """
-        NEEDS DESCRIPTION!!
+        Searches through all the submissions in the database for the indicated
+        Locker and it will order them by timestamp and filter the Locker object
+        with the newest timestamp.
         """
         newestSubmission = Submission.objects.filter(
             locker=self.locker).latest('timestamp')
