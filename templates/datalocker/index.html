@@ -89,8 +89,11 @@
 
 
 {% block dialogs %}
-{# Modal used for Editing the Locker. The name and the owner of the existing
- Locker is what is changed here #}
+{% comment %}
+  Modal used for Editing the Locker.
+  The name and the owner of the existing
+  Locker is what is changed here
+{% endcomment %}
   <div class="modal fade" id="dialog-edit-users" tabindex="-1"
     role="dialog" aria-labelledby="dialog-edit-users-title"
     aria-hidden="true" data-locker-id="0">
@@ -126,8 +129,11 @@
       </div>
     </form>
   </div>
-{# Modal used for Edit the users of the Locker. You can add or remove users from
- the existing locker by adding or removing existing email addresses #}
+{% comment %}
+  Modal used for Edit the users of the Locker.
+  You can add or remove users from the existing
+  locker by adding or removing existing email addresses
+{% endcomment %}
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog"
     aria-labelledby="dialog-edit-locker-title" aria-hidden="true"
     data-locker-id="0">
