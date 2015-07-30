@@ -140,10 +140,16 @@
      */
 
     Locker._build_user_list_entry = function (user) {
+        var width = Math.max.apply(Math,
+        $('.existing-users-list').map(function() {
+            return $(this).width();
+        }).get());
+        console.log(width);
+
         return  $("<li />").attr("data-id", user.id).append(
-                    $("<span />").html(user.first_name + " " + user.last_name + " ")).append(
-                        $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr(
-                            "href", "#")
+                    $("<div class='existing-users-list'/>").html(user.first_name + " " + user.last_name + " ").append(
+                        $("<a />").html("<span class='glyphicon glyphicon-remove pull-right remove-users'>" ).attr(
+                            "href", "#"))
             );
     }
 
@@ -277,15 +283,15 @@ $(document).ready(function () {
 
     // Taken from w3 schools to retireve a cookie value
     function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        }
+        return "";
     }
-    return "";
-}
 
     // Enables tablesorter JS on the tablesorter tables
     $('.tablesorter').tablesorter();
