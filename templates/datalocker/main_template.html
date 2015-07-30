@@ -112,13 +112,15 @@
                                 >Change Password</a>
                             </li>
                             {% endblock menuitem-password-change %}
-                            <!--<li role="separator" class="divider"></li>
-                            <li role="presentation"
-                              ><a role="menuitem"
-                                  tabindex="-1"
-                                  href="{% url 'admin:index' %}"
-                                >Settings</a>
-                            </li> -->
+                            {% if user.is_staff %}
+                              <li role="separator" class="divider"></li>
+                              <li role="presentation"
+                                ><a role="menuitem"
+                                    tabindex="-1"
+                                    href="{% url 'admin:index' %}"
+                                  >Settings</a>
+                            {% endif %}
+                            </li>
                           {% endblock personal-bar-menu %}
                         </ul>
                       </li>
