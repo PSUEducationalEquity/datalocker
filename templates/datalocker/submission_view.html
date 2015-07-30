@@ -22,6 +22,8 @@
         {% include "datalocker/pagination_template.html" %}
       </div>
       <ul class="submission-view">
+          <li class="header">Submission Date</li>
+          <li class="information">{{ object.timestamp }}</li>
         {% for key, value in object.data_dict.items %}
           <li class="header">{{ key }}</li>
           <li class="information">{{ value }}</li>

@@ -41,11 +41,11 @@
                   <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Users</button>
                   <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
                   {% if locker.archive_timestamp != None %}
-                  <button type="button" class="btn btn-default btn-xs archive-button"
+                  <button type="button" class="btn btn-success btn-xs archive-button"
                     id="unarchive-locker" role="archive-locker"
                     data-url="{% url 'datalocker:unarchive_locker' 0 %}">Unarchive</button>
                   {% else %}
-                  <button type="button" class="btn btn-default btn-xs archive-button"
+                  <button type="button" class="btn btn-danger btn-xs archive-button"
                     id="archive-locker" role="archive-locker"
                     data-url="{% url 'datalocker:archive_locker' 0 %}">Archive</button>
                   {% endif %}
