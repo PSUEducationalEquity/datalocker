@@ -65,7 +65,7 @@
               <button type="button"
                 role="delete-submission"
                 class="delete-submission"
-                data-url="{% url 'datalocker:delete_submission' locker.id submission.id %}"
+                data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
             </td>
           </tr>

@@ -6,7 +6,6 @@
 
 {% block content %}
   <div class="container-fluid">
-    {% if user.is_authenticated %}
       <ol class="breadcrumb">
         <li><a href="{% url 'datalocker:index' %}"
            ><span class="sr-only">List of </span>My Lockers</a>
@@ -22,17 +21,14 @@
       <div class="pagination">
         {% include "datalocker/pagination_template.html" %}
       </div>
-      <dl class="dl-horizontal">
+      <ul class="submission-view">
         {% for key, value in object.data_dict.items %}
-          <dt>{{ key }}</dt>
-          <dd>{{ value }}</dd>
+          <li class="header">{{ key }}</li>
+          <li class="information">{{ value }}</li>
         {% endfor %}
-      </dl>
+      </ul>
       <div class="pagination">
         {% include "datalocker/pagination_template.html" %}
       </div>
-    {% else %}
-      <h4>Please <a href="/datalocker/admin/login/?next=/datalocker/">log in</a> to view this submission</h4>
-    {% endif %}
   </div>
 {% endblock %}

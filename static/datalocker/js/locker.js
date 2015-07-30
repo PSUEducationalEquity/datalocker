@@ -218,6 +218,8 @@ $(document).ready(function () {
         var url = $("#dialog-edit-locker").find("form").attr("data-url");
         $("#dialog-edit-locker").find("form").attr(
             "action", url.replace("/0/","/"+ id +"/"));
+        var name = $(this).closest("tr").attr("data-name");
+        $("#edit-locker").val(name);
         $("#dialog-edit-locker").modal('show');
     });
 
@@ -248,13 +250,41 @@ $(document).ready(function () {
             $('.is-archived').show();
             $(this).addClass('button-archived-showhide is-active');
             $(this).html('Hide Archived Lockers');
+            document.cookie="show/hide=show";
         } else {
             $('.is-archived').hide();
             $(this).removeClass('button-archived-showhide is-active');
             $(this).html('Show Archived Lockers');
+            document.cookie="show/hide=hide"
         }
     });
 
+
     // enables tablesorter JS on the tablesorter tables
+    var showHide = getCookie("show/hide");
+    if (showHide == "show") {
+        $('.is-archived').show();
+        $(".button-archived-showhide").addClass('button-archived-showhide is-active');
+        $(".button-archived-showhide").html('Hide Archived Lockers');
+    }
+    else {
+        $('.is-archived').hide();
+        $(".button-archived-showhide").removeClass('button-archived-showhide is-active');
+        $(".button-archived-showhide").html('Show Archived Lockers');
+    }
+
+    // Taken from w3 schools to retireve a cookie value
+    function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+    // Enables tablesorter JS on the tablesorter tables
     $('.tablesorter').tablesorter();
 });

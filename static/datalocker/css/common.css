@@ -19,7 +19,6 @@
     $ARCHIVED
 \*------------------------------------*/
 .archive-button {
-  float: right;
   margin-right: .5em;
 }
 
@@ -40,6 +39,30 @@
 }
 
 
+/*-----------------------------------*\
+    $SUBMISSIONVIEWPAGE
+\*-----------------------------------*/
+ul {
+  list-style-type: none;
+}
+
+ul .header{
+  font-size: 16px;
+  padding-top: 1em;
+}
+
+ul .information {
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 2em;
+}
+
+/*------------------------------------*\
+    $TABLES
+\*------------------------------------*/
+.record-actions {
+  text-align: right;
+}
 
 
 /*------------------------------------*\
@@ -113,6 +136,10 @@
 \*------------------------------------*/
 caption {
   font-size: 1.75em;
+}
+
+.document-footer {
+  margin-top: 150px;
 }
 .deleted{
   display: none;
