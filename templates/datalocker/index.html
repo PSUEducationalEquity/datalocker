@@ -12,49 +12,52 @@
       </ol>
       <h2 class="italic">My Lockers</h2>
       {% if my_lockers_list|length == 0 %}
-        <p>You have no lockers.</p>
+        <p>You currently do not own any Lockers.
+        You can add lockers of your own by adding a forms from Plone Form Gen.
+        </p>
+      {% else %}
+        <button name="show-hide-lockers" class="btn btn-default btn-xs button-archived-showhide" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
+        <table class="table table-striped table-hover listing tablesorter"
+          id="locker-list">
+          <caption>List of Lockers that I own</caption>
+          <thead>
+            <tr>
+              <th>Form Name</th>
+              <th>Latest Submission</th>
+              <th><span class="sr-only">Locker Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for locker in my_lockers_list %}
+              {% if locker.owner == user.username %}
+                <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
+                {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
+                  <td class="record-name">
+                      <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                    {% if locker.archive_timestamp != None %}
+                      <span class="label label-default js-archived-label">Archived</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ locker.latest_submission }}</td>
+                  <td class="record-actions">
+                    <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Users</button>
+                    <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
+                    {% if locker.archive_timestamp != None %}
+                    <button type="button" class="btn btn-success btn-xs archive-button"
+                      id="unarchive-locker" role="archive-locker"
+                      data-url="{% url 'datalocker:unarchive_locker' 0 %}">Unarchive</button>
+                    {% else %}
+                    <button type="button" class="btn btn-danger btn-xs archive-button"
+                      id="archive-locker" role="archive-locker"
+                      data-url="{% url 'datalocker:archive_locker' 0 %}">Archive</button>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
       {% endif %}
-      <button name="show-hide-lockers" class="btn btn-default btn-xs button-archived-showhide" title="Show/Hide Archived Lockers">Show Archived Lockers</button>
-      <table class="table table-striped table-hover listing tablesorter"
-        id="locker-list">
-        <caption>List of Lockers that I own</caption>
-        <thead>
-          <tr>
-            <th>Form Name</th>
-            <th>Latest Submission</th>
-            <th><span class="sr-only">Locker Actions</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for locker in my_lockers_list %}
-            {% if locker.owner == user.username %}
-              <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
-              {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
-                <td>
-                    <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                  {% if locker.archive_timestamp != None %}
-                    <span class="label label-default js-archived-label">Archived</span>
-                  {% endif %}
-                </td>
-                <td>{{ locker.latest_submission }}</td>
-                <td class="record-actions">
-                  <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Users</button>
-                  <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
-                  {% if locker.archive_timestamp != None %}
-                  <button type="button" class="btn btn-success btn-xs archive-button"
-                    id="unarchive-locker" role="archive-locker"
-                    data-url="{% url 'datalocker:unarchive_locker' 0 %}">Unarchive</button>
-                  {% else %}
-                  <button type="button" class="btn btn-danger btn-xs archive-button"
-                    id="archive-locker" role="archive-locker"
-                    data-url="{% url 'datalocker:archive_locker' 0 %}">Archive</button>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
       <hr />
       <h2 class="italic">Lockers Shared with Me</h2>
       <table class="table table-striped table-hover listing tablesorter"
@@ -71,7 +74,7 @@
             {% if locker.owner != user.username %}
                 <tr data-id="{{ locker.id }}"
                 {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
-                  <td>
+                  <td class="record-name">
                     <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}
                     </a>
                     {% if locker.archive_timestamp != null %}
