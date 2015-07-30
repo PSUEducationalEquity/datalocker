@@ -135,18 +135,18 @@ class LockerSubmissionsListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(LockerSubmissionsListView, self).get_context_data(**kwargs)
-        self.locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        context['locker'] = self.locker
-        self.fields_list = self.locker.get_all_fields_list()
-        context['fields_list'] = self.fields_list
-        self.selected_fields = self.locker.get_selected_fields_list()
-        context['selected_fields'] = self.selected_fields
-        context['column_headings'] = ['Submitted Date', ] + self.selected_fields
+        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
+        context['locker'] = locker
+        fields_list = locker.get_all_fields_list()
+        context['fields_list'] = fields_list
+        selected_fields = locker.get_selected_fields_list()
+        context['selected_fields'] = selected_fields
+        context['column_headings'] = ['Submitted Date', ] + selected_fields
         context['data'] = []
-        for submission in self.locker.submissions.all().order_by('-timestamp'):
+        for submission in locker.submissions.all().order_by('-timestamp'):
             entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
-                if field in self.selected_fields:
+                if field in selected_fields:
                     entry.append(value)
             context['data'].append(entry)
         return context
@@ -159,7 +159,11 @@ class LockerSubmissionsListView(generic.ListView):
 
 
     def post(self, *args, **kwargs):
-        """ Submits the selected data from the fields list """
+        """
+        Takes the checkboxes selected on the select fields dialog and saves
+        those as a selected-fields setting which is loaded then on every page
+        load thereafter.
+        """
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         selected_fields = []
         for field in locker.get_all_fields_list():
@@ -177,6 +181,7 @@ class LockerSubmissionsListView(generic.ListView):
         selected_fields_setting.save()
         return HttpResponseRedirect(reverse('datalocker:submissions_list',
             kwargs={'locker_id': self.kwargs['locker_id']}))
+
 
 
 
@@ -231,11 +236,6 @@ class LockerUserDelete(View):
 
 
 
-
-
-
-
-
 class SubmissionView(generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
@@ -248,6 +248,7 @@ class SubmissionView(generic.DetailView):
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         return context
+
 
 
 

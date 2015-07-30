@@ -138,13 +138,13 @@ class Locker(models.Model):
                 )
         all_fields_setting.save()
         try:
-            last_updated_setting.value = datetime.datetime.now()
+            last_updated_setting.value = timezone.now()
         except UnboundLocalError:
             last_updated_setting = LockerSetting(
                 category='fields-list',
                 setting='Date/time all fields list last updated',
                 setting_identifier='last-updated',
-                value=datetime.datetime.now(),
+                value=timezone.now(),
                 locker=self,
                 )
         last_updated_setting.save()
