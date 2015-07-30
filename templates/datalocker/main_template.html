@@ -126,7 +126,12 @@
                       </li>
 
                     {% else %}
-                      <li><a href="{% block login-url %}{% url 'admin:login' %}{% endblock %}">Log In</a></li>
+                      <li>
+                        {% block login-link %}
+                          <a href="{% url 'admin:login' %}"
+                            >Log In</a>
+                        {% endblock login-link %}
+                      </li>
                     {% endif %}
                   </ul>
                 {% endblock personal-bar-wrapper %}
