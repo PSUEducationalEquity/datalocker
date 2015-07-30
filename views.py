@@ -67,7 +67,7 @@ def form_submission_view(request, **kwargs):
         'data': request.POST.get('data', ''),
         }
     locker, created = Locker.objects.get_or_create(
-        form_identifier=safe_values['form-id'],
+        form_identifier=safe_values['identifier'],
         archive_timestamp=None,
         defaults={
             'name': safe_values['name'],
