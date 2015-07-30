@@ -2,6 +2,8 @@
 {% extends "datalocker/main_template.html" %}
 {% load staticfiles %}
 
+
+
 {% block page-meta-title %}Submissions{% endblock page-meta-title %}
 
 {% block content %}
@@ -17,7 +19,8 @@
     </ol>
     <h1>{{ locker.name }}</h1>
     {% if locker.owner = user.username %}
-    <div class="maintenance-mode-switch">
+    <input type="checkbox" data-size="small"  data-toggle="toggle">
+   <!--  <div class="maintenance-mode-switch">
       Maintenance Mode
       <div class="onoffswitch">
         <input type="checkbox"
@@ -29,7 +32,7 @@
           <span class="onoffswitch-inner"></span>
           <span class="onoffswitch-switch"></span>
         </label>
-      </div>
+      </div> -->
     </div>
     {% endif %}
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
@@ -151,6 +154,8 @@
         $('#submission-list').tablesorter();
       });
     </script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/bootstrap-toggle.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"

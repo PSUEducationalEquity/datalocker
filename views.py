@@ -288,4 +288,5 @@ def undelete_submission(request, **kwargs):
     if request.is_ajax():
         return JsonResponse({})
     else:
-        return HttpResponseRedirect(reverse('datalocker:submission_list'))
+        return HttpResponseRedirect(reverse('datalocker:submission_list',
+            kwargs={'id': self.kwargs['id']}))
