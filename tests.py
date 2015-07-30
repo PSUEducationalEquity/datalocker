@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
+from collections import OrderedDict
+
 from datalocker.models import Locker, Submission
 
 import datetime, json
@@ -24,7 +26,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.active() ],
-            (1, 2, 3, 4, 5, 6, 7, )
+            (1, 2, 4, 6, )
             )
 
 
@@ -34,7 +36,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.archived() ],
-            ()
+            (3, 5, )
             )
 
 
@@ -45,7 +47,18 @@ class LockerManagerTestCase(TestCase):
         user = User.objects.get(pk=2)
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.has_access(user) ],
-            (1, )
+            (1, 2, 3, 4, 6, )
+            )
+
+
+    def test_has_access_user_only(self):
+        """
+        User who does not own any lockers but has lockers shared with him.
+        """
+        user = User.objects.get(pk=1)
+        self.assertItemsEqual(
+            [ locker.pk for locker in Locker.objects.has_access(user) ],
+            (1, 3, 4, 5, 6, )
             )
 
 
@@ -76,23 +89,32 @@ class SubmissionTestCase(TestCase):
 
     def test_to_dict(self):
         """
-        to_dict method should properly convert the object to a dictionary
+        to_dict method should properly convert the object to a python dictionary
         """
-        ### TODO: figure out why the timestamp property isn't output
-        #         as part of the to_dict() conversion.
+        data = OrderedDict({
+            u'first-name': u'Dominick',
+            u'last-name': u'Stuck',
+            u'email': u'das66@psu.edu',
+            u'subject': u'Testing',
+            u'comment': u'Testing the Submission.to_dict() method.',
+            })
+        submission = Submission(
+            locker = Locker.objects.get(pk=1),
+            data = json.dumps(data),
+            deleted = None
+            )
+        submission.save()
+        expected_results = {
+            'deleted': None,
+            'locker': 1L,
+            'data': data,
+            u'id': submission.id,
+            'timestamp': submission.timestamp.isoformat(),
+            }
         self.maxDiff = None
         self.assertDictEqual(
-            Submission.objects.get(pk=1).to_dict(),
-            {
-                u'id': 1L,
-                'locker': 1L,
-                'data': [{
-                    u'user': u'das66',
-                    u'name': u'Dominick Stuck',
-                    u'submitted-timestamp': u'2015-01-14 15:00:00-05:00',
-                    u'archive-timestamp': u'2015-02-16 14:02:20-05:00'
-                    }, ]
-                }
+            submission.to_dict(),
+            expected_results
             )
 
 
@@ -171,7 +193,7 @@ class SubmissionViewTestCase(TestCase):
 
     def test_submission_view_archive_locker_create_new_locker(self):
         """
-        Form submission should create a new locker because 
+        Form submission should create a new locker because
         the original was archived and save the submission.
         """
         user = User(

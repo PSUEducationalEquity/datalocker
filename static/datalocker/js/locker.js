@@ -208,6 +208,8 @@ $(document).ready(function () {
         $("#dialog-edit-users").find("form").attr(
             "action", url.replace("/0/","/"+ id +"/"));
         Locker.build_user_list();
+        var name = $(this).closest("tr").attr("data-name");
+        $("#dialog-edit-users-title").html('Share access to ' + name);
         $("#dialog-edit-users").modal('show');
     });
 
