@@ -31,7 +31,7 @@
      */
     Submission.delete = function (locker_id, id)
     {
-        deleteUrl = $("button[role='delete-submission']").attr("data-url");
+        deleteUrl = $("#delete-submission").attr("data-url");
         // submits the request to delete the submission
         Submission.deleteRequest = $.ajax({
             url: deleteUrl,
@@ -108,13 +108,15 @@ $(document).ready(function()
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         var locker_id = $(this).closest("table").attr("data-locker-id");
-        // $("button[role='delete-submission']").attr(
-        //     "data-url", url.replace("/0/","/"+ id +"/"));
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
             $(this).html('Undelete');
+            $(this).removeClass("btn-danger")
+            $(this).addClass("btn-success")
         } else {
             Submission.undelete(locker_id, id);
+            $(this).removeClass("btn-success")
+            $(this).addClass("btn-danger")
             $(this).html('Delete');
         }
     });
