@@ -120,15 +120,6 @@ class LockerListView(generic.ListView):
     template_name = 'datalocker/index.html'
 
 
-    def get_context_data(self, **kwargs):
-        context = super(LockerListView, self).get_context_data(**kwargs)
-        context['archived'] = []
-        for locker in Locker.objects.all():
-            entry = [True if locker.archive_timestamp != None else False]
-            context['archived'].append(entry)
-        return context
-
-
     def get_queryset(self):
         """ Return all lockers for the current user """
         return Locker.objects.active().has_access(self.request.user).annotate(
