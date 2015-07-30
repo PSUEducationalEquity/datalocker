@@ -40,6 +40,17 @@
 
 
 /*-----------------------------------*\
+    $EXISTINGUSERS
+\*-----------------------------------*/
+.existing-users-list {
+  display: inline-block;
+}
+.remove-users {
+  padding-left: 2px;
+  margin-top: 2px;
+}
+
+/*-----------------------------------*\
     $SUBMISSIONVIEWPAGE
 \*-----------------------------------*/
 ul {
