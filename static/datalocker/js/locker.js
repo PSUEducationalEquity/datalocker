@@ -169,7 +169,7 @@
             });
 
             // callback handler: success
-            Locker.build_user_list.done(function (response, textStatus, jqXHR) {
+            Locker.dataRequest.done(function (response, textStatus, jqXHR) {
                 var $users_list = $("#existing-users");
                 // clear the list
                 $users_list.children().remove();
@@ -181,7 +181,7 @@
             });
 
             // callback handler: failure
-            Locker.build_user_list.fail(function (jqXHR, textStatus, errorThrown) {
+            Locker.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
                 if  (errorThrown != "abort") {
                     console.error(
                         "Locker.dataRequest in locker.js AJAX error: "
