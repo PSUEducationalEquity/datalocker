@@ -102,15 +102,15 @@
                               ><a role="menuitem"
                                   tabindex="-1"
                                   href="{% block logout-url %}{% url 'admin:logout' %}{% endblock %}"
-                                >Log out</a>
+                                >{% block logout-label %}Log out{% endblock logout-label %}</a>
                             </li>
                             {% block menuitem-password-change %}
-                            <li role="presentation"
-                              ><a role="menuitem"
-                                  tabindex="-1"
-                                  href="{% url 'admin:password_change' %}"
-                                >Change Password</a>
-                            </li>
+                              <li role="presentation"
+                                ><a role="menuitem"
+                                    tabindex="-1"
+                                    href="{% url 'admin:password_change' %}"
+                                  >Change Password</a>
+                              </li>
                             {% endblock menuitem-password-change %}
                             {% if user.is_staff %}
                               <li role="separator" class="divider"></li>
@@ -119,18 +119,18 @@
                                     tabindex="-1"
                                     href="{% url 'admin:index' %}"
                                   >Settings</a>
+                              </li>
                             {% endif %}
-                            </li>
                           {% endblock personal-bar-menu %}
                         </ul>
                       </li>
 
                     {% else %}
                       <li>
-                        {% block login-link %}
-                          <a href="{% url 'admin:login' %}"
-                            >Log In</a>
-                        {% endblock login-link %}
+                        <a href="{% block login-url %}
+                            {% url 'admin:login' %}
+                          {% endblock %}"
+                          >{% block login-label %}Log In{% endblock login-label %}</a>
                       </li>
                     {% endif %}
                   </ul>
