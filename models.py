@@ -2,6 +2,7 @@
 
 from django.contrib.auth.models import User, Group
 from django.db import models
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import request
 from django.utils import timezone
@@ -36,13 +37,10 @@ class LockerQuerySet(models.query.QuerySet):
 
     def has_access(self, user):
         """
-        Owners automatically have access , this allows
-        the owners to gives users access
+        Filters the lockers such that the user specified must be the owner or
+        user of the locker to be included
         """
-        if user.is_authenticated():
-            return Locker.objects.filter(owner=user) | Locker.objects.filter(users=user)
-        else:
-            return Locker.objects.filter(owner=user)
+        return Locker.objects.filter(Q(owner=user) | Q(users=user)).distinct()
 
 
 
