@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
+from collections import OrderedDict
+
 from datalocker.models import Locker, Submission
 
 import datetime, json
@@ -89,21 +91,31 @@ class SubmissionTestCase(TestCase):
         """
         to_dict method should properly convert the object to a dictionary
         """
-        ### TODO: figure out why the timestamp property isn't output
-        #         as part of the to_dict() conversion.
+        data = OrderedDict({
+            u'first-name': u'Dominick',
+            u'last-name': u'Stuck',
+            u'email': u'das66@psu.edu',
+            u'subject': u'Testing',
+            u'comment': u'Testing the Submission.to_dict() method.',
+            })
+        submission = Submission(
+            locker = Locker.objects.get(pk=1),
+            data = json.dumps(data),
+            deleted = None
+            )
+        submission.save()
+        expected_results = {
+            'deleted': None,
+            'locker': 1L,
+            'data': data,
+            u'id': submission.id,
+            'timestamp': submission.timestamp.isoformat(),
+            }
+        import pdb; pdb.set_trace()
         self.maxDiff = None
         self.assertDictEqual(
-            Submission.objects.get(pk=1).to_dict(),
-            {
-                u'id': 1L,
-                'locker': 1L,
-                'data': [{
-                    u'user': u'das66',
-                    u'name': u'Dominick Stuck',
-                    u'submitted-timestamp': u'2015-01-14 15:00:00-05:00',
-                    u'archive-timestamp': u'2015-02-16 14:02:20-05:00'
-                    }, ]
-                }
+            submission.to_dict(),
+            expected_results
             )
 
 

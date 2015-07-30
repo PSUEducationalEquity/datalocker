@@ -213,15 +213,22 @@ class Submission(models.Model):
 
     def data_dict(self):
         """
-        Returns the data into Json format
+        Returns the data field as an ordered dictionary instead of JSON
         """
         data = json.loads(self.data, object_pairs_hook=OrderedDict)
         return data
 
 
     def to_dict(self):
+        """
+        Returns the entire object as a Python dictionary
+        """
         result = model_to_dict(self)
         result['data'] = self.data_dict()
+        # model_to_dict skips fields that are not editable and fields that have
+        # auto_now_add=True are considered not editable, thus we add the
+        # submission timestamp back in manually
+        result['timestamp'] = self.timestamp.isoformat()
         return result
 
 
