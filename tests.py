@@ -24,7 +24,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.active() ],
-            (1, 2, 3, 4, 5, 6, 7, )
+            (1, 2, 4, 6, )
             )
 
 
@@ -34,7 +34,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.archived() ],
-            ()
+            (3, 5, )
             )
 
 
