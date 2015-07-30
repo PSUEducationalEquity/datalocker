@@ -67,22 +67,22 @@ def form_submission_view(request, **kwargs):
         'data': request.POST.get('data', ''),
         }
     locker, created = Locker.objects.get_or_create(
-        form_identifier=save_values['form-id'],
+        form_identifier=safe_values['form-id'],
         archive_timestamp=None,
         defaults={
-            'name': save_values['name'],
-            'form_url': save_values['url'],
-            'owner': save_values['owner'],
+            'name': safe_values['name'],
+            'form_url': safe_values['url'],
+            'owner': safe_values['owner'],
             }
         )
     submission = Submission(
         locker = locker,
-        data = save_values['data'],
+        data = safe_values['data'],
         )
     submission.save()
 
     try:
-        address = User.objects.get(username=save_values['owner']).email
+        address = User.objects.get(username=safe_values['owner']).email
     except User.DoesNotExist:
         """ TODO: do something about this as the locker's owner doesn't have
                an account so therefore likely won't be able to access it.
@@ -90,7 +90,7 @@ def form_submission_view(request, **kwargs):
                the locker to someone or create an account for the owner. """
         pass
     else:
-        subject = "%s - new submission - Data Locker" % save_values['name']
+        subject = "%s - new submission - Data Locker" % safe_values['name']
         message = "Data Locker: new form submission saved\n\n" \
             "Form: %s\n\n" \
             "View submission: %s\n" \
