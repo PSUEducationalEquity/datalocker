@@ -28,7 +28,7 @@
         <tbody>
           {% for locker in my_lockers_list %}
             {% if locker.owner == user.username %}
-              <tr data-id="{{ locker.id }}"
+              <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
               {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                 <td>
                     <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
@@ -149,7 +149,11 @@
           <div class="modal-body">
             <div class="form-group">
              <label for="edit-locker">Name</label>
-               <input type="text" name="edit-locker" class="form-control" id="edit-locker">
+               <input type="text"
+                  name="edit-locker"
+                  class="form-control"
+                  id="edit-locker"
+                  value="">
                <br/>
             </div>
             <div class="form-group">

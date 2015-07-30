@@ -221,6 +221,8 @@ $(document).ready(function () {
         var url = $("#dialog-edit-locker").find("form").attr("data-url");
         $("#dialog-edit-locker").find("form").attr(
             "action", url.replace("/0/","/"+ id +"/"));
+        var name = $(this).closest("tr").attr("data-name");
+        $("#edit-locker").val(name);
         $("#dialog-edit-locker").modal('show');
     });
 
