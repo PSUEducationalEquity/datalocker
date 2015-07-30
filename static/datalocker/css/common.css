@@ -64,6 +64,10 @@ ul .information {
   text-align: right;
 }
 
+.record-name {
+  width: 600px;
+}
+
 
 /*------------------------------------*\
     $TOGGLESWITCH
