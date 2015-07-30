@@ -137,6 +137,10 @@ ul .information {
 caption {
   font-size: 1.75em;
 }
+
+.document-footer {
+  margin-top: 150px;
+}
 .deleted{
   display: none;
   text-decoration: line-through;
