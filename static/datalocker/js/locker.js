@@ -28,26 +28,19 @@
                     "input[name='csrfmiddlewaretoken']").val()
                 }
         });
+
         // callback handler: success
         Locker.addRequest.done(function (response, textStatus, jqXHR) {
             $("#email").val("");
-            $("#existing-users").append(Locker._build_list_entry(response));
+            $("#existing-users").append(Locker._build_user_list_entry(response));
             $("email").focus();
             Locker.addRequest = null;
         });
-        // callback handler: failure
-        Locker.addRequest.fail(function (jqXHR, textStatus, errorThrown) {
-            if (errorThrown != "abort") {
-                if (jqXHR.status == 400 || jqXHR.status == 404) {
-                    Locker.errorHandler(jqXHR, 'adding');
 
-                } else {
-                    console.error(
-                        "Locker.add in Locker.js AJAX error: "
-                            + textStatus,
-                        errorThrown
-                    );
-                }
+        // callback handler: failure
+        Locker.addRequest.fail(function (jqXHR, errorThrown) {
+            if (errorThrown != "abort") {
+                console.error("Locker.add in Locker.js AJAX error");
             }
             Locker.addRequest = null;
         });
@@ -130,78 +123,82 @@
           Locker.deleteRequest = null;
         });
         // callback handler: failure
-        Locker.deleteRequest.fail(function (jqXHR, textStatus, errorThrown) {
+        Locker.deleteRequest.fail(function (jqXHR, errorThrown) {
             if (errorThrown != "abort") {
-                if (jqXHR.status == 400 || jqXHR.status == 404) {
-                    Locker.errorHandler(jqXHR, 'deleting');
-
-                } else {
-                    console.error(
-                        "Locker.delete in Locker.js AJAX error: "
-                            + textStatus,
-                    errorThrown
-                    );
-                }
+               console.error("Locker.delete in Locker.js AJAX error");
             }
             Locker.deleteRequest = null;
         });
     }
 
 
-Locker._build_list_entry = function (user) {
-    return $("<li />").attr("data-id", user.id).append(
-            $("<span />").html(user.first_name + " " + user.last_name + " ")
-        ).append(
-            $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr(
-                "href", "#")
-        );
-}
+    /**
+     * Builds a list of a single entry of a user that was submitted
+     *
+     * @return     void
+     * @author     Hunter Yohn  <hay110@psu.edu>
+     */
 
-
-Locker.buildList = function (users) {
-     // get the url to use
-    var locker_id = $("#dialog-edit-users").attr("data-locker-id");
-    var url = $("#existing-users").attr("data-url").replace(
-        "/0/", "/" + locker_id +"/");
-
-    // submit the request (if none are pending)
-    if (!Locker.dataRequest && url) {
-        Locker.dataRequest = $.ajax({
-            url: url,
-            type: "get",
-            cache: false
-        });
-
-        // callback handler: success
-        Locker.dataRequest.done(function (response, textStatus, jqXHR) {
-            var $users_list = $("#existing-users");
-            // clear the list
-            $users_list.children().remove();
-            // build the list of Locker
-            $.each(response.users, function (index, user) {
-                $users_list.append(Locker._build_list_entry(user));
-            });
-            Locker.dataRequest = null;
-        });
-
-        // callback handler: failure
-        Locker.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
-            if (errorThrown != "abort") {
-                console.error(
-                    "Locker.dataRequest in locker.js AJAX error: "
-                        + textStatus,
-                    errorThrown
-                );
-            }
-            Locker.dataRequest = null;
-        });
+    Locker._build_user_list_entry = function (user) {
+        return  $("<li />").attr("data-id", user.id).append(
+                    $("<span />").html(user.first_name + " " + user.last_name + " ")).append(
+                        $("<a />").html("<span class='glyphicon glyphicon-remove'>" ).attr(
+                            "href", "#")
+            );
     }
-}
+
+    /**
+     * Builds a list off all of the user list entries
+     *
+     * @return     void
+     * @author     Hunter Yohn  <hay110@psu.edu>
+     */
+
+    Locker.build_user_list = function (users) {
+         // get the url to use
+        var locker_id = $("#dialog-edit-users").attr("data-locker-id");
+        var url = $("#existing-users").attr("data-url").replace(
+            "/0/", "/" + locker_id +"/");
+
+        // submit the request (if none are pending)
+        if  (!Locker.dataRequest && url) {
+            Locker.dataRequest = $.ajax({
+                url: url,
+                type: "get",
+                cache: false
+            });
+
+            // callback handler: success
+            Locker.build_user_list.done(function (response, textStatus, jqXHR) {
+                var $users_list = $("#existing-users");
+                // clear the list
+                $users_list.children().remove();
+                // build the list of Locker
+                $.each(response.users, function (index, user) {
+                    $users_list.append(Locker._build_user_list_entry(user));
+                });
+                Locker.dataRequest = null;
+            });
+
+            // callback handler: failure
+            Locker.build_user_list.fail(function (jqXHR, textStatus, errorThrown) {
+                if  (errorThrown != "abort") {
+                    console.error(
+                        "Locker.dataRequest in locker.js AJAX error: "
+                            + textStatus,
+                        errorThrown
+                    );
+                }
+                Locker.dataRequest = null;
+            });
+        }
+    }
 }( window.Locker = window.Locker || {}, jQuery));
 
 
 $(document).ready(function () {
-    //Opens the users modal dialog
+
+    //opens the users modal dialog
     $("button[role='edit-users']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
@@ -209,11 +206,11 @@ $(document).ready(function () {
         var url = $("#dialog-edit-users").find("form").attr("data-url");
         $("#dialog-edit-users").find("form").attr(
             "action", url.replace("/0/","/"+ id +"/"));
-        Locker.buildList();
+        Locker.build_user_list();
         $("#dialog-edit-users").modal('show');
     });
 
-    //Opens the edit lockers modal dialog
+    //opens the edit lockers modal dialog
     $("button[role='edit-locker']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
@@ -226,12 +223,13 @@ $(document).ready(function () {
         $("#dialog-edit-locker").modal('show');
     });
 
-    //Handles the 'add' button for the edit users dialog
+    //handles the 'add' button for the edit users dialog
     $("#dialog-edit-users form").on("submit", function (event) {
         event.preventDefault();
         Locker.add();
     });
 
+    //handles the 'delete' button for the edit users dialog
     $("#dialog-edit-users form ul").on("click","a", function (event) {
         event.preventDefault();
         var user_id = $(this).closest("li").attr("data-id");
@@ -261,6 +259,8 @@ $(document).ready(function () {
         }
     });
 
+
+    // enables tablesorter JS on the tablesorter tables
     var showHide = getCookie("show/hide");
     if (showHide == "show") {
         $('.is-archived').show();
