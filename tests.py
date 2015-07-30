@@ -45,7 +45,7 @@ class LockerManagerTestCase(TestCase):
         user = User.objects.get(pk=2)
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.has_access(user) ],
-            (1, )
+            (1, 2, 3, 4, 6, )
             )
 
 
@@ -171,7 +171,7 @@ class SubmissionViewTestCase(TestCase):
 
     def test_submission_view_archive_locker_create_new_locker(self):
         """
-        Form submission should create a new locker because 
+        Form submission should create a new locker because
         the original was archived and save the submission.
         """
         user = User(
