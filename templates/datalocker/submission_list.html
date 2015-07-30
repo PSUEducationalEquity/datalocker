@@ -61,10 +61,10 @@
                 </td>
               {% endif %}
             {% endfor %}
-            <td>
+            <td class="record-actions">
               <button type="button"
                 role="delete-submission"
-                class="delete-submission"
+                class="btn btn-danger btn-xs archive-button delete-submission"
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
             </td>

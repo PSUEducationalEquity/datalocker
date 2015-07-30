@@ -149,6 +149,12 @@ ul .information {
 /*------------------------------------*\
     $GENERAL
 \*------------------------------------*/
+
+.add-btn{
+padding:3px 4px;
+vertical-align: top;
+}
+
 caption {
   font-size: 1.75em;
 }

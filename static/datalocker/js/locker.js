@@ -107,7 +107,6 @@
         // submit the request
         var deleteUrl =  $("#existing-users").attr("data-delete-url");
         var locker_id = $("#dialog-edit-users").attr("data-locker-id");
-
         Locker.deleteRequest = $.ajax({
             url: deleteUrl.replace("/0/", "/" + locker_id +"/"),
             type: "post",
@@ -122,6 +121,7 @@
          $("#existing-users li[data-id='" + response.user_id + "']").remove();
           Locker.deleteRequest = null;
         });
+
         // callback handler: failure
         Locker.deleteRequest.fail(function (jqXHR, errorThrown) {
             if (errorThrown != "abort") {
@@ -147,9 +147,10 @@
         console.log(width);
 
         return  $("<li />").attr("data-id", user.id).append(
-                    $("<div class='existing-users-list'/>").html(user.first_name + " " + user.last_name + " ").append(
-                        $("<a />").html("<span class='glyphicon glyphicon-remove pull-right remove-users'>" ).attr(
-                            "href", "#"))
+                $("<div class='existing-users-list'/>").html(user.first_name + " " + user.last_name + " ").append(
+                    $("<a />").html("<span class='glyphicon glyphicon-remove pull-right remove-users'>").attr(
+                        "href", "#").attr("title", "Stop sharing access to this locker with " +
+                        user.first_name +" " + user.last_name))
             );
     }
 
@@ -190,7 +191,7 @@
             Locker.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
                 if  (errorThrown != "abort") {
                     console.error(
-                        "Locker.dataRequest in locker.js AJAX error: "
+                        "Locker.build_user_list in locker.js AJAX error: "
                             + textStatus,
                         errorThrown
                     );
