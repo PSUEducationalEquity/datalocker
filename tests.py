@@ -26,7 +26,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.active() ],
-            (1, 2, 3, 4, 5, 6, 7, )
+            (1, 2, 4, 6, )
             )
 
 
@@ -36,7 +36,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.archived() ],
-            ()
+            (3, 5, )
             )
 
 
@@ -47,7 +47,18 @@ class LockerManagerTestCase(TestCase):
         user = User.objects.get(pk=2)
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.has_access(user) ],
-            (1, )
+            (1, 2, 3, 4, 6, )
+            )
+
+
+    def test_has_access_user_only(self):
+        """
+        User who does not own any lockers but has lockers shared with him.
+        """
+        user = User.objects.get(pk=1)
+        self.assertItemsEqual(
+            [ locker.pk for locker in Locker.objects.has_access(user) ],
+            (1, 3, 4, 5, 6, )
             )
 
 
