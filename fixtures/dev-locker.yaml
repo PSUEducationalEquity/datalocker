@@ -21,7 +21,6 @@
     archive_timestamp: null
     users:
       - 3
-      - 1
   model: datalocker.Locker
   pk: 2
 - fields:

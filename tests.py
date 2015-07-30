@@ -49,6 +49,17 @@ class LockerManagerTestCase(TestCase):
             )
 
 
+    def test_has_access_user_only(self):
+        """
+        User who does not own any lockers but has lockers shared with him.
+        """
+        user = User.objects.get(pk=1)
+        self.assertItemsEqual(
+            [ locker.pk for locker in Locker.objects.has_access(user) ],
+            (1, 3, 4, 5, 6, )
+            )
+
+
 
 
 class SubmissionTestCase(TestCase):
