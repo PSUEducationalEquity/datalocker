@@ -2,35 +2,43 @@
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
 
+{% block breadcrumb-trail %}
+  <li>
+    <a href="{% url 'datalocker:index' %}">
+      <span class="sr-only">List of </span>My Lockers
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'datalocker:submissions_list' object.locker.id %}">
+      All Submissions<span class="sr-only"> for {{ object.locker.name }}</span>
+    </a>
+  </li>
+  <li class="active">
+    <span class="sr-only">{{ object.locker.name }}</span> Submission
+  </li>
+{% endblock breadcrumb-trail %}
+
 {% block page-meta-title %}Submission View{% endblock page-meta-title %}
 
 {% block content %}
   <div class="container-fluid">
-      <ol class="breadcrumb">
-        <li><a href="{% url 'datalocker:index' %}"
-           ><span class="sr-only">List of </span>My Lockers</a>
-        </li>
-        <li><a href="{% url 'datalocker:submissions_list' object.locker.id %}"
-          >All Submissions<span class="sr-only"> for {{ object.locker.name }}</span></a>
-        </li>
-        <li class="active"><span class="sr-only"
-          >{{ object.locker.name }}</span>Submission
-        </li>
-      </ol>
-      <h1>{{ object.locker.name }}</h1>
-      <div class="pagination">
-        {% include "datalocker/pagination_template.html" %}
-      </div>
-      <ul class="submission-view">
-          <li class="header">Submission Date</li>
-          <li class="information">{{ object.timestamp }}</li>
-        {% for key, value in object.data_dict.items %}
-          <li class="header">{{ key }}</li>
-          <li class="information">{{ value }}</li>
-        {% endfor %}
-      </ul>
-      <div class="pagination">
-        {% include "datalocker/pagination_template.html" %}
-      </div>
+    <h1>{{ object.locker.name }}</h1>
+
+    <div class="pagination">
+      {% include "datalocker/pagination_template.html" %}
+    </div>
+
+    <ul class="submission-view">
+      <li class="header">Submission Date</li>
+      <li class="information">{{ object.timestamp }}</li>
+      {% for key, value in object.data_dict.items %}
+        <li class="header">{{ key }}</li>
+        <li class="information">{{ value }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="pagination">
+      {% include "datalocker/pagination_template.html" %}
+    </div>
   </div>
 {% endblock %}

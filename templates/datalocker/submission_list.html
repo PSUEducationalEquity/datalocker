@@ -2,21 +2,21 @@
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
 
-
+{% block breadcrumb-trail %}
+  <li>
+    <a href="{% url 'datalocker:index' %}">
+      <span class="sr-only">List of </span>My Lockers
+    </a>
+  </li>
+  <li class="active">All Submissions
+    <span class="sr-only"> for {{ locker.name }}</span>
+  </li>
+{% endblock breadcrumb-trail %}
 
 {% block page-meta-title %}Submissions{% endblock page-meta-title %}
 
 {% block content %}
   <div class="container-fluid">
-    <ol class="breadcrumb">
-      <li>
-        <a href="{% url 'datalocker:index' %}">
-        <span class="sr-only">List of </span>My Lockers</a>
-      </li>
-      <li class="active">All Submissions
-        <span class="sr-only"> for {{ locker.name }}</span>
-      </li>
-    </ol>
     <h1>{{ locker.name }}</h1>
     {% if locker.owner = user.username %}
     <input type="checkbox" data-size="small"  data-toggle="toggle">

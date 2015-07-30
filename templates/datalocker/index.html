@@ -2,14 +2,17 @@
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
 
+{% block breadcrumb-trail %}
+  <li class="active">
+    <span class="sr-only">List of </span>My Lockers
+  </li>
+{% endblock breadcrumb-trail %}
+
 {% block page-meta-title %}My Lockers{% endblock page-meta-title %}
 
 {% block content %}
     <h1 class="hidden">Data lockers</h1>
     <div class="container-fluid">
-      <ol class="breadcrumb">
-        <li class="active"><span class="sr-only">List of </span>My Lockers</li>
-      </ol>
       <h2 class="italic">My Lockers</h2>
       {% if my_lockers_list|length == 0 %}
         <p>You currently do not own any Lockers.
