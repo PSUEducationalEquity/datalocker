@@ -102,7 +102,7 @@
         });
     }
 
-    /* Adds the ability to delete a locker */
+    /* Adds the ability to delete user from a locker */
     Locker.delete = function (user_id) {
         // submit the request
         var deleteUrl =  $("#existing-users").attr("data-delete-url");
