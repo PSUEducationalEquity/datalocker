@@ -33,8 +33,8 @@
         data-toggle="toggle"
         data-onstyle="success"
         data-offstyle="danger"
-        data-off="Done editing"
-        data-on="Edit submissions">
+        data-on="Done editing"
+        data-off="Edit submissions">
     </div>
     <h1>{{ locker.name }}</h1>
     {% if locker.owner = user.username %}
@@ -71,7 +71,7 @@
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
-                class="btn btn-danger btn-xs archive-button delete-submission"
+                class="btn btn-xs archive-button delete-submission {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
             </td>
