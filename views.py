@@ -1,5 +1,6 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMessage
@@ -116,7 +117,16 @@ def form_submission_view(request, **kwargs):
 
 
 
-class LockerListView(generic.ListView):
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+
+
+class LockerListView(LoginRequiredMixin, generic.ListView):
     template_name = 'datalocker/index.html'
     model = Locker
 
@@ -142,7 +152,7 @@ class LockerListView(generic.ListView):
 
 
 
-class LockerSubmissionsListView(generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
@@ -250,7 +260,7 @@ class LockerUserDelete(View):
 
 
 
-class SubmissionView(generic.DetailView):
+class SubmissionView(LoginRequiredMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 

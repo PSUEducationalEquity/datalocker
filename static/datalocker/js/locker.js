@@ -250,8 +250,12 @@ $(document).ready(function () {
         var id = $(this).closest("tr").attr("data-id");
         if ($(this).html() == "Archive") {
             Locker.archive(id);
+            $(this).removeClass('btn-danger');
+            $(this).addClass('btn-success');
         } else {
             Locker.unarchive(id);
+            $(this).addClass('btn-danger');
+            $(this).removeClass('btn-success');
         }
     });
     $(".button-archived-showhide").click(function() {
