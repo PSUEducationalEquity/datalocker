@@ -43,7 +43,7 @@
                 },
             success: function(data) {
                 // deletes the submission and adds the class "deleted"
-                $("#submission-list tr[data-id='" + id +"']").addClass('deleted');
+                $("#submission-list tr[data-id='" + id +"']").addClass('deleted submission-deleted');
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     'Undelete');
                 Submission.deleteRequest = null;
@@ -103,7 +103,7 @@
 
 
 $(document).ready(function()
-{
+{   event.preventDefault();
     $("#submission-list").on("click","button[role='delete-submission']", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
@@ -111,18 +111,19 @@ $(document).ready(function()
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
             $(this).html('Undelete');
-            $(this).removeClass("btn-danger")
-            $(this).addClass("btn-success")
+            $(this).addClass("btn-success").removeClass("btn-danger");
         } else {
             Submission.undelete(locker_id, id);
-            $(this).removeClass("btn-success")
-            $(this).addClass("btn-danger")
+            $(this).removeClass("deleted")
+            $(this).addClass("btn-danger").removeClass("btn-success");
             $(this).html('Delete');
         }
     });
-
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
+
     });
+
+
 });
