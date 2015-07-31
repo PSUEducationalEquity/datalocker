@@ -24,7 +24,6 @@ import datetime, json, requests
 
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
-# user = request.user
 
 
 
@@ -124,15 +123,18 @@ class LockerListView(generic.ListView):
 
     def get_queryset(self):
         """ Return all lockers for the current user """
+        user = self.request.user
         return Locker.objects.active().has_access(self.request.user).annotate(
-            latest_submission= Max('submissions__timestamp')).order_by('name')
+            latest_submission= Max('submissions__timestamp')).order_by('name').filter(
+            owner=user)
+
 
     def get_context_data(self, **kwargs):
-        # user = request.user
+        user = self.request.user
         context = super(LockerListView, self).get_context_data(**kwargs)
         context['shared'] = Locker.objects.active().has_access(self.request.user).annotate(
             latest_submission= Max('submissions__timestamp')).order_by('name').exclude(
-            owner='das66')
+            owner=user)
         return context
 
 
