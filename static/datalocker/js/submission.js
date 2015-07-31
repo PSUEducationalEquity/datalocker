@@ -72,7 +72,7 @@
      */
     Submission.undelete = function (locker_id, id)
     {
-        undeleteUrl = $("button[role='delete-submission']").attr("data-url").replace('/delete_submission','/undelete_submission');
+        undeleteUrl = $("button[role='delete-submission']").attr("data-url");
         // submits the request to undelete the submission
         Submission.undeleteRequest = $.ajax({
             url: '/datalocker/'+locker_id+'/submissions/' + id + '/undelete_submission',
@@ -103,7 +103,7 @@
 
 
 $(document).ready(function()
-{   event.preventDefault();
+{
     $("#submission-list").on("click","button[role='delete-submission']", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");

@@ -24,21 +24,21 @@
 
 {% block content %}
   <div class="container-fluid">
-    <div class="onoffswitch">
-      <input type="checkbox"
-        id="onoffswitch"
-        class="onoffswitch-checkbox"
-        name="onoffswitch"
-        data-size="small"
-        data-toggle="toggle"
-        data-onstyle="success"
-        data-offstyle="danger"
-        data-on="Done editing"
-        data-off="Edit submissions">
-    </div>
-    <h1>{{ locker.name }}</h1>
     {% if locker.owner = user.username %}
+      <div class="onoffswitch">
+        <input type="checkbox"
+          id="onoffswitch"
+          class="onoffswitch-checkbox"
+          name="onoffswitch"
+          data-size="small"
+          data-toggle="toggle"
+          data-onstyle="success"
+          data-offstyle="danger"
+          data-on="Done editing"
+          data-off="Edit submissions">
+      </div>
     {% endif %}
+    <h1>{{ locker.name }}</h1>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
     <table class="table table-striped table-hover listing tablesorter"
@@ -72,7 +72,11 @@
               <button type="button"
                 role="delete-submission"
                 class="btn btn-xs archive-button delete-submission {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
+                {% if submission.1 %}
+                data-url="{% url 'datalocker:undelete_submission' locker.id submission.0 %}"
+                {% else %
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
+                {% endif %}
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
             </td>
           </tr>
