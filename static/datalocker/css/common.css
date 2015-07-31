@@ -6,8 +6,10 @@
 /**
  * CONTENTS.............You're reading it!
  * ARCHIVED.............Automatically hides archived classes by default on page load
+ * BREADCRUMBS..........Breadcrumb list stying
  * TOGGLESWITCH.........Toggle Switch the stying when entering and exiting maintenance mode
  * GENERAL..............General styles
+ * HEADER...............Styling specifically for the page header
  * ACCESSIBILITY........Improve the accessibility of certain structures
  * BUTTONS..............Button styling
  * FOOTER...............Styling specifically for the page footer
@@ -37,6 +39,39 @@
   display: none;
   margin-left: .5em;
 }
+
+
+
+
+/*-----------------------------------*\
+    $BREADCRUMBS
+\*-----------------------------------*/
+
+.document-breadcrumbs {
+  margin: 0.2em 1em;
+}
+
+/*ol*/.breadcrumb-trail {
+  display: inline-block;
+  list-style-type: none;
+  padding-left: 0.5em;
+}
+
+/*ol*/.breadcrumb-trail > li {
+    display: inline-block;
+}
+
+/*ol*/.breadcrumb-trail > li + li:before {
+  padding: 0 5px;
+  color: #ccc;
+  content: "/\00a0";
+}
+
+/*ol*/.breadcrumb-trail > .active {
+  color: #777;
+}
+
+
 
 
 /*-----------------------------------*\
@@ -229,6 +264,20 @@ h2.italic {
 .undeleted-submission{
   display: none;
 }
+
+
+
+
+/*-----------------------------------*\
+    $HEADER
+\*-----------------------------------*/
+
+/**
+ * Bootstrap implements a margin below a navigation bar, this shifts that
+ * margin to the overall header and not just the navigation bar.
+ */
+.document-header .navbar { margin-bottom: 0; }
+header { margin-bottom: 20px; }
 
 
 
