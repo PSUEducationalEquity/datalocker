@@ -71,7 +71,8 @@
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
-                class="btn btn-xs archive-button delete-submission {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
+                class="btn btn-xs archive-button delete-submission
+                {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 {% if submission.1 %}
                 data-url="{% url 'datalocker:undelete_submission' locker.id submission.0 %}"
                 {% else %
@@ -107,7 +108,8 @@
           {% csrf_token %}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title" id="dialog-filter-results-title">Select the form fields to display below</h4>
+          <h4 class="modal-title"
+            id="dialog-filter-results-title">Select the form fields to display below</h4>
         </div>
         <div class="modal-body">
           <div>

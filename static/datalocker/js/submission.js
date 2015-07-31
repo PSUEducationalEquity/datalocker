@@ -34,7 +34,7 @@
         deleteUrl = $("#delete-submission").attr("data-url");
         // submits the request to delete the submission
         Submission.deleteRequest = $.ajax({
-            url: '/datalocker/'+locker_id+'/submissions/' + id + '/delete_submission',
+            url: "/datalocker/"+locker_id+"/submissions/" + id + "/delete_submission",
             type: "post",
             data:{
                 id: id,
@@ -43,9 +43,9 @@
                 },
             success: function(data) {
                 // deletes the submission and adds the class "deleted"
-                $("#submission-list tr[data-id='" + id +"']").addClass('deleted submission-deleted');
+                $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
-                    'Undelete');
+                    "Undelete");
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -53,10 +53,9 @@
                         "Submission.delete in Submission.js AJAX error: "
                     );
                 }
-
             });
         Submission.deleteRequest = null;
-        }
+    }
 
 
     /**
@@ -75,7 +74,7 @@
         undeleteUrl = $("button[role='delete-submission']").attr("data-url");
         // submits the request to undelete the submission
         Submission.undeleteRequest = $.ajax({
-            url: '/datalocker/'+locker_id+'/submissions/' + id + '/undelete_submission',
+            url: "/datalocker/"+locker_id+"/submissions/" + id + "/undelete_submission",
             type: "post",
             data:{
                 id : id,
@@ -84,9 +83,9 @@
                 },
             success: function(data) {
                 // undeletes the submission and removes the class "deleted"
-                $("#submission-list tr[data-id='"+id +"']").removeClass('deleted');
+                $("#submission-list tr[data-id='"+id +"']").removeClass("deleted");
                 $("#submission-list tr[data-id='"+id +"'] button[role='delete-submission']").html(
-                    'Delete');
+                    "Delete");
                  Submission.undeleteRequest = null;
                 },
             error: function(jqXHR) {
@@ -94,36 +93,35 @@
                         "Submission.undelete in Submission.js AJAX error: "
                     );
                 }
-
             });
         Submission.undeleteRequest = null;
-        }
-
-    }( window.Submission = window.Submission || {}, jQuery));
+    }
+}( window.Submission = window.Submission || {}, jQuery));
 
 
 $(document).ready(function()
 {
+    //changes the html and css of the button when clicked to 'delete' or 'undelete'
     $("#submission-list").on("click","button[role='delete-submission']", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         var locker_id = $(this).closest("table").attr("data-locker-id");
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
-            $(this).html('Undelete');
+            $(this).html("Undelete");
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
             Submission.undelete(locker_id, id);
             $(this).removeClass("deleted")
             $(this).removeClass("btn-success").addClass("btn-danger");
-            $(this).html('Delete');
+            $(this).html("Delete");
         }
     });
+
+    //shows the delete buttons and the all of the submissions
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
 
     });
-
-
 });
