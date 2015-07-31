@@ -140,12 +140,6 @@
      */
 
     Locker._build_user_list_entry = function (user) {
-        var width = Math.max.apply(Math,
-        $('.existing-users-list').map(function() {
-            return $(this).width();
-        }).get());
-        console.log(width);
-
         return  $("<li />").attr("data-id", user.id).append(
                 $("<div class='existing-users-list'/>").html(user.first_name + " " + user.last_name + " ").append(
                     $("<a />").html("<span class='glyphicon glyphicon-remove pull-right remove-users'>").attr(
@@ -216,6 +210,15 @@ $(document).ready(function () {
         Locker.build_user_list();
         var name = $(this).closest("tr").attr("data-name");
         $("#dialog-edit-users-title").html('Share access to ' + name);
+
+        var elementWidths = $('.existing-users-list').map(function () {
+            return $(this).width();
+        }).get();
+
+        // Math.max takes a variable number of arguments
+        // 'apply' is equivalent to passing each width as an argument
+        var maxWidth = Math.max.apply(null, elementWidths);
+        $('.existing-users-list').width(maxWidth);
         $("#dialog-edit-users").modal('show');
     });
 
