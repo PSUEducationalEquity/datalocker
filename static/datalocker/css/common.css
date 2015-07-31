@@ -179,6 +179,19 @@ ul .information {
     right: 0px;
 }
 
+.toggle.btn {
+  width: 130px;
+  min-width: 59px;
+  min-height: 34px;
+  float: right;
+ }
+
+.onoffswitch {
+  width: 130px;
+  min-width: 59px;
+  min-height: 34px;
+  float: right;
+ }
 /*-----------End code for the toggle switch --------*/
 
 /*------------------------------------*\
@@ -203,7 +216,7 @@ caption {
 }
 
 .delete-submission{
-display: none;
+  display: none;
 }
 
 .dl-horizontal dd {

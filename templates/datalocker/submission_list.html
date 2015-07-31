@@ -24,23 +24,20 @@
 
 {% block content %}
   <div class="container-fluid">
+    <div class="onoffswitch">
+      <input type="checkbox"
+        id="onoffswitch"
+        class="onoffswitch-checkbox"
+        name="onoffswitch"
+        data-size="small"
+        data-toggle="toggle"
+        data-onstyle="success"
+        data-offstyle="danger"
+        data-off="Done editing"
+        data-on="Edit submissions">
+    </div>
     <h1>{{ locker.name }}</h1>
     {% if locker.owner = user.username %}
-    <input type="checkbox" data-size="small"  data-toggle="toggle">
-   <!--  <div class="maintenance-mode-switch">
-      Maintenance Mode
-      <div class="onoffswitch">
-        <input type="checkbox"
-          name="onoffswitch"
-          class="onoffswitch-checkbox"
-          id="myonoffswitch"
-          checked>
-        <label class="onoffswitch-label" for="myonoffswitch">
-          <span class="onoffswitch-inner"></span>
-          <span class="onoffswitch-switch"></span>
-        </label>
-      </div> -->
-    </div>
     {% endif %}
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
