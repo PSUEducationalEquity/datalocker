@@ -14,11 +14,7 @@
     <h1 class="hidden">Data lockers</h1>
     <div class="container-fluid">
       <h2 class="italic">My Lockers</h2>
-      {% if owned|length == 0 %}
-        <p>You currently do not own any Lockers.
-        You can add lockers of your own by adding a forms from Plone Form Gen.
-        </p>
-      {% else %}
+      {% if owned|length > 0 %}
         <button name="show-hide-lockers"
           class="btn btn-default btn-xs button-archived-showhide"
           title="Show/Hide Archived Lockers">Show Archived Lockers</button>
@@ -60,6 +56,10 @@
             {% endfor %}
           </tbody>
         </table>
+      {% else %}
+        <p>You currently do not own any Lockers.
+        You can add lockers of your own by adding a forms from Plone Form Gen.
+        </p>
       {% endif %}
       <hr />
       {% if shared|length > 0 %}
