@@ -73,8 +73,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for locker in my_lockers_list %}
-            {% if locker.owner != user.username %}
+          {% for locker in shared %}
                 <tr data-id="{{ locker.id }}"
                 {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                   <td class="record-name">
@@ -86,7 +85,6 @@
                   </td>
                   <td class="hidden-xs">{{ locker.latest_submission }}</td>
                 </tr>
-            {% endif %}
           {% endfor %}
         </tbody>
       </table>

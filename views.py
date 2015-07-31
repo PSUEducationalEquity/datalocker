@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, request
 from django.shortcuts import render, render_to_response , get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
@@ -18,12 +18,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
-from .models import Locker, LockerManager,LockerSetting, LockerQuerySet,  Submission
+from .models import Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, requests
 
 
 public_fields = ['id', 'email', 'first_name', 'last_name']
+# user = request.user
 
 
 
@@ -125,6 +126,14 @@ class LockerListView(generic.ListView):
         """ Return all lockers for the current user """
         return Locker.objects.active().has_access(self.request.user).annotate(
             latest_submission= Max('submissions__timestamp')).order_by('name')
+
+    def get_context_data(self, **kwargs):
+        # user = request.user
+        context = super(LockerListView, self).get_context_data(**kwargs)
+        context['shared'] = Locker.objects.active().has_access(self.request.user).annotate(
+            latest_submission= Max('submissions__timestamp')).order_by('name').exclude(
+            owner='das66')
+        return context
 
 
 
