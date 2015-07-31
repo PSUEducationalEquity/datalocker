@@ -3,6 +3,9 @@
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />{% endblock %}
 
+{% block title %}Datalocker Login{% endblock %}
+{% block branding %}<h1 id="site-name">Datalocker Login</h1>{% endblock %}
+
 {% block bodyclass %}{{ block.super }} login{% endblock %}
 
 {% block usertools %}{% endblock %}
