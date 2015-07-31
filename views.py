@@ -117,7 +117,6 @@ def form_submission_view(request, **kwargs):
 
 
 class LockerListView(generic.ListView):
-    context_object_name = 'my_lockers_list'
     template_name = 'datalocker/index.html'
     model = Locker
 
