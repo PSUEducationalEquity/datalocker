@@ -122,6 +122,7 @@ $(document).ready(function()
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
+        $(".heading-display-for-submission").toggle();
 
     });
 });

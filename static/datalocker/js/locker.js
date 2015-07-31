@@ -31,8 +31,8 @@
 
         // callback handler: success
         Locker.addRequest.done(function (response, textStatus, jqXHR) {
-            $("#email").val("");
             $("#existing-users").append(Locker._build_user_list_entry(response));
+            $("#email").val("");
             $("#email").focus();
             Locker.addRequest = null;
         });

@@ -198,9 +198,9 @@ ul .information {
     $GENERAL
 \*------------------------------------*/
 
-.add-btn{
-padding:3px 4px;
-vertical-align: top;
+.add-btn {
+  padding:3px 4px;
+  vertical-align: top;
 }
 
 caption {
@@ -210,16 +210,18 @@ caption {
 .document-footer {
   margin-top: 150px;
 }
-.deleted{
+.deleted {
   display: none;
   text-decoration: line-through;
 }
 
-.delete-submission{
+.delete-submission {
   display: none;
 }
-
-.submission-deleted{
+.heading-display-for-submission {
+  display: none;
+}
+.submission-deleted {
   display: table-row;
 }
 .dl-horizontal dd {
