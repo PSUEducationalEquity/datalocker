@@ -71,7 +71,7 @@
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
-                class="btn btn-danger btn-xs archive-button delete-submission"
+                class="btn btn-xs archive-button delete-submission {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
             </td>

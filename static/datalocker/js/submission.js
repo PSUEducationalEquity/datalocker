@@ -111,11 +111,11 @@ $(document).ready(function()
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
             $(this).html('Undelete');
-            $(this).addClass("btn-success").removeClass("btn-danger");
+            $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
             Submission.undelete(locker_id, id);
             $(this).removeClass("deleted")
-            $(this).addClass("btn-danger").removeClass("btn-success");
+            $(this).removeClass("btn-success").addClass("btn-danger");
             $(this).html('Delete');
         }
     });
