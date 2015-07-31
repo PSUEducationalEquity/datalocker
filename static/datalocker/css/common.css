@@ -77,12 +77,16 @@
 /*-----------------------------------*\
     $EXISTINGUSERS
 \*-----------------------------------*/
-.existing-users-list {
-  display: inline-block;
+/*.existing-users-list {
+  width: 180px;
+}*/
+.existing-users-div {
+  width: 250px;
 }
 .remove-users {
-  padding-left: 2px;
+  float: right;
   margin-top: 2px;
+  margin-right: -1px;
 }
 
 /*-----------------------------------*\
