@@ -33,7 +33,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for locker in my_lockers_list %}
+            {% for locker in owned %}
               <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
               {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                 <td class="record-name">

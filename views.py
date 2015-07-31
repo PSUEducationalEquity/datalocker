@@ -119,22 +119,25 @@ def form_submission_view(request, **kwargs):
 class LockerListView(generic.ListView):
     context_object_name = 'my_lockers_list'
     template_name = 'datalocker/index.html'
-
-
-    def get_queryset(self):
-        """ Return all lockers for the current user """
-        user = self.request.user
-        return Locker.objects.active().has_access(self.request.user).annotate(
-            latest_submission= Max('submissions__timestamp')).order_by('name').filter(
-            owner=user)
+    model = Locker
 
 
     def get_context_data(self, **kwargs):
+        """
+        Accesses the logged in user and searched through all the lockers they
+        have access to. It only returns the lockers that they have access to
+        and don't own.
+        """
         user = self.request.user
         context = super(LockerListView, self).get_context_data(**kwargs)
-        context['shared'] = Locker.objects.active().has_access(self.request.user).annotate(
-            latest_submission= Max('submissions__timestamp')).order_by('name').exclude(
-            owner=user)
+        context['shared'] = Locker.objects.active().has_access(
+            self.request.user).annotate(latest_submission= Max(
+                'submissions__timestamp')).order_by('name').exclude(
+                    owner=user)
+        context['owned'] = Locker.objects.active().has_access(
+            self.request.user).annotate(latest_submission= Max(
+                'submissions__timestamp')).order_by('name').filter(
+                    owner=user)
         return context
 
 
