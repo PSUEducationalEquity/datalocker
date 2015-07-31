@@ -34,7 +34,7 @@
         deleteUrl = $("#delete-submission").attr("data-url");
         // submits the request to delete the submission
         Submission.deleteRequest = $.ajax({
-            url: deleteUrl,
+            url: '/datalocker/'+locker_id+'/submissions/' + id + '/delete_submission',
             type: "post",
             data:{
                 id: id,
@@ -72,10 +72,10 @@
      */
     Submission.undelete = function (locker_id, id)
     {
-        undeleteUrl = $("button[role='delete-submission']").attr("data-url");
+        undeleteUrl = $("button[role='delete-submission']").attr("data-url").replace('/delete_submission','/undelete_submission');
         // submits the request to undelete the submission
         Submission.undeleteRequest = $.ajax({
-            url: undeleteUrl.replace("/delete_submission", "/undelete_submission"),
+            url: '/datalocker/'+locker_id+'/submissions/' + id + '/undelete_submission',
             type: "post",
             data:{
                 id : id,
@@ -120,7 +120,8 @@ $(document).ready(function()
             $(this).html('Delete');
         }
     });
-    $(".onoffswitch-checkbox").on("click", function (event) {
+
+    $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
     });
