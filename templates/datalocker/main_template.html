@@ -141,6 +141,17 @@
             </div><!-- /.container-fluid -->
           </nav>
         </div>
+        {% block breadcrumbs %}
+          <div class="document-breadcrumbs">
+            <span class="document-breadcrumbs-label">
+              You are here:
+            </span>
+            <ol class="breadcrumb-trail">
+              {% block breadcrumb-trail %}
+              {% endblock breadcrumb-trail %}
+            </ol>
+          </div>
+        {% endblock breadcrumbs %}
         {% block header-bottom %}{% endblock %}
       </header>
     {% endblock header-wrapper %}

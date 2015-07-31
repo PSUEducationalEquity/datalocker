@@ -1,22 +1,22 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
-{% extends "datalocker/main_template.html" %}
+{% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
 
-
+{% block breadcrumb-trail %}
+  <li>
+    <a href="{% url 'datalocker:index' %}">
+      <span class="sr-only">List of </span>My Lockers
+    </a>
+  </li>
+  <li class="active">All Submissions
+    <span class="sr-only"> for {{ locker.name }}</span>
+  </li>
+{% endblock breadcrumb-trail %}
 
 {% block page-meta-title %}Submissions{% endblock page-meta-title %}
 
 {% block content %}
   <div class="container-fluid">
-    <ol class="breadcrumb">
-      <li>
-        <a href="{% url 'datalocker:index' %}">
-        <span class="sr-only">List of </span>My Lockers</a>
-      </li>
-      <li class="active">All Submissions
-        <span class="sr-only"> for {{ locker.name }}</span>
-      </li>
-    </ol>
     <div class="onoffswitch">
       <input type="checkbox"
         id="onoffswitch"
@@ -34,7 +34,7 @@
     {% endif %}
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
-    <table class="table table-striped table-hover listing sortable"
+    <table class="table table-striped table-hover listing tablesorter"
       name="submission listing"
       id="submission-list"
       data-locker-id="{{locker.id}}">

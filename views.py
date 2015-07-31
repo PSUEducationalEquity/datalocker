@@ -213,12 +213,13 @@ class LockerUserAdd(View):
         for key,value in model_to_dict(user).iteritems():
             if key in public_fields:
                 user_dict[key] = value
-        # locker_name = Locker.objects.get(id=kwargs['locker_id'])
-        # subject = 'Granted Locker Access'
-        # to = self.request.POST.get('email', "")
-        # body= 'Hello, '+ to +'\n'+' You now have access to a locker ' +  locker_name.name
-        # email = EmailMessage(subject, body, from_email, [to])
-        # email.send()
+        from_email = 'eeqsys@psu.edu'
+        locker_name = Locker.objects.get(id=kwargs['locker_id'])
+        subject = 'Granted Locker Access'
+        to = self.request.POST.get('email', "")
+        body = 'Hello, ' + to +'\n'+' You now have access to a locker ' +  locker_name.name
+        email = EmailMessage(subject, body, from_email, [to])
+        email.send()
         return JsonResponse(user_dict)
 
 
