@@ -78,12 +78,11 @@
     $EXISTINGUSERS
 \*-----------------------------------*/
 .existing-users-list {
-  display: inline;
+  display: inline-block;
 }
 .remove-users {
   padding-left: 2px;
   margin-top: 2px;
-  /*margin-right: 80%;*/
 }
 
 /*-----------------------------------*\
@@ -220,6 +219,9 @@ caption {
   display: none;
 }
 
+.submission-deleted{
+  display: table-row;
+}
 .dl-horizontal dd {
   margin-left: 150px;
   line-height: 2.5;
