@@ -31,6 +31,9 @@
 
         // callback handler: success
         Locker.addRequest.done(function (response, textStatus, jqXHR) {
+            if ($("#no-users-message").length){
+                $("#no-users-message").remove();
+            }
             $("#existing-users").append(Locker._build_user_list_entry(response));
             $("#email").val("");
             $("#email").focus();
@@ -118,7 +121,12 @@
         });
 
         Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
-         $("#existing-users li[data-id='" + response.user_id + "']").remove();
+            $("#existing-users li[data-id='" + response.user_id + "']").remove();
+            if ($("#existing-users li").length == 0){
+                $("#existing-users").append(
+                    $("<li />").attr('id','no-users-message').append(
+                        "There are no users for this locker"));
+            }
           Locker.deleteRequest = null;
         });
 
@@ -177,8 +185,13 @@
                 $users_list.children().remove();
                 // build the list of Locker
                 $.each(response.users, function (index, user) {
-                    $users_list.append(Locker._build_user_list_entry(user));
+                        $users_list.append(Locker._build_user_list_entry(user));
                 });
+                if ($("#existing-users li").length == 0){
+                            $("#existing-users").append(
+                                $("<li />").attr('id','no-users-message').append(
+                                    "There are no users for this locker"));
+                }
                 Locker.dataRequest = null;
             });
 
@@ -210,14 +223,7 @@ $(document).ready(function () {
             "action", url.replace("/0/","/"+ id +"/"));
         Locker.build_user_list();
         var name = $(this).closest("tr").attr("data-name");
-
-        // This code works correctly it is just not in the right place
         $("#dialog-edit-users-title").html('Share access to ' + name);
-        if ($("#existing-users li").length == 0){
-            $("#existing-users").append(
-                $("<li id='no-users-message'/>").html(
-                    "There are no users for this locker"));
-        }
         $("#dialog-edit-users").modal('show');
     });
 
