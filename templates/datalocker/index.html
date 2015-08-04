@@ -115,12 +115,10 @@
           <div class="modal-body">
             <div>
               <h5 clss="modal-title"><strong>Users who have access to this locker</strong></h5>
-              <div class="existing-users-div">
               <ul id="existing-users"
                 data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}"
                 data-url="{% url 'datalocker:locker_users' 0 %}">
               </ul>
-              </div>
               <h5 class="modal-title" id="dialog-edit-users-title"><strong>Share access to this locker with someone else</strong></h5>
               <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text" name="email" id="email" style="width:200px;" placeholder="Enter the email address to share this locker with">

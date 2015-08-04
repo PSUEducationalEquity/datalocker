@@ -77,8 +77,8 @@
 /*-----------------------------------*\
     $EXISTINGUSERS
 \*-----------------------------------*/
-.existing-users-div {
-  width: 250px;
+.existing-users-list {
+  display: inline-block;
 }
 .remove-users {
   margin-top: 2px;
