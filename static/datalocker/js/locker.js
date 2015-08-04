@@ -122,11 +122,7 @@
 
         Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
             $("#existing-users li[data-id='" + response.user_id + "']").remove();
-            if ($("#existing-users li").length == 0){
-                $("#existing-users").append(
-                    $("<li />").attr('id','no-users-message').append(
-                        "There are no users for this locker"));
-            }
+            Locker.no_user_message();
           Locker.deleteRequest = null;
         });
 
@@ -187,11 +183,7 @@
                 $.each(response.users, function (index, user) {
                         $users_list.append(Locker._build_user_list_entry(user));
                 });
-                if ($("#existing-users li").length == 0){
-                            $("#existing-users").append(
-                                $("<li />").attr('id','no-users-message').append(
-                                    "There are no users for this locker"));
-                }
+                Locker.no_user_message();
                 Locker.dataRequest = null;
             });
 
@@ -206,6 +198,15 @@
                 }
                 Locker.dataRequest = null;
             });
+        }
+
+        Locker.no_user_message = function () {
+            if ($("#existing-users li").length == 0){
+                $("#existing-users").append(
+                    $("<li />").attr('id','no-users-message').addClass(
+                        'label label-info').append(
+                            "There are no users for this locker"));
+            }
         }
     }
 }( window.Locker = window.Locker || {}, jQuery));

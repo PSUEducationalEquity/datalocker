@@ -83,6 +83,9 @@
 .existing-users-list {
   display: inline-block;
 }
+#no-users-message {
+  font-size: 15px;
+}
 .remove-users {
   padding-left: 10px;
   margin-top: 2px;
