@@ -215,9 +215,8 @@ $(document).ready(function () {
         $("#dialog-edit-users-title").html('Share access to ' + name);
         if ($("#existing-users li").length == 0){
             $("#existing-users").append(
-                $("<li />").append(
-                    $("<div class='no-users-message'/>").html(
-                    "There are no users for this locker")));
+                $("<li id='no-users-message'/>").html(
+                    "There are no users for this locker"));
         }
         $("#dialog-edit-users").modal('show');
     });
@@ -276,7 +275,6 @@ $(document).ready(function () {
     });
 
 
-    // enables tablesorter JS on the tablesorter tables
     var showHide = getCookie("show/hide");
     if (showHide == "show") {
         $('.is-archived').show();
