@@ -155,16 +155,6 @@
 
 {% block site-scripts %}
     {{ block.super }}
-    <script type="text/javascript">
-      /*JavaScript code to run the modal into the page when the button
-      is pressed */
-      $(document).ready(function (){
-        $("button[role='filter-results']").on("click", function (event){
-          $("#dialog-filter-results").modal('show');
-        });
-        $('#submission-list').tablesorter();
-      });
-    </script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/bootstrap-toggle.js' %}"></script>
     <script type="text/javascript"

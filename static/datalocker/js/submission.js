@@ -101,6 +101,11 @@
 
 $(document).ready(function()
 {
+    $("button[role='filter-results']").on("click", function (event){
+          $("#dialog-filter-results").modal('show');
+        });
+    $('#submission-list').tablesorter();
+
     //changes the html and css of the button when clicked to 'delete' or 'undelete'
     $("#submission-list").on("click","button[role='delete-submission']", function (event) {
         event.preventDefault();
