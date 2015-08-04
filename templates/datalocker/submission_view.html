@@ -24,7 +24,7 @@
   <div class="container-fluid">
     <h1>{{ object.locker.name }}</h1>
 
-    <div class="pagination">
+    <div class="pagination" aria-label="submission navigation buttons">
       {% include "datalocker/pagination_template.html" %}
     </div>
 
@@ -37,7 +37,7 @@
       {% endfor %}
     </ul>
 
-    <div class="pagination">
+    <div class="pagination" aria-label="submission navigation buttons">
       {% include "datalocker/pagination_template.html" %}
     </div>
   </div>
