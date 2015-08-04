@@ -77,10 +77,14 @@
 /*-----------------------------------*\
     $EXISTINGUSERS
 \*-----------------------------------*/
+#existing-users {
+  display: inline-block;
+}
 .existing-users-list {
   display: inline-block;
 }
 .remove-users {
+  padding-left: 10px;
   margin-top: 2px;
 }
 
