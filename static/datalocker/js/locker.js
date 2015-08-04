@@ -210,7 +210,15 @@ $(document).ready(function () {
             "action", url.replace("/0/","/"+ id +"/"));
         Locker.build_user_list();
         var name = $(this).closest("tr").attr("data-name");
+
+        // This code works correctly it is just not in the right place
         $("#dialog-edit-users-title").html('Share access to ' + name);
+        if ($("#existing-users li").length == 0){
+            $("#existing-users").append(
+                $("<li />").append(
+                    $("<div class='no-users-message'/>").html(
+                    "There are no users for this locker")));
+        }
         $("#dialog-edit-users").modal('show');
     });
 
