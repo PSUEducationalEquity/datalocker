@@ -154,7 +154,7 @@ class UserHasLockerAccessMixin(object):
 
 
 
-class LockerListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
+class LockerListView(LoginRequiredMixin, generic.ListView):
     template_name = 'datalocker/index.html'
     model = Locker
 
@@ -180,7 +180,7 @@ class LockerListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListV
 
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
@@ -267,7 +267,7 @@ class LockerUserDelete(View):
 
 
 
-class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.DetailView):
+class SubmissionView(LoginRequiredMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 
