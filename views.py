@@ -8,23 +8,32 @@ from django.core.urlresolvers import reverse
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, request
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response , get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
 from django.utils import timezone
-from django.utils.text import slugify
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
+from .decorators import user_has_locker_access
 from .models import Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, requests
 
 
-public_fields = ['id', 'email', 'first_name', 'last_name']
+##
+## Helper Functions
+##
+def _get_public_user_dict(user):
+    public_fields = ['id', 'email', 'first_name', 'last_name']
+    user_dict = {}
+    for key, value in model_to_dict(user).iteritems():
+        if key in public_fields:
+            user_dict[key] = value
+    return user_dict
 
 
 
@@ -42,12 +51,23 @@ def archive_locker(request, **kwargs):
 
 
 
+def custom_404(request):
+    response = render_to_response('404.html')
+    response.status_code = 404
+    return response
+
+
+
+
 def delete_submission(request, **kwargs):
     submission = get_object_or_404(Submission, id=kwargs['pk'])
     submission.deleted = timezone.now()
     submission.save()
     if request.is_ajax():
-        return JsonResponse({})
+        return JsonResponse({
+            'id': submission.id,
+            'timestamp': submission.timestamp,
+            })
     else:
         return HttpResponseRedirect(reverse('datalocker:submission_list',
             kwargs={'id': self.kwargs['id']}))
@@ -125,8 +145,16 @@ class LoginRequiredMixin(object):
 
 
 
+class UserHasLockerAccessMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(UserHasLockerAccessMixin, cls).as_view(**initkwargs)
+        return user_has_locker_access(view)
 
-class LockerListView(LoginRequiredMixin, generic.ListView):
+
+
+
+class LockerListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
     template_name = 'datalocker/index.html'
     model = Locker
 
@@ -152,7 +180,7 @@ class LockerListView(LoginRequiredMixin, generic.ListView):
 
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
@@ -188,20 +216,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
         load thereafter.
         """
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        selected_fields = []
-        for field in locker.get_all_fields_list():
-            if slugify(field) in self.request.POST:
-                selected_fields.append(field)
-        selected_fields_setting, created = LockerSetting.objects.get_or_create(
-            category='fields-list',
-            setting_identifier='selected-fields',
-            locker=locker,
-            defaults={
-                'setting': 'User-defined list of fields to display in tabular view',
-                }
-            )
-        selected_fields_setting.value = json.dumps(selected_fields)
-        selected_fields_setting.save()
+        locker.save_selected_fields_list(self.request.POST)
         return HttpResponseRedirect(reverse('datalocker:submissions_list',
             kwargs={'locker_id': self.kwargs['locker_id']}))
 
@@ -213,11 +228,7 @@ def locker_users(request, locker_id):
         locker = get_object_or_404(Locker, pk=locker_id)
         users = []
         for user in locker.users.all():
-            user_dict = {}
-            for key, value in model_to_dict(user).iteritems():
-                if key in public_fields:
-                    user_dict[key] = value
-            users.append(user_dict)
+            users.append(_get_public_user_dict(user))
         return JsonResponse({'users': users})
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
@@ -232,10 +243,6 @@ class LockerUserAdd(View):
         if not user in locker.users.all():
             locker.users.add(user)
             locker.save()
-        user_dict = {}
-        for key,value in model_to_dict(user).iteritems():
-            if key in public_fields:
-                user_dict[key] = value
         from_email = 'eeqsys@psu.edu'
         locker_name = Locker.objects.get(id=kwargs['locker_id'])
         subject = 'Granted Locker Access'
@@ -243,7 +250,7 @@ class LockerUserAdd(View):
         body = 'Hello, ' + to +'\n'+' You now have access to a locker ' +  locker_name.name
         email = EmailMessage(subject, body, from_email, [to])
         email.send()
-        return JsonResponse(user_dict)
+        return JsonResponse(_get_public_user_dict(user))
 
 
 
@@ -260,7 +267,7 @@ class LockerUserDelete(View):
 
 
 
-class SubmissionView(LoginRequiredMixin, generic.DetailView):
+class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 
@@ -281,15 +288,19 @@ def modify_locker(request, **kwargs):
     locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
     locker_name = locker.name
     locker_owner = locker.owner
-    new_locker_name = request.POST.get('edit-locker')
-    new_owner = request.POST.get('edit-owner')
+    new_locker_name = request.POST.get('edit-locker', '')
+    new_owner = request.POST.get('edit-owner', '')
     if new_locker_name != "":
-         locker.name = new_locker_name
-         locker.save()
+        locker.name = new_locker_name
     if new_owner != "":
-        user = User.objects.get(email=new_owner).username
-        locker.owner = user
-        locker.save()
+        try:
+            user = User.objects.get(email=new_owner).username
+        except User.DoesNotExist:
+            ### TODO: Log this and deal with it
+            pass
+        else:
+            locker.owner = user
+    locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
@@ -310,6 +321,9 @@ def undelete_submission(request, **kwargs):
     submission.deleted = None
     submission.save()
     if request.is_ajax():
-        return JsonResponse({})
+        return JsonResponse({
+            'id': submission.id,
+            'timestamp': submission.timestamp,
+            })
     else:
         return HttpResponseRedirect(reverse('datalocker:submission_list'))

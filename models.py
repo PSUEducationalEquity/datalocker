@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import request
 from django.utils import timezone
+from django.utils.text import slugify
 from django.db.models.query import QuerySet
 
 from collections import OrderedDict
@@ -166,6 +167,34 @@ class Locker(models.Model):
         else:
             selected_fields = json.loads(selected_fields_setting.value)
         return selected_fields
+
+
+    def has_access(self, user):
+        """
+
+        """
+        if user == self.owner:
+            return True
+        elif user in self.users.all():
+            return True
+        return False
+
+
+    def save_selected_fields_list(self, fields):
+        selected_fields = []
+        for field in self.get_all_fields_list():
+            if slugify(field) in fields:
+                selected_fields.append(field)
+        selected_fields_setting, created = LockerSetting.objects.get_or_create(
+            category='fields-list',
+            setting_identifier='selected-fields',
+            locker=self,
+            defaults={
+                'setting': 'User-defined list of fields to display in tabular view',
+                }
+            )
+        selected_fields_setting.value = json.dumps(selected_fields)
+        selected_fields_setting.save()
 
 
 

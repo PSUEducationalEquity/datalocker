@@ -16,7 +16,6 @@
 
     /* Add a user to the selected locker */
     Locker.add = function () {
-       // submit the request
         var email = $("#email").val();
         var addUrl = $("#dialog-edit-users form").attr("action");
         Locker.addRequest = $.ajax({
@@ -107,7 +106,6 @@
 
     /* Adds the ability to delete user from a locker */
     Locker.delete = function (user_id) {
-        // submit the request
         var deleteUrl =  $("#existing-users").attr("data-delete-url");
         var locker_id = $("#dialog-edit-users").attr("data-locker-id");
         Locker.deleteRequest = $.ajax({
@@ -119,7 +117,7 @@
                     "input[name='csrfmiddlewaretoken']").val()
                   }
         });
-
+        // callback handler: success
         Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
             $("#existing-users li[data-id='" + response.user_id + "']").remove();
             Locker.no_user_message();
@@ -145,10 +143,17 @@
 
     Locker._build_user_list_entry = function (user) {
         return  $("<li />").attr("data-id", user.id).append(
-                $("<div class='existing-users-list'/>").html(user.first_name + " " + user.last_name + " ")).append(
-                    $("<a />").html("<span class='glyphicon glyphicon-remove pull-right remove-users'>").attr(
-                        "href", "#").attr("title", "Stop sharing access to this locker with " +
-                        user.first_name +" " + user.last_name)
+            $("<div />").addClass("existing-users-list").html(
+                user.first_name + " " + user.last_name + " "
+            )).append(
+                $("<a />").attr("href", "#").attr(
+                    "title",
+                    "Stop sharing access to this locker with " + user.first_name + " " + user.last_name
+                ).append(
+                    $("<span />").addClass(
+                        "glyphicon glyphicon-remove pull-right remove-users"
+                    )
+                )
             );
     }
 
@@ -160,7 +165,6 @@
      */
 
     Locker.build_user_list = function (users) {
-         // get the url to use
         var locker_id = $("#dialog-edit-users").attr("data-locker-id");
         var url = $("#existing-users").attr("data-url").replace(
             "/0/", "/" + locker_id +"/");
@@ -203,9 +207,10 @@
         Locker.no_user_message = function () {
             if ($("#existing-users li").length == 0){
                 $("#existing-users").append(
-                    $("<li />").attr('id','no-users-message').addClass(
-                        'label label-info').append(
-                            "There are no users for this locker"));
+                    $("<li />").attr('id','no-users-message'
+                        ).append(
+                            "There are no users for this locker")
+                        );
             }
         }
     }

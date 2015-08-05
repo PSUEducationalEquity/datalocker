@@ -7,14 +7,23 @@
  */
 
 $(document).ready(function() {
-   $("body").on("click", "[role='select-all']", function (event)
+    $("body").on("click", "[role='select-all']", function (event)
     {
         var target = $(this).attr("data-target");
         $("#" + target + " input[type='checkbox']").prop(
         	"checked", $(this).prop("checked"));
     });
 
-    if ($('.checkbox-inputs:checked').length == $('.checkbox-inputs').length){
-        $('#fields-select-all').prop("checked", true);
-    }
+    $("[role='select-all']").each(function () {
+        var $target = $("#" + $(this).attr("data-target"));
+        var checked_count = $target.find("input[type='checkbox']:checked").length;
+        var checkbox_count = $target.find("input[type='checkbox']").length;
+        console.log($(this));
+        console.log($target);
+        console.log(checked_count);
+        console.log(checkbox_count);
+        if (checkbox_count == checked_count) {
+            $(this).prop("checked", true);
+        }
+    });
 });

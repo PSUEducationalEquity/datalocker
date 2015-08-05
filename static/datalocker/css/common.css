@@ -80,17 +80,21 @@
 #existing-users {
   display: inline-block;
 }
+
 .existing-users-list {
   display: inline-block;
 }
+
 #no-users-message {
   font-size: 15px;
+  color: #808080;
+  font-style: italic;
 }
+
 .remove-users {
   padding-left: 10px;
   margin-top: 2px;
 }
-
 /*-----------------------------------*\
     $SUBMISSIONVIEWPAGE
 \*-----------------------------------*/
