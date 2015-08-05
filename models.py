@@ -234,6 +234,7 @@ class Submission(models.Model):
         blank=True,
         null=True,
         )
+    workflow_state = models.CharField(max_length=25, default='unreviewed')
 
 
     def __str__(self):

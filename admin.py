@@ -21,7 +21,8 @@ class SubmissionAdmin(admin.ModelAdmin):
         'locker',
         'timestamp',
         'data',
-        'deleted'
+        'deleted',
+        'workflow_state'
         ]
 
 
