@@ -22,23 +22,31 @@
 
 {% block content %}
   <div class="container-fluid">
-    <h1>{{ object.locker.name }}</h1>
+    <div class="row">
+      <div class="col-md-8">
+        <h1>{{ object.locker.name }}</h1>
 
-    <div class="pagination" aria-label="submission navigation buttons">
-      {% include "datalocker/pagination_template.html" %}
-    </div>
+        <div class="pagination" aria-label="submission navigation buttons">
+          {% include "datalocker/pagination_template.html" %}
+        </div>
 
-    <ul class="submission-view">
-      <li class="header">Submission Date</li>
-      <li class="information">{{ object.timestamp }}</li>
-      {% for key, value in object.data_dict.items %}
-        <li class="header">{{ key }}</li>
-        <li class="information">{{ value }}</li>
-      {% endfor %}
-    </ul>
+        <ul class="submission-view">
+          <li class="header">Submission Date</li>
+          <li class="information">{{ object.timestamp }}</li>
+          {% for key, value in object.data_dict.items %}
+            <li class="header">{{ key }}</li>
+            <li class="information">{{ value }}</li>
+          {% endfor %}
+        </ul>
 
-    <div class="pagination" aria-label="submission navigation buttons">
-      {% include "datalocker/pagination_template.html" %}
+        <div class="pagination" aria-label="submission navigation buttons">
+          {% include "datalocker/pagination_template.html" %}
+        </div>
+      </div>
+      <div class="col-md-4">
+      <!-- Add all the workflow and commenting code here -->
+        <h4>Commenting div</h4>
+      </div>
     </div>
   </div>
 {% endblock %}
