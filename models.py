@@ -315,3 +315,41 @@ class Submission(models.Model):
         newestSubmission = Submission.objects.filter(
             locker=self.locker).latest('timestamp')
         return newestSubmission.id
+
+
+
+
+class Comments(models.Model):
+    submission = models.ForeignKey(
+        Submission,
+        related_name="comments",
+        on_delete=models.PROTECT,
+        )
+    user = models.ForeignKey(
+        User,
+        related_name="comment_user",
+        )
+    timestamp = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=True,
+        editable=False,
+        )
+    comment = models.TextField(blank=True)
+    parent_comment = models.ForeignKey(
+        'self',
+        related_name="comment_parent",
+        blank=True,
+        null=True,
+        )
+
+
+    def __str__(self):
+        return str(self.id)
+
+
+    def is_editable(self):
+        return ""
+
+
+    def to_dict(self):
+        return ""
