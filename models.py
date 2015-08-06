@@ -152,6 +152,34 @@ class Locker(models.Model):
         return all_fields
 
 
+    def get_all_states(self):
+        try:
+            all_states = self.settings.get(
+                category='workflow',
+                setting='states',
+                setting_identifier='states',
+                locker=self,
+                )
+        except LockerSetting.DoesNotExist:
+            all_fields = []
+        else:
+            all_fields = json.loads(all_fields_setting.value)
+
+
+    def get_selected_states(self):
+        try:
+            selected_state_setting = self.settings.get(
+                category='workflow',
+                setting='states',
+                setting_identifier='states',
+                locker=self,
+                )
+        except LockerSetting.DoesNotExist:
+            selected_state = []
+        else:
+            selected_state = json.loads(selected_state_setting.value)
+        return selected_state
+
     def get_selected_fields_list(self):
         """
         Get's the selected fields off of the Submission List Page,
@@ -197,6 +225,16 @@ class Locker(models.Model):
         selected_fields_setting.save()
 
 
+    def save_states(self, fields):
+        saved_state_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting='states',
+            setting_identifier='states',
+            locker=self,
+            )
+        saved_state_setting.value = json.dumps(selected_fields)
+        saved_state_setting.save()
+
 
 
 class LockerSetting(models.Model):
@@ -234,7 +272,10 @@ class Submission(models.Model):
         blank=True,
         null=True,
         )
-    workflow_state = models.CharField(max_length=25, default='unreviewed')
+    workflow_state = models.CharField(
+        max_length=25,
+        default='unreviewed',
+        )
 
 
     def __str__(self):

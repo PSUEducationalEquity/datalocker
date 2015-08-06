@@ -72,6 +72,19 @@
 }
 
 
+/*-----------------------------------*\
+    $COMMENTING
+\*-----------------------------------*/
+.comment-button {
+  float: right;
+}
+
+.comment-textarea {
+  padding: 10px;
+  border: solid 1px #dcdcdc;
+  height: 50px;
+  width: 100%;
+}
 
 
 /*-----------------------------------*\
