@@ -6,7 +6,8 @@
     Comment.dataRequest;
 
     Comment.add = function () {
-        var addUrl = $("#comments-div form").attr("action");
+        var addUrl = $("#comments-div form").attr("data-url");
+        var comment = $("textarea#comment-text").val();
         Comment.addRequest = $.ajax({
             url: addUrl,
             type: "post",
@@ -17,7 +18,6 @@
                 }
         });
 
-        var comment = $("textarea#comment-text").val();
         $("#comment-feed-list").append(
             $("<li />").attr("class","comment-li"
                 ).append(
