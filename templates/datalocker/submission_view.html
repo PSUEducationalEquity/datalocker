@@ -50,14 +50,13 @@
           <div class="panel panel-default panel-workflow">
             <div class="panel-heading">
               <div class="panel-title">Workflow</div>
-            </div>
+            </div><label id="state-status" class="state-status"> </label>
             <div class="panel-body">
             Workflow State
-            <select>
-              <option value=""></option>
-              <option value="unreviewed">Unreviewed</option>
-              <option value="accepted">Accepted</option>
-              <option value="rejected">Rejected</option>
+            <select id="states">
+              <option value="Unreviewed">Unreviewed</option>
+              <option value="Accepted">Accepted</option>
+              <option value="Rejected">Rejected</option>
             </select>
             </div>
           </div>
@@ -87,3 +86,10 @@
     </div>
   </div>
 {% endblock %}
+
+
+{% block site-scripts %}
+    {{ block.super }}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/workflow.js' %}"></script>
+{% endblock site-scripts %}

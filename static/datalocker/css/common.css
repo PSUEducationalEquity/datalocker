@@ -216,6 +216,16 @@ ul .information {
   float: right;
  }
 /*-----------End code for the toggle switch --------*/
+/*------------------------------------*\
+    $Workflow
+\*------------------------------------*/
+
+.state-status {
+  font-style: italic;
+  padding-left: 1em;
+}
+
+/*-----------End code for the toggle switch --------*/
 
 /*------------------------------------*\
     $GENERAL
