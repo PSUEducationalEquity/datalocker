@@ -136,15 +136,6 @@ def form_submission_view(request, **kwargs):
 
 
 
-def get_comments_view(request, **kwargs):
-    submission = Submission.objects.get(pk=kwargs['pk'])
-    comments = {}
-    for comment in submission.to_dict().iteritems():
-        comments.append(comment)
-    return comments
-
-
-
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -288,7 +279,6 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
-        context['commenting_enabled'] = True
         return context
 
 
