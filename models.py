@@ -239,6 +239,9 @@ class Submission(models.Model):
     def __str__(self):
         return str(self.locker)
 
+    def __unicode__ (self):
+        return str(self.id)
+
 
     def data_dict(self):
         """
