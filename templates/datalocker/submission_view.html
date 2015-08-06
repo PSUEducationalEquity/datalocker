@@ -55,7 +55,7 @@
             </div>
           </div>
 
-
+          {% if commenting_enabled %}
           <div class="panel panel-default panel-comments">
             <div class="panel-heading">
               <div class="panel-title">Comments</div>
@@ -75,8 +75,15 @@
               </div>
             </div>
           </div>
+          {% endif %}
         </div>
       {% endif %}
     </div>
   </div>
+{% endblock %}
+
+
+{% block site-scripts %}
+  <script type="text/javascript"
+          src="{% static 'datalocker/js/commenting.js' %}"></script>
 {% endblock %}
