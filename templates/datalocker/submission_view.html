@@ -47,7 +47,34 @@
 
       {% if sidebar_enabled %}
         <div class="col-md-4">
-          <h4>Commenting div</h4>
+          <div class="panel panel-default panel-workflow">
+            <div class="panel-heading">
+              <div class="panel-title">Workflow</div>
+            </div>
+            <div class="panel-body">
+            </div>
+          </div>
+
+
+          <div class="panel panel-default panel-comments">
+            <div class="panel-heading">
+              <div class="panel-title">Comments</div>
+            </div>
+            <div class="panel-body">
+              <div class="comment-controls">
+                <textarea
+                  placeholder="Add Comment"
+                  class="comment-textarea"></textarea>
+                <button type="button"
+                  id="comment-add"
+                  class="btn btn-primary btn-xs comment-button"
+                  >Add</button>
+              </div>
+              <div class="comment-feed">
+
+              </div>
+            </div>
+          </div>
         </div>
       {% endif %}
     </div>
