@@ -78,18 +78,48 @@
     $COMMENTING
 \*-----------------------------------*/
 .comment-button {
+  clear: left;
   float: right;
 }
+
+.comment-feed-container {
+  margin-top: 25px;
+}
+
 .comment-textarea {
   padding: 10px;
   border: solid 1px #dcdcdc;
   height: 50px;
   width: 100%;
+  resize: none;
 }
+
 .panel .panel-heading {
   background-color: #5bc0de;
 }
 
+.single-comment-options {
+  float: right;
+}
+
+.single-comment-text {
+  word-wrap: break-word;
+}
+
+.comment-li {
+  display: block;
+  margin-bottom: 25px;
+  background-color: #e7e7e7;
+}
+.user-image {
+  /* dummy values to get the look of the box */
+  background-color: black;
+  width: 50px;
+  height: 50px;
+  /* Real needed values */
+  display: block;
+  float: left;
+}
 
 
 
