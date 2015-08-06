@@ -15,12 +15,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Comments',
+            name='Comment',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('comment', models.TextField(blank=True)),
-                ('parent_comment', models.ForeignKey(related_name='comment_parent', to='datalocker.Comments')),
+                ('parent_comment', models.ForeignKey(related_name='comment_parent', to='datalocker.Comment')),
             ],
         ),
         migrations.AlterField(
@@ -29,12 +29,12 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(null=True, blank=True),
         ),
         migrations.AddField(
-            model_name='comments',
+            model_name='comment',
             name='submission',
             field=models.ForeignKey(related_name='comments', on_delete=django.db.models.deletion.PROTECT, to='datalocker.Submission'),
         ),
         migrations.AddField(
-            model_name='comments',
+            model_name='comment',
             name='user',
             field=models.ForeignKey(related_name='comment_user', to=settings.AUTH_USER_MODEL),
         ),

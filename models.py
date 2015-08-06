@@ -322,7 +322,7 @@ class Submission(models.Model):
 
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     submission = models.ForeignKey(
         Submission,
         related_name="comments",
@@ -351,7 +351,12 @@ class Comments(models.Model):
 
 
     def is_editable(self):
-        return ""
+        time = timezone.now()
+        if ((timestamp - time) < COMMENT_MAX_EDIT):
+            editable = True
+        else:
+            editable = False
+        return editable
 
 
     def to_dict(self):

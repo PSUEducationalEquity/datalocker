@@ -12,8 +12,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='comments',
+            model_name='comment',
             name='parent_comment',
-            field=models.ForeignKey(related_name='comment_parent', blank=True, to='datalocker.Comments', null=True),
+            field=models.ForeignKey(related_name='comment_parent', blank=True, to='datalocker.Comment', null=True),
         ),
     ]
