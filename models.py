@@ -351,7 +351,7 @@ class Comment(models.Model):
         return str(self.id)
 
 
-    def is_editable(self, *args, **kwargs):
+    def is_editable(self):
         """
         Captures the current time and compares it to the timestamp
         on the submission the submissions. editable is returned True
@@ -360,7 +360,7 @@ class Comment(models.Model):
         time = timezone.now()
         editTimeFrame = datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
         editable = []
-        for comment in Comment.objects.get(submission=kwargs['pk'])
+        for comment in Comment.objects.all():
             timestamp = comment.timestamp
             boolean = True if ((time - timestamp) < editTimeFrame) else False
             editable.append(boolean)
