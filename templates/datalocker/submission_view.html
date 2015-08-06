@@ -56,13 +56,17 @@
           </div>
 
           {% if commenting_enabled %}
-          <div class="panel panel-default panel-comments">
+          <div class="panel panel-default panel-comments"
+            id="comments-div">
             <div class="panel-heading">
               <div class="panel-title">Comments</div>
             </div>
             <div class="panel-body">
               <div class="comment-controls">
-                <form method="POST">
+                <form method="POST"
+                  action=""
+                  data-url="{% url 'datalocker:submissions_view' object.locker.id object.pk %}">
+                {% csrf_token %}
                   <textarea
                     id="comment-text"
                     placeholder="Add Comment"

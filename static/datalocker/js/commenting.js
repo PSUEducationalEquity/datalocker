@@ -6,6 +6,17 @@
     Comment.dataRequest;
 
     Comment.add = function () {
+        var addUrl = $("#comments-div form").attr("action");
+        Comment.addRequest = $.ajax({
+            url: addUrl,
+            type: "post",
+            data: {
+                comment: comment,
+                csrfmiddlewaretoken: $("#comments-div").find(
+                    "input[name='csrfmiddlewaretoken']").val()
+                }
+        });
+
         var comment = $("textarea#comment-text").val();
         $("#comment-feed-list").append(
             $("<li />").attr("class","comment-li"

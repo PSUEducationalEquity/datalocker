@@ -137,6 +137,16 @@ def form_submission_view(request, **kwargs):
 
 
 
+def get_comments_view(request, **kwargs):
+    submission = Submission.objects.get(pk=kwargs['pk'])
+    comments = {}
+    for comment in submission.to_dict().iteritems():
+        comments.append(comment)
+    return comments
+
+
+
+
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls, **initkwargs):
