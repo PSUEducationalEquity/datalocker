@@ -279,6 +279,7 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
+        context['commenting_enabled'] = True
         return context
 
 
