@@ -1,6 +1,7 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
 from django.contrib.auth.models import User, Group
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -350,14 +351,20 @@ class Comment(models.Model):
         return str(self.id)
 
 
-    def is_editable(self):
+    def is_editable(self, *args, **kwargs):
+        """
+        Captures the current time and compares it to the timestamp
+        on the submission the submissions. editable is returned True
+        if the difference is within the timeframe set by COMMENT_EDIT_MAX
+        """
         time = timezone.now()
-        if ((timestamp - time) < COMMENT_MAX_EDIT):
-            editable = True
-        else:
-            editable = False
+        editTimeFrame = datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
+        editable = []
+        for comment in Comment.objects.get(submission=kwargs['pk'])
+            timestamp = comment.timestamp
+            boolean = True if ((time - timestamp) < editTimeFrame) else False
+            editable.append(boolean)
         return editable
-
 
     def to_dict(self):
         return ""
