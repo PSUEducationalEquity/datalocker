@@ -359,11 +359,7 @@ class Comment(models.Model):
         """
         time = timezone.now()
         editTimeFrame = datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
-        editable = []
-        for comment in Comment.objects.all():
-            timestamp = comment.timestamp
-            boolean = True if ((time - timestamp) < editTimeFrame) else False
-            editable.append(boolean)
+        editable = True if ((time - self.timestamp) < editTimeFrame) else False
         return editable
 
 
@@ -372,4 +368,6 @@ class Comment(models.Model):
         Returns the entire object as a Python dictionary
         """
         result = model_to_dict(self)
+        result['editable'] = self.is_editable()
+        result['color'] = "red"
         return result
