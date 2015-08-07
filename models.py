@@ -366,5 +366,11 @@ class Comment(models.Model):
             editable.append(boolean)
         return editable
 
+
     def to_dict(self):
-        return ""
+        """
+        Returns the entire object as a Python dictionary
+        """
+        result = model_to_dict(self)
+        result['data'] = self.data_dict()
+        return result
