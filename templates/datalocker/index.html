@@ -171,11 +171,51 @@
                <br/>
             </div>
             <div>
-              <label for="edit-owner">Enable Workflow</label>
+              <label for="enable-workflow">
+                Enable Workflow
+              </label>
+              <input type="checkbox"
+                name="enable-workflow"
+                id="enable-workflow"
+                >
+            </div>
+            <div id="locker-options">
+                Choose the states you'd like to choose from:<br/>
                 <input type="checkbox"
-                  name="edit-owner"
-                  id="edit-owner">
-             <br/>
+                  name="states"
+                  id="accept-state"> Accept<br/>
+                <input type="checkbox"
+                  name="states"
+                  id="reject-state"> Reject<br/>
+                <input type="checkbox"
+                  name="states"
+                  id="yes-state"> Yes<br/>
+                <input type="checkbox"
+                  name="states"
+                  id="no-state"> No<br/>
+                <input type="checkbox"
+                  name="states"
+                  id="unreviewed-state"> Unreviewed<br/>
+                <input type="checkbox"
+                  name="states"
+                  id="other-state"> Other
+                <input type="textbox"
+                  name="states"
+                  id="other"
+                  placeholder="Type another state"><br/>
+                  Would you like the users who have access to see/use the workflow?<br/>
+                <input type="radio"
+                  name="states"
+                  id="accept-state"> Yes<br/>
+                <input type="radio"
+                  name="states"
+                  id="reject-state"> No<br/>
+                <label for="enable-commenting">
+                Enable Commenting
+                </label>
+                <input type="checkbox"
+                  name="enable-commenting"
+                  id="enable-commenting">
             </div>
           </div>
           <div class="modal-footer">
@@ -195,4 +235,6 @@
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/locker.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/workflow.js' %}"></script>
 {% endblock site-scripts %}

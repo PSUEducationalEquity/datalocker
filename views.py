@@ -215,6 +215,8 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
         those as a selected-fields setting which is loaded then on every page
         load thereafter.
         """
+        workflow_form = workflow_form(request.post)
+        workflow_form.save(self.request.post)
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         locker.save_selected_fields_list(self.request.POST)
         return HttpResponseRedirect(reverse('datalocker:submissions_list',

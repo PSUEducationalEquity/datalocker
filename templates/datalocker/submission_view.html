@@ -53,17 +53,20 @@
             </div><label id="state-status" class="state-status"> </label>
             <div class="panel-body">
             Workflow State
-            <select id="states">
-              <option value="Unreviewed">Unreviewed</option>
-              <option value="Accepted">Accepted</option>
-              <option value="Rejected">Rejected</option>
-            </select>
+            <form action="" id="workflow_form" method="POST">
+              {% csrf_token %}
+              <select id="states">
+                <option value="Unreviewed">Unreviewed</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </form>
             </div>
           </div>
 
 
-          <div class="panel panel-default panel-comments">
-            <div class="panel-heading">
+          <div class="panel panel-default panel-comments bg-info">
+            <div class="panel-heading color-for-div" >
               <div class="panel-title">Comments</div>
             </div>
             <div class="panel-body">

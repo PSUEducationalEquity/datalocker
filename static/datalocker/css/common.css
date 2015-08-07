@@ -223,6 +223,7 @@ ul .information {
 .state-status {
   font-style: italic;
   padding-left: 1em;
+  display: inherit;
 }
 
 /*-----------End code for the toggle switch --------*/
