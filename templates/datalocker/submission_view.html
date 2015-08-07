@@ -80,6 +80,12 @@
               </div>
               <div class="comment-feed-container">
                 <ul class="media-list">
+                {% for comment in comments %}
+                  <li>{{ comment.comment }}
+                  {{ comment.timestamp }}
+                  {{ comment.user }}
+                  </li>
+                {% endfor %}
                 </ul>
               </div>
             </div>

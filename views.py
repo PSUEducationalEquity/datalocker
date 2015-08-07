@@ -19,7 +19,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
 from .decorators import user_has_locker_access
-from .models import Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
+from .models import Comment, Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, requests
 
@@ -145,11 +145,8 @@ def form_submission_view(request, **kwargs):
 
 def get_comments_view(request, **kwargs):
     # If statement to make sure the user should be able to see the comments
-    submission = Submission.objects.get(pk=kwargs['pk'])
-    comments = {}
-    for comment in submission.objects.all():
-        comments.append(comment)
-    return comments
+    all_comments = Comment.objects.filter(submission=kwargs['object'].pk)
+    return all_comments
 
 
 
@@ -297,6 +294,7 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
         context['commenting_enabled'] = True
+        context['comments'] = get_comments_view(self,**kwargs)
         return context
 
 
