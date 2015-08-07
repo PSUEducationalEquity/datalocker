@@ -372,5 +372,4 @@ class Comment(models.Model):
         Returns the entire object as a Python dictionary
         """
         result = model_to_dict(self)
-        result['data'] = self.data_dict()
         return result
