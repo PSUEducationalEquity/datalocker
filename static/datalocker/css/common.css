@@ -20,25 +20,30 @@
 /*------------------------------------*\
     $ARCHIVED
 \*------------------------------------*/
-.archive-button {
-  margin-right: .5em;
-}
-
 .button-archived-showhide .is-active {
   display: active;
 }
-.is-archived {
-  display: none;
-}
 
-.is-archived .js-archived-label {
+
+/* show/hide the archived rows */
+.is-archived { display: none; }
+.js-show-archived .is-archived { display: table-row; }
+
+
+/* show/hide the archive labels */
+.is-archived .archived-label {
   display: inline;
-}
-
-.js-archived-label {
-  display: none;
   margin-left: .5em;
 }
+.archived-label {
+  display: none;
+}
+
+/* show/hide the archive/unarchive buttons */
+button[role='unarchive-locker'] { display: none; }
+button[role='archive-locker']   { display: inline-block; }
+.is-archived button[role='unarchive-locker'] { display: inline-block; }
+.is-archived button[role='archive-locker'] { display: none; }
 
 
 
