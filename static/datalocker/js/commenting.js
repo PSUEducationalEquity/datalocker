@@ -18,18 +18,18 @@
                 }
         });
 
-        $("#comment-feed-list").append(
-            $("<li />").attr("class","comment-li"
+        $(".media-list").append(
+            $("<li />").attr("class","media"
                 ).append(
-                    $("<div />"
-                        ).append(
-                            $("<span />").attr("class","user-image"
-                        )).append(
-                            $("<div />").attr("class","single-comment-text"
+                    $("<div />").attr("class", "media-left"
+                    ).append(
+                        $("<img />").attr("class","media-object"
+                )).append(
+                    $("<div />").attr("class", "media-body"
                         ).append(comment
                     ).append(
                         $("<div />").attr("class","single-comment-options pull-right"
-                    ).append($("<a />").attr("href","#").html("Reply"))))));
+                        ).append($("<a />").attr("href","#").html("Reply"))))));
         $("textarea#comment-text").val('');
     }
 
