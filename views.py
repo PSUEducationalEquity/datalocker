@@ -39,7 +39,15 @@ def _get_public_user_dict(user):
 
 
 def add_comment(request, **kwargs):
-    return ""
+    comment = Comment(
+        submission=kwargs['object'].pk,
+        comment=self.request.POST.get('comment', ''),
+        user=request.user,
+        timestamp=timezone.now(),
+        parent_comment='',
+        )
+    comment.save()
+    return HttpResponse(status=201)
 
 
 
