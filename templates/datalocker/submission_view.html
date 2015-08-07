@@ -65,7 +65,7 @@
               <div class="comment-controls">
                 <form method="POST"
                   action=""
-                  data-url="{% url 'datalocker:submissions_view' object.locker.id object.pk %}">
+                  data-url="{% url 'datalocker:add_comment' object.locker.id object.pk %}">
                 {% csrf_token %}
                   <textarea
                     id="comment-text"
