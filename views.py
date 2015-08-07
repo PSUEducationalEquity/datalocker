@@ -38,6 +38,12 @@ def _get_public_user_dict(user):
 
 
 
+def add_comment(request, **kwargs):
+    return ""
+
+
+
+
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = locker.owner
@@ -138,9 +144,10 @@ def form_submission_view(request, **kwargs):
 
 
 def get_comments_view(request, **kwargs):
+    # If statement to make sure the user should be able to see the comments
     submission = Submission.objects.get(pk=kwargs['pk'])
     comments = {}
-    for comment in submission.to_dict().iteritems():
+    for comment in submission.objects.all():
         comments.append(comment)
     return comments
 
