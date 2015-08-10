@@ -6,7 +6,7 @@
     Comment.dataRequest;
 
     Comment.add = function () {
-        var addUrl = $("#comments-div form").attr("action");
+        var addUrl = $("#comment-form").attr("action");
         var comment = $("textarea#comment-text").val();
         Comment.addRequest = $.ajax({
             url: addUrl,
@@ -40,7 +40,6 @@
     Comment._build_comment_feed_entry = function (comment) {
         $(".media-list").append(
             $("<li />").attr("class","media"
-                    ).attr("data-url", comment.id
                 ).append(
                     $("<div />").attr("class", "media-left"
                     ).append(
@@ -54,8 +53,7 @@
     }
 
     Comment.build_comment_feed = function (comment) {
-        var url = $("#existing-users").attr("data-url").replace(
-            "/0/", "/" + locker_id +"/");
+        var url = $("#comment-form").attr("data-url");
         // submit the request (if none are pending)
         if  (!Comment.dataRequest && url) {
             Comment.dataRequest = $.ajax({
@@ -99,4 +97,8 @@ $(document).ready(function() {
     $("button[role='add-comment']").on("click", function (event) {
         Comment.add();
     });
+    url = $("#comment-form").attr("data-url");
+    $("#comment-form").attr(
+            "action", url);
+    Comment.build_comment_feed();
 });
