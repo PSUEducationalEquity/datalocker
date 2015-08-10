@@ -99,7 +99,7 @@ class Locker(models.Model):
 
     def get_all_fields_list(self):
         """
-        This gets all of the feilds that were submitted to the form
+        This gets all of the fields that were submitted to the form
         """
         try:
             all_fields_setting = self.settings.get(
@@ -154,16 +154,16 @@ class Locker(models.Model):
 
     def get_all_states(self):
         try:
-            all_states = self.settings.get(
+            all_states_setting = self.settings.get(
                 category='workflow',
                 setting='states',
                 setting_identifier='states',
                 locker=self,
                 )
         except LockerSetting.DoesNotExist:
-            all_fields = []
+            all_states = []
         else:
-            all_fields = json.loads(all_fields_setting.value)
+            all_states = json.loads(all_states_setting.value)
 
 
     def get_selected_states(self):
@@ -232,7 +232,7 @@ class Locker(models.Model):
             setting_identifier='states',
             locker=self,
             )
-        saved_state_setting.value = json.dumps(selected_fields)
+        saved_state_setting.value = json.dumps(selected_state)
         saved_state_setting.save()
 
 
