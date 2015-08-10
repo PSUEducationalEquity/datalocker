@@ -38,7 +38,7 @@ def _get_public_user_dict(user):
 
 
 def _get_public_comment_dict(comment):
-    public_fields = ['comment', 'submission', 'user', 'email']
+    public_fields = ['comment', 'submission', 'user']
     comment_dict = {}
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
@@ -329,7 +329,6 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
         context['commenting_enabled'] = True
-        # context['comments'] = get_comments_view(self,**kwargs)
         return context
 
 
