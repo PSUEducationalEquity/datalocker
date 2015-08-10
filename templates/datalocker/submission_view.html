@@ -64,6 +64,7 @@
             <div class="panel-body">
               <div class="comment-controls">
                 <form method="POST"
+                  id="comment-form"
                   action=""
                   data-url="{% url 'datalocker:add_comment' object.locker.id object.pk %}">
                 {% csrf_token %}
