@@ -9,7 +9,7 @@ from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response , get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
 from django.utils import timezone
@@ -39,15 +39,22 @@ def _get_public_user_dict(user):
 
 
 def add_comment(request, **kwargs):
-    comment = Comment(
-        submission=kwargs['object'].pk,
-        comment=self.request.POST.get('comment', ''),
-        user=request.user,
-        timestamp=timezone.now(),
-        parent_comment='',
-        )
-    comment.save()
-    return HttpResponse(status=201)
+    # import pdb; pdb.set_trace()
+    if request.method == 'POST':
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        user_comment = request.POST.get('comment', '')
+        comment = Comment(
+            submission=submission,
+            comment=user_comment,
+            user=request.user,
+            timestamp=timezone.now(),
+            )
+        comment.save()
+        return HttpResponse(status=201)
+    else:
+        locker_id = kwargs['locker_id']
+        pk = kwargs['pk']
+        return HttpResponseRedirect(reverse('datalocker:submissions_view', kwargs={'locker_id': locker_id, 'pk': pk}))
 
 
 
