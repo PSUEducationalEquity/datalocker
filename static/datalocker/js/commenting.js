@@ -36,16 +36,17 @@
 
     Comment._build_comment_feed_entry = function (comment) {
         return $(".media-list").append(
-            $("<li />").attr("class","media comment"
+            $("<li />").attr("data-id", comment.id
+                ).addClass("media comment"
                 ).append(
-                    $("<div />").attr("class", "media-left"
+                    $("<div />").addClass("media-left"
                     ).append(
-                        $("<img />").attr("class","media-object"
+                        $("<img />").addClass("media-object"
                 )).append(
-                    $("<div />").attr("class", "media-body"
+                    $("<div />").addClass("media-body"
                         ).html(comment.comment
                     ).append(
-                        $("<div />").attr("class","single-comment-options pull-right"
+                        $("<div />").addClass("single-comment-options pull-right"
                         ).append($("<a />").attr("href","#").html("Reply"))))));
     }
 

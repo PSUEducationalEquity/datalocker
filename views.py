@@ -38,7 +38,7 @@ def _get_public_user_dict(user):
 
 
 def _get_public_comment_dict(comment):
-    public_fields = ['comment', 'submission', 'user']
+    public_fields = ['comment', 'submission', 'user', 'id']
     comment_dict = {}
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
@@ -63,6 +63,7 @@ def add_comment(request, **kwargs):
             'comment': user_comment,
             'submission': submission.id,
             'user': request.user.username,
+            'id': comment.id,
             })
     else:
         locker_id = kwargs['locker_id']
