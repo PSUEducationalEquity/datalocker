@@ -81,9 +81,9 @@
                 </form>
               </div>
               <div class="comment-feed-container">
-                <ul class="media-list">
+                <ul class="media-list" id="comment-list">
                 {% for comment in comments %}
-                  <li>{{ comment.comment }}
+                  <li class="comment">{{ comment.comment }}
                   {{ comment.timestamp }}
                   {{ comment.user }}
                   </li>

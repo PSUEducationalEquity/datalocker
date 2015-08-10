@@ -20,10 +20,10 @@
 
         // Callback handler: success
         Comment.addRequest.done(function (response, textStatus, jqXHR) {
-            if ($(".media-list").length){
-                $(".media-list").remove();
+            if ($("#comment-list").length){
+                $(".comment").remove();
             }
-            $(".media-list").append(Comment._build_comment_feed_entry(response));
+            $("#comment-list").append(Comment._build_comment_feed_entry(response));
             $("textarea#comment-text").val('');
             Comment.addRequest = null;
         });
@@ -38,8 +38,8 @@
     }
 
     Comment._build_comment_feed_entry = function (comment) {
-        $(".media-list").append(
-            $("<li />").attr("class","media"
+        return $(".media-list").append(
+            $("<li />").attr("class","media comment"
                 ).append(
                     $("<div />").attr("class", "media-left"
                     ).append(
@@ -64,9 +64,9 @@
 
             // callback handler: success
             Comment.dataRequest.done(function (response, textStatus, jqXHR) {
-                var $comment_list = $(".media-list");
+                var $comment_list = $("#comment-list");
                 // clear the list
-                $comment_list.children().remove();
+                //$comment_list.children().remove();
                 // build the list of Comment
                 $.each(response.comment, function (index, comment) {
                         $comment_list.append(Comment._build_comment_feed_entry(comment));
