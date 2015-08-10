@@ -39,7 +39,6 @@ def _get_public_user_dict(user):
 
 
 def add_comment(request, **kwargs):
-    # import pdb; pdb.set_trace()
     if request.method == 'POST':
         submission = get_object_or_404(Submission, id=kwargs['pk'])
         user_comment = request.POST.get('comment', '')
@@ -50,11 +49,17 @@ def add_comment(request, **kwargs):
             timestamp=timezone.now(),
             )
         comment.save()
-        return HttpResponse(status=201)
+        return JsonResponse({
+            'Comment': user_comment,
+            'Submission': submission.id,
+            'User': request.user.username,
+            'Email': request.user.email,
+            })
     else:
         locker_id = kwargs['locker_id']
         pk = kwargs['pk']
-        return HttpResponseRedirect(reverse('datalocker:submissions_view', kwargs={'locker_id': locker_id, 'pk': pk}))
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
 
 
 
