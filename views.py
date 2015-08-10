@@ -271,17 +271,17 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 
-
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
         context['oldest_disabled'] = True if self.object.id == self.object.oldest() else False
         context['older_disabled'] = True if self.object.id == self.object.older() else False
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
-        context['sidebar_enabled'] = True
-        context['sidebar_enabled'] = True if  self.request.POST.get('enable-workflow') else False
-        # workflow_form = workflow_form(request.post)
-        # workflow_form.save(self.request.post)
+        # context['sidebar_enabled'] = True if self.request.POST.get('enable-workflow',True)  else False
+        if self.request.POST.get('enable-workflow',True):
+            context['sidebar_enabled'] = True
+        else:
+            False
         return context
 
 
