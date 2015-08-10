@@ -20,9 +20,6 @@
 
         // Callback handler: success
         Comment.addRequest.done(function (response, textStatus, jqXHR) {
-            if ($("#comment-list").length){
-                $(".comment").remove();
-            }
             $("#comment-list").append(Comment._build_comment_feed_entry(response));
             $("textarea#comment-text").val('');
             Comment.addRequest = null;
@@ -46,13 +43,13 @@
                         $("<img />").attr("class","media-object"
                 )).append(
                     $("<div />").attr("class", "media-body"
-                        ).append(comment
+                        ).html(comment.comment
                     ).append(
                         $("<div />").attr("class","single-comment-options pull-right"
                         ).append($("<a />").attr("href","#").html("Reply"))))));
     }
 
-    Comment.build_comment_feed = function (comment) {
+    Comment.build_comment_feed = function (comments) {
         var url = $("#comment-form").attr("data-url");
         // submit the request (if none are pending)
         if  (!Comment.dataRequest && url) {
@@ -64,14 +61,11 @@
 
             // callback handler: success
             Comment.dataRequest.done(function (response, textStatus, jqXHR) {
-                var $comment_list = $("#comment-list");
-                // clear the list
-                //$comment_list.children().remove();
+                var $comments_list = $("#comment-list");
                 // build the list of Comment
-                $.each(response.comment, function (index, comment) {
-                        $comment_list.append(Comment._build_comment_feed_entry(comment));
+                $.each(response.comments, function (index, comment) {
+                        $comments_list.append(Comment._build_comment_feed_entry(comment));
                 });
-                Comment.no_user_message();
                 Comment.dataRequest = null;
             });
 
@@ -95,10 +89,12 @@
 $(document).ready(function() {
     //Appends the text from the box to the commenting feed
     $("button[role='add-comment']").on("click", function (event) {
-        Comment.add();
+        if ($("#comment-text").val() != '') {
+            Comment.add();
+        }
+        else {
+
+        }
     });
-    url = $("#comment-form").attr("data-url");
-    $("#comment-form").attr(
-            "action", url);
     Comment.build_comment_feed();
 });

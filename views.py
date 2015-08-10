@@ -37,6 +37,16 @@ def _get_public_user_dict(user):
 
 
 
+def _get_public_comment_dict(comment):
+    public_fields = ['comment', 'submission', 'user', 'email']
+    comment_dict = {}
+    for key, value in model_to_dict(comment).iteritems():
+        if key in public_fields:
+            comment_dict[key] = value
+    return comment_dict
+
+
+
 
 def add_comment(request, **kwargs):
     if request.method == 'POST':
@@ -50,10 +60,9 @@ def add_comment(request, **kwargs):
             )
         comment.save()
         return JsonResponse({
-            'Comment': user_comment,
-            'Submission': submission.id,
-            'User': request.user.username,
-            'Email': request.user.email,
+            'comment': user_comment,
+            'submission': submission.id,
+            'user': request.user.username,
             })
     else:
         locker_id = kwargs['locker_id']
@@ -163,14 +172,6 @@ def form_submission_view(request, **kwargs):
 
 
 
-def get_comments_view(request, **kwargs):
-    # If statement to make sure the user should be able to see the comments
-    all_comments = Comment.objects.filter(submission=kwargs['object'].pk)
-    return all_comments
-
-
-
-
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls, **initkwargs):
@@ -257,6 +258,20 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 
 
+def get_comments_view(request, **kwargs):
+    if request.is_ajax():
+        # If statement to make sure the user should be able to see the comments
+        all_comments = Comment.objects.filter(submission=kwargs['pk'])
+        comments = []
+        for comment in all_comments:
+            comments.append(_get_public_comment_dict(comment))
+        return JsonResponse({'comments': comments})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:submission_view object.locker.id object.pk'))
+
+
+
+
 def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
@@ -314,7 +329,7 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
         context['commenting_enabled'] = True
-        context['comments'] = get_comments_view(self,**kwargs)
+        # context['comments'] = get_comments_view(self,**kwargs)
         return context
 
 
