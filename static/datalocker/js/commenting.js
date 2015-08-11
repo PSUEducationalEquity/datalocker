@@ -45,13 +45,13 @@
                 ))).append(
                     $("<div />").addClass("media-body"
                         ).html(comment.comment
-                    ).append(
+                )).append(
                         $("<div />").addClass("single-comment-options pull-right"
                         ).append($("<button />").html("Reply"
                             ).attr("data-id", comment.id
                             ).attr("role", "reply"
-                            ).addClass("btn btn-link"))
-                )).append(
+                            ).addClass("btn btn-link btn-xs"))
+                ).append(
                     $("<textarea />").addClass("comment-reply"
                         ).attr("id", comment.id
                         ).attr("data-id", comment.id)));
@@ -107,5 +107,16 @@ $(document).ready(function() {
     $("#comment-list").on("click", "button[role='reply']", function (event) {
         var id = $(this).attr("data-id");
         $("textarea#" + id).show();
+        if ($(this).html() == "Reply") {
+            $(this).html("Add");
+            $(this).removeAttr("role", "reply");
+            $(this).attr("role", "add-reply");
+        }
     });
+    $("#comment-list").on("click", "button[role='add-reply']", function (event) {
+        var id = $(this).attr("data-id");
+        if ($("textarea#" + id).val() != ''){
+            Comment.addReply();
+        }
+    })
 });
