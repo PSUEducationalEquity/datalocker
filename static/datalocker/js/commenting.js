@@ -42,12 +42,19 @@
                     $("<div />").addClass("media-left"
                     ).append(
                         $("<img />").addClass("media-object"
-                )).append(
+                ))).append(
                     $("<div />").addClass("media-body"
                         ).html(comment.comment
                     ).append(
                         $("<div />").addClass("single-comment-options pull-right"
-                        ).append($("<a />").attr("href","#").html("Reply"))))));
+                        ).append($("<button />").html("Reply"
+                            ).attr("data-id", comment.id
+                            ).attr("role", "reply"
+                            ).addClass("btn btn-link"))
+                )).append(
+                    $("<textarea />").addClass("comment-reply"
+                        ).attr("id", comment.id
+                        ).attr("data-id", comment.id)));
     }
 
     Comment.build_comment_feed = function (comments) {
@@ -88,14 +95,17 @@
 
 
 $(document).ready(function() {
+    Comment.build_comment_feed();
+
     //Appends the text from the box to the commenting feed
     $("button[role='add-comment']").on("click", function (event) {
         if ($("#comment-text").val() != '') {
             Comment.add();
         }
-        else {
-
-        }
     });
-    Comment.build_comment_feed();
+
+    $("#comment-list").on("click", "button[role='reply']", function (event) {
+        var id = $(this).attr("data-id");
+        $("textarea#" + id).show();
+    });
 });

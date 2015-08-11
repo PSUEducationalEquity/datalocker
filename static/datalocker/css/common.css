@@ -82,6 +82,7 @@ button[role='archive-locker']   { display: inline-block; }
 /*-----------------------------------*\
     $COMMENTING
 \*-----------------------------------*/
+
 .comment-button {
   clear: left;
   float: right;
@@ -96,6 +97,11 @@ button[role='archive-locker']   { display: inline-block; }
   border: solid 1px #dcdcdc;
   height: 50px;
   width: 100%;
+  resize: none;
+}
+
+.comment-reply {
+  display: none;
   resize: none;
 }
 
