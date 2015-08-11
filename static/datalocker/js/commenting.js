@@ -33,6 +33,34 @@
             Comment.addRequest = null;
         });
     }
+    Comment.addReply = function (id) {
+        var addUrl = $("#comment-form").attr("action");
+        var comment = $("textarea#" + id).val();
+        Comment.addRequest = $.ajax({
+            url: addUrl,
+            type: "post",
+            data: {
+                comment: comment,
+                csrfmiddlewaretoken: $("#comments-div").find(
+                    "input[name='csrfmiddlewaretoken']").val()
+                }
+        });
+
+        // Callback handler: success
+        Comment.addRequest.done(function (response, textStatus, jqXHR) {
+            $("#comment-list").append(Comment._build_comment_feed_entry(response));
+            $("textarea#" + id).val('');
+            Comment.addRequest = null;
+        });
+
+        // Callback handler: failure
+        Comment.addRequest.fail(function (jqXHR, errorThrown) {
+            if (errorThrown != "abort") {
+                console.error("Comment.add in commenting.js AJAX error");
+            }
+            Comment.addRequest = null;
+        });
+    }
 
     Comment._build_comment_feed_entry = function (comment) {
         return $(".media-list").append(
@@ -45,16 +73,20 @@
                 ))).append(
                     $("<div />").addClass("media-body"
                         ).html(comment.comment
-                )).append(
+                ).append(
                         $("<div />").addClass("single-comment-options pull-right"
                         ).append($("<button />").html("Reply"
                             ).attr("data-id", comment.id
                             ).attr("role", "reply"
                             ).addClass("btn btn-link btn-xs"))
                 ).append(
-                    $("<textarea />").addClass("comment-reply"
+                    $("<div />").addClass("comment-replies"
+                        ).attr("data-id", comment.id
+                        ).html(comment.comment
+                        ).append(
+                    $("<textarea />").addClass("comment-reply-textarea"
                         ).attr("id", comment.id
-                        ).attr("data-id", comment.id)));
+                        ).attr("data-id", comment.id)))));
     }
 
     Comment.build_comment_feed = function (comments) {
@@ -116,7 +148,7 @@ $(document).ready(function() {
     $("#comment-list").on("click", "button[role='add-reply']", function (event) {
         var id = $(this).attr("data-id");
         if ($("textarea#" + id).val() != ''){
-            Comment.addReply();
+            Comment.addReply(id);
         }
     })
 });

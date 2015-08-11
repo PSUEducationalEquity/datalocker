@@ -100,9 +100,14 @@ button[role='archive-locker']   { display: inline-block; }
   resize: none;
 }
 
-.comment-reply {
+.comment-replies {
+  margin-left: 20px;
+}
+
+.comment-reply-textarea {
   display: none;
   resize: none;
+  margin-left: 20px;
 }
 
 
