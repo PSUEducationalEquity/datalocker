@@ -164,6 +164,7 @@ class Locker(models.Model):
             all_states = []
         else:
             all_states = json.loads(all_states_setting.value)
+            all_states_setting.save()
 
 
     def get_selected_states(self):
@@ -173,6 +174,9 @@ class Locker(models.Model):
                 setting='states',
                 setting_identifier='states',
                 locker=self,
+                defaults={
+                    'workflow': 'unreviewed',
+                    }
                 )
         except LockerSetting.DoesNotExist:
             selected_state = []
@@ -225,7 +229,7 @@ class Locker(models.Model):
         selected_fields_setting.save()
 
 
-    def save_states(self, fields):
+    def save_states(self, states):
         saved_state_setting, created = LockerSetting.objects.get_or_create(
             category='workflow',
             setting='states',
