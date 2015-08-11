@@ -49,6 +49,7 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+# def changeSubmissionWorkflowState(view):
 
 
 def custom_404(request):
