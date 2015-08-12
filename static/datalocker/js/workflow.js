@@ -46,6 +46,7 @@
 
 $(document).ready(function () {
     $('#locker-options').hide();
+    $('#discussion-options').hide();
     $('select[id=states]').change( function(){
         var newText = $('option:selected',this).text();
           $('.state-status').text(" "+ newText);
@@ -56,6 +57,13 @@ $(document).ready(function () {
         $('#locker-options').show();
     } else {
         $('#locker-options').hide();
+    }
+    });
+   $('#enable-discussion').change(function(){
+    if (this.checked) {
+        $('#discussion-options').show();
+    } else {
+        $('#discussion-options').hide();
     }
     });
 });
