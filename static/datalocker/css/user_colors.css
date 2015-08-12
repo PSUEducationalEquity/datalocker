@@ -1,4 +1,9 @@
 /* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
+.azure {
+	background-color: #F0FFFF;
+	color: #000000;
+}
+
 .black {
 	background-color: #000000;
 	color: #CCCC33;
@@ -79,8 +84,22 @@
     color: #000000;
 }
 
+.slate-grey {
+    background-color: #2F4F4F;
+    color: #FFFFFF;
+}
+
+.tan {
+    background-color: #D2B48C;
+    color: #000000;
+}
+
 .yellow {
 	background-color: #CCCC33;
 	color: #000000;
 }
 
+.violet-blue {
+    background-color: #8A2BE2;
+    color: #FFFFFF;
+}
