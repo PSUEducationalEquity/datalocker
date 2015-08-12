@@ -23,19 +23,14 @@
             type: "post",
             data: {
                 email: email,
-                csrfmiddlewaretoken: $("#dialog-edit-users").find(
+                csrfmiddlewaretoken: $("#dialog-edit-locker").find(
                     "input[name='csrfmiddlewaretoken']").val()
                 }
         });
 
         // callback handler: success
         Submission.workflowRequest.done(function (response, textStatus, jqXHR) {
-            if ($("#no-users-message").length){
-                $("#no-users-message").remove();
-            }
-            $("#existing-users").append(Locker._build_user_list_entry(response));
-            $("#email").val("");
-            $("#email").focus();
+            
             Submission.workflowRequest = null;
         });
 
