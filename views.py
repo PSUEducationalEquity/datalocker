@@ -49,7 +49,18 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-# def changeSubmissionWorkflowState(view):
+#class changeSubmissionWorkflowState(view):
+#   template_name = 'datalocker/index.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super(changeSubmissionWorkflowState, self).get_context_data(**kwargs)
+#         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
+#         context['locker'] = locker
+#         states = locker.get_all_states()
+#         context['states'] = states
+#         selected_states = locker.get_selected_states()#         
+#     return context
+
 
 
 def custom_404(request):
