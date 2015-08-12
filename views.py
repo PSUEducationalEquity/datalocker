@@ -61,7 +61,13 @@ class changeSubmissionWorkflowState(View):
         selected_states = locker.get_selected_states()      
         return context
 
-
+    def post(self, request, **kwargs):
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+        locker_name = locker.name
+        locker_owner = locker.owner
+        user_can_view_workflow = request.POST.get('users-can-view-state', '')
+        user_can_edit_workflow = request.POST.get('users-can-edit-state', '')       
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
 def custom_404(request):
     response = render_to_response('404.html')
