@@ -62,7 +62,7 @@
         });
     }
 
-    Comment._build_comment_feed_entry = function (comment) {
+    Comment._build_comment_feed_entry = function (comment, reply) {
         return $(".media-list").append(
             $("<li />").attr("data-id", comment.id
                 ).addClass("media comment"
@@ -82,14 +82,14 @@
                 ).append(
                     $("<div />").addClass("comment-replies"
                         ).attr("data-id", comment.id
-                        ).html(comment.comment
+                        ).html(comment.reply
                         ).append(
                     $("<textarea />").addClass("comment-reply-textarea"
                         ).attr("id", comment.id
                         ).attr("data-id", comment.id)))));
     }
 
-    Comment.build_comment_feed = function (comments) {
+    Comment.build_comment_feed = function (comments, replies) {
         var url = $("#comment-form").attr("data-url");
         // submit the request (if none are pending)
         if  (!Comment.dataRequest && url) {
@@ -104,8 +104,11 @@
                 var $comments_list = $("#comment-list");
                 // build the list of Comment
                 $.each(response.comments, function (index, comment) {
-                        $comments_list.append(Comment._build_comment_feed_entry(comment));
+                    $comments_list.append(Comment._build_comment_feed_entry(comment));
                 });
+                $.each(response.replies, function (index, reply) {
+                    $comments_list.append(Comment._build_comment_feed_entry(reply))
+                })
                 Comment.dataRequest = null;
             });
 
