@@ -74,6 +74,35 @@ def add_comment(request, **kwargs):
 
 
 
+def add_reply(request, **kwargs):
+    if request.method == 'POST':
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        parent_comment = get_object_or_404(Comment, id=request.POST['parent_comment'])
+        user_comment = request.POST.get('comment', '')
+        comment = Comment(
+            submission=submission,
+            comment=user_comment,
+            user=request.user,
+            timestamp=timezone.now(),
+            parent_comment=parent_comment,
+            )
+        comment.save()
+        return JsonResponse({
+            'comment': user_comment,
+            'submission': submission.id,
+            'user': request.user.username,
+            'id': comment.id,
+            'parent_comment': parent_comment.id
+            })
+    else:
+        locker_id = kwargs['locker_id']
+        pk = kwargs['pk']
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
+
+
+
+
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = locker.owner
