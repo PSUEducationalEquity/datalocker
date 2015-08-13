@@ -58,16 +58,16 @@ class changeSubmissionWorkflowState(View):
         context['locker'] = locker
         states = locker.get_all_states()
         context['states'] = states
-        selected_states = locker.get_selected_states()      
+        selected_states = locker.get_selected_states()
         return context
 
     def post(self, request, **kwargs):
-        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])       
+        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
         user_can_view_workflow = request.POST.get('users-can-view-state', '')
-        user_can_edit_workflow = request.POST.get('users-can-edit-state', '')       
+        user_can_edit_workflow = request.POST.get('users-can-edit-state', '')
         return HttpResponseRedirect(reverse('datalocker:index'))
 
-        
+
 
 def custom_404(request):
     response = render_to_response('404.html')
@@ -171,30 +171,27 @@ class UserHasLockerAccessMixin(object):
 
 
 
-
-class LockerListView(LoginRequiredMixin, generic.ListView):
-    template_name = 'datalocker/index.html'
-    model = Locker
-
-
-    def get_context_data(self, **kwargs):
-        """
-        Accesses the logged in user and searched through all the lockers they
-        have access to. It only returns the lockers that they have access to
-        and don't own.
-        """
-        user = self.request.user
-        context = super(LockerListView, self).get_context_data(**kwargs)
-        context['shared'] = Locker.objects.active().has_access(
-            self.request.user).annotate(latest_submission= Max(
-                'submissions__timestamp')).order_by('name').exclude(
-                    owner=user)
-        context['owned'] = Locker.objects.active().has_access(
-            self.request.user).annotate(latest_submission= Max(
-                'submissions__timestamp')).order_by('name').filter(
-                    owner=user)
-        return context
-
+@login_required()
+def locker_list_view(request):
+    """
+    Accesses the logged in user and searched through all the lockers they
+    have access to. It only returns the lockers that they have access to
+    and don't own.
+    """
+    shared_lockers = Locker.objects.active().has_access(
+        request.user
+    ).annotate(
+        latest_submission= Max('submissions__timestamp')
+    ).order_by('name').exclude(owner=request.user)
+    my_lockers = Locker.objects.active().has_access(
+        request.user
+    ).annotate(
+        latest_submission= Max('submissions__timestamp')
+    ).order_by('name').filter(owner=request.user)
+    return render(request, 'datalocker/index.html', {
+        'shared': shared_lockers,
+        'owned': my_lockers,
+        })
 
 
 

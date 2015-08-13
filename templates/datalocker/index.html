@@ -1,6 +1,7 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
+{% load datalocker_tags %}
 
 {% block breadcrumb-trail %}
   <li class="active">
@@ -31,6 +32,7 @@
           <tbody>
             {% for locker in owned %}
               <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
+                  data-settings="{{ locker.get_settings|jsonify }}"
               {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                 <td class="record-name">
                     <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
@@ -123,10 +125,10 @@
                 <strong>Share access to this locker with someone else</strong>
               </h5>
               <label for="email"><span class="sr-only">Email Address</span></label>
-              <input type="text" 
-                name="email" 
+              <input type="text"
+                name="email"
                 id="email"
-                style="width:200px;" 
+                style="width:200px;"
                 placeholder="Enter the email address to share this locker with">
               <button type="submit" class="btn btn-primary btn-sm add-btn" id="button-user-add">
                 Add</button>
@@ -211,7 +213,7 @@
             Discussion Options<br/>
               <input type="checkbox"
                 name="states"
-                id="users-can-view-state"> Users have access to discussion<br/>         
+                id="users-can-view-state"> Users have access to discussion<br/>
             </div>
           </div>
           <div class="modal-footer">

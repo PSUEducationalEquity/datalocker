@@ -91,6 +91,23 @@ class Locker(models.Model):
         return self.name
 
 
+    def enable_workflow(self, enable=None):
+        workflow_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='workflow-enabled',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if workflow is enabled or not',
+                'value': False,
+                }
+            )
+        if enabled is None:
+            return workflow_setting['value']
+        elif enable in (True, False):
+            workflow_setting['value'] = enable
+            workflow_setting.save()
+
+
     def is_archived(self):
         if archive_timestamp is None:
             return False
@@ -156,7 +173,6 @@ class Locker(models.Model):
         try:
             all_states_setting = self.settings.get(
                 category='workflow',
-                setting='states',
                 setting_identifier='states',
                 locker=self,
                 )
@@ -164,25 +180,16 @@ class Locker(models.Model):
             all_states = []
         else:
             all_states = json.loads(all_states_setting.value)
-            all_states_setting.save()
+        return all_states
 
 
-    def get_selected_states(self):
+    def get_default_state(self):
+        states = self.get_all_states()
         try:
-            selected_state_setting = self.settings.get(
-                category='workflow',
-                setting='states',
-                setting_identifier='states',
-                locker=self,
-                defaults={
-                    'workflow': 'unreviewed',
-                    }
-                )
-        except LockerSetting.DoesNotExist:
-            selected_state = []
-        else:
-            selected_state = json.loads(selected_state_setting.value)
-        return selected_state
+            return states[0]
+        except:
+            return ''
+
 
     def get_selected_fields_list(self):
         """
@@ -199,6 +206,15 @@ class Locker(models.Model):
         else:
             selected_fields = json.loads(selected_fields_setting.value)
         return selected_fields
+
+
+    def get_settings(self):
+        return {
+            'workflow|enabled': True,
+            'workflow|users-can-view': True,
+            'workflow|users-can-edit': False,
+            }
+
 
 
     def has_access(self, user):
@@ -232,12 +248,48 @@ class Locker(models.Model):
     def save_states(self, states):
         saved_state_setting, created = LockerSetting.objects.get_or_create(
             category='workflow',
-            setting='states',
             setting_identifier='states',
             locker=self,
+            defaults={
+                'setting': 'User-defined list of workflow states',
+                }
             )
-        saved_state_setting.value = json.dumps(selected_state)
+        saved_state_setting.value = json.dumps(states)
         saved_state_setting.save()
+
+
+    def workflow_users_can_edit(self, enable=None):
+        users_can_edit_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='users-can-edit',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if users can edit workflow',
+                'value': False,
+                }
+            )
+        if enabled is None:
+            return users_can_edit_setting['value']
+        elif enable in (True, False):
+            users_can_edit_setting['value'] = enable
+            users_can_edit_setting.save()
+
+
+    def workflow_users_can_view(self, enable=None):
+        users_can_view_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='users-can-view',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if users can see workflow',
+                'value': False,
+                }
+            )
+        if enabled is None:
+            return users_can_view_setting['value']
+        elif enable in (True, False):
+            users_can_view_setting['value'] = enable
+            users_can_view_setting.save()
 
 
 
@@ -278,7 +330,7 @@ class Submission(models.Model):
         )
     workflow_state = models.CharField(
         max_length=25,
-        default='unreviewed',
+        default='',
         )
 
 
