@@ -103,12 +103,16 @@
             Comment.dataRequest.done(function (response, textStatus, jqXHR) {
                 var $comments_list = $("#comment-list");
                 // build the list of Comment
-                $.each(response.comments, function (index, comment) {
+                $.each(response.comments, function (index, comment, reply) {
                     $comments_list.append(Comment._build_comment_feed_entry(comment));
+                    var reply = replies
+                    if (reply != '') {
+                        $.each(response.replies, function (index, reply) {
+                            $comments_list.append(Comment._build_comment_feed_entry(reply));
+                    });
+                }
                 });
-                $.each(response.replies, function (index, reply) {
-                    $comments_list.append(Comment._build_comment_feed_entry(reply))
-                })
+
                 Comment.dataRequest = null;
             });
 
@@ -153,5 +157,5 @@ $(document).ready(function() {
         if ($("textarea#" + id).val() != ''){
             Comment.addReply(id);
         }
-    })
+    });
 });
