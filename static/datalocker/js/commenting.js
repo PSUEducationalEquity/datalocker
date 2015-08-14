@@ -68,7 +68,7 @@
         var user = comment.user;
         var username = user.replace(/[0-9]+/g, '');
         var $icon = $("<div />").addClass("media-left").append(
-                        $("<span />").addClass("media-object brown").html(
+                        $("<span />").addClass("media-object midnight-blue").html(
                             username)
                     );
         var $body = $("<div />").addClass("media-body").html(comment.comment);
