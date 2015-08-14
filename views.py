@@ -76,11 +76,14 @@ def delete_submission(request, **kwargs):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
 def form_submission_view(request, **kwargs):
     """
     Handles form submissions from outside applications to be saved in lockers.
     """
+    # redirect non-form submissions to the main page
+    if request.method != 'POST':
+        return HttpResponseRedirect(reverse('datalocker:index'))
+
     safe_values = {
         'identifier': request.POST.get('form-id', ''),
         'name': request.POST.get('name', 'New Locker'),
