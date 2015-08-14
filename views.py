@@ -1,5 +1,6 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -99,7 +100,7 @@ def form_submission_view(request, **kwargs):
             form_identifier=safe_values['identifier'],
             archive_timestamp=None,
             ).order_by('-pk')[0]
-    except Locker.DoesNotExist:
+    except (Locker.DoesNotExist, IndexError):
         locker = Locker(
             form_identifier=safe_values['identifier'],
             name=safe_values['name'],
@@ -127,25 +128,37 @@ def form_submission_view(request, **kwargs):
                 ),
         ))
     else:
-        subject = "%s - new submission - Data Locker" % safe_values['name']
-        message = "Data Locker: new form submission saved\n\n" \
-            "Form: %s\n\n" \
-            "View submission: %s\n" \
-            "View all submissions: %s\n" % (
-                request.POST.get('name', 'New Locker'),
-                reverse(
-                    'datalocker:submissions_view',
-                    kwargs={'locker_id': locker.id, 'pk': submission.id}
-                    ),
-                reverse(
-                    'datalocker:submissions_list',
-                    kwargs={'locker_id': locker.id,}
-                    ),
-                )
-        try:
-            send_mail(subject, message, from_email, [address])
-        except Exception, e:
-            logger.exception("New submission email to the locker owner failed")
+        from_addr = settings.NOTIFICATIONS_FROM
+        if from_addr == '':
+            logger.warning("New submission notification not sent because " \
+                "NOTIFICATIONS_FROM is blank or not defined in " \
+                "settings_local.py or settings.py")
+        else:
+            subject = "%s - new submission" % safe_values['name']
+            message = "A new form submission was saved to the Data Locker. " \
+                "The name of the locker and links to view the submission " \
+                "are provided below.\n\n" \
+                "Locker: %s\n\n" \
+                "View submission: %s\n" \
+                "View all submissions: %s\n" % (
+                    request.POST.get('name', 'New Locker'),
+                    request.build_absolute_uri(
+                        reverse(
+                            'datalocker:submissions_view',
+                            kwargs={'locker_id': locker.id, 'pk': submission.id}
+                            )
+                        ),
+                    request.build_absolute_uri(
+                        reverse(
+                            'datalocker:submissions_list',
+                            kwargs={'locker_id': locker.id,}
+                            )
+                        ),
+                    )
+            try:
+                send_mail(subject, message, from_addr, [address])
+            except Exception, e:
+                logger.exception("New submission email to the locker owner failed")
     return HttpResponse(status=201)
 
 
