@@ -45,7 +45,7 @@
 }( window.Locker = window.Locker || {}, jQuery));
 
 $(document).ready(function () {
-
+    $('#locker-options').hide();
     $('#discussion-options').hide();
     $('select[id=states]').change( function(){
         var newText = $('option:selected',this).text();
@@ -66,24 +66,4 @@ $(document).ready(function () {
             $('#discussion-options').hide();
         }
     });
-    (function() {
-        var boxes = document.querySelectorAll("input[type='checkbox']");
-        for (var i = 0; i < boxes.length; i++) {
-            var box = boxes[i];
-            if (box.hasAttribute("store")) {
-                setupBox(box);
-            }
-    }
-
-    function setupBox(box) {
-        var storageId = box.getAttribute("store");
-        var oldVal    = localStorage.getItem(storageId);
-        console.log(oldVal);
-        box.checked = oldVal === "true" ? true : false;
-
-        box.addEventListener("change", function() {
-            localStorage.setItem(storageId, this.checked);
-        });
-    }
-})();
 });

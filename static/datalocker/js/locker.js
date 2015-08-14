@@ -243,6 +243,14 @@ $(document).ready(function () {
             "action", url.replace("/0/","/"+ id +"/"));
         var name = $(this).closest("tr").attr("data-name");
         $("#edit-locker").val(name);
+        var settings = jQuery.parseJSON($(this).closest("tr").attr("data-settings"));
+        console.log(settings);
+        $("#dialog-edit-locker input[name='enable-workflow']").prop('checked', settings['workflow|enabled']);
+        $("#dialog-edit-locker input[name='users-can-view-workflow']").prop('checked', settings['workflow|users-can-view']);
+        $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
+        $("#dialog-edit-locker textarea[name='workflow-states-textarea']").val(
+            settings['workflow|states'].join("\n")
+        );
         $("#dialog-edit-locker").modal('show');
     });
 

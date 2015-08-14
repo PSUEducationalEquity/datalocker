@@ -101,10 +101,11 @@ class Locker(models.Model):
                 'value': False,
                 }
             )
+        # import pdb; pdb.set_trace()
         if enable is None:
-            return workflow_setting['value']
+            return True if workflow_setting.value == 'True' else False
         elif enable in (True, False):
-            workflow_setting['value'] = enable
+            workflow_setting.value = str(enable)
             workflow_setting.save()
 
 
@@ -210,9 +211,10 @@ class Locker(models.Model):
 
     def get_settings(self):
         return {
-            'workflow|enabled': True,
-            'workflow|users-can-view': True,
-            'workflow|users-can-edit': False,
+            'workflow|enabled': self.enable_workflow(),
+            'workflow|users-can-view': self.workflow_users_can_view(),
+            'workflow|users-can-edit': self.workflow_users_can_edit(),
+            'workflow|states': self.get_all_states(),
             }
 
 
@@ -254,7 +256,9 @@ class Locker(models.Model):
                 'setting': 'User-defined list of workflow states',
                 }
             )
-        saved_state_setting.value = json.dumps(states)
+        saved_state_setting.value = json.dumps(
+            [ item.strip() for item in states.split("\n") if item.strip() ]
+            )
         saved_state_setting.save()
 
 
@@ -269,9 +273,9 @@ class Locker(models.Model):
                 }
             )
         if enable is None:
-            return users_can_edit_setting['value']
+            return True if users_can_edit_setting.value == 'True' else False
         elif enable in (True, False):
-            users_can_edit_setting['value'] = enable
+            users_can_edit_setting.value = str(enable)
             users_can_edit_setting.save()
 
 
@@ -286,9 +290,9 @@ class Locker(models.Model):
                 }
             )
         if enable is None:
-            return users_can_view_setting['value']
+            return True if users_can_view_setting.value == 'True' else False
         elif enable in (True, False):
-            users_can_view_setting['value'] = enable
+            users_can_view_setting.value = str(enable)
             users_can_view_setting.save()
 
 
