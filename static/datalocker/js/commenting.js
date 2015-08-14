@@ -81,7 +81,10 @@
                     $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs"
                     ).attr("role", "comment-reply")
-                )
+                ).append(
+                    $("<button />").html("Edit").addClass(
+                        "btn btn-link btn-xs"
+                    ).attr("role", "comment-edit"))
             ).append(
                 $("<ul />").addClass("media-list")
             ).append(
