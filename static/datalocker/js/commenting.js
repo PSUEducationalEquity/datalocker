@@ -91,7 +91,7 @@
                 $("<div />").addClass("comment-reply-entry hide").append(
                     $("<textarea />").attr("name", "comment-reply")
                 ).append(
-                    $("<button />").html("Add").addClass(
+                    $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs"
                     ).attr("role", "comment-add")
                 )
