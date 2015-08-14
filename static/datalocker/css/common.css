@@ -105,6 +105,7 @@ button[role='archive-locker']   { display: inline-block; }
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+  border-radius: 5px;
 }
 
 
