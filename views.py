@@ -326,6 +326,10 @@ def modify_locker(request, **kwargs):
             pass
         else:
             locker.owner = user
+    locker.enable_workflow(request.POST)
+    locker.workflow_users_can_edit(request.POST)
+    locker.workflow_users_can_view(user_can_view_workflow)
+    # locker.users_can_edit_setting(request.POST)
     locker.save_states(workflow_states_list)
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
