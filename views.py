@@ -31,7 +31,33 @@ logger = logging.getLogger(__name__)
 ##
 ## Helper Functions
 ##
+
+def _get_notification_from_address(email_purpose):
+    """
+    Gets the from address for notification emails from settings.py. If the
+    setting does not exist or is blank, it logs the error and uses
+    `email_purpose` to explain what email was trying to be sent.
+    """
+    from_addr = ''
+    try:
+        from_addr = settings.NOTIFICATIONS_FROM
+    except:
+        logger.warning("The '%s' email was not sent because " \
+            "NOTIFICATIONS_FROM was not defined in settings_local.py or " \
+            "settings.py" % email_purpose)
+    else:
+        if from_addr == '':
+            logger.warning("The '%s' email was not sent because " \
+                "NOTIFICATIONS_FROM in settings_local.py or settings.py " \
+                "is blank" % email_purpose)
+    return from_addr
+
+
 def _get_public_user_dict(user):
+    """
+    Converts a user object to a dictionary and only returns certain
+    publically-available fields for the user.
+    """
     public_fields = ['id', 'email', 'first_name', 'last_name']
     user_dict = {}
     for key, value in model_to_dict(user).iteritems():
@@ -41,6 +67,11 @@ def _get_public_user_dict(user):
 
 
 
+
+
+##
+## Views
+##
 
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -128,12 +159,8 @@ def form_submission_view(request, **kwargs):
                 ),
         ))
     else:
-        from_addr = settings.NOTIFICATIONS_FROM
-        if from_addr == '':
-            logger.warning("New submission notification not sent because " \
-                "NOTIFICATIONS_FROM is blank or not defined in " \
-                "settings_local.py or settings.py")
-        else:
+        from_addr = _get_notification_from_address("new submission")
+        if from_addr != '':
             subject = "%s - new submission" % safe_values['name']
             message = "A new form submission was saved to the Data Locker. " \
                 "The name of the locker and links to view the submission " \
