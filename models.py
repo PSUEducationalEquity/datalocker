@@ -101,7 +101,7 @@ class Locker(models.Model):
                 'value': False,
                 }
             )
-        if enabled is None:
+        if enable is None:
             return workflow_setting['value']
         elif enable in (True, False):
             workflow_setting['value'] = enable
@@ -268,7 +268,7 @@ class Locker(models.Model):
                 'value': False,
                 }
             )
-        if enabled is None:
+        if enable is None:
             return users_can_edit_setting['value']
         elif enable in (True, False):
             users_can_edit_setting['value'] = enable
@@ -285,7 +285,7 @@ class Locker(models.Model):
                 'value': False,
                 }
             )
-        if enabled is None:
+        if enable is None:
             return users_can_view_setting['value']
         elif enable in (True, False):
             users_can_view_setting['value'] = enable

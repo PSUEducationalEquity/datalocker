@@ -3,7 +3,7 @@
 
 
   /**
-   * Changes the workflow state for the submisison 
+   * Changes the workflow state for the submisison
    *
    * @return     void
    * @author     Hunter Yohn  <hay110@psu.edu>
@@ -16,7 +16,7 @@
     Submission.workflowRequest;
 
 
-    Submission.changeWorkflowState = function () {        
+    Submission.changeWorkflowState = function () {
         var changeWorkflowStateUrl = $("#dialog-edit-users form").attr("action");
         Submission.workflowRequest = $.ajax({
             url: changeWorkflowStateUrl,
@@ -30,7 +30,7 @@
 
         // callback handler: success
         Submission.workflowRequest.done(function (response, textStatus, jqXHR) {
-            
+
             Submission.workflowRequest = null;
         });
 
@@ -45,25 +45,45 @@
 }( window.Locker = window.Locker || {}, jQuery));
 
 $(document).ready(function () {
-    $('#locker-options').hide();
+
     $('#discussion-options').hide();
     $('select[id=states]').change( function(){
         var newText = $('option:selected',this).text();
           $('.state-status').text(" "+ newText);
-      }
+        }
     );
-   $('#enable-workflow').change(function(){
-    if (this.checked) {
-        $('#locker-options').show();
-    } else {
-        $('#locker-options').hide();
-    }
+    $('#enable-workflow').change(function(){
+        if (this.checked) {
+            $('#locker-options').show();
+        } else {
+            $('#locker-options').hide();
+        }
     });
-   $('#enable-discussion').change(function(){
-    if (this.checked) {
-        $('#discussion-options').show();
-    } else {
-        $('#discussion-options').hide();
-    }
+    $('#enable-discussion').change(function(){
+        if (this.checked) {
+            $('#discussion-options').show();
+        } else {
+            $('#discussion-options').hide();
+        }
     });
+    (function() {
+        var boxes = document.querySelectorAll("input[type='checkbox']");
+        for (var i = 0; i < boxes.length; i++) {
+            var box = boxes[i];
+            if (box.hasAttribute("store")) {
+                setupBox(box);
+            }
+    }
+
+    function setupBox(box) {
+        var storageId = box.getAttribute("store");
+        var oldVal    = localStorage.getItem(storageId);
+        console.log(oldVal);
+        box.checked = oldVal === "true" ? true : false;
+
+        box.addEventListener("change", function() {
+            localStorage.setItem(storageId, this.checked);
+        });
+    }
+})();
 });
