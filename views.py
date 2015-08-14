@@ -43,6 +43,10 @@ def _get_public_comment_dict(comment):
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
             comment_dict[key] = value
+            if key == 'user':
+                name = User.objects.get(id=value).username
+                username = ''.join([i for i in name if not i.isdigit()])
+                comment_dict[key] = username
     return comment_dict
 
 

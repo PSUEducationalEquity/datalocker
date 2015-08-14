@@ -65,8 +65,11 @@
     }
 
     Comment._build_comment_feed_entry = function (comment) {
+        var user = comment.user;
+        var username = user.replace(/[0-9]+/g, '');
         var $icon = $("<div />").addClass("media-left").append(
-                        $("<img />").addClass("media-object")
+                        $("<span />").addClass("media-object brown").html(
+                            username)
                     );
         var $body = $("<div />").addClass("media-body").html(comment.comment);
         if (comment.parent_comment == null){

@@ -20,6 +20,12 @@
 
 {% block page-meta-title %}Submission View{% endblock page-meta-title %}
 
+{% block site-styles %}
+  {{ block.super }}
+  <link type="text/css" rel="stylesheet"
+        href="{% static 'datalocker/css/user_colors.css' %}" />
+{% endblock site-styles %}
+
 {% block content %}
   <div class="container-fluid">
     <div class="row">
