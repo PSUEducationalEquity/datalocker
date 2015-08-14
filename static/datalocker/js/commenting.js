@@ -88,6 +88,7 @@
             $("#comment-list li[data-id='" + id + "'] textarea").val('');
             $("#comment-list li[data-id='" + id + "'] div.comment-reply-entry").addClass("hide");
             $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
+            $("#comment-list li[data-id='" + id + "'] button[role='comment-edit']").show();
 
             Comment.addRequest = null;
         });
@@ -230,7 +231,7 @@ $(document).ready(function() {
         if ($("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea.edit").val() != '') {
             Comment.edit(id);
         }
-        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").first().replaceWith("<span />");
+        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").first().replaceWith("<span class='comment' />");
         $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span").first().html(html);
         $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
         $(this).hide();
