@@ -21,7 +21,10 @@ from django.views.generic import View
 from .decorators import user_has_locker_access
 from .models import Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
-import datetime, json, requests
+import datetime, json, logging, requests
+
+
+logger = logging.getLogger(__name__)
 
 
 ##
@@ -117,7 +120,12 @@ def form_submission_view(request, **kwargs):
                an account so therefore likely won't be able to access it.
                Might have to alert an administrator so they can assign
                the locker to someone or create an account for the owner. """
-        pass
+        logger.info("New submission saved to orphaned locker: %s" % (
+            reverse(
+                'datalocker:submissions_view',
+                kwargs={'locker_id': locker.id, 'pk': submission.id}
+                ),
+        ))
     else:
         subject = "%s - new submission - Data Locker" % safe_values['name']
         message = "Data Locker: new form submission saved\n\n" \
@@ -137,8 +145,7 @@ def form_submission_view(request, **kwargs):
         try:
             send_mail(subject, message, from_email, [address])
         except Exception, e:
-            """ TODO: log the failure here """
-            pass
+            logger.exception("New submission email to the locker owner failed")
     return HttpResponse(status=201)
 
 
