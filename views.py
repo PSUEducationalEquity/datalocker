@@ -91,15 +91,19 @@ def form_submission_view(request, **kwargs):
         'owner': request.POST.get('owner', ''),
         'data': request.POST.get('data', ''),
         }
-    locker, created = Locker.objects.get_or_create(
-        form_identifier=safe_values['identifier'],
-        archive_timestamp=None,
-        defaults={
-            'name': safe_values['name'],
-            'form_url': safe_values['url'],
-            'owner': safe_values['owner'],
-            }
-        )
+    try:
+        locker = Locker.objects.filter(
+            form_identifier=safe_values['identifier'],
+            archive_timestamp=None,
+            ).order_by('-pk')[0]
+    except Locker.DoesNotExist:
+        locker = Locker(
+            form_identifier=safe_values['identifier'],
+            name=safe_values['name'],
+            form_url=safe_values['url'],
+            owner=safe_values['owner'],
+            )
+        locker.save()
     submission = Submission(
         locker = locker,
         data = safe_values['data'],
