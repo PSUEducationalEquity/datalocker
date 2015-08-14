@@ -74,7 +74,8 @@
                         $("<span />").addClass("media-object midnight-blue").html(
                             username)
                     );
-        var $body = $("<div />").addClass("media-body").html(comment.comment);
+        var $body = $("<div />").addClass("media-body").append(
+            $("<span />").addClass("comment").html(comment.comment));
         if (comment.parent_comment == null){
             $body.append(
                 $("<div />").addClass("comment-actions").append(
@@ -84,7 +85,11 @@
                 ).append(
                     $("<button />").html("Edit").addClass(
                         "btn btn-link btn-xs"
-                    ).attr("role", "comment-edit"))
+                    ).attr("role", "comment-edit")
+                ).append(
+                    $("<button />").html("Reply").addClass(
+                        "btn btn-link btn-xs hide"
+                    ).attr("role", "submit-edit"))
             ).append(
                 $("<ul />").addClass("media-list")
             ).append(
@@ -172,5 +177,25 @@ $(document).ready(function() {
         if ($textarea.val() != '') {
             Comment.addReply(id);
         }
+    });
+
+    $("#comment-list").on("click", "button[role='comment-edit']", function (event) {
+        var id = $(this).closest("li").attr("data-id");
+        var text = $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span.comment").html();
+        $("#comment-list").find("li[data-id='" + id + "']").find("button[role='comment-reply']").hide();
+        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span.comment").first().replaceWith("<textarea />");
+        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").val(text);
+        $("#comment-list").find("li[data-id='" + id + "']").find("button[role='submit-edit']").removeClass("hide");
+        $(this).hide();
+
+    });
+
+    $("#comment-list").on("click", "button[role='submit-edit']", function (event) {
+        var id = $(this).closest("li").attr("data-id");
+        var html = $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").val();
+        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").first().replaceWith("<span />");
+        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span").first().html(html);
+        $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
+        $(this).hide();
     });
 });
