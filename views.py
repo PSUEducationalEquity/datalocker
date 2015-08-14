@@ -62,6 +62,7 @@ class changeSubmissionWorkflowState(View):
         return context
 
     def post(self, request, **kwargs):
+        import pdb; pdb.set_trace()
         locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
         user_can_view_workflow = request.POST.get('users-can-view-state', '')
         user_can_edit_workflow = request.POST.get('users-can-edit-state', '')
@@ -309,6 +310,12 @@ def modify_locker(request, **kwargs):
     locker_owner = locker.owner
     new_locker_name = request.POST.get('edit-locker', '')
     new_owner = request.POST.get('edit-owner', '')
+    enable_workflow = request.POST.get('enable-workflow', '')
+    workflow_states_list = request.POST.get('workflow-states-textarea','')
+    user_can_view_workflow = request.POST.get('users-can-view-workflow', '')
+    user_can_edit_workflow = request.POST.get('users-can-edit-workflow', '')
+    enable_discussion = request.POST.get('enable-discussion','')
+    users_can_view_discussion = request.POST.get('users-can-view-discussion', '')
     if new_locker_name != "":
         locker.name = new_locker_name
     if new_owner != "":
@@ -319,6 +326,7 @@ def modify_locker(request, **kwargs):
             pass
         else:
             locker.owner = user
+    locker.save_states(workflow_states_list)
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
 

@@ -185,20 +185,22 @@
               <input type="checkbox"
                 name="enable-workflow"
                 id="enable-workflow"
+                value="yes"
                 data-target="workflow"/
                 >
             </div>
             <div id="locker-options">
                 Users can view the workflow
               <input type="checkbox"
-                name="states"
+                name="users-can-view-workflow"
                 id="users-can-view-state"><br/>
                 Users can edit the workflow
               <input type="checkbox"
-                name="states"
+                name="users-can-edit-workflow"
                 id="users-can-edit-state"><br/>
               Workflow states <br/>
-              <textarea cols="20" rows="3"> </textarea> <br/>
+              <textarea cols="20" rows="3"
+                name="workflow-states-textarea" id="workflow-states-textarea"> </textarea> <br/>
               <label for="enable-discussion">
               Enable discussion
               </label>
@@ -209,7 +211,7 @@
             <div id="discussion-options">
               Users have access to discussion
               <input type="checkbox"
-                name="states"
+                name="users-can-view-discussion"
                 id="users-can-view-state"><br/>
             </div>
           </div>
