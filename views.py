@@ -78,6 +78,31 @@ def add_comment(request, **kwargs):
 
 
 
+def edit_comment(request, **kwargs):
+    if request.method == 'POST':
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        user_comment = request.POST.get('comment', '')
+        comment = Comment.objects.get(
+            submission=submission,
+            user=request.user,
+            )
+        comment.comment = user_comment
+        comment.save()
+        return JsonResponse({
+            'comment': user_comment,
+            'submission': submission.id,
+            'user': request.user.username,
+            'id': comment.id,
+            })
+    else:
+        locker_id = kwargs['locker_id']
+        pk = kwargs['pk']
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
+
+
+
+
 def add_reply(request, **kwargs):
     if request.method == 'POST':
         submission = get_object_or_404(Submission, id=kwargs['pk'])
