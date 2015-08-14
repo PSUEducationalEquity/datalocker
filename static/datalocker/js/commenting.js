@@ -52,6 +52,9 @@
         Comment.addRequest.done(function (response, textStatus, jqXHR) {
             $("#comment-list").append(Comment._build_comment_feed_entry(response));
             $("#comment-list li[data-id='" + id + "'] textarea").val('');
+            $("#comment-list li[data-id='" + id + "'] div.comment-reply-entry").addClass("hide");
+            $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
+
             Comment.addRequest = null;
         });
 
