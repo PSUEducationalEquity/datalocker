@@ -83,8 +83,7 @@ def edit_comment(request, **kwargs):
         submission = get_object_or_404(Submission, id=kwargs['pk'])
         user_comment = request.POST.get('comment', '')
         comment = Comment.objects.get(
-            submission=submission,
-            user=request.user,
+            id=request.POST.get('id'),
             )
         comment.comment = user_comment
         comment.save()

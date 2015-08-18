@@ -234,6 +234,7 @@ $(document).ready(function() {
         $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").first().replaceWith("<span class='comment' />");
         $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span").first().html(html);
         $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
+        $("#comment-list li[data-id='" + id + "'] button[role='comment-edit']").show();
         $(this).hide();
     });
 });
