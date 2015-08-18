@@ -296,10 +296,9 @@ def modify_locker(request, **kwargs):
     new_owner = request.POST.get('edit-owner', '')
     enabled_workflow = bool(request.POST.get('enable-workflow', False))
     workflow_states_list = request.POST.get('workflow-states-textarea','')
-    user_can_view_workflow = bool(request.POST.get('users-can-view-workflow', False))
     user_can_edit_workflow = bool(request.POST.get('users-can-edit-workflow', False))
-    enable_discussion = request.POST.get('enable-discussion', False)
-    users_can_view_discussion = request.POST.get('users-can-view-discussion', False)
+    enable_discussion =  bool(request.POST.get('enable-discussion', False))
+    users_can_view_discussion =  bool(request.POST.get('users-can-view-discussion', False))
     if new_locker_name != "":
         locker.name = new_locker_name
     if new_owner != "":
@@ -311,8 +310,9 @@ def modify_locker(request, **kwargs):
         else:
             locker.owner = user
     locker.enable_workflow(enabled_workflow)
+    locker.enable_discussion(enable_discussion)
     locker.workflow_users_can_edit(user_can_edit_workflow)
-    locker.workflow_users_can_view(user_can_view_workflow)
+    locker.discussion_users_have_access(users_can_view_discussion)
     locker.save_states(workflow_states_list)
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))

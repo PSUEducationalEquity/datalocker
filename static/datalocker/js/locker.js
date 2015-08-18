@@ -246,14 +246,12 @@ $(document).ready(function () {
         var settings = jQuery.parseJSON($(this).closest("tr").attr("data-settings"));
         console.log(settings);
         $("#dialog-edit-locker input[name='enable-workflow']").prop('checked', settings['workflow|enabled']);
-        $("#dialog-edit-locker input[name='users-can-view-workflow']").prop('checked', settings['workflow|users-can-view']);
         $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
+        $("#dialog-edit-locker input[name='enable-discussion']").prop('checked', settings['discussion|enabled']);
+        $("#dialog-edit-locker input[name='users-can-view-discussion']").prop('checked', settings['discussion|users-have-access-to-disccusion']);
         $("#dialog-edit-locker textarea[name='workflow-states-textarea']").val(
             settings['workflow|states'].join("\n")
         );
-        $("#workflow-states-dropdown option").val(
-            settings['workflow|states'].join("\n")
-    );
         $("#dialog-edit-locker").modal('show');
     });
 

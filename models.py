@@ -90,6 +90,22 @@ class Locker(models.Model):
     def __str__(self):
         return self.name
 
+    def enable_discussion(self,enable=None):
+        discussion_setting, created =LockerSetting.objects.get_or_create(
+            category='discussion',
+            setting_identifier='discussion-enabled',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if discussion is enabled or not',
+                'value': False,
+                }
+            )
+        # import pdb; pdb.set_trace()
+        if enable is None:
+            return True if discussion_setting.value == 'True' else False
+        elif enable in (True, False):
+            discussion_setting.value = str(enable)
+            discussion_setting.save()
 
     def enable_workflow(self, enable=None):
         workflow_setting, created = LockerSetting.objects.get_or_create(
@@ -101,7 +117,6 @@ class Locker(models.Model):
                 'value': False,
                 }
             )
-        # import pdb; pdb.set_trace()
         if enable is None:
             return True if workflow_setting.value == 'True' else False
         elif enable in (True, False):
@@ -212,9 +227,10 @@ class Locker(models.Model):
     def get_settings(self):
         return {
             'workflow|enabled': self.enable_workflow(),
-            'workflow|users-can-view': self.workflow_users_can_view(),
             'workflow|users-can-edit': self.workflow_users_can_edit(),
             'workflow|states': self.get_all_states(),
+            'discussion|enabled': self.enable_discussion(),
+            'discussion|users-have-access-to-disccusion': self.discussion_users_have_access(),
             }
 
 
@@ -279,21 +295,22 @@ class Locker(models.Model):
             users_can_edit_setting.save()
 
 
-    def workflow_users_can_view(self, enable=None):
-        users_can_view_setting, created = LockerSetting.objects.get_or_create(
-            category='workflow',
-            setting_identifier='users-can-view',
+    def discussion_users_have_access(self, enable=None):
+        discussion_users_have_access_setting, created = LockerSetting.objects.get_or_create(
+            category='discussion',
+            setting_identifier='users-have-access-to-disccusion',
             locker=self,
             defaults={
-                'setting': 'Indicates if users can see workflow',
+                'setting': 'Indicates if users have access to discussion',
                 'value': False,
                 }
             )
         if enable is None:
-            return True if users_can_view_setting.value == 'True' else False
+            return True if discussion_users_have_access_setting.value == 'True' else False
         elif enable in (True, False):
-            users_can_view_setting.value = str(enable)
-            users_can_view_setting.save()
+            discussion_users_have_access_setting.value = str(enable)
+            discussion_users_have_access_setting.save()
+
 
 
 
