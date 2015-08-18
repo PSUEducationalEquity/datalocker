@@ -149,7 +149,7 @@ def form_submission_view(request, **kwargs):
     logger.info("New submission (%s) from %s saved to %s locker (%s)" % (
         submission.pk,
         safe_values['url'],
-        'new' if created else 'existing'
+        'new' if created else 'existing',
         locker.pk
         ))
 
