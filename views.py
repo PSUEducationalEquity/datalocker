@@ -120,17 +120,18 @@ def form_submission_view(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
     safe_values = {
-        'identifier': request.POST.get('form-id', ''),
-        'name': request.POST.get('name', 'New Locker'),
-        'url': request.POST.get('url', ''),
-        'owner': request.POST.get('owner', ''),
-        'data': request.POST.get('data', ''),
+        'identifier': request.POST.get('form-id', '').strip(),
+        'name': request.POST.get('name', 'New Locker').strip(),
+        'url': request.POST.get('url', '').strip(),
+        'owner': request.POST.get('owner', '').strip(),
+        'data': request.POST.get('data', '').strip(),
         }
     try:
         locker = Locker.objects.filter(
             form_identifier=safe_values['identifier'],
             archive_timestamp=None,
             ).order_by('-pk')[0]
+        created = False
     except (Locker.DoesNotExist, IndexError):
         locker = Locker(
             form_identifier=safe_values['identifier'],
@@ -139,11 +140,18 @@ def form_submission_view(request, **kwargs):
             owner=safe_values['owner'],
             )
         locker.save()
+        created = True
     submission = Submission(
         locker = locker,
         data = safe_values['data'],
         )
     submission.save()
+    logger.info("New submission (%s) from %s saved to %s locker (%s)" % (
+        submission.pk,
+        safe_values['url'],
+        'new' if created else 'existing'
+        locker.pk
+        ))
 
     try:
         address = User.objects.get(username=safe_values['owner']).email
