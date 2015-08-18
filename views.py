@@ -317,24 +317,31 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 
 def get_comments_view(request, **kwargs):
-    if request.is_ajax():
-        # If statement to make sure the user should be able to see the comments
-        all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
-        all_replies = Comment.objects.filter(submission=kwargs['pk']
-            ).exclude(parent_comment=None)
-        comments = []
-        replies = []
-        for comment in all_comments:
-            comments.append(_get_public_comment_dict(comment))
-        for comment in all_replies:
-            replies.append(_get_public_comment_dict(comment))
-        return JsonResponse(
-            {
-            'comments': comments,
-            'replies': replies
-            })
+    locker = Locker.objects.get(id=kwargs['locker_id'])
+    setting = LockerSetting.objects.get(locker=locker, category='discussion')
+    if setting.value == u'True':
+        if request.is_ajax():
+            # If statement to make sure the user should be able to see the comments
+            all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
+            all_replies = Comment.objects.filter(submission=kwargs['pk']
+                ).exclude(parent_comment=None)
+            comments = []
+            replies = []
+            for comment in all_comments:
+                comments.append(_get_public_comment_dict(comment))
+            for comment in all_replies:
+                replies.append(_get_public_comment_dict(comment))
+            return JsonResponse(
+                {
+                'comments': comments,
+                'replies': replies
+                })
+        else:
+            return HttpResponseRedirect(reverse('datalocker:submission_view object.locker.id object.pk'))
     else:
-        return HttpResponseRedirect(reverse('datalocker:submission_view object.locker.id object.pk'))
+        pk = Submission.objects.get(id=kwargs['pk'])
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker.id, 'pk': pk}))
 
 
 
