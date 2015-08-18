@@ -10,12 +10,12 @@
     </a>
   </li>
   <li>
-    <a href="{% url 'datalocker:submissions_list' object.locker.id %}">
-      All Submissions<span class="sr-only"> for {{ object.locker.name }}</span>
+    <a href="{% url 'datalocker:submissions_list' locker.id %}">
+      All Submissions<span class="sr-only"> for {{ locker.name }}</span>
     </a>
   </li>
   <li class="active">
-    <span class="sr-only">{{ object.locker.name }}</span> Submission
+    <span class="sr-only">{{ locker.name }}</span> Submission
   </li>
 {% endblock breadcrumb-trail %}
 
@@ -31,7 +31,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-{% if sidebar_enabled %}8{% else %}12{% endif %}">
-        <h1>{{ object.locker.name }}</h1>
+        <h1>{{ locker.name }}</h1>
 
         <div class="pagination" aria-label="submission navigation buttons">
           {% include "datalocker/pagination_template.html" %}
@@ -61,22 +61,25 @@
               </div>
               <div class="panel-body">
                 <label id="state-status" class="state-status">Current State: {{ current_state }}</label>
-                <form action="{% url 'datalocker:workflow_states' object.locker.id object.pk %}"
-                  id="workflow_form" method="POST">
-                  {% csrf_token %}
-                    <label for="states">Workflow State</label>
-                    <select id="states" name="states" class="form-control">
-                      <option selected="selected">Pick a Workflow state</option>
-                      {% for states in  workflow_states %}
-                        <option name="states">{{ states }}</option>
-                      {% endfor %}
-                    </select>
-                </form>
+                {% if workflow_users_can_edit %}
+                  <form action="{% url 'datalocker:workflow_states' locker.id object.id %}"
+                    id="workflow_form" method="POST">
+                    {% csrf_token %}
+                      <label for="states">Workflow State</label>
+                      <select id="states" name="states" class="form-control">
+                        <option selected="selected">Pick a Workflow state</option>
+                        {% for states in  workflow_states %}
+                          <option name="states">{{ states }}</option>
+                        {% endfor %}
+                      </select>
+                  </form>
+                {% endif %}
               </div>
             </div>
           {% endif %}
 
           {% if commenting_enabled %}
+          {% if users_can_view_discussion %}
           <div class="panel panel-default panel-comments"
             id="comments-div">
             <div class="panel-heading" >
@@ -107,6 +110,7 @@
               </div>
             </div>
           </div>
+          {% endif %}
           {% endif %}
         </div>
     {% endif %}

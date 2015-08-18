@@ -405,34 +405,20 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
-        locker = Locker.objects.get(id=kwargs['object'].locker.id)
+        locker = kwargs['object'].locker
+        context['locker'] = locker
         context['oldest_disabled'] = True if self.object.id == self.object.oldest() else False
         context['older_disabled'] = True if self.object.id == self.object.older() else False
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
-        context['current_state'] = Submission.objects.get(id=kwargs['object'].id).workflow_state
-
-        context['workflow_states'] = []
-        for states in Locker.get_all_states(locker):
-            context['workflow_states'].append(states)
-        try:
-            context['workflow_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker,
-                setting_identifier='workflow-enabled').value == u'True' else False
-        except LockerSetting.DoesNotExist:
-            context['workflow_enabled'] = False
-
-        try:
-            context['commenting_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker,
-                setting_identifier='discussion-enabled').value == u'True' else False
-        except LockerSetting.DoesNotExist:
-            context['commenting_enabled'] = False
-
-        if context['workflow_enabled'] == True or context['commenting_enabled'] == True:
-            context['sidebar_enabled'] = True
-        else:
-            context['sidebar_enabled'] = False
+        context['current_state'] = kwargs['object'].workflow_state
+        context['workflow_states'] = locker.get_all_states()
+        context['workflow_enabled'] = locker.enable_workflow()
+        context['workflow_users_can_edit'] = locker.workflow_users_can_edit() or self.request.user.username == locker.owner
+        context['commenting_enabled'] = locker.enable_discussion()
+        context['users_can_view_discussion'] = locker.discussion_users_have_access() or self.request.user.username == locker.owner
+        context['sidebar_enabled'] = context['workflow_enabled'] or context['commenting_enabled']
         return context
-
 
 
 @require_http_methods(["POST"])
