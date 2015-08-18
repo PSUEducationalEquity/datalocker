@@ -145,14 +145,18 @@ def archive_locker(request, **kwargs):
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
 
+
+
+
 @require_http_methods(["POST"])
-def changeSubmissionWorkflowState(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])
-
-
-
-
 def change_workflow_state(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    workflow_state_update = request.POST.get('states', '')
+    locker_id = kwargs['locker_id']
+    pk = kwargs['pk']
+    return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
+
 
 
 
