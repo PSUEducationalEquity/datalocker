@@ -148,10 +148,6 @@ def form_submission_view(request, **kwargs):
     try:
         address = User.objects.get(username=safe_values['owner']).email
     except User.DoesNotExist:
-        """ TODO: do something about this as the locker's owner doesn't have
-               an account so therefore likely won't be able to access it.
-               Might have to alert an administrator so they can assign
-               the locker to someone or create an account for the owner. """
         logger.info("New submission saved to orphaned locker: %s" % (
             reverse(
                 'datalocker:submissions_view',
@@ -160,7 +156,7 @@ def form_submission_view(request, **kwargs):
         ))
     else:
         from_addr = _get_notification_from_address("new submission")
-        if from_addr != '':
+        if from_addr:
             subject = "%s - new submission" % safe_values['name']
             message = "A new form submission was saved to the Data Locker. " \
                 "The name of the locker and links to view the submission " \
@@ -297,13 +293,26 @@ class LockerUserAdd(View):
         if not user in locker.users.all():
             locker.users.add(user)
             locker.save()
-        from_email = 'eeqsys@psu.edu'
-        locker_name = Locker.objects.get(id=kwargs['locker_id'])
-        subject = 'Granted Locker Access'
-        to = self.request.POST.get('email', "")
-        body = 'Hello, ' + to +'\n'+' You now have access to a locker ' +  locker_name.name
-        email = EmailMessage(subject, body, from_email, [to])
-        email.send()
+        from_addr = _get_notification_from_address("locker access granted")
+        if from_addr:
+            subject = "Access to Locker: %s" % locker.name
+            to_addr = self.request.POST.get('email', '')
+            message = "The following Data Locker of form submissions has been " \
+                "shared with you.\n\n" \
+                "Locker: %s\n\n" \
+                "You can view the submissions at:\n%s\n" % (
+                    locker.name,
+                    request.build_absolute_uri(
+                        reverse(
+                            'datalocker:submissions_list',
+                            kwargs={'locker_id': locker.id,}
+                            )
+                        ),
+                    )
+            try:
+                send_mail(subject, message, from_addr, [to_addr])
+            except:
+                logger.exception("Locker shared with you email failed to send")
         return JsonResponse(_get_public_user_dict(user))
 
 
@@ -340,20 +349,41 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    locker_name = locker.name
-    locker_owner = locker.owner
+    previous_owner = locker.owner
     new_locker_name = request.POST.get('edit-locker', '')
-    new_owner = request.POST.get('edit-owner', '')
-    if new_locker_name != "":
+    new_owner_email = request.POST.get('edit-owner', '')
+    if new_locker_name:
         locker.name = new_locker_name
-    if new_owner != "":
+    if new_owner_email:
         try:
-            user = User.objects.get(email=new_owner).username
+            new_owner = User.objects.get(email=new_owner_email).username
         except User.DoesNotExist:
             ### TODO: Log this and deal with it
             pass
         else:
-            locker.owner = user
+            locker.owner = new_owner
+            from_addr = _get_notification_from_address("change locker owner")
+            if from_addr:
+                subject = "Ownership of Locker: %s" % locker.name
+                to_addr = self.request.POST.get('email', '')
+                message = "%s %s has changed the ownership of the following " \
+                    "Data Locker of form submissions to you.\n\n" \
+                    "Locker: %s\n\n" \
+                    "You can view the submissions at:\n%s\n" % (
+                        previous_owner.first_name,
+                        previous_owner.last_name,
+                        locker.name,
+                        request.build_absolute_uri(
+                            reverse(
+                                'datalocker:submissions_list',
+                                kwargs={'locker_id': locker.id,}
+                                )
+                            ),
+                        )
+                try:
+                    send_mail(subject, message, from_addr, [to_addr])
+                except:
+                    logger.exception("Locker ownership changed to you email failed to send")
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
 
