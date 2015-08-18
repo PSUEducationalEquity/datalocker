@@ -66,8 +66,9 @@
                   {% csrf_token %}
                     <label for="states">Workflow State</label>
                     <select id="states" name="states" class="form-control">
+                      <option selected="selected">Pick a Workflow state</option>
                       {% for states in  workflow_states %}
-                        <option>{{ states }}</option>
+                        <option name="states">{{ states }}</option>
                       {% endfor %}
                     </select>
                 </form>

@@ -54,83 +54,67 @@ def _get_public_comment_dict(comment):
 
 
 
-
+@require_http_methods(["POST"])
 def add_comment(request, **kwargs):
-    if request.method == 'POST':
-        submission = get_object_or_404(Submission, id=kwargs['pk'])
-        user_comment = request.POST.get('comment', '')
-        comment = Comment(
-            submission=submission,
-            comment=user_comment,
-            user=request.user,
-            timestamp=timezone.now(),
-            )
-        comment.save()
-        return JsonResponse({
-            'comment': user_comment,
-            'submission': submission.id,
-            'user': request.user.username,
-            'id': comment.id,
-            })
-    else:
-        locker_id = kwargs['locker_id']
-        pk = kwargs['pk']
-        return HttpResponseRedirect(reverse('datalocker:submissions_view',
-         kwargs={'locker_id': locker_id, 'pk': pk}))
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    user_comment = request.POST.get('comment', '')
+    comment = Comment(
+        submission=submission,
+        comment=user_comment,
+        user=request.user,
+        timestamp=timezone.now(),
+        )
+    comment.save()
+    return JsonResponse({
+        'comment': user_comment,
+        'submission': submission.id,
+        'user': request.user.username,
+        'id': comment.id,
+        })
 
 
 
 
+@require_http_methods(["POST"])
 def edit_comment(request, **kwargs):
-    if request.method == 'POST':
-        submission = get_object_or_404(Submission, id=kwargs['pk'])
-        user_comment = request.POST.get('comment', '')
-        comment = Comment.objects.get(
-            id=request.POST.get('id'),
-            )
-        if Comment.is_editable(comment):
-            comment.comment = user_comment
-            comment.save()
-        return JsonResponse({
-            'comment': user_comment,
-            'submission': submission.id,
-            'user': request.user.username,
-            'id': comment.id,
-            })
-    else:
-        locker_id = kwargs['locker_id']
-        pk = kwargs['pk']
-        return HttpResponseRedirect(reverse('datalocker:submissions_view',
-         kwargs={'locker_id': locker_id, 'pk': pk}))
-
-
-
-
-def add_reply(request, **kwargs):
-    if request.method == 'POST':
-        submission = get_object_or_404(Submission, id=kwargs['pk'])
-        parent_comment = get_object_or_404(Comment, id=request.POST['parent_comment'])
-        user_comment = request.POST.get('comment', '')
-        comment = Comment(
-            submission=submission,
-            comment=user_comment,
-            user=request.user,
-            timestamp=timezone.now(),
-            parent_comment=parent_comment,
-            )
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    user_comment = request.POST.get('comment', '')
+    comment = Comment.objects.get(
+        id=request.POST.get('id'),
+        )
+    if Comment.is_editable(comment):
+        comment.comment = user_comment
         comment.save()
-        return JsonResponse({
-            'comment': user_comment,
-            'submission': submission.id,
-            'user': request.user.username,
-            'id': comment.id,
-            'parent_comment': parent_comment.id
-            })
-    else:
-        locker_id = kwargs['locker_id']
-        pk = kwargs['pk']
-        return HttpResponseRedirect(reverse('datalocker:submissions_view',
-         kwargs={'locker_id': locker_id, 'pk': pk}))
+    return JsonResponse({
+        'comment': user_comment,
+        'submission': submission.id,
+        'user': request.user.username,
+        'id': comment.id,
+        })
+
+
+
+
+@require_http_methods(["POST"])
+def add_reply(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+    parent_comment = get_object_or_404(Comment, id=request.POST['parent_comment'])
+    user_comment = request.POST.get('comment', '')
+    comment = Comment(
+        submission=submission,
+        comment=user_comment,
+        user=request.user,
+        timestamp=timezone.now(),
+        parent_comment=parent_comment,
+        )
+    comment.save()
+    return JsonResponse({
+        'comment': user_comment,
+        'submission': submission.id,
+        'user': request.user.username,
+        'id': comment.id,
+        'parent_comment': parent_comment.id
+        })
 
 
 
@@ -150,13 +134,13 @@ def archive_locker(request, **kwargs):
 
 @require_http_methods(["POST"])
 def change_workflow_state(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])
-    workflow_state_update = request.POST.get('states', '')
-    locker_id = kwargs['locker_id']
-    pk = kwargs['pk']
-    return HttpResponseRedirect(reverse('datalocker:submissions_view',
-         kwargs={'locker_id': locker_id, 'pk': pk}))
-
+    submission = Submission.objects.get(id=kwargs['pk'])
+    new_state = request.POST.get('workflow_state_update', '')
+    submission.workflow_state = new_state
+    submission.save()
+    return JsonResponse({
+        'new state': new_state
+        })
 
 
 

@@ -16,15 +16,15 @@
     Submission.workflowRequest;
 
 
-    Submission.changeWorkflowState = function () {
-        var changeWorkflowStateUrl = $("#dialog-edit-users form").attr("action");
-        var workflow_state_update =$("#workflow_state_update").val();
+    Submission.changeWorkflowState = function (value) {
+        var changeWorkflowStateUrl = $("#workflow_form").attr("action");
+        var workflow_state_update = value;
         Submission.workflowRequest = $.ajax({
             url: changeWorkflowStateUrl,
             type: "post",
             data: {
                 workflow_state_update: workflow_state_update,
-                csrfmiddlewaretoken: $("#dialog-edit-locker").find(
+                csrfmiddlewaretoken: $("#workflow_form").find(
                     "input[name='csrfmiddlewaretoken']").val()
                 }
         });
@@ -38,18 +38,17 @@
         // callback handler: failure
         Submission.workflowRequest.fail(function (jqXHR, errorThrown) {
             if (errorThrown != "abort") {
-                console.error("Locker.add in Locker.js AJAX error");
+                console.error("Submission.add in workflow.js AJAX error");
             }
             Submission.workflowRequest = null;
         });
     }
-}( window.Locker = window.Locker || {}, jQuery));
+}( window.Submission = window.Submission || {}, jQuery));
 
 $(document).ready(function () {
     $('select[id=states]').change( function(){
         var newText = $('option:selected',this).text();
-          $('.state-status').text(" "+ newText);
-        }
-    );
-
+        $('.state-status').text(" "+ newText);
+        Submission.changeWorkflowState(newText);
+    });
 });
