@@ -307,8 +307,6 @@ $(document).ready(function () {
         var id = $(this).closest("tr").attr("data-id");
         Locker.unarchive(id);
     });
-
-
     $(".button-archived-showhide").on("click", function (event)
     {
         var showing = $("table").hasClass("js-show-archived");
