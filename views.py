@@ -358,8 +358,11 @@ def modify_locker(request, **kwargs):
         try:
             new_owner = User.objects.get(email=new_owner_email).username
         except User.DoesNotExist:
-            ### TODO: Log this and deal with it
-            pass
+            logger.error(
+                "Attempted to reassign locker (%s) to non-existent user (%s)" %
+                (locker.name, new_owner)
+                )
+            ### TODO: Report this problem back to the end user
         else:
             locker.owner = new_owner
             from_addr = _get_notification_from_address("change locker owner")
