@@ -48,7 +48,7 @@
 $(document).ready(function () {
     $('select[id=states]').change( function(){
         var newText = $('option:selected',this).text();
-        $('.state-status').text(" "+ newText);
+        $('#current_state').text("Current State: "+ newText);
         Submission.changeWorkflowState(newText);
     });
 });

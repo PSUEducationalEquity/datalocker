@@ -60,14 +60,14 @@
                 <div class="panel-title">Workflow</div>
               </div>
               <div class="panel-body">
-                <label id="state-status" class="state-status">Current State: {{ current_state }}</label>
+                <div id="current_state">Current State: {{ current_state }} </div>
                 {% if workflow_users_can_edit %}
                   <form action="{% url 'datalocker:workflow_states' locker.id object.id %}"
                     id="workflow_form" method="POST">
                     {% csrf_token %}
                       <label for="states">Workflow State</label>
                       <select id="states" name="states" class="form-control">
-                        <option selected="selected">Pick a Workflow state</option>
+                        <option selected="selected" disabled="disabled">Pick a Workflow state</option>
                         {% for states in  workflow_states %}
                           <option name="states">{{ states }}</option>
                         {% endfor %}
