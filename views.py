@@ -156,7 +156,7 @@ def form_submission_view(request, **kwargs):
     try:
         address = User.objects.get(username=safe_values['owner']).email
     except User.DoesNotExist:
-        logger.info("New submission saved to orphaned locker: %s" % (
+        logger.warning("New submission saved to orphaned locker: %s" % (
             reverse(
                 'datalocker:submissions_view',
                 kwargs={'locker_id': locker.id, 'pk': submission.id}
