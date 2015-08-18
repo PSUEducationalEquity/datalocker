@@ -152,6 +152,8 @@ def changeSubmissionWorkflowState(request, **kwargs):
 
 
 
+def change_workflow_state(request, **kwargs):
+
 
 
 def custom_404(request):

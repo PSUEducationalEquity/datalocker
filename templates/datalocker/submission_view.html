@@ -61,7 +61,8 @@
               </div>
               <div class="panel-body">
                 <label id="state-status" class="state-status">Current State: {{ current_state }}</label>
-                <form action="" id="workflow_form" method="POST">
+                <form action="{% url 'datalocker:worflow_states' object.locker.id object.pk %}"
+                  id="workflow_form" method="POST">
                   {% csrf_token %}
                     <label for="states">Workflow State</label>
                     <select id="states" name="states" class="form-control">
