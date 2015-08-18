@@ -302,7 +302,7 @@ class LockerUserAdd(View):
                 "Locker: %s\n\n" \
                 "You can view the submissions at:\n%s\n" % (
                     locker.name,
-                    request.build_absolute_uri(
+                    self.request.build_absolute_uri(
                         reverse(
                             'datalocker:submissions_list',
                             kwargs={'locker_id': locker.id,}
