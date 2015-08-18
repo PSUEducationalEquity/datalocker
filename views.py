@@ -85,8 +85,9 @@ def edit_comment(request, **kwargs):
         comment = Comment.objects.get(
             id=request.POST.get('id'),
             )
-        comment.comment = user_comment
-        comment.save()
+        if Comment.is_editable(comment):
+            comment.comment = user_comment
+            comment.save()
         return JsonResponse({
             'comment': user_comment,
             'submission': submission.id,
@@ -403,7 +404,8 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
-        context['commenting_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker, category='discussion').value == u'True' else False
+        context['commenting_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker,
+            category='discussion').value == u'True' else False
         return context
 
 
