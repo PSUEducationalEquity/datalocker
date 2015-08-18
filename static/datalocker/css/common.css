@@ -77,20 +77,6 @@ button[role='archive-locker']   { display: inline-block; }
 }
 
 
-/*-----------------------------------*\
-    $COMMENTING
-\*-----------------------------------*/
-.comment-button {
-  float: right;
-}
-
-.comment-textarea {
-  padding: 10px;
-  border: solid 1px #dcdcdc;
-  height: 50px;
-  width: 100%;
-}
-
 
 /*-----------------------------------*\
     $COMMENTING
@@ -108,10 +94,18 @@ button[role='archive-locker']   { display: inline-block; }
 .comment-textarea {
   padding: 10px;
   border: solid 1px #dcdcdc;
-  height: 50px;
+  height: 75px;
   width: 100%;
   resize: none;
 }
+
+.comment-reply-textarea {
+  padding: 10px;
+  border: solid 1px #dcdcdc;
+  height: 75px;
+  width: 100%;
+}
+
 .media-left span {
   width: 35px;
   height: 35px;

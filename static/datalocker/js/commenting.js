@@ -128,7 +128,8 @@
                 $("<ul />").addClass("media-list")
             ).append(
                 $("<div />").addClass("comment-reply-entry hide").append(
-                    $("<textarea />").attr("name", "comment-reply")
+                    $("<textarea />").attr("name", "comment-reply").addClass(
+                        "comment-reply-textarea")
                 ).append(
                     $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs"
