@@ -1,6 +1,7 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
+{% load datalocker_tags %}
 
 {% block breadcrumb-trail %}
   <li>
@@ -47,6 +48,7 @@
 
       {% if sidebar_enabled %}
         <div class="col-md-4">
+        {% if workflow_enabled %}
           <div class="panel panel-default panel-workflow">
             <div class="panel-heading">
               <div class="panel-title">Workflow</div>
@@ -56,14 +58,14 @@
             <form action="" id="workflow_form" method="POST">
               {% csrf_token %}
               <select id="states" class="form-control">
-                <option value="Unreviewed">Unreviewed</option>
-                <option value="Accepted">Accepted</option>
-                <option value="Rejected">Rejected</option>
+                {% for states in  workflow_states_list %}
+                <option>{{ states }}</option>
+                {% endfor %}
               </select>
             </form>
             </div>
           </div>
-
+          {% endif %}
 
           <div class="panel panel-default panel-comments bg-info">
             <div class="panel-heading color-for-div" >
@@ -80,7 +82,6 @@
                   >Add</button>
               </div>
               <div class="comment-feed">
-
               </div>
             </div>
           </div>
@@ -95,4 +96,6 @@
     {{ block.super }}
     <script type="text/javascript"
             src=" {% static 'datalocker/js/workflow.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/locker.js' %}"></script>
 {% endblock site-scripts %}

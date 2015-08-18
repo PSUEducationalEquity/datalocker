@@ -49,24 +49,11 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-class changeSubmissionWorkflowState(View):
-    template_name = 'datalocker/index.html'
+def changeSubmissionWorkflowState(View):
+    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
+    setting = LockerSetting.objects.get(Locker, cate)
 
-    def get_context_data(self, **kwargs):
-        context = super(changeSubmissionWorkflowState, self).get_context_data(**kwargs)
-        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        context['locker'] = locker
-        states = locker.get_all_states()
-        context['states'] = states
-        selected_states = locker.get_selected_states()
-        return context
 
-    def post(self, request, **kwargs):
-        import pdb; pdb.set_trace()
-        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-        user_can_view_workflow = request.POST.get('users-can-view-state', '')
-        user_can_edit_workflow = request.POST.get('users-can-edit-state', '')
-        return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 
@@ -293,11 +280,8 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['older_disabled'] = True if self.object.id == self.object.older() else False
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
-        context['sidebar_enabled'] = True
-        # if locker.saved_state_setting.value = "":
-        #     context['sidebar_enabled'] = True
-        # else:
-        #     False
+        context['workflow_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker, setting_identifier='workflow-enabled').value == u'True' else False
+        context['sidebar_enabled'] = True if context['workflow_enabled'] == True else False
         return context
 
 

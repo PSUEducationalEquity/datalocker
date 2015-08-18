@@ -251,6 +251,9 @@ $(document).ready(function () {
         $("#dialog-edit-locker textarea[name='workflow-states-textarea']").val(
             settings['workflow|states'].join("\n")
         );
+        $("#workflow-states-dropdown option").val(
+            settings['workflow|states'].join("\n")
+    );
         $("#dialog-edit-locker").modal('show');
     });
 
