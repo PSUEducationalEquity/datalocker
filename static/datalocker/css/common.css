@@ -80,8 +80,39 @@ button[role='archive-locker']   { display: inline-block; }
 
 
 /*-----------------------------------*\
+    $COMMENTING
+\*-----------------------------------*/
+
+.comment-button {
+  clear: left;
+  float: right;
+}
+
+.comment-feed-container {
+  margin-top: 25px;
+}
+
+.comment-textarea {
+  padding: 10px;
+  border: solid 1px #dcdcdc;
+  height: 50px;
+  width: 100%;
+  resize: none;
+}
+.media-left span {
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+
+/*-----------------------------------*\
     $EXISTINGUSERS
 \*-----------------------------------*/
+
 #existing-users {
   display: inline-block;
 }
@@ -100,9 +131,12 @@ button[role='archive-locker']   { display: inline-block; }
   padding-left: 10px;
   margin-top: 2px;
 }
+
+
 /*-----------------------------------*\
     $SUBMISSIONVIEWPAGE
 \*-----------------------------------*/
+
 ul {
   list-style-type: none;
 }
@@ -121,6 +155,7 @@ ul .information {
 /*------------------------------------*\
     $TABLES
 \*------------------------------------*/
+
 .record-actions {
   text-align: right;
 }

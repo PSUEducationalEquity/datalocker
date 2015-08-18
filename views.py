@@ -9,7 +9,7 @@ from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response , get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
 from django.utils import timezone
@@ -19,7 +19,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
 from .decorators import user_has_locker_access
-from .models import Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
+from .models import Comment, Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, logging, requests
 
@@ -37,6 +37,100 @@ def _get_public_user_dict(user):
         if key in public_fields:
             user_dict[key] = value
     return user_dict
+
+
+
+def _get_public_comment_dict(comment):
+    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment']
+    comment_dict = {}
+    for key, value in model_to_dict(comment).iteritems():
+        if key in public_fields:
+            comment_dict[key] = value
+            if key == 'user':
+                name = User.objects.get(id=value).username
+                username = ''.join([i for i in name if not i.isdigit()])
+                comment_dict[key] = username
+    return comment_dict
+
+
+
+
+def add_comment(request, **kwargs):
+    if request.method == 'POST':
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        user_comment = request.POST.get('comment', '')
+        comment = Comment(
+            submission=submission,
+            comment=user_comment,
+            user=request.user,
+            timestamp=timezone.now(),
+            )
+        comment.save()
+        return JsonResponse({
+            'comment': user_comment,
+            'submission': submission.id,
+            'user': request.user.username,
+            'id': comment.id,
+            })
+    else:
+        locker_id = kwargs['locker_id']
+        pk = kwargs['pk']
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
+
+
+
+
+def edit_comment(request, **kwargs):
+    if request.method == 'POST':
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        user_comment = request.POST.get('comment', '')
+        comment = Comment.objects.get(
+            id=request.POST.get('id'),
+            )
+        if Comment.is_editable(comment):
+            comment.comment = user_comment
+            comment.save()
+        return JsonResponse({
+            'comment': user_comment,
+            'submission': submission.id,
+            'user': request.user.username,
+            'id': comment.id,
+            })
+    else:
+        locker_id = kwargs['locker_id']
+        pk = kwargs['pk']
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
+
+
+
+
+def add_reply(request, **kwargs):
+    if request.method == 'POST':
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        parent_comment = get_object_or_404(Comment, id=request.POST['parent_comment'])
+        user_comment = request.POST.get('comment', '')
+        comment = Comment(
+            submission=submission,
+            comment=user_comment,
+            user=request.user,
+            timestamp=timezone.now(),
+            parent_comment=parent_comment,
+            )
+        comment.save()
+        return JsonResponse({
+            'comment': user_comment,
+            'submission': submission.id,
+            'user': request.user.username,
+            'id': comment.id,
+            'parent_comment': parent_comment.id
+            })
+    else:
+        locker_id = kwargs['locker_id']
+        pk = kwargs['pk']
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker_id, 'pk': pk}))
 
 
 
@@ -237,6 +331,37 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 
 
+def get_comments_view(request, **kwargs):
+    locker = Locker.objects.get(id=kwargs['locker_id'])
+    setting = LockerSetting.objects.get(locker=locker, category='discussion')
+    if setting.value == u'True':
+        if request.is_ajax():
+            # If statement to make sure the user should be able to see the comments
+            all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
+            all_replies = Comment.objects.filter(submission=kwargs['pk']
+                ).exclude(parent_comment=None)
+            comments = []
+            replies = []
+            for comment in all_comments:
+                comments.append(_get_public_comment_dict(comment))
+            for comment in all_replies:
+                replies.append(_get_public_comment_dict(comment))
+            return JsonResponse(
+                {
+                'comments': comments,
+                'replies': replies
+                })
+        else:
+            return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker.id, 'pk': pk}))
+    else:
+        pk = Submission.objects.get(id=kwargs['pk'])
+        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker.id, 'pk': pk}))
+
+
+
+
 def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
@@ -292,6 +417,12 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['older_disabled'] = True if self.object.id == self.object.older() else False
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
+        context['sidebar_enabled'] = True
+        try:
+            context['commenting_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker,
+                category='discussion').value == u'True' else False
+        except LockerSetting.DoesNotExist:
+            context['commenting_enabled'] = False
         return context
 
 

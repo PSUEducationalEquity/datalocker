@@ -5,7 +5,7 @@ from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
 from django.contrib.auth.models import Group, User
 
-from .models import Locker, LockerSetting, Submission
+from .models import Locker, LockerSetting, Submission, Comment
 
 
 class DataLockerAdminSite(AdminSite):
@@ -16,6 +16,18 @@ class DataLockerAdminSite(AdminSite):
 
 
 # Register your models here.
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id',
+        'submission',
+        'user',
+        'timestamp',
+        'comment',
+        'parent_comment'
+        ]
+
+
+
+
 class SubmissionAdmin(admin.ModelAdmin):
     list_display = ['id',
         'locker',
@@ -65,6 +77,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin_site = DataLockerAdminSite(name='datalockeradmin')
+admin_site.register(Comment, CommentAdmin)
 admin_site.register(Group, GroupAdmin)
 admin_site.register(Locker, LockerAdmin)
 admin_site.register(Submission, SubmissionAdmin)

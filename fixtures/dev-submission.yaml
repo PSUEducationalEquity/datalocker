@@ -111,7 +111,7 @@
 - fields:
     locker: 6
     timestamp: '2015-04-16 20:25:20+05:00'
-    data: '{"Name of College or Institution:": "South Hills School of Busniess and Technology", "Attendance": "Will Not Attend", "Name of representatice attending": "Booby Johnson", "Phone Number": "894-569-1203", "E-Mail address": "eeqdev+dl-bjohnson@psu.edu", "Name of additional representative attending": "Jeff lawman", "Additional representatives E-mail address": "eeqdev+dl-jlawman@psu.edu", "Additional representatives phone number": "894-569-1205", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "Yes", "If not, will you need a parking permit?": "No"}'
+    data: '{"Name of College or Institution:": "South Hills School of Busniess and Technology", "Attendance": "Will Not Attend", "Name of representatice attending": "Bobby Johnson", "Phone Number": "894-569-1203", "E-Mail address": "eeqdev+dl-bjohnson@psu.edu", "Name of additional representative attending": "Jeff lawman", "Additional representatives E-mail address": "eeqdev+dl-jlawman@psu.edu", "Additional representatives phone number": "894-569-1205", "Special accommodations required": "No", "Will you be driving a State Vehicle?": "Yes", "If not, will you need a parking permit?": "No"}'
   model: datalocker.Submission
   pk: 17
 - fields:

@@ -1,6 +1,7 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
 from django.contrib.auth.models import User, Group
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -239,6 +240,9 @@ class Submission(models.Model):
     def __str__(self):
         return str(self.locker)
 
+    def __unicode__ (self):
+        return str(self.id)
+
 
     def data_dict(self):
         """
@@ -315,3 +319,55 @@ class Submission(models.Model):
         newestSubmission = Submission.objects.filter(
             locker=self.locker).latest('timestamp')
         return newestSubmission.id
+
+
+
+
+class Comment(models.Model):
+    submission = models.ForeignKey(
+        Submission,
+        related_name="comments",
+        on_delete=models.PROTECT,
+        )
+    user = models.ForeignKey(
+        User,
+        related_name="comment_user",
+        )
+    timestamp = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=True,
+        editable=False,
+        )
+    comment = models.TextField(blank=True)
+    parent_comment = models.ForeignKey(
+        'self',
+        related_name="comment_parent",
+        blank=True,
+        null=True,
+        )
+
+
+    def __str__(self):
+        return str(self.id)
+
+
+    def is_editable(self):
+        """
+        Captures the current time and compares it to the timestamp
+        on the submission the submissions. editable is returned True
+        if the difference is within the timeframe set by COMMENT_EDIT_MAX
+        """
+        time = timezone.now()
+        editTimeFrame = datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
+        editable = True if ((time - self.timestamp) < editTimeFrame) else False
+        return editable
+
+
+    def to_dict(self):
+        """
+        Returns the entire object as a Python dictionary
+        """
+        result = model_to_dict(self)
+        result['editable'] = self.is_editable()
+        result['color'] = "red"
+        return result
