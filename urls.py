@@ -32,8 +32,8 @@ urlpatterns = patterns('',
         views.LockerUserAdd.as_view(),
         name='locker_user_add'),
     url(r'^$',
-        views.LockerListView.as_view(),
-        name='index'
+        views.locker_list_view,
+        name='index',
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<pk>[0-9]+)/view/comments/add$',
         views.add_comment,
@@ -51,6 +51,7 @@ urlpatterns = patterns('',
         views.get_comments_view,
         name='get_comments',
         ),
+
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<pk>[0-9]+)/view$',
     	views.SubmissionView.as_view(context_object_name='submission_view'),
     	name='submissions_view'

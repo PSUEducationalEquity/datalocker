@@ -16,4 +16,9 @@ class Migration(migrations.Migration):
             name='parent_comment',
             field=models.ForeignKey(related_name='comment_parent', blank=True, to='datalocker.Comment', null=True),
         ),
+        migrations.AlterField(
+            model_name='submission',
+            name='workflow_state',
+            field=models.CharField(default=b'unreviewed', max_length=25),
+        ),
     ]

@@ -1,6 +1,7 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
+{% load datalocker_tags %}
 
 {% block breadcrumb-trail %}
   <li class="active">
@@ -35,6 +36,7 @@
           <tbody>
             {% for locker in owned %}
               <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
+                  data-settings="{{ locker.get_settings|jsonify }}"
               {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                 <td class="record-name">
                   <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
@@ -120,9 +122,15 @@
                 data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}"
                 data-url="{% url 'datalocker:locker_users' 0 %}">
               </ul>
-              <h5 class="modal-title" id="dialog-edit-users-title"><strong>Share access to this locker with someone else</strong></h5>
+              <h5 class="modal-title" id="dialog-edit-users-title">
+                <strong>Share access to this locker with someone else</strong>
+              </h5>
               <label for="email"><span class="sr-only">Email Address</span></label>
-              <input type="text" name="email" id="email" style="width:200px;" placeholder="Enter the email address to share this locker with">
+              <input type="text"
+                name="email"
+                id="email"
+                style="width:200px;"
+                placeholder="Enter the email address to share this locker with">
               <button type="submit" class="btn btn-primary btn-sm add-btn" id="button-user-add">
                 Add</button>
             </div>
@@ -171,6 +179,45 @@
                   placeholder="Enter a new owner's email address">
                <br/>
             </div>
+            <div>
+              <input type="checkbox"
+                name="enable-workflow"
+                id="enable-workflow"
+                class="always"
+                value="True"
+                data-target="workflow"/
+              >
+              <label for="enable-workflow">
+                Enable Workflow
+              </label>
+            </div>
+            <div id="locker-options">
+              <input type="checkbox"
+                name="users-can-edit-workflow"
+                class="always"
+                value="True"
+                id="users-can-edit-state">
+                Users can edit the workflow
+                <br/>
+              <textarea cols="20" rows="3"
+                name="workflow-states-textarea" id="workflow-states-textarea"> </textarea>   Workflow states <br/>
+            </div>
+            <input type="checkbox"
+              name="enable-discussion"
+              class="always"
+              value="True"
+              id="enable-discussion">
+            <label for="enable-discussion">
+            Enable discussion
+            </label>
+            <div id="discussion-options">
+              <input type="checkbox"
+                name="users-can-view-discussion"
+                class="always"
+                value="True"
+                id="users-can-view-state">
+              Users have access to discussion<br/>
+            </div>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary btn-sm pull-left" value="Save" />
@@ -189,4 +236,6 @@
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/locker.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/workflow.js' %}"></script>
 {% endblock site-scripts %}

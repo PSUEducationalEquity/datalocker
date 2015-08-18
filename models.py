@@ -91,6 +91,39 @@ class Locker(models.Model):
     def __str__(self):
         return self.name
 
+    def enable_discussion(self,enable=None):
+        discussion_setting, created =LockerSetting.objects.get_or_create(
+            category='discussion',
+            setting_identifier='discussion-enabled',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if discussion is enabled or not',
+                'value': False,
+                }
+            )
+        # import pdb; pdb.set_trace()
+        if enable is None:
+            return True if discussion_setting.value == 'True' else False
+        elif enable in (True, False):
+            discussion_setting.value = str(enable)
+            discussion_setting.save()
+
+    def enable_workflow(self, enable=None):
+        workflow_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='workflow-enabled',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if workflow is enabled or not',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if workflow_setting.value == 'True' else False
+        elif enable in (True, False):
+            workflow_setting.value = str(enable)
+            workflow_setting.save()
+
 
     def is_archived(self):
         if archive_timestamp is None:
@@ -100,7 +133,7 @@ class Locker(models.Model):
 
     def get_all_fields_list(self):
         """
-        This gets all of the feilds that were submitted to the form
+        This gets all of the fields that were submitted to the form
         """
         try:
             all_fields_setting = self.settings.get(
@@ -153,6 +186,28 @@ class Locker(models.Model):
         return all_fields
 
 
+    def get_all_states(self):
+        try:
+            all_states_setting = self.settings.get(
+                category='workflow',
+                setting_identifier='states',
+                locker=self,
+                )
+        except LockerSetting.DoesNotExist:
+            all_states = []
+        else:
+            all_states = json.loads(all_states_setting.value)
+        return all_states
+
+
+    def get_default_state(self):
+        states = self.get_all_states()
+        try:
+            return states[0]
+        except:
+            return ''
+
+
     def get_selected_fields_list(self):
         """
         Get's the selected fields off of the Submission List Page,
@@ -168,6 +223,17 @@ class Locker(models.Model):
         else:
             selected_fields = json.loads(selected_fields_setting.value)
         return selected_fields
+
+
+    def get_settings(self):
+        return {
+            'workflow|enabled': self.enable_workflow(),
+            'workflow|users-can-edit': self.workflow_users_can_edit(),
+            'workflow|states': self.get_all_states(),
+            'discussion|enabled': self.enable_discussion(),
+            'discussion|users-have-access-to-disccusion': self.discussion_users_have_access(),
+            }
+
 
 
     def has_access(self, user):
@@ -196,6 +262,55 @@ class Locker(models.Model):
             )
         selected_fields_setting.value = json.dumps(selected_fields)
         selected_fields_setting.save()
+
+
+    def save_states(self, states):
+        saved_state_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='states',
+            locker=self,
+            defaults={
+                'setting': 'User-defined list of workflow states',
+                }
+            )
+        saved_state_setting.value = json.dumps(
+            [ item.strip() for item in states.split("\n") if item.strip() ]
+            )
+        saved_state_setting.save()
+
+
+    def workflow_users_can_edit(self, enable=None):
+        users_can_edit_setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='users-can-edit',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if users can edit workflow',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if users_can_edit_setting.value == 'True' else False
+        elif enable in (True, False):
+            users_can_edit_setting.value = str(enable)
+            users_can_edit_setting.save()
+
+
+    def discussion_users_have_access(self, enable=None):
+        discussion_users_have_access_setting, created = LockerSetting.objects.get_or_create(
+            category='discussion',
+            setting_identifier='users-have-access-to-disccusion',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if users have access to discussion',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if discussion_users_have_access_setting.value == 'True' else False
+        elif enable in (True, False):
+            discussion_users_have_access_setting.value = str(enable)
+            discussion_users_have_access_setting.save()
 
 
 
@@ -234,6 +349,10 @@ class Submission(models.Model):
     deleted = models.DateTimeField(
         blank=True,
         null=True,
+        )
+    workflow_state = models.CharField(
+        max_length=25,
+        default='',
         )
 
 

@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('datalocker', '0004_auto_20150722_0844'),
+        ('datalocker', '0005_auto_20150805_1622'),
     ]
 
     operations = [

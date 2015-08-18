@@ -244,7 +244,8 @@
 
 
 $(document).ready(function () {
-
+    $('#locker-options').hide();
+    $('#discussion-options').hide();
     //opens the users modal dialog
     $("button[role='edit-users']").on("click", function (event) {
         event.preventDefault();
@@ -269,6 +270,15 @@ $(document).ready(function () {
             "action", url.replace("/0/","/"+ id +"/"));
         var name = $(this).closest("tr").attr("data-name");
         $("#edit-locker").val(name);
+        var settings = jQuery.parseJSON($(this).closest("tr").attr("data-settings"));
+        console.log(settings);
+        $("#dialog-edit-locker input[name='enable-workflow']").prop('checked', settings['workflow|enabled']);
+        $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
+        $("#dialog-edit-locker input[name='enable-discussion']").prop('checked', settings['discussion|enabled']);
+        $("#dialog-edit-locker input[name='users-can-view-discussion']").prop('checked', settings['discussion|users-have-access-to-disccusion']);
+        $("#dialog-edit-locker textarea[name='workflow-states-textarea']").val(
+            settings['workflow|states'].join("\n")
+        );
         $("#dialog-edit-locker").modal('show');
     });
 
@@ -306,6 +316,22 @@ $(document).ready(function () {
             Locker.show_hide_archived('hide');
         } else {
             Locker.show_hide_archived('show');
+        }
+    });
+    //show or hides the workflow options if checked
+    $('#enable-workflow').change(function(){
+        if (this.checked) {
+            $('#locker-options').show();
+        } else {
+            $('#locker-options').hide();
+        }
+    });
+     //show or hides the discussion options if checked
+    $('#enable-discussion').change(function(){
+        if (this.checked) {
+            $('#discussion-options').show();
+        } else {
+            $('#discussion-options').hide();
         }
     });
 

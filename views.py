@@ -145,6 +145,12 @@ def archive_locker(request, **kwargs):
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
 
+@require_http_methods(["POST"])
+def changeSubmissionWorkflowState(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
+
+
+
 
 
 
@@ -261,30 +267,27 @@ class UserHasLockerAccessMixin(object):
 
 
 
-
-class LockerListView(LoginRequiredMixin, generic.ListView):
-    template_name = 'datalocker/index.html'
-    model = Locker
-
-
-    def get_context_data(self, **kwargs):
-        """
-        Accesses the logged in user and searched through all the lockers they
-        have access to. It only returns the lockers that they have access to
-        and don't own.
-        """
-        user = self.request.user
-        context = super(LockerListView, self).get_context_data(**kwargs)
-        context['shared'] = Locker.objects.active().has_access(
-            self.request.user).annotate(latest_submission= Max(
-                'submissions__timestamp')).order_by('name').exclude(
-                    owner=user)
-        context['owned'] = Locker.objects.active().has_access(
-            self.request.user).annotate(latest_submission= Max(
-                'submissions__timestamp')).order_by('name').filter(
-                    owner=user)
-        return context
-
+@login_required()
+def locker_list_view(request):
+    """
+    Accesses the logged in user and searched through all the lockers they
+    have access to. It only returns the lockers that they have access to
+    and don't own.
+    """
+    shared_lockers = Locker.objects.active().has_access(
+        request.user
+    ).annotate(
+        latest_submission= Max('submissions__timestamp')
+    ).order_by('name').exclude(owner=request.user)
+    my_lockers = Locker.objects.active().has_access(
+        request.user
+    ).annotate(
+        latest_submission= Max('submissions__timestamp')
+    ).order_by('name').filter(owner=request.user)
+    return render(request, 'datalocker/index.html', {
+        'shared': shared_lockers,
+        'owned': my_lockers,
+        })
 
 
 
@@ -333,7 +336,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 def get_comments_view(request, **kwargs):
     locker = Locker.objects.get(id=kwargs['locker_id'])
-    setting = LockerSetting.objects.get(locker=locker, category='discussion')
+    setting = LockerSetting.objects.get(locker=locker, setting_identifier='discussion-enabled')
     if setting.value == u'True':
         if request.is_ajax():
             # If statement to make sure the user should be able to see the comments
@@ -410,31 +413,50 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 
-
     def get_context_data(self, **kwargs):
         context = super(SubmissionView, self).get_context_data(**kwargs)
+        locker = Locker.objects.get(id=kwargs['object'].locker.id)
         context['oldest_disabled'] = True if self.object.id == self.object.oldest() else False
         context['older_disabled'] = True if self.object.id == self.object.older() else False
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
-        context['sidebar_enabled'] = True
+        context['current_state'] = Submission.objects.get(id=kwargs['object'].id).workflow_state
+
+        context['workflow_states'] = []
+        for states in Locker.get_all_states(locker):
+            context['workflow_states'].append(states)
+        try:
+            context['workflow_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker,
+                setting_identifier='workflow-enabled').value == u'True' else False
+        except LockerSetting.DoesNotExist:
+            context['workflow_enabled'] = False
+
         try:
             context['commenting_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker,
-                category='discussion').value == u'True' else False
+                setting_identifier='discussion-enabled').value == u'True' else False
         except LockerSetting.DoesNotExist:
             context['commenting_enabled'] = False
-        return context
 
+        if context['workflow_enabled'] == True or context['commenting_enabled'] == True:
+            context['sidebar_enabled'] = True
+        else:
+            context['sidebar_enabled'] = False
+        return context
 
 
 
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
-    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     locker_name = locker.name
     locker_owner = locker.owner
     new_locker_name = request.POST.get('edit-locker', '')
     new_owner = request.POST.get('edit-owner', '')
+    enabled_workflow = bool(request.POST.get('enable-workflow', False))
+    workflow_states_list = request.POST.get('workflow-states-textarea','')
+    user_can_edit_workflow = bool(request.POST.get('users-can-edit-workflow', False))
+    enable_discussion =  bool(request.POST.get('enable-discussion', False))
+    users_can_view_discussion =  bool(request.POST.get('users-can-view-discussion', False))
     if new_locker_name != "":
         locker.name = new_locker_name
     if new_owner != "":
@@ -445,6 +467,11 @@ def modify_locker(request, **kwargs):
             pass
         else:
             locker.owner = user
+    locker.enable_workflow(enabled_workflow)
+    locker.enable_discussion(enable_discussion)
+    locker.workflow_users_can_edit(user_can_edit_workflow)
+    locker.discussion_users_have_access(users_can_view_discussion)
+    locker.save_states(workflow_states_list)
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
 
