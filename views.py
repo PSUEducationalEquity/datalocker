@@ -349,7 +349,7 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    previous_owner = locker.owner
+    previous_owner = User.objects.get(username=locker.owner)
     new_locker_name = request.POST.get('edit-locker', '')
     new_owner_email = request.POST.get('edit-owner', '')
     if new_locker_name:
@@ -368,7 +368,7 @@ def modify_locker(request, **kwargs):
             from_addr = _get_notification_from_address("change locker owner")
             if from_addr:
                 subject = "Ownership of Locker: %s" % locker.name
-                to_addr = self.request.POST.get('email', '')
+                to_addr = request.POST.get('email', '')
                 message = "%s %s has changed the ownership of the following " \
                     "Data Locker of form submissions to you.\n\n" \
                     "Locker: %s\n\n" \
