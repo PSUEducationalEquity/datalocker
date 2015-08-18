@@ -337,7 +337,8 @@ def get_comments_view(request, **kwargs):
                 'replies': replies
                 })
         else:
-            return HttpResponseRedirect(reverse('datalocker:submission_view object.locker.id object.pk'))
+            return HttpResponseRedirect(reverse('datalocker:submissions_view',
+         kwargs={'locker_id': locker.id, 'pk': pk}))
     else:
         pk = Submission.objects.get(id=kwargs['pk'])
         return HttpResponseRedirect(reverse('datalocker:submissions_view',
@@ -402,7 +403,7 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newer_disabled'] = True if self.object.id == self.object.newer() else False
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['sidebar_enabled'] = True
-        context['commenting_enabled'] = True
+        context['commenting_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker, category='discussion').value == u'True' else False
         return context
 
 
