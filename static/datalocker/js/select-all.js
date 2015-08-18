@@ -18,10 +18,6 @@ $(document).ready(function() {
         var $target = $("#" + $(this).attr("data-target"));
         var checked_count = $target.find("input[type='checkbox']:checked").length;
         var checkbox_count = $target.find("input[type='checkbox']").length;
-        console.log($(this));
-        console.log($target);
-        console.log(checked_count);
-        console.log(checkbox_count);
         if (checkbox_count == checked_count) {
             $(this).prop("checked", true);
         }
