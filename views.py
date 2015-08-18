@@ -48,10 +48,10 @@ def archive_locker(request, **kwargs):
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
 
+@require_http_methods(["POST"])
+def changeSubmissionWorkflowState(request, **kwargs):
+    submission = get_object_or_404(Submission, id=kwargs['pk'])
 
-def changeSubmissionWorkflowState(View):
-    locker = Locker.objects.get(Locker, id=kwargs['locker_id'])
-    setting = LockerSetting.objects.get(Locker, cate)
 
 
 
@@ -282,8 +282,12 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
         context['newest_disabled'] = True if self.object.id == self.object.newest() else False
         context['workflow_enabled'] = True if LockerSetting.objects.get(locker=kwargs['object'].locker, setting_identifier='workflow-enabled').value == u'True' else False
         context['sidebar_enabled'] = True if context['workflow_enabled'] == True else False
+        context['workflow_states'] = []
+        locker = Locker.objects.get(id=kwargs['object'].locker.id)
+        for states in Locker.get_all_states(locker):
+            context['workflow_states'].append(states)
+        context['current_state'] = Submission.objects.get(id=kwargs['object'].id).workflow_state
         return context
-
 
 
 

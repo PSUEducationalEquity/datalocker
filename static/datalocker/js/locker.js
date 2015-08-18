@@ -218,7 +218,8 @@
 
 
 $(document).ready(function () {
-
+    $('#locker-options').hide();
+    $('#discussion-options').hide();
     //opens the users modal dialog
     $("button[role='edit-users']").on("click", function (event) {
         event.preventDefault();
@@ -295,7 +296,22 @@ $(document).ready(function () {
         }
     });
 
-
+    //show or hides the workflow options if checked
+    $('#enable-workflow').change(function(){
+        if (this.checked) {
+            $('#locker-options').show();
+        } else {
+            $('#locker-options').hide();
+        }
+    });
+     //show or hides the discussion options if checked
+    $('#enable-discussion').change(function(){
+        if (this.checked) {
+            $('#discussion-options').show();
+        } else {
+            $('#discussion-options').hide();
+        }
+    });
     var showHide = getCookie("show/hide");
     if (showHide == "show") {
         $('.is-archived').show();

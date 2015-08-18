@@ -52,13 +52,15 @@
           <div class="panel panel-default panel-workflow">
             <div class="panel-heading">
               <div class="panel-title">Workflow</div>
-            </div><label id="state-status" class="state-status"> </label>
+            </div>
             <div class="panel-body">
-            Workflow State
+            <label id="state-status" class="state-status">Current State: {{ current_state }}</label>
+
             <form action="" id="workflow_form" method="POST">
               {% csrf_token %}
-              <select id="states" class="form-control">
-                {% for states in  workflow_states_list %}
+              <label for="states">Workflow State</label>
+              <select id="states" name="states" class="form-control">
+                {% for states in  workflow_states %}
                 <option>{{ states }}</option>
                 {% endfor %}
               </select>
@@ -96,6 +98,4 @@
     {{ block.super }}
     <script type="text/javascript"
             src=" {% static 'datalocker/js/workflow.js' %}"></script>
-    <script type="text/javascript"
-            src=" {% static 'datalocker/js/locker.js' %}"></script>
 {% endblock site-scripts %}

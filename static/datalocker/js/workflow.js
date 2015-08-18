@@ -18,11 +18,12 @@
 
     Submission.changeWorkflowState = function () {
         var changeWorkflowStateUrl = $("#dialog-edit-users form").attr("action");
+        var workflow_state_update =$("#workflow_state_update").val();
         Submission.workflowRequest = $.ajax({
             url: changeWorkflowStateUrl,
             type: "post",
             data: {
-                email: email,
+                workflow_state_update: workflow_state_update,
                 csrfmiddlewaretoken: $("#dialog-edit-locker").find(
                     "input[name='csrfmiddlewaretoken']").val()
                 }
@@ -45,33 +46,10 @@
 }( window.Locker = window.Locker || {}, jQuery));
 
 $(document).ready(function () {
-    if ('#enable-workflow'.checked) {
-            $('#locker-options').show();
-        } else {
-            $('#locker-options').hide();
-        }
-    if (this.checked) {
-            $('#discussion-options').show();
-        } else {
-            $('#discussion-options').hide();
-        }
     $('select[id=states]').change( function(){
         var newText = $('option:selected',this).text();
           $('.state-status').text(" "+ newText);
         }
     );
-    $('#enable-workflow').change(function(){
-        if (this.checked) {
-            $('#locker-options').show();
-        } else {
-            $('#locker-options').hide();
-        }
-    });
-    $('#enable-discussion').change(function(){
-        if (this.checked) {
-            $('#discussion-options').show();
-        } else {
-            $('#discussion-options').hide();
-        }
-    });
+
 });
