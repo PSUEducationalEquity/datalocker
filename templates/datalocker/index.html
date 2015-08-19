@@ -63,9 +63,9 @@
                   <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Share</button>
                   <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
                   <button type="button"
-                          class="btn btn-xs"
+                          class="btn btn-xs {% if locker.1 %}btn-success{% else %}btn-danger{% endif %}"
                           role="archive-locker">
-
+                          {% if locker.1 %}Unarchive{% else %}Archive{% endif %}
                             </button>
                 </td>
               </tr>
