@@ -216,23 +216,33 @@ $(document).ready(function() {
 
     $("#comment-list").on("click", "button[role='comment-edit']", function (event) {
         var id = $(this).closest("li").attr("data-id");
-        var text = $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span.comment").html();
-        $("#comment-list").find("li[data-id='" + id + "']").find("button[role='comment-reply']").hide();
-        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span.comment").first().replaceWith("<textarea class='edit' />");
-        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").val(text);
-        $("#comment-list").find("li[data-id='" + id + "']").find("button[role='submit-edit']").removeClass("hide");
+        var text = $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("div.media-body span.comment").html();
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("button[role='comment-reply']").hide();
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("div.media-body span.comment").first().replaceWith("<textarea class='edit' />");
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("div.media-body textarea").val(text);
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("button[role='submit-edit']").removeClass("hide");
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("button[role='submit-edit']").show();
         $(this).hide();
 
     });
 
     $("#comment-list").on("click", "button[role='submit-edit']", function (event) {
         var id = $(this).closest("li").attr("data-id");
-        var html = $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").val();
+        var html = $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("div.media-body textarea").val();
         if ($("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea.edit").val() != '') {
             Comment.edit(id);
         }
-        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body textarea").first().replaceWith("<span class='comment' />");
-        $("#comment-list").find("li[data-id='" + id + "']").find("div.media-body span").first().html(html);
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("div.media-body textarea").first().replaceWith("<span class='comment' />");
+        $("#comment-list").find("li[data-id='" + id + "']"
+            ).find("div.media-body span").first().html(html);
         $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
         $("#comment-list li[data-id='" + id + "'] button[role='comment-edit']").show();
         $(this).hide();
