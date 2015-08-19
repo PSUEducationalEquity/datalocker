@@ -370,8 +370,13 @@ def locker_users(request, locker_id):
 
 class LockerUserAdd(View):
     def post(self, *args, **kwargs):
-        user = get_object_or_404(User, email=self.request.POST.get('email', ''))
-        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
+        try:
+            user = User.objects.get(email=self.request.POST.get('email', ''))
+            locker =  Locker.objects.get(id=kwargs['locker_id'])
+        except User.DoesNotExist:
+            return HttpResponse(status=404)
+        except Locker.DoesNotExist:
+            return HttpResponse(status=404)
         if not user in locker.users.all():
             locker.users.add(user)
             locker.save()

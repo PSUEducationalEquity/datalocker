@@ -107,6 +107,10 @@
     role="dialog" aria-labelledby="dialog-edit-users-title"
     aria-hidden="true" data-locker-id="0">
       <div class="modal-dialog">
+        <div id="not-a-user-alert"
+          class="alert alert-danger">This User Does Not Exist
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
         <div class="modal-content">
           <form method="POST" name="modalForm"  action=""
             data-url="{% url 'datalocker:locker_user_add' 0 %}">

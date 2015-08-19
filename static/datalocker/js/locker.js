@@ -33,6 +33,7 @@
             if ($("#no-users-message").length){
                 $("#no-users-message").remove();
             }
+            $("#not-a-user-alert").hide();
             $("#existing-users").append(Locker._build_user_list_entry(response));
             $("#email").val("");
             $("#email").focus();
@@ -43,6 +44,9 @@
         Locker.addRequest.fail(function (jqXHR, errorThrown) {
             if (errorThrown != "abort") {
                 console.error("Locker.add in Locker.js AJAX error");
+            }
+            if (jqXHR.status == 404) {
+                $("#not-a-user-alert").show();
             }
             Locker.addRequest = null;
         });
@@ -244,6 +248,7 @@
 
 
 $(document).ready(function () {
+    $("#not-a-user-alert").hide();
     $('#locker-options').hide();
     $('#discussion-options').hide();
     //opens the users modal dialog
