@@ -348,7 +348,11 @@ $(document).ready(function () {
             $('#discussion-options').hide();
         }
     });
-
+    $('input.typeahead').typeahead({
+        name: 'users',
+        prefetch: {'users': users},
+        limit: 10
+    });
     var showHide = getCookie("show/hide");
     Locker.show_hide_archived(showHide);
 

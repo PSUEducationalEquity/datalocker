@@ -241,4 +241,13 @@
             src=" {% static 'datalocker/js/workflow.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/typeahead.js' %}"></script>
+    <script>
+    $(document).ready(function($) {
+        // Workaround for bug in mouse item selection
+       $('input.typeahead').typeahead({
+        name: 'users',
+        prefetch: {user:'user'}
+        limit: 10
+    });
+    </script>
 {% endblock site-scripts %}
