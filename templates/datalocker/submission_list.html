@@ -76,7 +76,7 @@
                 {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 {% if submission.1 %}
                 data-url="{% url 'datalocker:undelete_submission' locker.id submission.0 %}"
-                {% else %
+                {% else %}
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 {% endif %}
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>

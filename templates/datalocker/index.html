@@ -10,9 +10,27 @@
 
 {% block page-meta-title %}My Lockers{% endblock page-meta-title %}
 
+{% block site-styles %}
+  {{ block.super }}
+  <link type="text/css" rel="stylesheet"
+        href="{% static 'datalocker/css/bootstrap-toggle.css' %}" />
+{% endblock site-styles %}
+
 {% block content %}
     <h1 class="hidden">Data lockers</h1>
     <div class="container-fluid">
+      <div class="hide-show-archived-lockers-checkbox">
+      <input type="checkbox"
+        id="hide-show-archived-lockers"
+        class="hide-show-archived-lockers-checkbox"
+        name="onoffswitch"
+        data-size="small"
+        data-toggle="toggle"
+        data-onstyle="success"
+        data-offstyle="danger"
+        data-on="Hide Archived Lockers"
+        data-off="Show Archived Lockers">
+      </div>
       <h2 class="italic">My Lockers</h2>
       <button name="show-hide-lockers"
               class="btn btn-default btn-xs button-archived-showhide"
@@ -45,13 +63,10 @@
                   <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Share</button>
                   <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
                   <button type="button"
-                          class="btn btn-success btn-xs"
-                          role="unarchive-locker"
-                          >Unarchive</button>
-                  <button type="button"
-                          class="btn btn-danger btn-xs"
-                          role="archive-locker"
-                          >Archive</button>
+                          class="btn btn-xs {% if locker.1 %}btn-success{% else %}btn-danger{% endif %}"
+                          role="archive-locker">
+                          {% if locker.1 %}Unarchive{% else %}Archive{% endif %}
+                            </button>
                 </td>
               </tr>
             {% endfor %}
@@ -185,6 +200,8 @@
 
 {% block site-scripts %}
     {{ block.super }}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/bootstrap-toggle.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
