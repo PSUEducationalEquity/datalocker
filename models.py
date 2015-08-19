@@ -394,10 +394,10 @@ class Submission(models.Model):
         try:
             nextSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__gt=self.timestamp).order_by('timestamp')[0]
+                timestamp__gt=self.timestamp, deleted=None).order_by('timestamp')[0]
         except IndexError:
             nextSubmission = Submission.objects.filter(
-                locker=self.locker).order_by('-timestamp')[0]
+                locker=self.locker, deleted=None).order_by('-timestamp')[0]
         return nextSubmission.id
 
 
@@ -411,10 +411,10 @@ class Submission(models.Model):
         try:
             lastSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__lt=self.timestamp).order_by('-timestamp')[0]
+                timestamp__lt=self.timestamp, deleted=None).order_by('-timestamp')[0]
         except IndexError:
             lastSubmission = Submission.objects.filter(
-                locker=self.locker).order_by('timestamp')[0]
+                locker=self.locker, deleted=None).order_by('timestamp')[0]
         return lastSubmission.id
 
 
@@ -425,7 +425,7 @@ class Submission(models.Model):
         with the earliest timestamp.
         """
         oldestSubmission = Submission.objects.filter(
-            locker=self.locker).earliest('timestamp')
+            locker=self.locker, deleted=None).earliest('timestamp')
         return oldestSubmission.id
 
 
@@ -436,7 +436,7 @@ class Submission(models.Model):
         with the newest timestamp.
         """
         newestSubmission = Submission.objects.filter(
-            locker=self.locker).latest('timestamp')
+            locker=self.locker, deleted=None).latest('timestamp')
         return newestSubmission.id
 
 
