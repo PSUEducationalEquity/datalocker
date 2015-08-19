@@ -48,8 +48,7 @@ button[role='archive-locker']   { display: inline-block; }
 
 
 #delete-warning{
-  width: 330px;
-  float: right;
+  width: 100%;
   display: none
 }
 /*-----------------------------------*\
