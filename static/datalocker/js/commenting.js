@@ -109,21 +109,21 @@
                             username)
                     );
         var $body = $("<div />").addClass("media-body").append(
-            $("<span />").addClass("comment").html(comment.comment));
-        if (comment.parent_comment == null){
-            $body.append(
-                $("<div />").addClass("comment-actions").append(
-                    $("<button />").html("Reply").addClass(
-                        "btn btn-link btn-xs"
-                    ).attr("role", "comment-reply")
-                ).append(
+            $("<span />").addClass("comment").html(comment.comment)).append(
                     $("<button />").html("Edit").addClass(
                         "btn btn-link btn-xs"
                     ).attr("role", "comment-edit")
                 ).append(
                     $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs hide"
-                    ).attr("role", "submit-edit"))
+                    ).attr("role", "submit-edit"));
+        if (comment.parent_comment == null){
+            $body.append(
+                $("<div />").addClass("comment-actions").append(
+                    $("<button />").html("Reply").addClass(
+                        "btn btn-link btn-xs"
+                    ).attr("role", "comment-reply")
+
             ).append(
                 $("<ul />").addClass("media-list")
             ).append(
@@ -134,7 +134,7 @@
                     $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs"
                     ).attr("role", "comment-add")
-                )
+                ))
             );
         }
 
