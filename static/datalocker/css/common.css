@@ -47,7 +47,11 @@ button[role='archive-locker']   { display: inline-block; }
 
 
 
-
+#delete-warning{
+  width: 330px;
+  float: right;
+  display: none
+}
 /*-----------------------------------*\
     $BREADCRUMBS
 \*-----------------------------------*/
