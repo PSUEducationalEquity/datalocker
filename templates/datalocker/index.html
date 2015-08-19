@@ -15,11 +15,15 @@
     <div class="container-fluid">
       <h2 class="italic">My Lockers</h2>
       <button name="show-hide-lockers"
-          class="btn btn-default btn-xs button-archived-showhide"
-          title="Show/Hide Archived Lockers">Show Archived Lockers</button>
+              class="btn btn-default btn-xs button-archived-showhide"
+              title="Show/Hide Archived Lockers"
+              data-state="hide"
+              >Show Archived Lockers</button>
       {% if owned|length > 0 %}
         <table class="table table-striped table-hover listing tablesorter"
-          id="locker-list">
+               data-archive-url="{% url 'datalocker:archive_locker' 0 %}"
+               data-unarchive-url="{% url 'datalocker:unarchive_locker' 0 %}"
+               id="locker-list">
           <caption>List of Lockers that I own</caption>
           <thead>
             <tr>
@@ -33,24 +37,21 @@
               <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
               {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                 <td class="record-name">
-                    <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
-                  {% if locker.archive_timestamp != None %}
-                    <span class="label label-default js-archived-label">Archived</span>
-                  {% endif %}
+                  <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                  <span class="label label-default archived-label">Archived</span>
                 </td>
                 <td class="hidden-xs">{{ locker.latest_submission }}</td>
                 <td class="record-actions">
                   <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Share</button>
                   <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
-                  {% if locker.archive_timestamp != None %}
-                  <button type="button" class="btn btn-success btn-xs archive-button"
-                    id="unarchive-locker" role="archive-locker"
-                    data-url="{% url 'datalocker:unarchive_locker' 0 %}">Unarchive</button>
-                  {% else %}
-                  <button type="button" class="btn btn-danger btn-xs archive-button"
-                    id="archive-locker" role="archive-locker"
-                    data-url="{% url 'datalocker:archive_locker' 0 %}">Archive</button>
-                  {% endif %}
+                  <button type="button"
+                          class="btn btn-success btn-xs"
+                          role="unarchive-locker"
+                          >Unarchive</button>
+                  <button type="button"
+                          class="btn btn-danger btn-xs"
+                          role="archive-locker"
+                          >Archive</button>
                 </td>
               </tr>
             {% endfor %}
@@ -172,7 +173,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <input type="submit" class="btn btn-primary btn-sm pull-left" value="Done" />
+            <input type="submit" class="btn btn-primary btn-sm pull-left" value="Save" />
             <button type="button" class="btn btn-default btn-sm pull-left"
               data-dismiss="modal">Close</button>
           </div>

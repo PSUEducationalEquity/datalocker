@@ -1,5 +1,6 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -21,13 +22,42 @@ from django.views.generic import View
 from .decorators import user_has_locker_access
 from .models import Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
-import datetime, json, requests
+import datetime, json, logging, requests
+
+
+logger = logging.getLogger(__name__)
 
 
 ##
 ## Helper Functions
 ##
+
+def _get_notification_from_address(email_purpose):
+    """
+    Gets the from address for notification emails from settings.py. If the
+    setting does not exist or is blank, it logs the error and uses
+    `email_purpose` to explain what email was trying to be sent.
+    """
+    from_addr = ''
+    try:
+        from_addr = settings.NOTIFICATIONS_FROM
+    except:
+        logger.warning("The '%s' email was not sent because " \
+            "NOTIFICATIONS_FROM was not defined in settings_local.py or " \
+            "settings.py" % email_purpose)
+    else:
+        if from_addr == '':
+            logger.warning("The '%s' email was not sent because " \
+                "NOTIFICATIONS_FROM in settings_local.py or settings.py " \
+                "is blank" % email_purpose)
+    return from_addr
+
+
 def _get_public_user_dict(user):
+    """
+    Converts a user object to a dictionary and only returns certain
+    publically-available fields for the user.
+    """
     public_fields = ['id', 'email', 'first_name', 'last_name']
     user_dict = {}
     for key, value in model_to_dict(user).iteritems():
@@ -37,6 +67,11 @@ def _get_public_user_dict(user):
 
 
 
+
+
+##
+## Views
+##
 
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -76,62 +111,85 @@ def delete_submission(request, **kwargs):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
 def form_submission_view(request, **kwargs):
     """
     Handles form submissions from outside applications to be saved in lockers.
     """
+    # redirect non-form submissions to the main page
+    if request.method != 'POST':
+        return HttpResponseRedirect(reverse('datalocker:index'))
+
     safe_values = {
-        'identifier': request.POST.get('form-id', ''),
-        'name': request.POST.get('name', 'New Locker'),
-        'url': request.POST.get('url', ''),
-        'owner': request.POST.get('owner', ''),
-        'data': request.POST.get('data', ''),
+        'identifier': request.POST.get('form-id', '').strip(),
+        'name': request.POST.get('name', 'New Locker').strip(),
+        'url': request.POST.get('url', '').strip(),
+        'owner': request.POST.get('owner', '').strip(),
+        'data': request.POST.get('data', '').strip(),
         }
-    locker, created = Locker.objects.get_or_create(
-        form_identifier=safe_values['identifier'],
-        archive_timestamp=None,
-        defaults={
-            'name': safe_values['name'],
-            'form_url': safe_values['url'],
-            'owner': safe_values['owner'],
-            }
-        )
+    try:
+        locker = Locker.objects.filter(
+            form_identifier=safe_values['identifier'],
+            archive_timestamp=None,
+            ).order_by('-pk')[0]
+        created = False
+    except (Locker.DoesNotExist, IndexError):
+        locker = Locker(
+            form_identifier=safe_values['identifier'],
+            name=safe_values['name'],
+            form_url=safe_values['url'],
+            owner=safe_values['owner'],
+            )
+        locker.save()
+        created = True
     submission = Submission(
         locker = locker,
         data = safe_values['data'],
         )
     submission.save()
+    logger.info("New submission (%s) from %s saved to %s locker (%s)" % (
+        submission.pk,
+        safe_values['url'],
+        'new' if created else 'existing',
+        locker.pk
+        ))
 
     try:
         address = User.objects.get(username=safe_values['owner']).email
     except User.DoesNotExist:
-        """ TODO: do something about this as the locker's owner doesn't have
-               an account so therefore likely won't be able to access it.
-               Might have to alert an administrator so they can assign
-               the locker to someone or create an account for the owner. """
-        pass
+        logger.warning("New submission saved to orphaned locker: %s" % (
+            reverse(
+                'datalocker:submissions_view',
+                kwargs={'locker_id': locker.id, 'pk': submission.id}
+                ),
+        ))
     else:
-        subject = "%s - new submission - Data Locker" % safe_values['name']
-        message = "Data Locker: new form submission saved\n\n" \
-            "Form: %s\n\n" \
-            "View submission: %s\n" \
-            "View all submissions: %s\n" % (
-                request.POST.get('name', 'New Locker'),
-                reverse(
-                    'datalocker:submissions_view',
-                    kwargs={'locker_id': locker.id, 'pk': submission.id}
-                    ),
-                reverse(
-                    'datalocker:submissions_list',
-                    kwargs={'locker_id': locker.id,}
-                    ),
-                )
-        try:
-            send_mail(subject, message, from_email, [address])
-        except Exception, e:
-            """ TODO: log the failure here """
-            pass
+        from_addr = _get_notification_from_address("new submission")
+        if from_addr:
+            subject = "%s - new submission" % safe_values['name']
+            message = "A new form submission was saved to the Data Locker. " \
+                "The name of the locker and links to view the submission " \
+                "are provided below.\n\n" \
+                "Locker: %s\n\n" \
+                "View submission: %s\n" \
+                "View all submissions: %s\n" % (
+                    request.POST.get('name', 'New Locker'),
+                    request.build_absolute_uri(
+                        reverse(
+                            'datalocker:submissions_view',
+                            kwargs={'locker_id': locker.id, 'pk': submission.id}
+                            )
+                        ),
+                    request.build_absolute_uri(
+                        reverse(
+                            'datalocker:submissions_list',
+                            kwargs={'locker_id': locker.id,}
+                            )
+                        ),
+                    )
+            try:
+                send_mail(subject, message, from_addr, [address])
+            except Exception, e:
+                logger.exception("New submission email to the locker owner failed")
     return HttpResponse(status=201)
 
 
@@ -243,13 +301,26 @@ class LockerUserAdd(View):
         if not user in locker.users.all():
             locker.users.add(user)
             locker.save()
-        from_email = 'eeqsys@psu.edu'
-        locker_name = Locker.objects.get(id=kwargs['locker_id'])
-        subject = 'Granted Locker Access'
-        to = self.request.POST.get('email', "")
-        body = 'Hello, ' + to +'\n'+' You now have access to a locker ' +  locker_name.name
-        email = EmailMessage(subject, body, from_email, [to])
-        email.send()
+        from_addr = _get_notification_from_address("locker access granted")
+        if from_addr:
+            subject = "Access to Locker: %s" % locker.name
+            to_addr = self.request.POST.get('email', '')
+            message = "The following Data Locker of form submissions has been " \
+                "shared with you.\n\n" \
+                "Locker: %s\n\n" \
+                "You can view the submissions at:\n%s\n" % (
+                    locker.name,
+                    self.request.build_absolute_uri(
+                        reverse(
+                            'datalocker:submissions_list',
+                            kwargs={'locker_id': locker.id,}
+                            )
+                        ),
+                    )
+            try:
+                send_mail(subject, message, from_addr, [to_addr])
+            except:
+                logger.exception("Locker shared with you email failed to send")
         return JsonResponse(_get_public_user_dict(user))
 
 
@@ -286,20 +357,44 @@ class SubmissionView(LoginRequiredMixin, generic.DetailView):
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    locker_name = locker.name
-    locker_owner = locker.owner
+    previous_owner = User.objects.get(username=locker.owner)
     new_locker_name = request.POST.get('edit-locker', '')
-    new_owner = request.POST.get('edit-owner', '')
-    if new_locker_name != "":
+    new_owner_email = request.POST.get('edit-owner', '')
+    if new_locker_name:
         locker.name = new_locker_name
-    if new_owner != "":
+    if new_owner_email:
         try:
-            user = User.objects.get(email=new_owner).username
+            new_owner = User.objects.get(email=new_owner_email).username
         except User.DoesNotExist:
-            ### TODO: Log this and deal with it
-            pass
+            logger.error(
+                "Attempted to reassign locker (%s) to non-existent user (%s)" %
+                (locker.name, new_owner)
+                )
+            ### TODO: Report this problem back to the end user
         else:
-            locker.owner = user
+            locker.owner = new_owner
+            from_addr = _get_notification_from_address("change locker owner")
+            if from_addr:
+                subject = "Ownership of Locker: %s" % locker.name
+                to_addr = request.POST.get('email', '')
+                message = "%s %s has changed the ownership of the following " \
+                    "Data Locker of form submissions to you.\n\n" \
+                    "Locker: %s\n\n" \
+                    "You can view the submissions at:\n%s\n" % (
+                        previous_owner.first_name,
+                        previous_owner.last_name,
+                        locker.name,
+                        request.build_absolute_uri(
+                            reverse(
+                                'datalocker:submissions_list',
+                                kwargs={'locker_id': locker.id,}
+                                )
+                            ),
+                        )
+                try:
+                    send_mail(subject, message, from_addr, [to_addr])
+                except:
+                    logger.exception("Locker ownership changed to you email failed to send")
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
 
