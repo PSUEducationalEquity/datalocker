@@ -48,11 +48,9 @@
         });
     }
 
-
-
     /* Adds the ability to archive a locker */
     Locker.archive = function(id) {
-        archiveUrl = $("#locker-list").attr("data-archive-url");
+        archiveUrl = $("#archive-locker").attr("data-url");
         $.ajax({
             url: archiveUrl.replace("/0/", "/" + id +"/"),
             type: 'POST',
@@ -63,7 +61,9 @@
             },
             // callback handler: success
             success: function(data) {
-                $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
+                $("#locker-list tr[data-id='" + id + "']").addClass('list-lockers is-archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                    'Unarchive');
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -76,11 +76,9 @@
         });
     }
 
-
-
     /* Adds the ability to unarchive a locker */
     Locker.unarchive = function(id) {
-        unarchiveUrl = $("#locker-list").attr("data-unarchive-url");
+        unarchiveUrl = $("#unarchive-locker").attr("data-url");
         $.ajax({
             url: unarchiveUrl.replace("/0/", "/" + id +"/"),
             type: 'POST',
@@ -91,7 +89,9 @@
             },
             // callback handler: success
             success: function(data) {
-                $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
+                $('#locker-list tr[data-id=' + id + "]").removeClass('list-lockers is-archived');
+                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                    'Archive');
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -103,8 +103,6 @@
             }
         });
     }
-
-
 
     /* Adds the ability to delete user from a locker */
     Locker.delete = function (user_id) {
@@ -136,13 +134,13 @@
     }
 
 
-
     /**
      * Builds a list of a single entry of a user that was submitted
      *
      * @return     void
      * @author     Hunter Yohn  <hay110@psu.edu>
      */
+
     Locker._build_user_list_entry = function (user) {
         return  $("<li />").attr("data-id", user.id).append(
             $("<div />").addClass("existing-users-list").html(
@@ -159,14 +157,13 @@
             );
     }
 
-
-
     /**
      * Builds a list off all of the user list entries
      *
      * @return     void
      * @author     Hunter Yohn  <hay110@psu.edu>
      */
+
     Locker.build_user_list = function (users) {
         var locker_id = $("#dialog-edit-users").attr("data-locker-id");
         var url = $("#existing-users").attr("data-url").replace(
@@ -206,39 +203,16 @@
                 Locker.dataRequest = null;
             });
         }
-    }
 
-
-
-    Locker.no_user_message = function () {
-        if ($("#existing-users li").length == 0){
-            $("#existing-users").append(
-                $("<li />").attr('id','no-users-message'
-                    ).append(
-                        "There are no users for this locker")
-                    );
+        Locker.no_user_message = function () {
+            if ($("#existing-users li").length == 0){
+                $("#existing-users").append(
+                    $("<li />").attr('id','no-users-message'
+                        ).append(
+                            "There are no users for this locker")
+                        );
+            }
         }
-    }
-
-
-
-    Locker.show_hide_archived = function (state) {
-        if (state == 'show') {
-            $("table").addClass("js-show-archived");
-            $("button[name='show-hide-lockers']").addClass(
-                'is-active'
-            ).html(
-                'Hide Archived Lockers'
-            );
-        } else if (state == 'hide') {
-            $("table").removeClass("js-show-archived");
-            $("button[name='show-hide-lockers']").removeClass(
-                'is-active'
-            ).html(
-                'Show Archived Lockers'
-            );
-        }
-        document.cookie="show/hide=" + state;
     }
 }( window.Locker = window.Locker || {}, jQuery));
 
@@ -273,8 +247,18 @@ $(document).ready(function () {
         var settings = jQuery.parseJSON($(this).closest("tr").attr("data-settings"));
         console.log(settings);
         $("#dialog-edit-locker input[name='enable-workflow']").prop('checked', settings['workflow|enabled']);
+        if ($("#dialog-edit-locker input[name='enable-workflow']").is(':checked')) {
+            $('#locker-options').show();
+        } else {
+            $('#locker-options').hide();
+        }
         $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
         $("#dialog-edit-locker input[name='enable-discussion']").prop('checked', settings['discussion|enabled']);
+        if ($("#dialog-edit-locker input[name='enable-discussion']").is(':checked')) {
+            $('#discussion-options').show();
+        } else {
+            $('#discussion-options').hide();
+        }
         $("#dialog-edit-locker input[name='users-can-view-discussion']").prop('checked', settings['discussion|users-have-access-to-disccusion']);
         $("#dialog-edit-locker textarea[name='workflow-states-textarea']").val(
             settings['workflow|states'].join("\n")
@@ -295,28 +279,34 @@ $(document).ready(function () {
         Locker.delete(user_id);
     });
 
-    $("button[role='archive-locker']").on("click", function (event)
-    {
+    $("[role='archive-locker']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
-        Locker.archive(id);
-    });
-    $("button[role='unarchive-locker']").on("click", function (event)
-    {
-        event.preventDefault();
-        var id = $(this).closest("tr").attr("data-id");
-        Locker.unarchive(id);
-    });
-    $(".button-archived-showhide").on("click", function (event)
-    {
-        var showing = $("table").hasClass("js-show-archived");
-        if (showing) {
-            Locker.show_hide_archived('hide');
+        if ($(this).html() == "Archive") {
+            Locker.archive(id);
+            $(this).removeClass('btn-danger');
+            $(this).addClass('btn-success');
         } else {
-            Locker.show_hide_archived('show');
+            Locker.unarchive(id);
+            $(this).addClass('btn-danger');
+            $(this).removeClass('btn-success');
         }
     });
-    //show or hides the workflow options if checked
+    $(".button-archived-showhide").click(function() {
+      if ($(this).html() == "Show Archived Lockers") {
+            $('.is-archived').show();
+            $(this).addClass('button-archived-showhide is-active');
+            $(this).html('Hide Archived Lockers');
+            document.cookie="show/hide=show";
+        } else {
+            $('.is-archived').hide();
+            $(this).removeClass('button-archived-showhide is-active');
+            $(this).html('Show Archived Lockers');
+            document.cookie="show/hide=hide"
+        }
+    });
+
+     //show or hides the workflow options if checked
     $('#enable-workflow').change(function(){
         if (this.checked) {
             $('#locker-options').show();
@@ -334,9 +324,18 @@ $(document).ready(function () {
     });
 
     var showHide = getCookie("show/hide");
-    Locker.show_hide_archived(showHide);
+    if (showHide == "show") {
+        $('.is-archived').show();
+        $(".button-archived-showhide").addClass('button-archived-showhide is-active');
+        $(".button-archived-showhide").html('Hide Archived Lockers');
+    }
+    else {
+        $('.is-archived').hide();
+        $(".button-archived-showhide").removeClass('button-archived-showhide is-active');
+        $(".button-archived-showhide").html('Show Archived Lockers');
+    }
 
-    // Taken from w3 schools to retrieve a cookie value
+    // Taken from w3 schools to retireve a cookie value
     function getCookie(cname) {
         var name = cname + "=";
         var ca = document.cookie.split(';');
