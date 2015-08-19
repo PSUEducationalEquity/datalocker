@@ -82,6 +82,16 @@ button[role='archive-locker']   { display: inline-block; }
     $COMMENTING
 \*-----------------------------------*/
 
+button[role='comment-edit'] { display: inline-block; }
+button[role='comment-reply'] {
+  display: inline-block;
+  float: left;
+}
+
+.comment {
+  display: block;
+}
+
 .comment-button {
   clear: left;
   float: right;

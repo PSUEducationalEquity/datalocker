@@ -119,11 +119,10 @@
                     ).attr("role", "submit-edit"));
         if (comment.parent_comment == null){
             $body.append(
-                $("<div />").addClass("comment-actions").append(
-                    $("<button />").html("Reply").addClass(
+                $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs"
-                    ).attr("role", "comment-reply")
-
+                    ).attr("role", "comment-reply")).append(
+                $("<div />").addClass("comment-actions"
             ).append(
                 $("<ul />").addClass("media-list")
             ).append(
