@@ -40,7 +40,7 @@
                 </td>
                 <td class="hidden-xs">{{ locker.latest_submission }}</td>
                 <td class="record-actions">
-                  <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Users</button>
+                  <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Share</button>
                   <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
                   {% if locker.archive_timestamp != None %}
                   <button type="button" class="btn btn-success btn-xs archive-button"
@@ -119,7 +119,7 @@
                 data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}"
                 data-url="{% url 'datalocker:locker_users' 0 %}">
               </ul>
-              <h5 class="modal-title" id="dialog-edit-users-title"><strong>Share access to this locker with someone else</strong></h5>
+              <h5 class="modal-title share-access-title" id="dialog-edit-access-users-title"><strong>Share access to this locker with someone else</strong></h5>
               <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text" name="email" id="email" style="width:200px;" placeholder="Enter the email address to share this locker with">
               <button type="submit" class="btn btn-primary btn-sm add-btn" id="button-user-add">
