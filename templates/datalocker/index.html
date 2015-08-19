@@ -128,6 +128,7 @@
               <label for="email"><span class="sr-only">Email Address</span></label>
               <input type="text"
                 name="email"
+                class="typeahead"
                 id="email"
                 style="width:200px;"
                 placeholder="Enter the email address to share this locker with">
@@ -238,4 +239,6 @@
             src=" {% static 'datalocker/js/locker.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/workflow.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/typeahead.js' %}"></script>
 {% endblock site-scripts %}
