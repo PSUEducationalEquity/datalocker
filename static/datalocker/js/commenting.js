@@ -84,7 +84,6 @@
 
         // Callback handler: success
         Comment.addRequest.done(function (response, textStatus, jqXHR) {
-            $("#comment-list").append(Comment._build_comment_feed_entry(response));
             $("#comment-list li[data-id='" + id + "'] textarea").val('');
             $("#comment-list li[data-id='" + id + "'] div.comment-reply-entry").addClass("hide");
             $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
@@ -129,7 +128,8 @@
                 $("<ul />").addClass("media-list")
             ).append(
                 $("<div />").addClass("comment-reply-entry hide").append(
-                    $("<textarea />").attr("name", "comment-reply")
+                    $("<textarea />").attr("name", "comment-reply").addClass(
+                        "comment-reply-textarea")
                 ).append(
                     $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs"
