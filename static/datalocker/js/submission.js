@@ -128,6 +128,7 @@ $(document).ready(function()
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
         $(".heading-display-for-submission").toggle();
+        $("#delete-warning").toggle();
 
     });
 });

@@ -47,7 +47,11 @@ button[role='archive-locker']   { display: inline-block; }
 
 
 
-
+#delete-warning{
+  width: 330px;
+  float: right;
+  display: none
+}
 /*-----------------------------------*\
     $BREADCRUMBS
 \*-----------------------------------*/
@@ -75,7 +79,6 @@ button[role='archive-locker']   { display: inline-block; }
 /*ol*/.breadcrumb-trail > .active {
   color: #777;
 }
-
 
 
 /*-----------------------------------*\
@@ -147,6 +150,14 @@ button[role='comment-reply'] {
 .remove-users {
   padding-left: 10px;
   margin-top: 2px;
+}
+
+
+/*-----------------------------------*\
+    $SHAREDIALOG
+\*-----------------------------------*/
+#dialog-edit-access-users-title {
+  margin-top: 65px;
 }
 
 
