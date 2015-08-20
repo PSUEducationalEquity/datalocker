@@ -85,10 +85,7 @@ button[role='archive-locker']   { display: inline-block; }
 \*-----------------------------------*/
 
 button[role='comment-edit'] { display: inline-block; }
-button[role='comment-reply'] {
-  display: inline-block;
-  float: left;
-}
+button[role='comment-reply'] { display: inline-block; float: left; }
 
 .comment {
   display: block;
