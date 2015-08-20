@@ -246,4 +246,11 @@ $(document).ready(function() {
         $("#comment-list li[data-id='" + id + "'] button[role='comment-edit']").show();
         $(this).hide();
     });
+
+    $("#comment-text").keydown(function (event) {
+        if (event.keyCode == 13 && !event.shiftKey) {
+            event.preventDefault();
+            $("button[role='add-comment']").click();
+        }
+    })
 });
