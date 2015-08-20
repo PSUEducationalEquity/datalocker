@@ -68,7 +68,8 @@
                 <td>
                   {% if forloop.counter == 3 %}
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
-                      style="display:block;">{{ value }}</a><span class="label label-warning">Warning</span>
+                      style="display:block;">{{ value }}</a>{% if submission.1 %}<span class="label label-warning delete-label">Warning! This is submission is going to be deleted</span>{% else%}
+                      {% endif %}
                   {% else %}
                     {{ value }}
                   {% endif %}

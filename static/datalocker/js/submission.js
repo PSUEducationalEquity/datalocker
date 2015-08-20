@@ -46,6 +46,7 @@
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
+                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").addClass("delete-label");
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -86,6 +87,7 @@
                 $("#submission-list tr[data-id='"+id +"']").removeClass("deleted");
                 $("#submission-list tr[data-id='"+id +"'] button[role='delete-submission']").html(
                     "Delete");
+                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").removeClass("delete-label");
                  Submission.undeleteRequest = null;
                 },
             error: function(jqXHR) {
@@ -117,7 +119,8 @@ $(document).ready(function()
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
             Submission.undelete(locker_id, id);
-            $(this).removeClass("deleted")
+            $(this).removeClass("deleted");
+            $(this).removeClass("delete-label");
             $(this).removeClass("btn-success").addClass("btn-danger");
             $(this).html("Delete");
         }
@@ -127,6 +130,7 @@ $(document).ready(function()
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
+        $(".delete-label").toggle();
         $(".heading-display-for-submission").toggle();
         $("#delete-warning").toggle();
 

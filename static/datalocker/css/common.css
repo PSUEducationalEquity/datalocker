@@ -51,6 +51,12 @@ button[role='archive-locker']   { display: inline-block; }
   width: 100%;
   display: none
 }
+
+.delete-label{
+  display: none;
+}
+
+
 /*-----------------------------------*\
     $BREADCRUMBS
 \*-----------------------------------*/
@@ -297,7 +303,7 @@ caption {
 }
 .deleted {
   display: none;
-  text-decoration: line-through;
+ /* text-decoration: line-through;*/
 }
 
 .delete-submission {
