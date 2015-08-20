@@ -68,8 +68,8 @@
             // callback handler: success
             success: function(data) {
                 $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
-                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                    "Unarchive");
+                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                //     "Unarchive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -98,8 +98,8 @@
             // callback handler: success
             success: function(data) {
                 $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
-                $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                    "Archive");
+                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                //     "Archive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -230,24 +230,14 @@
 
 
 
-    // Locker.show_hide_archived = function (state) {
-    //     if (state == 'show') {
-    //         $("table").addClass("js-show-archived");
-    //         $("button[name='show-hide-lockers']").addClass(
-    //             'is-active'
-    //         ).html(
-    //             'Hide Archived Lockers'
-    //         );
-    //     } else if (state == 'hide') {
-    //         $("table").removeClass("js-show-archived");
-    //         $("button[name='show-hide-lockers']").removeClass(
-    //             'is-active'
-    //         ).html(
-    //             'Show Archived Lockers'
-    //         );
-    //     }
-    //     document.cookie="show/hide=" + state;
-    // }
+    Locker.show_hide_archived = function (state) {
+        if (state == 'show') {
+            $("table").addClass("js-show-archived");
+        } else if (state == 'hide') {
+            $("table").removeClass("js-show-archived");
+        }
+        document.cookie="show/hide=" + state;
+    }
 }( window.Locker = window.Locker || {}, jQuery));
 
 
@@ -320,26 +310,26 @@ $(document).ready(function () {
         Locker.delete(user_id);
     });
 
-    $("#locker-list").on("click","button[role='archive-locker']", function (event) {
+    $("button[role='archive-locker']").on("click", function (event) {
         event.preventDefault();
-        var showing = $("table").hasClass("js-show-archived");
         var id = $(this).closest("tr").attr("data-id");
-        if ($(this).html() == "Archive") {
-            Locker.archive(id);
-            $(this).html("Unarchive");
-            $(this).removeClass("btn-danger").addClass("btn-success");
+        Locker.archive(id);
+    });
+
+    $("button[role='unarchive-locker']").on("click", function (event) {
+        event.preventDefault();
+        var id = $(this).closest("tr").attr("data-id");
+        Locker.unarchive(id);
+    });
+
+    $('#hide-show-archived-lockers').change(function(){
+        if (this.checked) {
+            $(".is-archived").show();
         } else {
-            Locker.unarchive(id);
-            var showing = $("table").removeClass("js-show-archived");
-            $(this).removeClass("btn-success").addClass("btn-danger");
-            $(this).html("Archive");
+            $(".is-archived").hide();
         }
     });
 
-    $(".hide-show-archived-lockers-checkbox").on("click", function (event) {
-        $("button[role='archive-locker']").show();
-        $(".is-archived").toggle();
-    });
     //show or hides the workflow options if checked
     $('#enable-workflow').change(function(){
         if (this.checked) {
@@ -357,8 +347,17 @@ $(document).ready(function () {
         }
     });
 
-    // var showHide = getCookie("show/hide");
-    // Locker.show_hide_archived(showHide);
+    $('#hide-show-archived-lockers').change(function(){
+        var showing = $("table").hasClass("js-show-archived");
+        if (showing) {
+            Locker.show_hide_archived('hide');
+        } else {
+            Locker.show_hide_archived('show');
+        }
+    });
+
+    var showHide = getCookie("show/hide");
+    Locker.show_hide_archived(showHide);
 
     // Taken from w3 schools to retrieve a cookie value
     function getCookie(cname) {
