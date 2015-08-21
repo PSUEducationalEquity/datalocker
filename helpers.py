@@ -7,7 +7,7 @@ CSS_FILE = os.path.join(BASE_DIR, 'static', 'datalocker', 'css', 'user_colors.cs
 logger = logging.getLogger(__name__)
 
 class UserColorHelper():
-    def list_of_available_colors():
+    def list_of_available_colors(self):
         """
         Searches the css file and assigns all of the classes
         defined into a list for use in a session element
