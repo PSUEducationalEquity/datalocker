@@ -71,7 +71,6 @@ def _get_public_user_dict(user):
 def _get_public_comment_dict(comment):
     public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
-    colors = UserColorHelper()
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
             comment_dict[key] = value
@@ -79,16 +78,18 @@ def _get_public_comment_dict(comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
-        comment_dict['color'] = colors.list_of_available_colors()
+    comment_dict['color'] = _user_color_lookup(comment_dict['user'])
     return comment_dict
 
 
 
 
 def _user_color_lookup(user):
-    avail_colors = UserColorHelper.list_of_available_colors()
-
-    return ""
+    color_dict = {}
+    colors = UserColorHelper()
+    avail_colors = colors.list_of_available_colors()
+    color_dict['color'] = avail_colors
+    return color_dict
 
 
 
@@ -399,7 +400,7 @@ def get_comments_view(request, **kwargs):
             return JsonResponse(
                 {
                 'comments': comments,
-                'replies': replies
+                'replies': replies,
                 })
         else:
             return HttpResponseRedirect(reverse('datalocker:submissions_view',
