@@ -49,11 +49,12 @@ button[role='archive-locker']   { display: inline-block; }
 
 #delete-warning{
   width: 100%;
-  display: none
+  display: none;
 }
 
 .delete-label{
   display: none;
+  font-size: 90%;
 }
 
 
