@@ -45,7 +45,7 @@ button[role='archive-locker']   { display: inline-block; }
 .is-archived button[role='unarchive-locker'] { display: inline-block; }
 .is-archived button[role='archive-locker'] { display: none; }
 
-
+/* if archived locker hide locker option buttons */
 button[role='edit-users'] { display: inline-block; }
 button[role='edit-locker'] { display: inline-block; }
 .is-archived button[role='edit-users'] { display: none; }
