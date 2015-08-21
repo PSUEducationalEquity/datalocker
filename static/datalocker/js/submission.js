@@ -46,7 +46,9 @@
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
-
+                var start = moment([2007, 0, 5]);
+                var end = moment([2007, 0, 10]);
+                $("span[name='delete-label']").text("Warning! This submission is going to be deleted in " + end.from(start)).toggle();
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -133,7 +135,7 @@ $(document).ready(function()
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
 
-        $(".delete-label").text("Warning! This submission is going to be deleted in " + end.from(start)).toggle();
+        $(".delete-label").toggle();
         $(".heading-display-for-submission").toggle();
         $("#delete-warning").toggle();
 
