@@ -46,6 +46,11 @@ button[role='archive-locker']   { display: inline-block; }
 .is-archived button[role='archive-locker'] { display: none; }
 
 
+button[role='edit-users'] { display: inline-block; }
+button[role='edit-locker'] { display: inline-block; }
+.is-archived button[role='edit-users'] { display: none; }
+.is-archived button[role='edit-locker'] { display: none; }
+
 
 #delete-warning{
   width: 100%;
