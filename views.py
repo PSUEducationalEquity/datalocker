@@ -20,6 +20,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
 from .decorators import user_has_locker_access
+from .helpers import UserColorHelper
 from .models import Comment, Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, logging, requests
@@ -68,7 +69,7 @@ def _get_public_user_dict(user):
 
 
 def _get_public_comment_dict(comment):
-    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment']
+    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
@@ -77,6 +78,7 @@ def _get_public_comment_dict(comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
+        comment_dict['color'] = "red"
     return comment_dict
 
 

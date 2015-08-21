@@ -24,11 +24,9 @@
   display: active;
 }
 
-
 /* show/hide the archived rows */
 .is-archived { display: none; }
 .js-show-archived .is-archived { display: table-row; }
-
 
 /* show/hide the archive labels */
 .is-archived .archived-label {
@@ -51,11 +49,13 @@ button[role='edit-locker'] { display: inline-block; }
 .is-archived button[role='edit-users'] { display: none; }
 .is-archived button[role='edit-locker'] { display: none; }
 
-
 #delete-warning{
   width: 100%;
   display: none
 }
+
+
+
 /*-----------------------------------*\
     $BREADCRUMBS
 \*-----------------------------------*/
@@ -83,6 +83,7 @@ button[role='edit-locker'] { display: inline-block; }
 /*ol*/.breadcrumb-trail > .active {
   color: #777;
 }
+
 
 
 /*-----------------------------------*\
@@ -130,6 +131,7 @@ button[role='comment-reply'] { display: inline-block; float: left; }
 }
 
 
+
 /*-----------------------------------*\
     $EXISTINGUSERS
 \*-----------------------------------*/
@@ -154,12 +156,14 @@ button[role='comment-reply'] { display: inline-block; float: left; }
 }
 
 
+
 /*-----------------------------------*\
     $SHAREDIALOG
 \*-----------------------------------*/
 #dialog-edit-access-users-title {
   margin-top: 65px;
 }
+
 
 
 /*-----------------------------------*\
@@ -181,6 +185,8 @@ ul .information {
   padding-left: 2em;
 }
 
+
+
 /*------------------------------------*\
     $TABLES
 \*------------------------------------*/
@@ -192,6 +198,7 @@ ul .information {
 .record-name {
   width: 600px;
 }
+
 
 
 /*------------------------------------*\
@@ -272,6 +279,9 @@ ul .information {
   float: right;
  }
 /*-----------End code for the toggle switch --------*/
+
+
+
 /*------------------------------------*\
     $Workflow
 \*------------------------------------*/
@@ -282,7 +292,7 @@ ul .information {
   display: inherit;
 }
 
-/*-----------End code for the toggle switch --------*/
+
 
 /*------------------------------------*\
     $GENERAL
@@ -300,6 +310,7 @@ caption {
 .document-footer {
   margin-top: 150px;
 }
+
 .deleted {
   display: none;
   text-decoration: line-through;
@@ -308,12 +319,15 @@ caption {
 .delete-submission {
   display: none;
 }
+
 .heading-display-for-submission {
   display: none;
 }
+
 .submission-deleted {
   display: table-row;
 }
+
 .dl-horizontal dd {
   margin-left: 150px;
   line-height: 2.5;
