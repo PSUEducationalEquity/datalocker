@@ -85,6 +85,11 @@ def _get_public_comment_dict(comment):
 
 
 def _user_color_lookup(user):
+    # Test if user has a color here #
+
+    # If there wasn't a color lookup these colors here,
+    # Pick one from the avail_colors and return it in
+    # the color dict variable.
     color_dict = {}
     colors = UserColorHelper()
     avail_colors = colors.list_of_available_colors()
