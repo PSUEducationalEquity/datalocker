@@ -17,14 +17,9 @@ class UserColorHelper():
             with open(CSS_FILE, 'r') as cfile:
                 for line in cfile:
                     if line[:1] == '.':
-                        name = line.split()[0][1:]
+                        name = line.split()[0][1:].strip()
                         avail_colors.append(name)
-        except:
+        except IOError:
             logger.warning("The css file for user colors doesn't exist at " \
             "the following location '%s'" % CSS_FILE)
         return avail_colors
-
-    def color_user_lookup():
-        avail_colors = list_of_available_colors()
-        users = []
-        return ""
