@@ -78,8 +78,12 @@ def _get_public_comment_dict(request, comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
-                request.session['color'] = _user_color_lookup(comment_dict[key])
-                comment_dict['color'] = request.session['color']
+                if not request.session.get('color', None):
+                    request.session['color'] = _user_color_lookup(comment_dict['user'])
+                    comment_dict['color'] = request.session['color']
+                else:
+                    comment_dict['color'] = request.session['color']
+        _user_color_lookup(comment_dict[key])
     return comment_dict
 
 
