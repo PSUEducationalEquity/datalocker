@@ -78,7 +78,7 @@ def _get_public_comment_dict(request, comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
-                request.session[name +'-color'] = _user_color_lookup(comment_dict[key])
+                request.session[name + '-color'] = _user_color_lookup(comment_dict[key])
                 comment_dict['color'] = request.session[name + '-color']
     return comment_dict
 
@@ -86,17 +86,13 @@ def _get_public_comment_dict(request, comment):
 
 
 def _user_color_lookup(user):
-    color_dict = {}
     colors = UserColorHelper()
     avail_colors = colors.list_of_available_colors()
-    color_dict['user'] = user
-    for users in color_dict['user']:
-        try:
-            color = avail_colors.pop()
-            color_dict['color'] = color
-        except Exception:
-            return ''
-    return color_dict['color']
+    try:
+        color = avail_colors.pop()
+    except Exception:
+        return ''
+    return color
 
 
 
