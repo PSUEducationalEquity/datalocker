@@ -46,7 +46,8 @@
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
-                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").html("Warning! This is submission is going to be deleted  " + moment(submission.deleted).toNow()).show();
+                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").addClass("delete-label");
+                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").text("Warning! This is submission is going to be deleted  " + " " + moment(Submission.deleted).format()).show()
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -70,7 +71,7 @@
      * @return     void
      * @author     Hunter Yohn  <hay110@psu.edu>
      */
-    Submission.undelete = function (locker_id, id)
+    Submission.undelete = function (locker_id, id,submission)
     {
         undeleteUrl = $("button[role='delete-submission']").attr("data-url");
         // submits the request to undelete the submission
@@ -115,7 +116,7 @@ $(document).ready(function(submission)
         var locker_id = $(this).closest("table").attr("data-locker-id");
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
-            $("#submission-list tr[data-id='" + id +"'] td").find("span:first").html("Warning! This is submission is going to be deleted  " + moment(submission.deleted).toNow()).show();
+            // $("#submission-list tr[data-id='" + id +"'] td").find("span:first").text("Warning! This is submission is going to be deleted  " + " " + moment(submission.deleted).format()).show();
             $(this).html("Undelete");
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
@@ -131,7 +132,7 @@ $(document).ready(function(submission)
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
-        $(".delete-label").toggle();
+        $("#delete-label").toggle();
         $(".heading-display-for-submission").toggle();
         $("#delete-warning").toggle();
 
