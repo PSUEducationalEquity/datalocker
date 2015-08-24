@@ -68,7 +68,7 @@ def _get_public_user_dict(user):
 
 
 
-def _get_public_comment_dict(comment):
+def _get_public_comment_dict(request, comment):
     public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
     for key, value in model_to_dict(comment).iteritems():
@@ -78,7 +78,8 @@ def _get_public_comment_dict(comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
-                comment_dict['color'] = _user_color_lookup(comment_dict[key])
+                request.session['color'] = _user_color_lookup(comment_dict[key])
+                comment_dict['color'] = request.session['color']
     return comment_dict
 
 
@@ -89,15 +90,18 @@ def _user_color_lookup(user):
     # If there wasn't a color lookup these colors here,
     # Pick one from the avail_colors and return it in
     # the color dict variable.
-    try:
-        color_dict = {}
-        colors = UserColorHelper()
-        avail_colors = colors.list_of_available_colors()
-        color_dict['color'] = avail_colors
-        color = color_dict['color'].pop()
-    except Exception:
-        return ''
-    return color
+    # import pdb; pdb.set_trace()
+    color_dict = {}
+    colors = UserColorHelper()
+    avail_colors = colors.list_of_available_colors()
+    color_dict['user'] = user
+    for users in color_dict['user']:
+        try:
+            color = avail_colors.pop()
+            color_dict['color'] = color
+        except Exception:
+            return ''
+    return color_dict['color']
 
 
 
@@ -124,7 +128,7 @@ def add_comment(request, **kwargs):
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
-        'color': _user_color_lookup(request.user.username),
+        'color': request.session['color']
         })
 
 
@@ -169,7 +173,7 @@ def add_reply(request, **kwargs):
         'user': request.user.username,
         'id': comment.id,
         'parent_comment': parent_comment.id,
-        'color': _user_color_lookup(request.user.username),
+        'color': request.session['color']
         })
 
 
@@ -404,9 +408,9 @@ def get_comments_view(request, **kwargs):
             comments = []
             replies = []
             for comment in all_comments:
-                comments.append(_get_public_comment_dict(comment))
+                comments.append(_get_public_comment_dict(request, comment))
             for comment in all_replies:
-                replies.append(_get_public_comment_dict(comment))
+                replies.append(_get_public_comment_dict(request, comment))
             return JsonResponse(
                 {
                 'comments': comments,
