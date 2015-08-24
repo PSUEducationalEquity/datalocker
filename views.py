@@ -78,8 +78,8 @@ def _get_public_comment_dict(request, comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
-                request.session[name + '-color'] = _user_color_lookup(comment_dict[key])
-                comment_dict['color'] = request.session[name + '-color']
+                request.session['color'] = _user_color_lookup(comment_dict[key])
+                comment_dict['color'] = request.session['color']
     return comment_dict
 
 
@@ -119,7 +119,7 @@ def add_comment(request, **kwargs):
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
-        'color': request.session[request.user.username + '-color']
+        'color': request.session['color']
         })
 
 
@@ -164,7 +164,7 @@ def add_reply(request, **kwargs):
         'user': request.user.username,
         'id': comment.id,
         'parent_comment': parent_comment.id,
-        'color': request.session[request.user.username + '-color']
+        'color': request.session['color']
         })
 
 
