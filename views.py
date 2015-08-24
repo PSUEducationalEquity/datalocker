@@ -89,17 +89,14 @@ def _user_color_lookup(user):
     # If there wasn't a color lookup these colors here,
     # Pick one from the avail_colors and return it in
     # the color dict variable.
-    users = []
-    users.append(user)
-    for user in users:
-        try:
-            color_dict = {}
-            colors = UserColorHelper()
-            avail_colors = colors.list_of_available_colors()
-            color_dict['color'] = avail_colors
-            color = color_dict['color'].pop()
-        except Exception:
-            return ''
+    try:
+        color_dict = {}
+        colors = UserColorHelper()
+        avail_colors = colors.list_of_available_colors()
+        color_dict['color'] = avail_colors
+        color = color_dict['color'].pop()
+    except Exception:
+        return ''
     return color
 
 
