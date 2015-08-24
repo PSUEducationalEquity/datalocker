@@ -193,10 +193,11 @@ def delete_submission(request, **kwargs):
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
+            'deleted': submission.deleted,
             })
     else:
         return HttpResponseRedirect(reverse('datalocker:submission_list',
-            kwargs={'id': self.kwargs['id']}))
+            kwargs={'id': self.kwargs['id'], 'deleted': submission.deleted}))
 
 
 

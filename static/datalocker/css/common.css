@@ -52,9 +52,12 @@ button[role='archive-locker']   { display: inline-block; }
   display: none;
 }
 
+.delete-label-font-size {
+  font-size: 90%;
+}
+
 .delete-label{
   display: none;
-  font-size: 90%;
 }
 
 

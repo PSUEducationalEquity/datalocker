@@ -1,6 +1,7 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
+{% load tz %}
 
 {% block breadcrumb-trail %}
   <li>
@@ -68,7 +69,7 @@
                 <td>
                   {% if forloop.counter == 3 %}
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
-                      style="display:block;">{{ value }}</a>{% if submission.1 %}<span class="label label-warning delete-label">Warning! This is submission is going to be deleted</span>{% else%}
+                      style="display:block;">{{ value }}</a>{% if submission.1 %}<span class="label label-warning delete-label delete-label-font-size">Warning! This is submission is going to be deleted </span>{% else%}
                       {% endif %}
                   {% else %}
                     {{ value }}
@@ -76,6 +77,7 @@
                 </td>
               {% endif %}
             {% endfor %}
+            {{ deleted }}
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
