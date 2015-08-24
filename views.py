@@ -73,7 +73,6 @@ def _get_public_comment_dict(request, comment):
     comment_dict = {}
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
-            comment_dict[key] = value
             if key == 'user':
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
@@ -83,6 +82,8 @@ def _get_public_comment_dict(request, comment):
                     comment_dict['color'] = request.session['color']
                 else:
                     comment_dict['color'] = request.session['color']
+            else:
+                comment_dict[key] = value
         _user_color_lookup(comment_dict[key])
     return comment_dict
 
