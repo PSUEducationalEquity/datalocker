@@ -29,7 +29,7 @@
      * @return     void
      * @author     Hunter Yohn  <hay110@psu.edu>
      */
-    Submission.delete = function (locker_id, id)
+    Submission.delete = function (locker_id, id, submission)
     {
         deleteUrl = $("#delete-submission").attr("data-url");
         // submits the request to delete the submission
@@ -101,7 +101,7 @@
 }( window.Submission = window.Submission || {}, jQuery));
 
 
-$(document).ready(function()
+$(document).ready(function(submission)
 {
     $("button[role='filter-results']").on("click", function (event){
           $("#dialog-filter-results").modal('show');
@@ -115,6 +115,7 @@ $(document).ready(function()
         var locker_id = $(this).closest("table").attr("data-locker-id");
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
+            $("#submission-list tr[data-id='" + id +"'] td").find("span:first").html("Warning! This is submission is going to be deleted  " + moment(submission.deleted).toNow());
             $(this).html("Undelete");
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
@@ -130,7 +131,7 @@ $(document).ready(function()
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
-        $(".delete-label").toggle();
+        $("span").toggle();
         $(".heading-display-for-submission").toggle();
         $("#delete-warning").toggle();
 
