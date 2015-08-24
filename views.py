@@ -78,7 +78,7 @@ def _get_public_comment_dict(comment):
                 name = User.objects.get(id=value).username
                 username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = username
-    comment_dict['color'] = _user_color_lookup(comment_dict['user'])
+                comment_dict['color'] = _user_color_lookup(comment_dict[key])
     return comment_dict
 
 
@@ -86,15 +86,21 @@ def _get_public_comment_dict(comment):
 
 def _user_color_lookup(user):
     # Test if user has a color here #
-
     # If there wasn't a color lookup these colors here,
     # Pick one from the avail_colors and return it in
     # the color dict variable.
-    color_dict = {}
-    colors = UserColorHelper()
-    avail_colors = colors.list_of_available_colors()
-    color_dict['color'] = avail_colors
-    return color_dict
+    users = []
+    users.append(user)
+    for user in users:
+        try:
+            color_dict = {}
+            colors = UserColorHelper()
+            avail_colors = colors.list_of_available_colors()
+            color_dict['color'] = avail_colors
+            color = color_dict['color'].pop()
+        except Exception:
+            return ''
+    return color
 
 
 
@@ -121,6 +127,7 @@ def add_comment(request, **kwargs):
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
+        'color': _user_color_lookup(request.user.username),
         })
 
 
@@ -164,7 +171,8 @@ def add_reply(request, **kwargs):
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
-        'parent_comment': parent_comment.id
+        'parent_comment': parent_comment.id,
+        'color': _user_color_lookup(request.user.username),
         })
 
 

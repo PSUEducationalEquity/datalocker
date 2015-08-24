@@ -105,7 +105,7 @@
         var user = comment.user;
         var username = user.replace(/[0-9]+/g, '');
         var $icon = $("<div />").addClass("media-left").append(
-                        $("<span />").addClass("media-object midnight-blue").html(
+                        $("<span />").addClass("media-object " + comment.color).html(
                             username)
                     );
         var $body = $("<div />").addClass("media-body").append(
