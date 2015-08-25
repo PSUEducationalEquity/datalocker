@@ -77,7 +77,9 @@ def _get_public_comment_dict(request, comment):
                 name = User.objects.get(id=value).username
                 comment_dict[key] = name
                 if not request.session.get(name + '-color', None):
-                    color_mapping = _user_color_lookup(request)
+                    submission = comment.submission
+                    locker = Locker.objects.get(submissions=submission)
+                    color_mapping = _user_color_lookup(request, locker)
                     request.session[name + '-color'] = color_mapping[name]
                     comment_dict['color'] = request.session[name + '-color']
                 else:
@@ -89,11 +91,12 @@ def _get_public_comment_dict(request, comment):
 
 
 
-def _user_color_lookup(request):
+def _user_color_lookup(request, locker):
     colors = UserColorHelper()
     avail_colors = colors.list_of_available_colors()
     users = {}
-    for user in User.objects.all():
+    users[locker.owner] = avail_colors.pop()
+    for user in locker.users.all():
         try:
             color = avail_colors.pop()
         except Exception:
@@ -122,7 +125,7 @@ def add_comment(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request)
+        color_mapping = _user_color_lookup(request, kwargs['locker_id'])
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
@@ -169,7 +172,7 @@ def add_reply(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request)
+        color_mapping = _user_color_lookup(request, kwargs['locker_id'])
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
