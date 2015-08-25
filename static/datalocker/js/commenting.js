@@ -111,7 +111,7 @@
                     );
         var $body = $("<div />").addClass("media-body").append(
             $("<span />").addClass("comment").html(comment.comment));
-        if ($("#current-username").html() == user){
+        if ($("#current-username").html() == user) {
             $body.append(
                     $("<button />").html("Edit").addClass(
                         "btn btn-link btn-xs"
