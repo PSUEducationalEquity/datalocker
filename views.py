@@ -77,7 +77,7 @@ def _get_public_comment_dict(request, comment):
                 name = User.objects.get(id=value).username
                 comment_dict[key] = name
                 if not request.session.get(name + '-color', None):
-                    color_mapping = _user_color_lookup(request, comment_dict['user'])
+                    color_mapping = _user_color_lookup(request)
                     request.session[name + '-color'] = color_mapping[name]
                     comment_dict['color'] = request.session[name + '-color']
                 else:
@@ -89,7 +89,7 @@ def _get_public_comment_dict(request, comment):
 
 
 
-def _user_color_lookup(request, user):
+def _user_color_lookup(request):
     colors = UserColorHelper()
     avail_colors = colors.list_of_available_colors()
     users = {}
@@ -122,7 +122,7 @@ def add_comment(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request, request.user)
+        color_mapping = _user_color_lookup(request)
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
@@ -169,7 +169,7 @@ def add_reply(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request, request.user)
+        color_mapping = _user_color_lookup(request)
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
