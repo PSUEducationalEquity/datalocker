@@ -500,6 +500,7 @@ def modify_locker(request, **kwargs):
     new_owner = request.POST.get('edit-owner', '')
     enabled_workflow = bool(request.POST.get('enable-workflow', False))
     workflow_states_list = request.POST.get('workflow-states-textarea','')
+    shared_users = bool(request.POST.get('shared-users',False))
     user_can_edit_workflow = bool(request.POST.get('users-can-edit-workflow', False))
     enable_discussion =  bool(request.POST.get('enable-discussion', False))
     users_can_view_discussion =  bool(request.POST.get('users-can-view-discussion', False))
@@ -521,6 +522,7 @@ def modify_locker(request, **kwargs):
             ### TODO: Report this problem back to the end user
         else:
             locker.owner = new_owner
+    locker.shared_users_recieve_email(shared_users)
     locker.enable_workflow(enabled_workflow)
     locker.enable_discussion(enable_discussion)
     locker.workflow_users_can_edit(user_can_edit_workflow)

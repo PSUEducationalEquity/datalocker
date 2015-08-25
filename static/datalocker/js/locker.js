@@ -287,6 +287,7 @@ $(document).ready(function () {
         } else {
             $('#locker-options').hide();
         }
+        $("#dialog-edit-locker input[name='shared-users']").prop('checked', settings['access|shared-users']);
         $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
         $("#dialog-edit-locker input[name='enable-discussion']").prop('checked', settings['discussion|enabled']);
         if ($("#dialog-edit-locker input[name='enable-discussion']").is(':checked')) {

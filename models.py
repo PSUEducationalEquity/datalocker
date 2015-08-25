@@ -232,6 +232,7 @@ class Locker(models.Model):
             'workflow|states': self.get_all_states(),
             'discussion|enabled': self.enable_discussion(),
             'discussion|users-have-access-to-disccusion': self.discussion_users_have_access(),
+            'access|shared-users': self.shared_users_recieve_email(),
             }
 
 
@@ -311,6 +312,22 @@ class Locker(models.Model):
         elif enable in (True, False):
             discussion_users_have_access_setting.value = str(enable)
             discussion_users_have_access_setting.save()
+
+    def shared_users_recieve_email(self, enable=None):
+        shared_users_recieve_email_setting, created = LockerSetting.objects.get_or_create(
+            category='email_users',
+            setting_identifier='shared-users-will-recieve-email',
+            locker=self,
+            defaults={
+                'setting': 'Indicates shared users will recieve an email when a new submission is submitted',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if shared_users_recieve_email_setting.value == 'True' else False
+        elif enable in (True, False):
+            shared_users_recieve_email_setting.value = str(enable)
+            shared_users_recieve_email_setting.save()
 
 
 
