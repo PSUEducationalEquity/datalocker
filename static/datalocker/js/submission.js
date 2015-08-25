@@ -100,10 +100,11 @@
     }
 
 
-    Submission.build_timestamp_warning = function (locker_id, id, submission)
+    Submission.build_timestamp_warning = function ()
     {
+        var id = $(this).closest("tr").attr("data-id");
         var deleted_timestamp = $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp");
-        return $("<span>").html("Warning! This is submission is going to be deleted " + moment(deleted_timestamp).format());
+        return $("<span>").html("Warning! This is submission is going to be deleted " + deleted_timestamp);
 
 
     }
