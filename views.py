@@ -410,8 +410,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 def get_comments_view(request, **kwargs):
     locker = Locker.objects.get(id=kwargs['locker_id'])
-    setting = LockerSetting.objects.get(locker=locker, setting_identifier='discussion-enabled')
-    if setting.value == u'True':
+    if Locker.get_settings(locker):
         if request.is_ajax():
             # If statement to make sure the user should be able to see the comments
             all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
