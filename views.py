@@ -247,8 +247,7 @@ def form_submission_view(request, **kwargs):
         address = []
         address.append(User.objects.get(username=safe_values['owner']).email)
         try:
-            import pdb; pdb.set_trace()
-            if shared_users_recieve_email():
+            if Locker.shared_users_receive_email(locker):
                 for user in locker.users.all(): address.append(user.email)
         except Exception:
             logger.warning("No setting saved")
@@ -522,7 +521,7 @@ def modify_locker(request, **kwargs):
             ### TODO: Report this problem back to the end user
         else:
             locker.owner = new_owner
-    locker.shared_users_recieve_email(shared_users)
+    locker.shared_users_receive_email(shared_users)
     locker.enable_workflow(enabled_workflow)
     locker.enable_discussion(enable_discussion)
     locker.workflow_users_can_edit(user_can_edit_workflow)
