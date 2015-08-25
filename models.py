@@ -315,11 +315,11 @@ class Locker(models.Model):
 
     def shared_users_recieve_email(self, enable=None):
         shared_users_recieve_email_setting, created = LockerSetting.objects.get_or_create(
-            category='shared_access',
+            category='email_users',
             setting_identifier='shared-users-will-recieve-email',
             locker=self,
             defaults={
-                'setting': 'Indicates shared users will recieve an email when a new submission is ',
+                'setting': 'Indicates shared users will recieve an email when a new submission is submitted',
                 'value': False,
                 }
             )
