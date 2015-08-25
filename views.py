@@ -20,6 +20,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
 from .decorators import user_has_locker_access
+from .helpers import UserColorHelper
 from .models import Comment, Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, logging, requests
@@ -67,17 +68,51 @@ def _get_public_user_dict(user):
 
 
 
-def _get_public_comment_dict(comment):
-    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment']
+def _get_public_comment_dict(request, comment):
+    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
-            comment_dict[key] = value
             if key == 'user':
                 name = User.objects.get(id=value).username
-                username = ''.join([i for i in name if not i.isdigit()])
-                comment_dict[key] = username
+                comment_dict[key] = name
+                if not request.session.get(name + '-color', None):
+                    submission = comment.submission
+                    locker = Locker.objects.get(submissions=submission)
+                    color_mapping = _user_color_lookup(request, locker)
+                    request.session[name + '-color'] = color_mapping[name]
+                    comment_dict['color'] = request.session[name + '-color']
+                else:
+                    comment_dict['color'] = request.session[name + '-color']
+            else:
+                comment_dict[key] = value
     return comment_dict
+
+
+
+
+def _user_color_lookup(request, locker):
+    colors = UserColorHelper()
+    avail_colors = colors.list_of_available_colors()
+    users = {}
+    try:
+        users[locker.owner] = avail_colors.pop()
+    except Exception:
+        pass
+    for user in locker.users.all():
+        try:
+            color = avail_colors.pop()
+        except Exception:
+            return ''
+        users[user.username] = color
+    return users
+
+
+
+
+##
+## Views
+##
 
 
 
@@ -92,11 +127,16 @@ def add_comment(request, **kwargs):
         timestamp=timezone.now(),
         )
     comment.save()
+    if not request.session.get(request.user.username + '-color', None):
+        locker = Locker.objects.get(id=kwargs['locker_id'])
+        color_mapping = _user_color_lookup(request, locker)
+        request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
+        'color': request.session[request.user.username + '-color']
         })
 
 
@@ -135,21 +175,21 @@ def add_reply(request, **kwargs):
         parent_comment=parent_comment,
         )
     comment.save()
+    if not request.session.get(request.user.username + '-color', None):
+        locker = Locker.objects.get(id=kwargs['locker_id'])
+        color_mapping = _user_color_lookup(request, locker)
+        request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
-        'parent_comment': parent_comment.id
+        'parent_comment': parent_comment.id,
+        'color': request.session[request.user.username + '-color']
         })
 
 
 
-
-
-##
-## Views
-##
 
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -377,8 +417,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 def get_comments_view(request, **kwargs):
     locker = Locker.objects.get(id=kwargs['locker_id'])
-    setting = LockerSetting.objects.get(locker=locker, setting_identifier='discussion-enabled')
-    if setting.value == u'True':
+    if Locker.get_settings(locker):
         if request.is_ajax():
             # If statement to make sure the user should be able to see the comments
             all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
@@ -387,13 +426,13 @@ def get_comments_view(request, **kwargs):
             comments = []
             replies = []
             for comment in all_comments:
-                comments.append(_get_public_comment_dict(comment))
+                comments.append(_get_public_comment_dict(request, comment))
             for comment in all_replies:
-                replies.append(_get_public_comment_dict(comment))
+                replies.append(_get_public_comment_dict(request, comment))
             return JsonResponse(
                 {
                 'comments': comments,
-                'replies': replies
+                'replies': replies,
                 })
         else:
             return HttpResponseRedirect(reverse('datalocker:submissions_view',

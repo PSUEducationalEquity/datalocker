@@ -19,6 +19,11 @@
 
 {% block content %}
     <h1 class="hidden">Data lockers</h1>
+    <ul class="messages list-unstyled" id="user-messages">
+      {% for msg in messages %}
+        <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+      {% endfor %}
+    </ul>
     <div class="container-fluid">
       <div class="hide-show-archived-lockers-checkbox">
       <input type="checkbox"
@@ -60,10 +65,13 @@
                   <button type="button" class="btn btn-primary btn-xs" role="edit-users" title="Edit users for this locker">Share</button>
                   <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
                   <button type="button"
-                          class="btn btn-xs {% if locker.1 %}btn-success{% else %}btn-danger{% endif %}"
-                          role="archive-locker">
-                          {% if locker.1 %}Unarchive{% else %}Archive{% endif %}
-                  </button>
+                          class="btn btn-success btn-xs"
+                          role="unarchive-locker"
+                          >Unarchive</button>
+                  <button type="button"
+                          class="btn btn-danger btn-xs"
+                          role="archive-locker"
+                          >Archive</button>
                 </td>
               </tr>
             {% endfor %}

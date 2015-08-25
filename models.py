@@ -72,6 +72,7 @@ class Locker(models.Model):
     users = models.ManyToManyField(
         User,
         related_name='lockers',
+        blank=True,
         )
     create_timestamp = models.DateTimeField(
         auto_now=False,
