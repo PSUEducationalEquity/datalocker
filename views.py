@@ -95,7 +95,10 @@ def _user_color_lookup(request, locker):
     colors = UserColorHelper()
     avail_colors = colors.list_of_available_colors()
     users = {}
-    users[locker.owner] = avail_colors.pop()
+    try:
+        users[locker.owner] = avail_colors.pop()
+    except Exception:
+        pass
     for user in locker.users.all():
         try:
             color = avail_colors.pop()
@@ -125,7 +128,8 @@ def add_comment(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request, kwargs['locker_id'])
+        locker = Locker.objects.get(id=kwargs['locker_id'])
+        color_mapping = _user_color_lookup(request, locker)
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
@@ -172,7 +176,8 @@ def add_reply(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request, kwargs['locker_id'])
+        locker = Locker.objects.get(id=kwargs['locker_id'])
+        color_mapping = _user_color_lookup(request, locker)
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
