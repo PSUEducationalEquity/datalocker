@@ -122,7 +122,7 @@ def add_comment(request, **kwargs):
         )
     comment.save()
     if not request.session.get(request.user.username + '-color', None):
-        color_mapping = _user_color_lookup(request, comment_dict['user'])
+        color_mapping = _user_color_lookup(request, request.user)
         request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
@@ -168,6 +168,9 @@ def add_reply(request, **kwargs):
         parent_comment=parent_comment,
         )
     comment.save()
+    if not request.session.get(request.user.username + '-color', None):
+        color_mapping = _user_color_lookup(request, request.user)
+        request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
         'submission': submission.id,

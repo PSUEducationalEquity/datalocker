@@ -104,9 +104,10 @@
     Comment._build_comment_feed_entry = function (comment) {
         var user = comment.user;
         var username = user.replace(/[0-9]+/g, '');
+        var initials = username.substring(1,0) + username.slice(-1);
         var $icon = $("<div />").addClass("media-left").append(
                         $("<span />").addClass("media-object " + comment.color).html(
-                            username)
+                            initials.toUpperCase())
                     );
         var $body = $("<div />").addClass("media-body").append(
             $("<span />").addClass("comment").html(comment.comment)).append(
