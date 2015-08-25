@@ -75,29 +75,32 @@ def _get_public_comment_dict(request, comment):
         if key in public_fields:
             if key == 'user':
                 name = User.objects.get(id=value).username
-                username = ''.join([i for i in name if not i.isdigit()])
-                comment_dict[key] = username
-                if not request.session.get('color', None):
-                    request.session['color'] = _user_color_lookup(comment_dict['user'])
-                    comment_dict['color'] = request.session['color']
+                # username = ''.join([i for i in name if not i.isdigit()])
+                comment_dict[key] = name
+                if not request.session.get(name + '-color', None):
+                    request.session[name + '-color'] = _user_color_lookup(request, comment_dict['user'])
+                    comment_dict['color'] = request.session[name + '-color']
                 else:
-                    comment_dict['color'] = request.session['color']
+                    comment_dict['color'] = request.session[name + '-color']
             else:
                 comment_dict[key] = value
-        _user_color_lookup(comment_dict[key])
     return comment_dict
 
 
 
 
-def _user_color_lookup(user):
+def _user_color_lookup(request, user):
     colors = UserColorHelper()
     avail_colors = colors.list_of_available_colors()
-    try:
-        color = avail_colors.pop()
-    except Exception:
-        return ''
-    return color
+    users = {}
+    for user in User.objects.all():
+        try:
+            color = avail_colors.pop()
+        except Exception:
+            return ''
+        users[user.username] = color
+        request.session[user.username + '-color'] = users
+    return users
 
 
 
@@ -124,7 +127,7 @@ def add_comment(request, **kwargs):
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
-        'color': request.session['color']
+        'color': request.session[request.user.username + '-color']
         })
 
 
@@ -169,7 +172,7 @@ def add_reply(request, **kwargs):
         'user': request.user.username,
         'id': comment.id,
         'parent_comment': parent_comment.id,
-        'color': request.session['color']
+        'color': request.session[request.user.username + '-color']
         })
 
 
