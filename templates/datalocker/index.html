@@ -19,6 +19,11 @@
 
 {% block content %}
     <h1 class="hidden">Data lockers</h1>
+    <ul class="messages list-unstyled" id="user-messages">
+      {% for msg in messages %}
+        <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+      {% endfor %}
+    </ul>
     <div class="container-fluid">
       <div class="hide-show-archived-lockers-checkbox">
       <input type="checkbox"

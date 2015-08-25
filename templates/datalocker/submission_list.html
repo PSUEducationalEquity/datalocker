@@ -44,7 +44,11 @@
       </div>
       {% endif %}
     <h1>{{ locker.name }}</h1>
-
+    <ul class="messages list-unstyled" id="user-messages">
+        {% for msg in messages %}
+            <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+        {% endfor %}
+    </ul>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
     <table class="table table-striped table-hover listing tablesorter"
