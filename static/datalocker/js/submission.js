@@ -29,7 +29,7 @@
      * @return     void
      * @author     Hunter Yohn  <hay110@psu.edu>
      */
-    Submission.delete = function (locker_id, id, submission)
+    Submission.delete = function (locker_id, id)
     {
         deleteUrl = $("#delete-submission").attr("data-url");
         // submits the request to delete the submission
@@ -46,8 +46,8 @@
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
-                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").addClass("delete-label");
-                $("#submission-list tr[data-id='" + id +"'] td").find("span:first").text("Warning! This is submission is going to be deleted  " + " " + moment(Submission.deleted).format()).show()
+                $("#submission-list tr[data-id='" + id +"'] td").append(Submission.build_timestamp_warning(response));
+                // $("#submission-list tr[data-id='" + id +"'] td").find("span:first").text("Warning! This is submission is going to be deleted  " + " " + moment(data.deleted).toNow()).show();
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -71,7 +71,7 @@
      * @return     void
      * @author     Hunter Yohn  <hay110@psu.edu>
      */
-    Submission.undelete = function (locker_id, id,submission)
+    Submission.undelete = function (locker_id, id)
     {
         undeleteUrl = $("button[role='delete-submission']").attr("data-url");
         // submits the request to undelete the submission
@@ -99,10 +99,20 @@
             });
         Submission.undeleteRequest = null;
     }
+
+
+    Submission.build_timestamp_warning = function (locker_id, id, data)
+    {
+        return $("<span>").text("Warning! This is submission is going to be deleted  "
+            + " " + moment(data.deleted).toNow());
+
+
+    }
+
 }( window.Submission = window.Submission || {}, jQuery));
 
 
-$(document).ready(function(submission)
+$(document).ready(function()
 {
     $("button[role='filter-results']").on("click", function (event){
           $("#dialog-filter-results").modal('show');
