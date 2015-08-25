@@ -185,11 +185,11 @@ def custom_404(request):
 
 
 def delete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])
-    submission.deleted = timezone.now()
-    oldest_date = submission.deleted - datetime.timedelta(days=3)
-    submission.save()
     if request.is_ajax():
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        submission.deleted = timezone.now()
+        oldest_date = submission.deleted - datetime.timedelta(days=3)
+        submission.save()
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
