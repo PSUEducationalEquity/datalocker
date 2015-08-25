@@ -75,10 +75,10 @@ def _get_public_comment_dict(request, comment):
         if key in public_fields:
             if key == 'user':
                 name = User.objects.get(id=value).username
-                # username = ''.join([i for i in name if not i.isdigit()])
                 comment_dict[key] = name
                 if not request.session.get(name + '-color', None):
-                    request.session[name + '-color'] = _user_color_lookup(request, comment_dict['user'])
+                    color_mapping = _user_color_lookup(request, comment_dict['user'])
+                    request.session[name + '-color'] = color_mapping[name]
                     comment_dict['color'] = request.session[name + '-color']
                 else:
                     comment_dict['color'] = request.session[name + '-color']
@@ -99,7 +99,6 @@ def _user_color_lookup(request, user):
         except Exception:
             return ''
         users[user.username] = color
-        request.session[user.username + '-color'] = users
     return users
 
 
@@ -122,6 +121,9 @@ def add_comment(request, **kwargs):
         timestamp=timezone.now(),
         )
     comment.save()
+    if not request.session.get(request.user.username + '-color', None):
+        color_mapping = _user_color_lookup(request, comment_dict['user'])
+        request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
         'submission': submission.id,
