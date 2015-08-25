@@ -244,7 +244,14 @@ def form_submission_view(request, **kwargs):
         ))
 
     try:
-        address = User.objects.get(username=safe_values['owner']).email
+        address = []
+        address.append(User.objects.get(username=safe_values['owner']).email)
+        try:
+            import pdb; pdb.set_trace()
+            if shared_users_recieve_email():
+                for user in locker.users.all(): address.append(user.email)
+        except Exception:
+            logger.warning("No setting saved")
     except User.DoesNotExist:
         logger.warning("New submission saved to orphaned locker: %s" % (
             reverse(
@@ -277,7 +284,8 @@ def form_submission_view(request, **kwargs):
                         ),
                     )
             try:
-                send_mail(subject, message, from_addr, [address])
+                for to_email in address:
+                    send_mail(subject, message, from_addr, [to_email])
             except Exception, e:
                 logger.exception("New submission email to the locker owner failed")
     return HttpResponse(status=201)
