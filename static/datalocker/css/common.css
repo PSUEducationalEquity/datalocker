@@ -103,6 +103,10 @@ button[role='comment-reply'] {
   display: block;
 }
 
+.comment-actions {
+  display: inline-block;
+}
+
 .comment-button {
   clear: left;
   float: right;
