@@ -24,11 +24,6 @@
 
 {% block content %}
   <div class="container-fluid">
-    <div class="alert alert-warning" id="delete-warning" role="alert">
-    When you 'Delete' a submission it will be marked
-    to be deleted automatically after 3 days
-    giving you time to 'Undelete' a submission if needed.
-  </div>
     {% if locker.owner = user.username %}
       <div class="onoffswitch">
         <input type="checkbox"
@@ -48,6 +43,10 @@
       {% for msg in messages %}
         <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
       {% endfor %}
+      <li class="alert alert-warning" id="delete-warning">
+        When you 'Delete' a submission it will be marked
+        to be deleted automatically after 3 days
+        giving you time to 'Undelete' a submission if needed.</li>
     </ul>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
