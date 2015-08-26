@@ -329,6 +329,14 @@ $(document).ready(function () {
         } else {
             $(".is-archived").hide();
         }
+
+        var showing = $("table").hasClass("js-show-archived");
+        if (showing) {
+            Locker.show_hide_archived('hide');
+            $('#hide-show-archived-lockers').prop('checked', true);
+        } else {
+            Locker.show_hide_archived('show');
+        }
     });
 
     //show or hides the workflow options if checked
@@ -338,6 +346,7 @@ $(document).ready(function () {
         } else {
             $('#locker-options').hide();
         }
+
     });
      //show or hides the discussion options if checked
     $('#enable-discussion').change(function(){
@@ -345,15 +354,6 @@ $(document).ready(function () {
             $('#discussion-options').show();
         } else {
             $('#discussion-options').hide();
-        }
-    });
-
-    $('#hide-show-archived-lockers').change(function(){
-        var showing = $("table").hasClass("js-show-archived");
-        if (showing) {
-            Locker.show_hide_archived('hide');
-        } else {
-            Locker.show_hide_archived('show');
         }
     });
 
