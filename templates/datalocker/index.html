@@ -57,6 +57,7 @@
               {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
                 <td class="record-name">
                   <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                  <span class="url">{{ locker.form_url }}</span>
                   <span class="label label-default archived-label">Archived</span>
                 </td>
                 <td class="hidden-xs">{{ locker.latest_submission }}</td>
@@ -100,10 +101,12 @@
                 <td class="record-name">
                   <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}
                   </a>
+                    <span class="url">{{ locker.form_url }}</span>
                   {% if locker.archive_timestamp != null %}
                     <span class="label label-default">Archived</span>
                   {% endif %}
                 </td>
+                <td class="hidden-xs">{{ locker.form_url }}</td>
                 <td class="hidden-xs">{{ locker.latest_submission }}</td>
               </tr>
             {% endfor %}

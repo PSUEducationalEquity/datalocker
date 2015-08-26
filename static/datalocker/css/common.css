@@ -219,6 +219,13 @@ ul .information {
   width: 600px;
 }
 
+.url {
+  display: block;
+  margin-left: 1em;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
 
 
 /*------------------------------------*\
