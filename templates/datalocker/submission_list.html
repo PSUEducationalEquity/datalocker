@@ -71,7 +71,7 @@
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
                       style="display:block;">{{ value }}</a>
                       <span class="label label-warning delete-label" id="delete-label-font-size"
-                        data-timestamp="{{ data.deleted }}"></span>
+                        ></span>
                   {% else %}
                     {{ value }}
                   {% endif %}
@@ -81,6 +81,7 @@
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
+                data-timestamp="{{oldest_date}}"
                 class="btn btn-xs archive-button delete-submission
                 {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 {% if submission.1 %}

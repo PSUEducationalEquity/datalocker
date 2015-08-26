@@ -188,12 +188,13 @@ def delete_submission(request, **kwargs):
     if request.is_ajax():
         submission = get_object_or_404(Submission, id=kwargs['pk'])
         submission.deleted = timezone.now()
-        oldest_date = submission.deleted - datetime.timedelta(days=3)
+        oldest_date = submission.deleted + datetime.timedelta(days=3)
         submission.save()
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
             'deleted': submission.deleted,
+            'oldest_date': oldest_date,
             })
     else:
         return HttpResponseRedirect(reverse('datalocker:submission_list',
