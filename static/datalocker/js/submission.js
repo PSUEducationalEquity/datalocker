@@ -46,8 +46,12 @@
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
-                $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").html(Submission.build_timestamp_warning(response));
-                // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp", deleted_timestamp);
+                var $label = $("#submission-list tr[data-id='" + id +"'] td span.label")
+                $label.attr("data-timestamp", data.oldest_date);
+                $label.html(Submission.build_timestamp_warning($label));
+                console.log(data);
+
+
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -88,7 +92,7 @@
                 $("#submission-list tr[data-id='"+id +"']").removeClass("deleted");
                 $("#submission-list tr[data-id='"+id +"'] button[role='delete-submission']").html(
                     "Delete");
-                // $("#submission-list tr[data-id='" + id +"'] td").find("span:first").remove();
+                // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp", deleted_timestamp);
                  Submission.undeleteRequest = null;
                 },
             error: function(jqXHR) {
@@ -101,11 +105,12 @@
     }
 
 
-    Submission.build_timestamp_warning = function ()
+    Submission.build_timestamp_warning = function (element)
     {
-        var id = $(this).closest("tr").attr("data-id");
-        var deleted_timestamp = $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp");
-        return $("<span>").html("Warning! This is submission is going to be deleted " + deleted_timestamp);
+        console.log(element);
+        var id = $(element).closest("tr").attr("data-id");
+        var deleted_timestamp = $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp");
+        return "Warning! This is submission is going to be deleted " + moment(deleted_timestamp).fromNow();
 
 
     }
@@ -127,13 +132,12 @@ $(document).ready(function(id)
         var locker_id = $(this).closest("table").attr("data-locker-id");
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
-            // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").show();
             $(this).html("Undelete");
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
             Submission.undelete(locker_id, id);
             $(this).removeClass("deleted");
-            // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").hide();
+            $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp","");
             $(this).removeClass("btn-success").addClass("btn-danger");
             $(this).html("Delete");
         }
@@ -144,7 +148,9 @@ $(document).ready(function(id)
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
         $("#delete-label").toggle();
-        $("#submission-list tr.deleted td[name='date']").find("span:first").html(Submission.build_timestamp_warning);
+        $("#submission-list tr.deleted td span.label").each(function() {
+            $(this).html(Submission.build_timestamp_warning($(this)));
+        });
         $(".heading-display-for-submission").toggle();
         $("#delete-warning").toggle();
 
