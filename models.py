@@ -242,9 +242,9 @@ class Locker(models.Model):
         """
 
         """
-        if user == self.owner:
+        if user.username == self.owner:
             return True
-        elif user in self.users.all():
+        elif user in self.users.all():            
             return True
         return False
 

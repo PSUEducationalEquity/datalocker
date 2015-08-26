@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from .models import Locker
+from .models import Locker, LockerQuerySet
 
 def user_has_locker_access(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
