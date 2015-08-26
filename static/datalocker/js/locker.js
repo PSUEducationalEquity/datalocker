@@ -68,8 +68,6 @@
             // callback handler: success
             success: function(data) {
                 $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
-                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                //     "Unarchive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -98,8 +96,6 @@
             // callback handler: success
             success: function(data) {
                 $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
-                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                //     "Archive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
