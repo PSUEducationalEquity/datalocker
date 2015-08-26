@@ -1,7 +1,6 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 {% extends "datalocker/app_template.html" %}
 {% load staticfiles %}
-{% load tz %}
 
 {% block breadcrumb-trail %}
   <li>
@@ -25,11 +24,6 @@
 
 {% block content %}
   <div class="container-fluid">
-    <div class="alert alert-warning" id="delete-warning" role="alert">
-    When you 'Delete' a submission it will be marked
-    to be deleted automatically after 3 days
-    giving you time to 'Undelete' a submission if needed.
-  </div>
     {% if locker.owner = user.username %}
       <div class="onoffswitch">
         <input type="checkbox"
@@ -43,9 +37,8 @@
           data-on="Done editing"
           data-off="Edit submissions">
       </div>
-      {% endif %}
+    {% endif %}
     <h1>{{ locker.name }}</h1>
-
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
     <table class="table table-striped table-hover listing tablesorter"
@@ -65,14 +58,15 @@
           <tr data-id="{{submission.0 }}"
             class="{% if submission.1 %}deleted{% else %}{% endif %}">
             {% for value in submission %}
-              {% if forloop.counter > 2 %}
+              {% if forloop.counter > 3 %}
                 <td name="date">
-                  {% if forloop.counter == 3 %}
+                  {% if forloop.counter == 4 %}
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
-                      style="display:block;">{{ value }}</a>
-                      <span class="label label-warning delete-label" id="delete-label-font-size"
-                       data-timestamp="{{delete}}"
-                        ></span>
+                      style="display:block;"
+                      >{{ value }}</a>
+                      <span class="label label-warning delete-label"
+                      id="delete-label-font-size"
+                      data-timestamp="{{ submission.2 }}"></span>
                   {% else %}
                     {{ value }}
                   {% endif %}
@@ -82,12 +76,11 @@
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
-                data-timestamp="{{oldest_date}}"
                 class="btn btn-xs archive-button delete-submission
                 {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 {% if submission.1 %}
                 data-url="{% url 'datalocker:undelete_submission' locker.id submission.0 %}"
-                {% else %}
+                {% else %
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 {% endif %}
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>

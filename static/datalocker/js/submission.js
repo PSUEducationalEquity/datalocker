@@ -41,12 +41,13 @@
                 csrfmiddlewaretoken: $("#delete_undelete_form").find(
                    "input[name='csrfmiddlewaretoken']").val()
                 },
-            success: function(data) {
+            success: function(data, response) {
                 // deletes the submission and adds the class "deleted"
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
-                $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").html(Submission.build_timestamp_warning);
+                $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").html(Submission.build_timestamp_warning(response));
+                // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp", deleted_timestamp);
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -126,13 +127,13 @@ $(document).ready(function(id)
         var locker_id = $(this).closest("table").attr("data-locker-id");
         if ($(this).html() == "Delete") {
             Submission.delete(locker_id, id);
-            $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").show();
+            // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").show();
             $(this).html("Undelete");
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
             Submission.undelete(locker_id, id);
             $(this).removeClass("deleted");
-            $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").hide();
+            // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").hide();
             $(this).removeClass("btn-success").addClass("btn-danger");
             $(this).html("Delete");
         }
