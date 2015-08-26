@@ -217,7 +217,7 @@ def change_workflow_state(request, **kwargs):
 
 
 def custom_404(request):
-    response = render_to_response('404.html')
+    response = render_to_response('datalocker/404.html')
     response.status_code = 404
     return response
 
@@ -372,7 +372,7 @@ def locker_list_view(request):
 
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
@@ -507,7 +507,7 @@ class LockerUserDelete(View):
 
 
 
-class SubmissionView(LoginRequiredMixin, generic.DetailView):
+class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 

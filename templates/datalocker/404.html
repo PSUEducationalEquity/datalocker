@@ -2,5 +2,10 @@
 {% extends "datalocker/app_template.html" %}
 
 {% block content %}
-<p> This should be a filler page for the 404 status code
+<div class="error-message">
+<h1>The page you tried to access doesn't exist!</h1>
+<a href="{% url 'datalocker:index' %}"
+    class="btn btn-primary"
+    role="button">Back to My Lockers</a>
+</div>
 {% endblock %}

@@ -15,6 +15,16 @@
  * FOOTER...............Styling specifically for the page footer
  */
 
+/*------------------------------------*\
+    $404 PAGE
+\*------------------------------------*/
+.error-message {
+  text-align: center;
+}
+.error-message h1 {
+  font-weight: bold;
+}
+
 
 
 /*------------------------------------*\
