@@ -342,6 +342,9 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
         context['selected_fields'] = selected_fields
         context['column_headings'] = ['Submitted Date', ] + selected_fields
         context['data'] = []
+        context['delete'] = []
+        for submissions in locker.submissions.all():
+            context['delete'].append(submissions.deleted)
         for submission in locker.submissions.all().order_by('-timestamp'):
             entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():

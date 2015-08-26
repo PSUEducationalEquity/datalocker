@@ -71,6 +71,7 @@
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
                       style="display:block;">{{ value }}</a>
                       <span class="label label-warning delete-label" id="delete-label-font-size"
+                       data-timestamp="{{delete}}"
                         ></span>
                   {% else %}
                     {{ value }}
