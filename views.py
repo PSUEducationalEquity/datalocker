@@ -71,19 +71,22 @@ def _get_public_user_dict(user):
 def _get_public_comment_dict(request, comment):
     public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
+    submission = comment.submission
+    locker = Locker.objects.get(submissions=submission)
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
             if key == 'user':
                 name = User.objects.get(id=value).username
                 comment_dict[key] = name
-                if not request.session.get(name + '-color', None):
-                    submission = comment.submission
-                    locker = Locker.objects.get(submissions=submission)
-                    color_mapping = _user_color_lookup(request, locker)
-                    request.session[name + '-color'] = color_mapping[name]
-                    comment_dict['color'] = request.session[name + '-color']
-                else:
-                    comment_dict['color'] = request.session[name + '-color']
+                try:
+                    if not request.session.get(name + '-color', None):
+                        color_mapping = _user_color_lookup(request, locker)
+                        request.session[name + '-color'] = color_mapping[name]
+                        comment_dict['color'] = request.session[name + '-color']
+                    else:
+                        comment_dict['color'] = request.session[name + '-color']
+                except KeyError:
+                    comment_dict['color'] = ''
             else:
                 comment_dict[key] = value
     return comment_dict
