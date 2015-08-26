@@ -104,12 +104,15 @@
     Comment._build_comment_feed_entry = function (comment) {
         var user = comment.user;
         var username = user.replace(/[0-9]+/g, '');
+        var initials = username.substring(1,0) + username.slice(-1);
         var $icon = $("<div />").addClass("media-left").append(
-                        $("<span />").addClass("media-object midnight-blue").html(
-                            username)
+                        $("<span />").addClass("media-object " + comment.color).html(
+                            initials.toUpperCase())
                     );
         var $body = $("<div />").addClass("media-body").append(
-            $("<span />").addClass("comment").html(comment.comment)).append(
+            $("<span />").addClass("comment").html(comment.comment));
+        if ($("#current-username").html() == user) {
+            $body.append(
                     $("<button />").html("Edit").addClass(
                         "btn btn-link btn-xs"
                     ).attr("role", "comment-edit")
@@ -117,6 +120,7 @@
                     $("<button />").html("Reply").addClass(
                         "btn btn-link btn-xs hide"
                     ).attr("role", "submit-edit"));
+            }
         if (comment.parent_comment == null){
             $body.append(
                 $("<button />").html("Reply").addClass(

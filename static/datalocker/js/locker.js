@@ -33,6 +33,7 @@
             if ($("#no-users-message").length){
                 $("#no-users-message").remove();
             }
+            $("#not-a-user-alert").hide();
             $("#existing-users").append(Locker._build_user_list_entry(response));
             $("#email").val("");
             $("#email").focus();
@@ -43,6 +44,9 @@
         Locker.addRequest.fail(function (jqXHR, errorThrown) {
             if (errorThrown != "abort") {
                 console.error("Locker.add in Locker.js AJAX error");
+            }
+            if (jqXHR.status == 404) {
+                $("#not-a-user-alert").show();
             }
             Locker.addRequest = null;
         });
@@ -64,6 +68,8 @@
             // callback handler: success
             success: function(data) {
                 $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
+                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                //     "Unarchive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -92,6 +98,8 @@
             // callback handler: success
             success: function(data) {
                 $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
+                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
+                //     "Archive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -225,18 +233,8 @@
     Locker.show_hide_archived = function (state) {
         if (state == 'show') {
             $("table").addClass("js-show-archived");
-            $("button[name='show-hide-lockers']").addClass(
-                'is-active'
-            ).html(
-                'Hide Archived Lockers'
-            );
         } else if (state == 'hide') {
             $("table").removeClass("js-show-archived");
-            $("button[name='show-hide-lockers']").removeClass(
-                'is-active'
-            ).html(
-                'Show Archived Lockers'
-            );
         }
         document.cookie="show/hide=" + state;
     }
@@ -244,6 +242,7 @@
 
 
 $(document).ready(function () {
+    $("#not-a-user-alert").hide();
     $('#locker-options').hide();
     $('#discussion-options').hide();
     //opens the users modal dialog
@@ -278,6 +277,7 @@ $(document).ready(function () {
         } else {
             $('#locker-options').hide();
         }
+        $("#dialog-edit-locker input[name='shared-users']").prop('checked', settings['access|shared-users']);
         $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
         $("#dialog-edit-locker input[name='enable-discussion']").prop('checked', settings['discussion|enabled']);
         if ($("#dialog-edit-locker input[name='enable-discussion']").is(':checked')) {
@@ -311,27 +311,26 @@ $(document).ready(function () {
         Locker.delete(user_id);
     });
 
-    $("button[role='archive-locker']").on("click", function (event)
-    {
+    $("button[role='archive-locker']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         Locker.archive(id);
     });
-    $("button[role='unarchive-locker']").on("click", function (event)
-    {
+
+    $("button[role='unarchive-locker']").on("click", function (event) {
         event.preventDefault();
         var id = $(this).closest("tr").attr("data-id");
         Locker.unarchive(id);
     });
-    $(".button-archived-showhide").on("click", function (event)
-    {
-        var showing = $("table").hasClass("js-show-archived");
-        if (showing) {
-            Locker.show_hide_archived('hide');
+
+    $('#hide-show-archived-lockers').change(function(){
+        if (this.checked) {
+            $(".is-archived").show();
         } else {
-            Locker.show_hide_archived('show');
+            $(".is-archived").hide();
         }
     });
+
     //show or hides the workflow options if checked
     $('#enable-workflow').change(function(){
         if (this.checked) {
@@ -348,11 +347,22 @@ $(document).ready(function () {
             $('#discussion-options').hide();
         }
     });
+
     $('input.typeahead').typeahead({
         name: 'users',
         prefetch: {'users': users},
         limit: 10
     });
+
+    $('#hide-show-archived-lockers').change(function(){
+        var showing = $("table").hasClass("js-show-archived");
+        if (showing) {
+            Locker.show_hide_archived('hide');
+        } else {
+            Locker.show_hide_archived('show');
+        }
+    });
+
     var showHide = getCookie("show/hide");
     Locker.show_hide_archived(showHide);
 

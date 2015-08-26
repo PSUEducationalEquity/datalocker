@@ -24,11 +24,9 @@
   display: active;
 }
 
-
 /* show/hide the archived rows */
 .is-archived { display: none; }
 .js-show-archived .is-archived { display: table-row; }
-
 
 /* show/hide the archive labels */
 .is-archived .archived-label {
@@ -45,6 +43,16 @@ button[role='archive-locker']   { display: inline-block; }
 .is-archived button[role='unarchive-locker'] { display: inline-block; }
 .is-archived button[role='archive-locker'] { display: none; }
 
+/* if archived locker hide locker option buttons */
+button[role='edit-users'] { display: inline-block; }
+button[role='edit-locker'] { display: inline-block; }
+.is-archived button[role='edit-users'] { display: none; }
+.is-archived button[role='edit-locker'] { display: none; }
+
+#delete-warning{
+  width: 100%;
+  display: none
+}
 
 
 
@@ -82,7 +90,10 @@ button[role='archive-locker']   { display: inline-block; }
     $COMMENTING
 \*-----------------------------------*/
 
-button[role='comment-edit'] { display: inline-block; }
+button[role='comment-edit'] {
+  display: inline-block;
+}
+
 button[role='comment-reply'] {
   display: inline-block;
   float: left;
@@ -90,6 +101,10 @@ button[role='comment-reply'] {
 
 .comment {
   display: block;
+}
+
+.comment-actions {
+  display: inline-block;
 }
 
 .comment-button {
@@ -126,6 +141,7 @@ button[role='comment-reply'] {
 }
 
 
+
 /*-----------------------------------*\
     $EXISTINGUSERS
 \*-----------------------------------*/
@@ -150,6 +166,16 @@ button[role='comment-reply'] {
 }
 
 
+
+/*-----------------------------------*\
+    $SHAREDIALOG
+\*-----------------------------------*/
+#dialog-edit-access-users-title {
+  margin-top: 65px;
+}
+
+
+
 /*-----------------------------------*\
     $SUBMISSIONVIEWPAGE
 \*-----------------------------------*/
@@ -169,6 +195,8 @@ ul .information {
   padding-left: 2em;
 }
 
+
+
 /*------------------------------------*\
     $TABLES
 \*------------------------------------*/
@@ -180,6 +208,7 @@ ul .information {
 .record-name {
   width: 600px;
 }
+
 
 
 /*------------------------------------*\
@@ -260,6 +289,9 @@ ul .information {
   float: right;
  }
 /*-----------End code for the toggle switch --------*/
+
+
+
 /*------------------------------------*\
     $Workflow
 \*------------------------------------*/
@@ -270,7 +302,7 @@ ul .information {
   display: inherit;
 }
 
-/*-----------End code for the toggle switch --------*/
+
 
 /*------------------------------------*\
     $GENERAL
@@ -288,6 +320,7 @@ caption {
 .document-footer {
   margin-top: 150px;
 }
+
 .deleted {
   display: none;
   text-decoration: line-through;
@@ -296,12 +329,15 @@ caption {
 .delete-submission {
   display: none;
 }
+
 .heading-display-for-submission {
   display: none;
 }
+
 .submission-deleted {
   display: table-row;
 }
+
 .dl-horizontal dd {
   margin-left: 150px;
   line-height: 2.5;

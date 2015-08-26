@@ -72,6 +72,7 @@ class Locker(models.Model):
     users = models.ManyToManyField(
         User,
         related_name='lockers',
+        blank=True,
         )
     create_timestamp = models.DateTimeField(
         auto_now=False,
@@ -232,6 +233,7 @@ class Locker(models.Model):
             'workflow|states': self.get_all_states(),
             'discussion|enabled': self.enable_discussion(),
             'discussion|users-have-access-to-disccusion': self.discussion_users_have_access(),
+            'access|shared-users': self.shared_users_receive_email(),
             }
 
 
@@ -311,6 +313,22 @@ class Locker(models.Model):
         elif enable in (True, False):
             discussion_users_have_access_setting.value = str(enable)
             discussion_users_have_access_setting.save()
+
+    def shared_users_receive_email(self, enable=None):
+        shared_users_receive_email_setting, created = LockerSetting.objects.get_or_create(
+            category='email_users',
+            setting_identifier='shared-users-will-receive-email',
+            locker=self,
+            defaults={
+                'setting': 'Indicates shared users will receive an email when a new submission is submitted',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if shared_users_receive_email_setting.value == 'True' else False
+        elif enable in (True, False):
+            shared_users_receive_email_setting.value = str(enable)
+            shared_users_receive_email_setting.save()
 
 
 
@@ -394,10 +412,10 @@ class Submission(models.Model):
         try:
             nextSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__gt=self.timestamp).order_by('timestamp')[0]
+                timestamp__gt=self.timestamp, deleted=None).order_by('timestamp')[0]
         except IndexError:
             nextSubmission = Submission.objects.filter(
-                locker=self.locker).order_by('-timestamp')[0]
+                locker=self.locker, deleted=None).order_by('-timestamp')[0]
         return nextSubmission.id
 
 
@@ -411,10 +429,10 @@ class Submission(models.Model):
         try:
             lastSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__lt=self.timestamp).order_by('-timestamp')[0]
+                timestamp__lt=self.timestamp, deleted=None).order_by('-timestamp')[0]
         except IndexError:
             lastSubmission = Submission.objects.filter(
-                locker=self.locker).order_by('timestamp')[0]
+                locker=self.locker, deleted=None).order_by('timestamp')[0]
         return lastSubmission.id
 
 
@@ -425,7 +443,7 @@ class Submission(models.Model):
         with the earliest timestamp.
         """
         oldestSubmission = Submission.objects.filter(
-            locker=self.locker).earliest('timestamp')
+            locker=self.locker, deleted=None).earliest('timestamp')
         return oldestSubmission.id
 
 
@@ -436,7 +454,7 @@ class Submission(models.Model):
         with the newest timestamp.
         """
         newestSubmission = Submission.objects.filter(
-            locker=self.locker).latest('timestamp')
+            locker=self.locker, deleted=None).latest('timestamp')
         return newestSubmission.id
 
 

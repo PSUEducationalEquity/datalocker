@@ -1,40 +1,25 @@
-from http import cookies
-import os
+import logging, os
 
 
-from .models import User
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSS_FILE = os.path.join(BASE_DIR, 'static', 'datalocker', 'css', 'user_colors.css')
 
+logger = logging.getLogger(__name__)
 
 class UserColorHelper():
-    #Need to figure out how to use the css combinations here to assign
-    #Them to a User for the logged in session
-    users = []
-    for user in request.get('comment').user:
-        users.append(user)
-
-    color_classes = ['azure',
-        'black',
-        'blue',
-        'brown',
-        'dark-cyan',
-        'dark-magenta',
-        'green',
-        'hard-cyan',
-        'hard-magenta',
-        'hard-organe',
-        'hard-red',
-        'light-grey',
-        'maroon',
-        'midnight-blue',
-        'obscure-grey',
-        'obscure-pink',
-        'purple',
-        'sea-green',
-        'slate-grey',
-        'tan',
-        'yellow',
-        'violet-blue',
-    ]
-
-    user_color = cookies.SimpleCookie()
-    user_color['user_color'] = users
+    def list_of_available_colors(self):
+        """
+        Searches the css file and assigns all of the classes
+        defined into a list for use in a session element
+        """
+        avail_colors = []
+        try:
+            with open(CSS_FILE, 'r') as cfile:
+                for line in cfile:
+                    if line[:1] == '.':
+                        name = line.split()[0][1:].strip()
+                        avail_colors.append(name)
+        except IOError:
+            logger.warning("The css file for user colors doesn't exist at " \
+            "the following location '%s'" % CSS_FILE)
+        return avail_colors
