@@ -35,7 +35,7 @@
             }
             $("#not-a-user-alert").hide();
             $("#existing-users").append(Locker._build_user_list_entry(response));
-$("#email").val("");
+            $("#email").val("");
             $("#email").focus();
             Locker.addRequest = null;
         });
