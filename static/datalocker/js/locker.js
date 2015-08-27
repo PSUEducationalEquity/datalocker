@@ -68,8 +68,6 @@
             // callback handler: success
             success: function(data) {
                 $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
-                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                //     "Unarchive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -98,8 +96,6 @@
             // callback handler: success
             success: function(data) {
                 $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
-                // $("#locker-list tr[data-id='" + id + "'] button[role='archive-locker']").html(
-                //     "Archive");
             },
             // callback handler: failure
             error: function(jqXHR, textStatus, errorThrown) {
@@ -327,6 +323,14 @@ $(document).ready(function () {
         } else {
             $(".is-archived").hide();
         }
+
+        var showing = $("table").hasClass("js-show-archived");
+        if (showing) {
+            Locker.show_hide_archived('hide');
+            $('#hide-show-archived-lockers').prop('checked', true);
+        } else {
+            Locker.show_hide_archived('show');
+        }
     });
 
     //show or hides the workflow options if checked
@@ -336,6 +340,7 @@ $(document).ready(function () {
         } else {
             $('#locker-options').hide();
         }
+
     });
      //show or hides the discussion options if checked
     $('#enable-discussion').change(function(){
@@ -346,22 +351,6 @@ $(document).ready(function () {
         }
     });
 
-
-    // $("#email").typeahead({
-    //     source: function(users, process){
-    //         $.ajax({
-    //             url: 'datalocker/all_users',
-    //             type: 'POST',
-    //             data: users,
-    //             dataType: 'JSON',
-    //             async: true,
-    //             success: function (data) {
-    //                 console.log(data);
-    //             }
-    //         });
-
-    //     }
-    // });
     var all_users_url = $("#email").attr("data-url");
     var users = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,

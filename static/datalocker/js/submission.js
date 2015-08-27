@@ -41,11 +41,17 @@
                 csrfmiddlewaretoken: $("#delete_undelete_form").find(
                    "input[name='csrfmiddlewaretoken']").val()
                 },
-            success: function(data) {
+            success: function(data, response) {
                 // deletes the submission and adds the class "deleted"
                 $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
                 $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
                     "Undelete");
+                var $label = $("#submission-list tr[data-id='" + id +"'] td span.label")
+                $label.attr("data-timestamp", data.oldest_date);
+                $label.html(Submission.build_timestamp_warning($label));
+                console.log(data);
+
+
                 Submission.deleteRequest = null;
                 },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -86,6 +92,7 @@
                 $("#submission-list tr[data-id='"+id +"']").removeClass("deleted");
                 $("#submission-list tr[data-id='"+id +"'] button[role='delete-submission']").html(
                     "Delete");
+                // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp", deleted_timestamp);
                  Submission.undeleteRequest = null;
                 },
             error: function(jqXHR) {
@@ -96,10 +103,22 @@
             });
         Submission.undeleteRequest = null;
     }
+
+
+    Submission.build_timestamp_warning = function (element)
+    {
+        console.log(element);
+        var id = $(element).closest("tr").attr("data-id");
+        var deleted_timestamp = $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp");
+        return "Warning! This is submission is going to be deleted " + moment(deleted_timestamp).fromNow();
+
+
+    }
+
 }( window.Submission = window.Submission || {}, jQuery));
 
 
-$(document).ready(function()
+$(document).ready(function(id)
 {
     $("button[role='filter-results']").on("click", function (event){
           $("#dialog-filter-results").modal('show');
@@ -117,7 +136,8 @@ $(document).ready(function()
             $(this).removeClass("btn-danger").addClass("btn-success");
         } else {
             Submission.undelete(locker_id, id);
-            $(this).removeClass("deleted")
+            $(this).removeClass("deleted");
+            $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp","");
             $(this).removeClass("btn-success").addClass("btn-danger");
             $(this).html("Delete");
         }
@@ -127,6 +147,10 @@ $(document).ready(function()
     $(".onoffswitch").on("click", function (event) {
         $("button[role='delete-submission']").toggle();
         $(".deleted").toggle();
+        $("#delete-label").toggle();
+        $("#submission-list tr.deleted td span.label").each(function() {
+            $(this).html(Submission.build_timestamp_warning($(this)));
+        });
         $(".heading-display-for-submission").toggle();
         $("#delete-warning").toggle();
 

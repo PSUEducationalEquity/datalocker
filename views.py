@@ -71,19 +71,22 @@ def _get_public_user_dict(user):
 def _get_public_comment_dict(request, comment):
     public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
+    submission = comment.submission
+    locker = Locker.objects.get(submissions=submission)
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
             if key == 'user':
                 name = User.objects.get(id=value).username
                 comment_dict[key] = name
-                if not request.session.get(name + '-color', None):
-                    submission = comment.submission
-                    locker = Locker.objects.get(submissions=submission)
-                    color_mapping = _user_color_lookup(request, locker)
-                    request.session[name + '-color'] = color_mapping[name]
-                    comment_dict['color'] = request.session[name + '-color']
-                else:
-                    comment_dict['color'] = request.session[name + '-color']
+                try:
+                    if not request.session.get(name + '-color', None):
+                        color_mapping = _user_color_lookup(request, locker)
+                        request.session[name + '-color'] = color_mapping[name]
+                        comment_dict['color'] = request.session[name + '-color']
+                    else:
+                        comment_dict['color'] = request.session[name + '-color']
+                except KeyError:
+                    comment_dict['color'] = ''
             else:
                 comment_dict[key] = value
     return comment_dict
@@ -217,7 +220,7 @@ def change_workflow_state(request, **kwargs):
 
 
 def custom_404(request):
-    response = render_to_response('404.html')
+    response = render_to_response('datalocker/404.html')
     response.status_code = 404
     return response
 
@@ -225,17 +228,20 @@ def custom_404(request):
 
 
 def delete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])
-    submission.deleted = timezone.now()
-    submission.save()
     if request.is_ajax():
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        submission.deleted = timezone.now()
+        oldest_date = submission.deleted + datetime.timedelta(days=3)
+        submission.save()
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
+            'deleted': submission.deleted,
+            'oldest_date': oldest_date,
             })
     else:
         return HttpResponseRedirect(reverse('datalocker:submission_list',
-            kwargs={'id': self.kwargs['id']}))
+            kwargs={'id': self.kwargs['id'], 'deleted': submission.deleted}))
 
 
 
@@ -372,7 +378,7 @@ def locker_list_view(request):
 
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
@@ -387,7 +393,9 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
         context['column_headings'] = ['Submitted Date', ] + selected_fields
         context['data'] = []
         for submission in locker.submissions.all().order_by('-timestamp'):
-            entry = [submission.id, True if submission.deleted else False, submission.timestamp, ]
+            if submission.deleted is not None:
+                submission.deleted = submission.deleted + datetime.timedelta(days=3)
+            entry = [submission.id, True if submission.deleted else False, submission.deleted, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
                 if field in selected_fields:
                     entry.append(value)
@@ -512,7 +520,7 @@ class LockerUserDelete(View):
 
 
 
-class SubmissionView(LoginRequiredMixin, generic.DetailView):
+class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 

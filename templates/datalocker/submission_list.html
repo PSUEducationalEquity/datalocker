@@ -24,11 +24,6 @@
 
 {% block content %}
   <div class="container-fluid">
-    <div class="alert alert-warning" id="delete-warning" role="alert">
-    When you 'Delete' a submission it will be marked
-    to be deleted automatically after 3 days
-    giving you time to 'Undelete' a submission if needed.
-  </div>
     {% if locker.owner = user.username %}
       <div class="onoffswitch">
         <input type="checkbox"
@@ -42,12 +37,16 @@
           data-on="Done editing"
           data-off="Edit submissions">
       </div>
-      {% endif %}
+    {% endif %}
     <h1>{{ locker.name }}</h1>
     <ul class="messages list-unstyled" id="user-messages">
       {% for msg in messages %}
         <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
       {% endfor %}
+      <li class="alert alert-warning" id="delete-warning">
+        When you 'Delete' a submission it will be marked
+        to be deleted automatically after 3 days
+        giving you time to 'Undelete' a submission if needed.</li>
     </ul>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
@@ -68,11 +67,15 @@
           <tr data-id="{{submission.0 }}"
             class="{% if submission.1 %}deleted{% else %}{% endif %}">
             {% for value in submission %}
-              {% if forloop.counter > 2 %}
-                <td>
-                  {% if forloop.counter == 3 %}
+              {% if forloop.counter > 3 %}
+                <td name="date">
+                  {% if forloop.counter == 4 %}
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
-                      style="display:block;">{{ value }}</a>
+                      style="display:block;"
+                      >{{ value }}</a>
+                      <span class="label label-warning delete-label"
+                      id="delete-label-font-size"
+                      data-timestamp="{{ submission.2|date:'c' }}"></span>
                   {% else %}
                     {{ value }}
                   {% endif %}
@@ -86,7 +89,7 @@
                 {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
                 {% if submission.1 %}
                 data-url="{% url 'datalocker:undelete_submission' locker.id submission.0 %}"
-                {% else %}
+                {% else %
                 data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
                 {% endif %}
                 >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>

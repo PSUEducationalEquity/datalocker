@@ -29,7 +29,6 @@
       <input type="checkbox"
         id="hide-show-archived-lockers"
         class="hide-show-archived-lockers-checkbox"
-        name="onoffswitch"
         data-size="small"
         data-toggle="toggle"
         data-onstyle="success"
@@ -59,6 +58,7 @@
                 <td class="record-name">
                   <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
                   <span class="label label-default archived-label">Archived</span>
+                  <span class="url">{{ locker.form_url }}</span>
                 </td>
                 <td class="hidden-xs">{{ locker.latest_submission }}</td>
                 <td class="record-actions">
@@ -104,6 +104,7 @@
                   {% if locker.archive_timestamp != null %}
                     <span class="label label-default">Archived</span>
                   {% endif %}
+                  <span class="url">{{ locker.form_url }}</span>
                 </td>
                 <td class="hidden-xs">{{ locker.latest_submission }}</td>
               </tr>
@@ -164,9 +165,10 @@
             <button type="button" class="btn btn-default btn-sm pull-left"
               data-dismiss="modal" />Done</button>
           </div>
+          </form>
         </div>
       </div>
-    </form>
+    </div>
   </div>
 {% comment %}
   Modal used for Edit the users of the Locker.
