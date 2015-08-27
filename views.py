@@ -457,10 +457,7 @@ def locker_users(request, locker_id):
 
 
 def get_all_users(request):
-    users = []
-    for user in User.objects.all():
-        users.append(_get_public_user_dict(user))
-    return JsonResponse({'users': users})
+    return JsonResponse([ user.email for user in User.objects.all() ], safe = False)
 
 
 

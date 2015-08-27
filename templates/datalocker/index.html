@@ -15,6 +15,8 @@
   {{ block.super }}
   <link type="text/css" rel="stylesheet"
         href="{% static 'datalocker/css/bootstrap-toggle.css' %}" />
+  <link type="text/css" rel="stylesheet"
+        href="{% static 'datalocker/css/typeahead.css' %}" />
 {% endblock site-styles %}
 
 {% block content %}
@@ -149,14 +151,12 @@
                 <strong>Share access to this locker with someone else</strong>
               </h5>
               <label for="email"><span class="sr-only">Email Address</span></label>
-              <div id="bloodhound">
               <input type="text"
                 name="email"
-                class="typeahead"
+                class="typeahead autocomplete"
                 id="email"
                 style="width:200px;"
                 placeholder="Enter the email address to share this locker with">
-                </div>
               <button type="submit" class="btn btn-primary btn-sm add-btn" id="button-user-add">
                 Add</button>
             </div>
@@ -272,34 +272,9 @@
     <script type="text/javascript"
             src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
     <script type="text/javascript"
+            src=" {% static 'datalocker/js/typeahead.js' %}"></script>
+    <script type="text/javascript"
             src=" {% static 'datalocker/js/locker.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/workflow.js' %}"></script>
-    <script type="text/javascript"
-            src=" {% static 'datalocker/js/typeahead.js' %}"></script>
-    <script type="text/javascript"
-            src=" {% static 'datalocker/js/bloodhound.js' %}"></script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        var users = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('email'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-          url: 'all_users',
-        }
-
-    });
-    users.initialize;
-
-    $('#email').typeahead({
-        hint: true,
-        minLength: 1,
-        highlight: true,
-    },{
-        name: 'users',
-        displayKey: 'email',
-        source: users.ttAdapter()
-    });
-    });
-    </script>
 {% endblock site-scripts %}

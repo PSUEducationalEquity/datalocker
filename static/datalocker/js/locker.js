@@ -363,6 +363,20 @@ $(document).ready(function () {
     //     }
     // });
 
+    var users = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch:  '/datalocker/all_users',
+    });
+    $('.typeahead').typeahead ({
+        hint: false,
+        minLength: 1,
+        highlight: true,
+    },{
+        name: 'users',
+        source: users
+    });
+
     $('#hide-show-archived-lockers').change(function(){
         var showing = $("table").hasClass("js-show-archived");
         if (showing) {
