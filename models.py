@@ -385,7 +385,10 @@ class Submission(models.Model):
         """
         Returns the data field as an ordered dictionary instead of JSON
         """
-        data = json.loads(self.data, object_pairs_hook=OrderedDict)
+        try:
+            data = json.loads(self.data, object_pairs_hook=OrderedDict)
+        except ValueError:
+            data = {}
         return data
 
 
