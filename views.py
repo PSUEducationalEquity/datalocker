@@ -456,6 +456,13 @@ def locker_users(request, locker_id):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+def get_all_users(request):
+    users = []
+    for user in User.objects.all():
+        users.append(_get_public_user_dict(user))
+    return JsonResponse({'users': users})
+
+
 
 
 class LockerUserAdd(View):

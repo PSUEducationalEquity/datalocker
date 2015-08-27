@@ -35,6 +35,7 @@
             }
             $("#not-a-user-alert").hide();
             $("#existing-users").append(Locker._build_user_list_entry(response));
+            $('#email').typeahead({source: response, items:response.count()});
             $("#email").val("");
             $("#email").focus();
             Locker.addRequest = null;
@@ -216,8 +217,6 @@
         }
     }
 
-
-
     Locker.no_user_message = function () {
         if ($("#existing-users li").length == 0){
             $("#existing-users").append(
@@ -347,12 +346,23 @@ $(document).ready(function () {
             $('#discussion-options').hide();
         }
     });
+    var users = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('email'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: 'all_users',
 
+    });
+    users.initialize;
 
-    // $("#email").typeahead({
-    //     name: 'users',
-    //     remote: 'locker_users'
-    // });
+    $('#email').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+    },{
+        name: 'users',
+        displayKey: 'email',
+        source: users.ttAdapter()
+    });
 
 
     $('#hide-show-archived-lockers').change(function(){
