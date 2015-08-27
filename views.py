@@ -393,7 +393,9 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         context['column_headings'] = ['Submitted Date', ] + selected_fields
         context['data'] = []
         for submission in locker.submissions.all().order_by('-timestamp'):
-            entry = [submission.id, True if submission.deleted else False, submission.deleted + datetime.timedelta(days=3), submission.timestamp, ]
+            if submission.deleted is not None:
+                submission.deleted = submission.deleted + datetime.timedelta(days=3)
+            entry = [submission.id, True if submission.deleted else False, submission.deleted, submission.timestamp, ]
             for field, value in submission.data_dict().iteritems():
                 if field in selected_fields:
                     entry.append(value)
