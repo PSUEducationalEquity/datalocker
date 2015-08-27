@@ -362,11 +362,11 @@ $(document).ready(function () {
 
     //     }
     // });
-
+    var all_users_url = $("#email").attr("data-url");
     var users = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        prefetch:  '/datalocker/all_users',
+        prefetch:  all_users_url,
     });
     $('.typeahead').typeahead ({
         hint: false,
