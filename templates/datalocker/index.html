@@ -281,10 +281,25 @@
             src=" {% static 'datalocker/js/bloodhound.js' %}"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-      $("#email").typeahead({
-        name: 'email',
-        remote: 'name_autocomplete/?q=%QUERY'
-      })
+        var users = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('email'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+          url: 'all_users',
+        }
+
+    });
+    users.initialize;
+
+    $('#email').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+    },{
+        name: 'users',
+        displayKey: 'email',
+        source: users.ttAdapter()
+    });
     });
     </script>
 {% endblock site-scripts %}
