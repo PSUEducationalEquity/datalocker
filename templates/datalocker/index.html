@@ -149,12 +149,14 @@
                 <strong>Share access to this locker with someone else</strong>
               </h5>
               <label for="email"><span class="sr-only">Email Address</span></label>
+              <div id="bloodhound">
               <input type="text"
                 name="email"
                 class="typeahead"
                 id="email"
                 style="width:200px;"
                 placeholder="Enter the email address to share this locker with">
+                </div>
               <button type="submit" class="btn btn-primary btn-sm add-btn" id="button-user-add">
                 Add</button>
             </div>
@@ -275,13 +277,14 @@
             src=" {% static 'datalocker/js/workflow.js' %}"></script>
     <script type="text/javascript"
             src=" {% static 'datalocker/js/typeahead.js' %}"></script>
-    <script>
-    $(document).ready(function($) {
-        // Workaround for bug in mouse item selection
-       $('input.typeahead').typeahead({
-        name: 'users',
-        prefetch: {user:'user'}
-        limit: 10
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/bloodhound.js' %}"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $("#email").typeahead({
+        name: 'email',
+        remote: 'name_autocomplete/?q=%QUERY'
+      })
     });
     </script>
 {% endblock site-scripts %}

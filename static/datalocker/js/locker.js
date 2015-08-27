@@ -348,11 +348,12 @@ $(document).ready(function () {
         }
     });
 
-    $('input.typeahead').typeahead({
-        name: 'users',
-        prefetch: {'users': users},
-        limit: 10
-    });
+
+    // $("#email").typeahead({
+    //     name: 'users',
+    //     remote: 'locker_users'
+    // });
+
 
     $('#hide-show-archived-lockers').change(function(){
         var showing = $("table").hasClass("js-show-archived");
