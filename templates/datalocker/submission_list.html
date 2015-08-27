@@ -39,6 +39,15 @@
       </div>
     {% endif %}
     <h1>{{ locker.name }}</h1>
+    <ul class="messages list-unstyled" id="user-messages">
+      {% for msg in messages %}
+        <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+      {% endfor %}
+      <li class="alert alert-warning" id="delete-warning">
+        When you 'Delete' a submission it will be marked
+        to be deleted automatically after 3 days
+        giving you time to 'Undelete' a submission if needed.</li>
+    </ul>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
     <table class="table table-striped table-hover listing tablesorter"

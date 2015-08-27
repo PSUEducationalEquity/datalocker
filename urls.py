@@ -63,6 +63,10 @@ urlpatterns = patterns('',
         views.LockerSubmissionsListView.as_view(context_object_name='my_submission_list'),
         name='submissions_list',
         ),
+    url(r'^404$',
+        views.custom_404,
+        name='404',
+        ),
 )
 
 ##

@@ -20,6 +20,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
 from .decorators import user_has_locker_access
+from .helpers import UserColorHelper
 from .models import Comment, Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
 
 import datetime, json, logging, requests
@@ -67,17 +68,54 @@ def _get_public_user_dict(user):
 
 
 
-def _get_public_comment_dict(comment):
-    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment']
+def _get_public_comment_dict(request, comment):
+    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
     comment_dict = {}
+    submission = comment.submission
+    locker = Locker.objects.get(submissions=submission)
     for key, value in model_to_dict(comment).iteritems():
         if key in public_fields:
-            comment_dict[key] = value
             if key == 'user':
                 name = User.objects.get(id=value).username
-                username = ''.join([i for i in name if not i.isdigit()])
-                comment_dict[key] = username
+                comment_dict[key] = name
+                try:
+                    if not request.session.get(name + '-color', None):
+                        color_mapping = _user_color_lookup(request, locker)
+                        request.session[name + '-color'] = color_mapping[name]
+                        comment_dict['color'] = request.session[name + '-color']
+                    else:
+                        comment_dict['color'] = request.session[name + '-color']
+                except KeyError:
+                    comment_dict['color'] = ''
+            else:
+                comment_dict[key] = value
     return comment_dict
+
+
+
+
+def _user_color_lookup(request, locker):
+    colors = UserColorHelper()
+    avail_colors = colors.list_of_available_colors()
+    users = {}
+    try:
+        users[locker.owner] = avail_colors.pop()
+    except Exception:
+        pass
+    for user in locker.users.all():
+        try:
+            color = avail_colors.pop()
+        except Exception:
+            return ''
+        users[user.username] = color
+    return users
+
+
+
+
+##
+## Views
+##
 
 
 
@@ -92,11 +130,16 @@ def add_comment(request, **kwargs):
         timestamp=timezone.now(),
         )
     comment.save()
+    if not request.session.get(request.user.username + '-color', None):
+        locker = Locker.objects.get(id=kwargs['locker_id'])
+        color_mapping = _user_color_lookup(request, locker)
+        request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
+        'color': request.session[request.user.username + '-color']
         })
 
 
@@ -135,21 +178,21 @@ def add_reply(request, **kwargs):
         parent_comment=parent_comment,
         )
     comment.save()
+    if not request.session.get(request.user.username + '-color', None):
+        locker = Locker.objects.get(id=kwargs['locker_id'])
+        color_mapping = _user_color_lookup(request, locker)
+        request.session[request.user.username + '-color'] = color_mapping[request.user.username]
     return JsonResponse({
         'comment': user_comment,
         'submission': submission.id,
         'user': request.user.username,
         'id': comment.id,
-        'parent_comment': parent_comment.id
+        'parent_comment': parent_comment.id,
+        'color': request.session[request.user.username + '-color']
         })
 
 
 
-
-
-##
-## Views
-##
 
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -177,7 +220,7 @@ def change_workflow_state(request, **kwargs):
 
 
 def custom_404(request):
-    response = render_to_response('404.html')
+    response = render_to_response('datalocker/404.html')
     response.status_code = 404
     return response
 
@@ -247,7 +290,13 @@ def form_submission_view(request, **kwargs):
         ))
 
     try:
-        address = User.objects.get(username=safe_values['owner']).email
+        address = []
+        address.append(User.objects.get(username=safe_values['owner']).email)
+        try:
+            if Locker.shared_users_receive_email(locker):
+                for user in locker.users.all(): address.append(user.email)
+        except Exception:
+            logger.warning("No setting saved")
     except User.DoesNotExist:
         logger.warning("New submission saved to orphaned locker: %s" % (
             reverse(
@@ -280,7 +329,8 @@ def form_submission_view(request, **kwargs):
                         ),
                     )
             try:
-                send_mail(subject, message, from_addr, [address])
+                for to_email in address:
+                    send_mail(subject, message, from_addr, [to_email])
             except Exception, e:
                 logger.exception("New submission email to the locker owner failed")
     return HttpResponse(status=201)
@@ -328,7 +378,7 @@ def locker_list_view(request):
 
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
     template_name = 'datalocker/submission_list.html'
 
 
@@ -373,8 +423,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, generic.ListView):
 
 def get_comments_view(request, **kwargs):
     locker = Locker.objects.get(id=kwargs['locker_id'])
-    setting = LockerSetting.objects.get(locker=locker, setting_identifier='discussion-enabled')
-    if setting.value == u'True':
+    if Locker.get_settings(locker):
         if request.is_ajax():
             # If statement to make sure the user should be able to see the comments
             all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
@@ -383,13 +432,13 @@ def get_comments_view(request, **kwargs):
             comments = []
             replies = []
             for comment in all_comments:
-                comments.append(_get_public_comment_dict(comment))
+                comments.append(_get_public_comment_dict(request, comment))
             for comment in all_replies:
-                replies.append(_get_public_comment_dict(comment))
+                replies.append(_get_public_comment_dict(request, comment))
             return JsonResponse(
                 {
                 'comments': comments,
-                'replies': replies
+                'replies': replies,
                 })
         else:
             return HttpResponseRedirect(reverse('datalocker:submissions_view',
@@ -464,7 +513,7 @@ class LockerUserDelete(View):
 
 
 
-class SubmissionView(LoginRequiredMixin, generic.DetailView):
+class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.DetailView):
     template_name = 'datalocker/submission_view.html'
     model = Submission
 
@@ -495,6 +544,7 @@ def modify_locker(request, **kwargs):
     new_owner = request.POST.get('edit-owner', '')
     enabled_workflow = bool(request.POST.get('enable-workflow', False))
     workflow_states_list = request.POST.get('workflow-states-textarea','')
+    shared_users = bool(request.POST.get('shared-users',False))
     user_can_edit_workflow = bool(request.POST.get('users-can-edit-workflow', False))
     enable_discussion =  bool(request.POST.get('enable-discussion', False))
     users_can_view_discussion =  bool(request.POST.get('users-can-view-discussion', False))
@@ -516,6 +566,7 @@ def modify_locker(request, **kwargs):
             ### TODO: Report this problem back to the end user
         else:
             locker.owner = new_owner
+    locker.shared_users_receive_email(shared_users)
     locker.enable_workflow(enabled_workflow)
     locker.enable_discussion(enable_discussion)
     locker.workflow_users_can_edit(user_can_edit_workflow)

@@ -230,3 +230,31 @@ class SubmissionViewTestCase(TestCase):
             self.assertTrue(False)
         else:
             self.assertEqual(len(Locker.objects.all()), 2)
+            
+            
+    def test_submission_view_no_data_submission(self):
+        """
+        Form submission should add a submission with no data,
+        which shouldn't generate any errors to the user.
+        """
+        locker = Locker(
+            form_url='http://equity.psu.edu/contact-form',
+            form_identifier='contact-form',
+            name='Contact Us',
+            owner='das66',
+            create_timestamp='2015-01-14 15:00:00+05:00',
+            archive_timestamp='2014-04-19 12:00:00+05:00',
+            )
+        response = self.client.post(
+            reverse('datalocker:form_submission'),
+            {
+                'form-id': 'contact-form',
+                'url': 'http://equity.psu.edu/contact-form',
+                'owner': 'das66',
+                'name': 'Contact Us',
+            })
+        self.assertEqual(response.status_code, 201)
+        submission = Submission.objects.get(id=1)
+        submission.data_dict()
+        
+        
