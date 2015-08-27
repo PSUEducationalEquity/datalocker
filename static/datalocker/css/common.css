@@ -393,6 +393,10 @@ h2.italic {
   padding-bottom: 1em;
 }
 
+.tt-dataset {
+  background-color: #E5E5E5;
+}
+
 .undeleted-submission{
   display: none;
 }
