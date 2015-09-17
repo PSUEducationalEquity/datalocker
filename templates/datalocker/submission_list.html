@@ -70,7 +70,7 @@
         {% for submission in data %}
           <tr class="{% if submission.1 %}is-deleted{% endif %}"
               data-id="{{submission.0 }}"
-              data-deleted-timestamp="{{ submission.2|date:'c' }}"
+              data-purge-timestamp="{{ submission.2|date:'c' }}"
               >
             {% for value in submission %}
               {% if forloop.counter > 3 %}

@@ -1,11 +1,6 @@
 /*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
 /**
- * Interactions related to submissions
- */
-
-
-/**
  * Submission related actions
  */
 (function (Submission, $, undefined)
@@ -16,90 +11,80 @@
 
 
 
-
     /**
-     * Delete's submissions, untill they are purged or undeleted   \
+     * Mark a submission as deleted
      *
-     * @param      integer locker_id   an integer indicating the locker_id
-     *                                 where the submission is located
-     * @param      integer id          an integer indicating the submission id
-     *                                 that will be deleted
-     *
-     * @return     void
-     * @author     Hunter Yohn  <hay110@psu.edu>
+     * @param   integer id  an integer indicating the submission id to delete
+     * @return  void
+     * @author  Hunter Yohn  <hay110@psu.edu>
      */
-    Submission.delete = function (locker_id, id)
+    Submission.delete = function (id)
     {
-        deleteUrl = $("#delete-submission").attr("data-url");
-        // submits the request to delete the submission
+        var delete_url = $("#submission-list").attr("data-delete-url");
         Submission.deleteRequest = $.ajax({
-            url: "/datalocker/"+locker_id+"/submissions/" + id + "/delete_submission",
+            url: delete_url.replace("/0/", "/" + id + "/"),
             type: "post",
-            data:{
+            data: {
                 id: id,
-                csrfmiddlewaretoken: $("#delete_undelete_form").find(
-                   "input[name='csrfmiddlewaretoken']").val()
-                },
-            success: function(data, response) {
-                // deletes the submission and adds the class "deleted"
-                $("#submission-list tr[data-id='" + id +"']").addClass("deleted submission-deleted");
-                $("#submission-list tr[data-id='" + id +"'] button[role='delete-submission']").html(
-                    "Undelete");
-                var $label = $("#submission-list tr[data-id='" + id +"'] td span.label")
-                $label.attr("data-timestamp", data.oldest_date);
-                $label.html(Submission.build_timestamp_warning($label));
-                console.log(data);
-
-
+                csrfmiddlewaretoken: $("#submission-list").attr("data-csrf-token")
+            },
+            success: function(response, textStatus, jqXHR)
+            {
+                $("#submission-list tr[data-id='" + response.id +"']").attr(
+                    "data-purge-timestamp",
+                    response.purge_timestamp
+                ).addClass("is-deleted");
+                Submission.update_purge_warning(response.id);
                 Submission.deleteRequest = null;
-                },
-            error: function(jqXHR, textStatus, errorThrown) {
-                    console.error(
-                        "Submission.delete in Submission.js AJAX error: "
-                    );
-                }
-            });
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.error(
+                    "Submission.delete in Submission.js AJAX error: "
+                    + textStatus,
+                    errorThrown
+                );
+            }
+        });
         Submission.deleteRequest = null;
     }
 
 
+
     /**
-     * Undelete's submissions
+     * Mark a submission as undeleted
      *
-     * @param      integer locker_id   an integer indicating the locker_id
-     *                                 where the submission is located
-     * @param      integer id          an integer indicating the submission id
-     *                                 that will be undeleted
-     *
-     * @return     void
-     * @author     Hunter Yohn  <hay110@psu.edu>
+     * @param   integer id  an integer indicating the submission id to undelete
+     * @return  void
+     * @author  Hunter Yohn  <hay110@psu.edu>
      */
-    Submission.undelete = function (locker_id, id)
+    Submission.undelete = function (id)
     {
-        undeleteUrl = $("button[role='delete-submission']").attr("data-url");
-        // submits the request to undelete the submission
+        var delete_url = $("#submission-list").attr("data-undelete-url");
         Submission.undeleteRequest = $.ajax({
-            url: "/datalocker/"+locker_id+"/submissions/" + id + "/undelete_submission",
+            url: delete_url.replace("/0/", "/" + id + "/"),
             type: "post",
-            data:{
-                id : id,
-                csrfmiddlewaretoken: $("#delete_undelete_form").find(
-                    "input[name='csrfmiddlewaretoken']").val()
-                },
-            success: function(data) {
-                // undeletes the submission and removes the class "deleted"
-                $("#submission-list tr[data-id='"+id +"']").removeClass("deleted");
-                $("#submission-list tr[data-id='"+id +"'] button[role='delete-submission']").html(
-                    "Delete");
-                // $("#submission-list tr[data-id='" + id +"'] td[name='date']").find("span:first").attr("data-timestamp", deleted_timestamp);
-                 Submission.undeleteRequest = null;
-                },
-            error: function(jqXHR) {
-                    console.error(
-                        "Submission.undelete in Submission.js AJAX error: "
-                    );
-                }
-            });
+            data: {
+                id: id,
+                csrfmiddlewaretoken: $("#submission-list").attr("data-csrf-token")
+            },
+            success: function(response, textStatus, jqXHR)
+            {
+                $("#submission-list tr[data-id='" + response.id +"']").attr(
+                    "data-purge-timestamp",
+                    ""
+                ).removeClass("is-deleted");
+                Submission.undeleteRequest = null;
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.error(
+                    "Submission.undelete in Submission.js AJAX error: "
+                    + textStatus,
+                    errorThrown
+                );
+            }
+        });
         Submission.undeleteRequest = null;
     }
 
@@ -111,20 +96,16 @@
      * Looks at the associated timestamp and converts it into the number of
      * days remaining
      *
-     * @param  id  integer  an integer that references the submission id of
-     *                      the entry to update
-     * @return void
+     * @param   integer id  an integer indicating the submission id to update
+     * @return  void
      */
     Submission.update_purge_warning = function (id)
     {
-        console.log(id);
         var $element = $("tr[data-id='" + id + "']");
-        console.log($element);
-        var deleted_timestamp = $element.attr("data-deleted-timestamp");
-        console.log(deleted_timestamp);
+        var purge_timestamp = $element.attr("data-purge-timestamp");
         $element.find("span.label").text(
             "Will be removed "
-            + moment(deleted_timestamp).fromNow() + "."
+            + moment(purge_timestamp).fromNow() + "."
         );
     }
 
@@ -166,23 +147,18 @@ $(document).ready(function(id)
     $("[name='maintenance-mode-toggle']").change();
 
 
-    //changes the html and css of the button when clicked to 'delete' or 'undelete'
-    // $("#submission-list").on("click","button[role='delete-submission']", function (event) {
-    //     event.preventDefault();
-    //     var id = $(this).closest("tr").attr("data-id");
-    //     var locker_id = $(this).closest("table").attr("data-locker-id");
-    //     if ($(this).html() == "Delete") {
-    //         Submission.delete(locker_id, id);
-    //         $(this).html("Undelete");
-    //         $(this).removeClass("btn-danger").addClass("btn-success");
-    //     } else {
-    //         Submission.undelete(locker_id, id);
-    //         $(this).removeClass("deleted");
-    //         $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp","");
-    //         $(this).removeClass("btn-success").addClass("btn-danger");
-    //         $(this).html("Delete");
-    //     }
-    // });
+    // Handle the delete submission buttons
+    $("[role='delete-submission']").on("click", function (event) {
+        event.preventDefault();
+        var id = $(this).closest("tr").attr("data-id");
+        Submission.delete(id);
+    });
 
 
+    // Handle the undelete submission buttons
+    $("[role='undelete-submission']").on("click", function (event) {
+        event.preventDefault();
+        var id = $(this).closest("tr").attr("data-id");
+        Submission.undelete(id);
+    });
 });

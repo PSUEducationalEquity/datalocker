@@ -225,25 +225,33 @@ def custom_404(request):
     return response
 
 
-
-
+@login_required()
+@require_http_methods(["POST"])
 def delete_submission(request, **kwargs):
+    """
+    Marks a submission as deleted in the database.
+    """
     if request.is_ajax():
         submission = get_object_or_404(Submission, id=kwargs['pk'])
         submission.deleted = timezone.now()
-        oldest_date = submission.deleted + datetime.timedelta(days=3)
         submission.save()
+        purge_timestamp = submission.deleted + datetime.timedelta(
+            days=settings.SUBMISSION_PURGE_DAYS
+            )
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
             'deleted': submission.deleted,
-            'oldest_date': oldest_date,
+            'purge_timestamp': purge_timestamp,
             })
     else:
-        return HttpResponseRedirect(reverse('datalocker:submission_list',
-            kwargs={'id': self.kwargs['id'], 'deleted': submission.deleted}))
-
-
+        return HttpResponseRedirect(reverse(
+            'datalocker:submission_list',
+            kwargs={
+                'id': self.kwargs['id'],
+                'deleted': submission.deleted
+                }
+            ))
 
 
 @csrf_exempt
@@ -631,14 +639,25 @@ def unarchive_locker(request, **kwargs):
 
 
 
+@login_required()
+@require_http_methods(["POST"])
 def undelete_submission(request, **kwargs):
-    submission = get_object_or_404(Submission, id=kwargs['pk'])
-    submission.deleted = None
-    submission.save()
+    """
+    Removes the deleted timestamp from a submission
+    """
     if request.is_ajax():
+        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        submission.deleted = None
+        submission.save()
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
             })
     else:
-        return HttpResponseRedirect(reverse('datalocker:submission_list'))
+        return HttpResponseRedirect(reverse(
+            'datalocker:submission_list',
+            kwargs={
+                'id': self.kwargs['id'],
+                'deleted': submission.deleted
+                }
+            ))
