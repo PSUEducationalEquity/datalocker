@@ -44,9 +44,10 @@
         <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
       {% endfor %}
       <li class="alert alert-warning" id="delete-warning">
-        When you 'Delete' a submission it will be marked
-        to be deleted automatically after 3 days
-        giving you time to 'Undelete' a submission if needed.</li>
+        <strong>Note:</strong>
+        <em>Deleted</em> submissions will be automatically purged from the
+        system after {{ purge_days }} days.
+      </li>
     </ul>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
