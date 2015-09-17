@@ -391,6 +391,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         selected_fields = locker.get_selected_fields_list()
         context['selected_fields'] = selected_fields
         context['column_headings'] = ['Submitted Date', ] + selected_fields
+        context['purge_days'] = settings.SUBMISSION_PURGE_DAYS
         context['data'] = []
         for submission in locker.submissions.all().order_by('-timestamp'):
             if submission.deleted is not None:
