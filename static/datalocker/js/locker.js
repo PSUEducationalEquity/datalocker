@@ -251,10 +251,84 @@
 
 
 
+/**
+ * Get a specific value from a cookie
+ *
+ * Base code adapted from the example here:
+ * http://www.w3schools.com/js/js_cookies.asp
+ *
+ * @param   cookie string  a string containing the name of the cookie to retrieve
+ * @return  a string containing the cookie value requested
+ */
+function getCookieValue(key)
+{
+    var name = key + "=";
+    var pairs = document.cookie.split(';');
+    for (var i=0; i < pairs.length; i++) {
+        var entry = pairs[i];
+        while (entry.charAt(0)==' ') entry = entry.substring(1);
+        if (entry.indexOf(name) == 0) {
+            return entry.substring(name.length, entry.length);
+        }
+    }
+    return "";
+}
+
+
+
+
+/**
+ * Convert a string to a boolean
+ *
+ * @param   value string  a string containing either "true" or "false"
+ * @return  a boolean based on the string contents provided
+ */
+function toBool(value)
+{
+    value = value.toLowerCase();
+    if (value == 'false' || value == 'no') {
+        return false;
+    }
+    return true;
+}
+
+
 $(document).ready(function () {
-    $("#not-a-user-alert").hide();
-    $('#locker-options').hide();
-    $('#discussion-options').hide();
+    // enable table sorting
+    $('table.tablesorter').tablesorter();
+
+
+    // Show/hide archived lockers
+    $("[name='archived-lockers-toggle']").on("change", function (event)
+    {
+        if ($(this).prop("checked")) {
+            $("body").addClass("js-show-archived");
+        } else {
+            $("body").removeClass("js-show-archived");
+        }
+        document.cookie="show-archived-toggle=" + $(this).prop("checked");
+    });
+    $("[name='archived-lockers-toggle']").prop(
+        "checked",
+        toBool(getCookieValue("show-archived-toggle"))
+    ).change();
+
+
+    // Handle the archive locker buttons
+    $("[role='archive-locker']").on("click", function (event) {
+        event.preventDefault();
+        var id = $(this).closest("tr").attr("data-id");
+        Locker.archive(id);
+    });
+
+
+    // Handle the unarchive locker buttons
+    $("[role='unarchive-locker']").on("click", function (event) {
+        event.preventDefault();
+        var id = $(this).closest("tr").attr("data-id");
+        Locker.unarchive(id);
+    });
+
 
 
 
@@ -291,6 +365,7 @@ $(document).ready(function () {
         var user_id = $(this).closest("li").attr("data-id");
         Locker.user_delete(user_id);
     });
+
 
 
 
@@ -368,33 +443,16 @@ $(document).ready(function () {
         $("#dialog-edit-locker").modal('show');
     });
 
-    $("button[role='archive-locker']").on("click", function (event) {
-        event.preventDefault();
-        var id = $(this).closest("tr").attr("data-id");
-        Locker.archive(id);
-    });
 
-    $("button[role='unarchive-locker']").on("click", function (event) {
-        event.preventDefault();
-        var id = $(this).closest("tr").attr("data-id");
-        Locker.unarchive(id);
-    });
 
-    $('#hide-show-archived-lockers').change(function(){
-        if (this.checked) {
-            $(".is-archived").show();
-        } else {
-            $(".is-archived").hide();
-        }
 
-        var showing = $("table").hasClass("js-show-archived");
-        if (showing) {
-            Locker.show_hide_archived('hide');
-            $('#hide-show-archived-lockers').prop('checked', true);
-        } else {
-            Locker.show_hide_archived('show');
-        }
-    });
+
+    $("#not-a-user-alert").hide();
+    $('#locker-options').hide();
+    $('#discussion-options').hide();
+
+
+
 
     //show or hides the workflow options if checked
     $('#enable-workflow').change(function(){
@@ -413,31 +471,4 @@ $(document).ready(function () {
             $('#discussion-options').hide();
         }
     });
-
-    $('#hide-show-archived-lockers').change(function(){
-        var showing = $("table").hasClass("js-show-archived");
-        if (showing) {
-            Locker.show_hide_archived('hide');
-        } else {
-            Locker.show_hide_archived('show');
-        }
-    });
-
-    var showHide = getCookie("show/hide");
-    Locker.show_hide_archived(showHide);
-
-    // Taken from w3 schools to retrieve a cookie value
-    function getCookie(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0; i<ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-        }
-        return "";
-    }
-
-    // Enables tablesorter JS on the tablesorter tables
-    $('.tablesorter').tablesorter();
 });
