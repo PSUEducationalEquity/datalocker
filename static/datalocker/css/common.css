@@ -5,31 +5,101 @@
 \*------------------------------------*/
 /**
  * CONTENTS.............You're reading it!
+ * 404_PAGE.............Styling for the 404 page
+ * ACCESSIBILITY........Improve the accessibility of certain structures
  * ARCHIVED.............Automatically hides archived classes by default on page load
  * BREADCRUMBS..........Breadcrumb list stying
- * TOGGLESWITCH.........Toggle Switch the stying when entering and exiting maintenance mode
+ * BUTTONS..............Button styling
+ * COMMENTING...........Commenting related styles
+ * EXISTING_USERS.......Styling for the list of existing users
+ * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
  * HEADER...............Styling specifically for the page header
- * ACCESSIBILITY........Improve the accessibility of certain structures
- * BUTTONS..............Button styling
- * FOOTER...............Styling specifically for the page footer
+ * SHARE_DIALOG.........Styling for the sharing dialog
+ * SUBMISSION_VIEW_PAGE.Styling for the submissions view page
+ * TABLES...............Table specific styling
+ * TOGGLE_SWITCH........Toggle Switch the stying when entering and exiting maintenance mode
+ * WORKFLOW.............Styling for the workflow portlet
  */
 
+
+
+
 /*------------------------------------*\
-    $404 PAGE
+    $404_PAGE
 \*------------------------------------*/
+
 .error-message {
   text-align: center;
 }
+
 .error-message h1 {
   font-weight: bold;
 }
 
 
 
+
+/*------------------------------------*\
+    $ACCESSIBILITY
+\*------------------------------------*/
+
+/**
+ * More accessible definition list styling
+ */
+/*ul*/.definition-list {
+    list-style-type: none;
+}
+
+/*ul*/.definition-list li {
+    margin-bottom: 2em;
+}
+
+/*ul*/.definition-list li h2,
+/*ul*/.definition-list li h3,
+/*ul*/.definition-list li h4 {
+    font-size: 20px;
+    line-height: 20px;
+    margin: 10px 0;
+}
+
+/*ul*/.definition-list li p {
+    margin-left: 3em;
+}
+
+
+/**
+ * Accessible key/value pair listing using the Bootstrap grid system
+ */
+/*ul*/.list-grid > li {
+    margin-bottom: 0.5em;
+}
+
+/*ul*/.list-grid > li h2,
+/*ul*/.list-grid > li h3,
+/*ul*/.list-grid > li h4 {
+    font-size: 1em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/*ul,ol*/.list-grid .divider {
+    border-top: 1px solid #CCCCCC;
+    padding-top: 0.5em;
+}
+
+/*ul,ol*/.list-grid .divider-success { border-color: #d6e9c6; }
+/*ul,ol*/.list-grid .divider-info    { border-color: #bce8f1; }
+/*ul,ol*/.list-grid .divider-warning { border-color: #faebcc; }
+/*ul,ol*/.list-grid .divider-danger  { border-color: #ebccd1; }
+
+
+
+
 /*------------------------------------*\
     $ARCHIVED
 \*------------------------------------*/
+
 .button-archived-showhide .is-active {
   display: active;
 }
@@ -59,10 +129,6 @@ button[role='edit-locker'] { display: inline-block; }
 .is-archived button[role='edit-users'] { display: none; }
 .is-archived button[role='edit-locker'] { display: none; }
 
-#delete-warning{
-  width: 100%;
-  display: none
-}
 
 
 
@@ -93,6 +159,63 @@ button[role='edit-locker'] { display: inline-block; }
 /*ol*/.breadcrumb-trail > .active {
   color: #777;
 }
+
+
+
+
+/*------------------------------------*\
+    $BUTTONS
+\*------------------------------------*/
+
+/**
+ * Black (inverse) button style for Bootstrap buttons
+ */
+.btn-inverse {
+  color: #ffffff;
+  background-color: #333333;
+  border-color: #000000;
+}
+
+.btn-inverse:hover,
+.btn-inverse:focus,
+.btn-inverse:active,
+.btn-inverse.active,
+.open .dropdown-toggle.btn-inverse {
+  color: #ffffff;
+  background-color: #4c4c4c; /*#ebebeb;*/
+  border-color: #333333;
+}
+
+.btn-inverse:active,
+.btn-inverse.active,
+.open .dropdown-toggle.btn-inverse {
+  background-image: none;
+}
+
+.btn-inverse.disabled,
+.btn-inverse[disabled],
+fieldset[disabled] .btn-inverse,
+.btn-inverse.disabled:hover,
+.btn-inverse[disabled]:hover,
+fieldset[disabled] .btn-inverse:hover,
+.btn-inverse.disabled:focus,
+.btn-inverse[disabled]:focus,
+fieldset[disabled] .btn-inverse:focus,
+.btn-inverse.disabled:active,
+.btn-inverse[disabled]:active,
+fieldset[disabled] .btn-inverse:active,
+.btn-inverse.disabled.active,
+.btn-inverse[disabled].active,
+fieldset[disabled] .btn-inverse.active {
+  background-color: #333333;
+  border-color: #cccccc;
+}
+
+.btn-inverse .badge {
+  color: #333333;
+  background-color: #333333;
+}
+
 
 
 
@@ -152,8 +275,9 @@ button[role='comment-reply'] {
 
 
 
+
 /*-----------------------------------*\
-    $EXISTINGUSERS
+    $EXISTING_USERS
 \*-----------------------------------*/
 
 #existing-users {
@@ -177,147 +301,37 @@ button[role='comment-reply'] {
 
 
 
-/*-----------------------------------*\
-    $SHAREDIALOG
-\*-----------------------------------*/
-#dialog-edit-access-users-title {
-  margin-top: 65px;
-}
-
-
-
-/*-----------------------------------*\
-    $SUBMISSIONVIEWPAGE
-\*-----------------------------------*/
-
-ul {
-  list-style-type: none;
-}
-
-ul .header{
-  font-size: 16px;
-  padding-top: 1em;
-}
-
-ul .information {
-  font-size: 16px;
-  font-weight: bold;
-  padding-left: 2em;
-}
-
-
 
 /*------------------------------------*\
-    $TABLES
+    $FOOTER
 \*------------------------------------*/
 
-.record-actions {
-  text-align: right;
+footer {
+    margin-top: 20px;
 }
 
-.record-name {
-  width: 600px;
+.document-footer {
+    background-color: #F8F8F8;
+    border-top: 1px solid #E7E7E7;
+    color: #777;
+    padding: 10px 0;
 }
 
-.url {
-  display: block;
-  margin-left: 1em;
-  font-size: 13px;
-  opacity: 0.75;
+.ownership,
+.copyright {
+    color: #777;
+    font-size: 0.8em;
 }
 
-
-
-/*------------------------------------*\
-    $TOGGLESWITCH
-\*------------------------------------*/
-
-.maintenance-mode-switch {
-  float:right;
-}
-
-.onoffswitch {
-    position: relative; width: 90px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-
-.onoffswitch-checkbox {
-    display: none;
-}
-
-.onoffswitch-label {
-    display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #999999; border-radius: 20px;
-}
-
-.onoffswitch-inner {
-    display: block; width: 200%; margin-left: -100%;
-    transition: margin 0.3s ease-in 0s;
-}
-
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
-    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
-    box-sizing: border-box;
-}
-
-.onoffswitch-inner:before {
-    content: "OFF";
-    padding-left: 10px;
-    background-color: #EEEEEE; color: #999999;
-
-}
-
-.onoffswitch-inner:after {
-    content: "ON";
-    padding-right: 10px;
-    background-color: #34A7C1; color: #FFFFFF;
+.ownership {
     text-align: right;
 }
-
-.onoffswitch-switch {
-    display: block; width: 16px; margin: 6px;
-    background: #FFFFFF;
-    position: absolute; top: 0; bottom: 2px;
-    right: 56px;
-    border: 2px solid #999999; border-radius: 20px;
-    transition: all 0.3s ease-in 0s;
+@media only screen and (max-width: 767px) {
+    .ownership {
+        text-align: left;
+    }
 }
 
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-    margin-left: 0;
-}
-
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px;
-}
-
-.toggle.btn {
-  width: 130px;
-  min-width: 59px;
-  min-height: 34px;
-  float: right;
- }
-
-.onoffswitch {
-  width: 130px;
-  min-width: 59px;
-  min-height: 34px;
-  float: right;
- }
-/*-----------End code for the toggle switch --------*/
-
-
-
-/*------------------------------------*\
-    $Workflow
-\*------------------------------------*/
-
-.state-status {
-  font-style: italic;
-  padding-left: 1em;
-  display: inherit;
-}
 
 
 
@@ -356,10 +370,6 @@ caption {
 }
 
 .delete-submission {
-  display: none;
-}
-
-.heading-display-for-submission {
   display: none;
 }
 
@@ -447,143 +457,148 @@ header { margin-bottom: 20px; }
 
 
 
-/*------------------------------------*\
-    $ACCESSIBILITY
-\*------------------------------------*/
+/*-----------------------------------*\
+    $SHARE_DIALOG
+\*-----------------------------------*/
 
-/**
- * More accessible definition list styling
- */
-/*ul*/.definition-list {
-    list-style-type: none;
-}
-
-/*ul*/.definition-list li {
-    margin-bottom: 2em;
-}
-
-/*ul*/.definition-list li h2,
-/*ul*/.definition-list li h3,
-/*ul*/.definition-list li h4 {
-    font-size: 20px;
-    line-height: 20px;
-    margin: 10px 0;
-}
-
-/*ul*/.definition-list li p {
-    margin-left: 3em;
+#dialog-edit-access-users-title {
+  margin-top: 65px;
 }
 
 
-/**
- * Accessible key/value pair listing using the Bootstrap grid system
- */
-/*ul*/.list-grid > li {
-    margin-bottom: 0.5em;
+
+
+/*-----------------------------------*\
+    $SUBMISSION_VIEW_PAGE
+\*-----------------------------------*/
+
+ul {
+  list-style-type: none;
 }
 
-/*ul*/.list-grid > li h2,
-/*ul*/.list-grid > li h3,
-/*ul*/.list-grid > li h4 {
-    font-size: 1em;
-    margin-top: 0;
-    margin-bottom: 0;
+ul .header{
+  font-size: 16px;
+  padding-top: 1em;
 }
 
-/*ul,ol*/.list-grid .divider {
-    border-top: 1px solid #CCCCCC;
-    padding-top: 0.5em;
+ul .information {
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 2em;
 }
-
-/*ul,ol*/.list-grid .divider-success { border-color: #d6e9c6; }
-/*ul,ol*/.list-grid .divider-info    { border-color: #bce8f1; }
-/*ul,ol*/.list-grid .divider-warning { border-color: #faebcc; }
-/*ul,ol*/.list-grid .divider-danger  { border-color: #ebccd1; }
 
 
 
 
 /*------------------------------------*\
-    $BUTTONS
+    $TABLES
 \*------------------------------------*/
 
-/**
- * Black (inverse) button style for Bootstrap buttons
- */
-.btn-inverse {
-  color: #ffffff;
-  background-color: #333333;
-  border-color: #000000;
+.record-actions {
+  text-align: right;
 }
 
-.btn-inverse:hover,
-.btn-inverse:focus,
-.btn-inverse:active,
-.btn-inverse.active,
-.open .dropdown-toggle.btn-inverse {
-  color: #ffffff;
-  background-color: #4c4c4c; /*#ebebeb;*/
-  border-color: #333333;
+.record-name {
+  width: 600px;
 }
 
-.btn-inverse:active,
-.btn-inverse.active,
-.open .dropdown-toggle.btn-inverse {
-  background-image: none;
+.url {
+  display: block;
+  margin-left: 1em;
+  font-size: 13px;
+  opacity: 0.75;
 }
 
-.btn-inverse.disabled,
-.btn-inverse[disabled],
-fieldset[disabled] .btn-inverse,
-.btn-inverse.disabled:hover,
-.btn-inverse[disabled]:hover,
-fieldset[disabled] .btn-inverse:hover,
-.btn-inverse.disabled:focus,
-.btn-inverse[disabled]:focus,
-fieldset[disabled] .btn-inverse:focus,
-.btn-inverse.disabled:active,
-.btn-inverse[disabled]:active,
-fieldset[disabled] .btn-inverse:active,
-.btn-inverse.disabled.active,
-.btn-inverse[disabled].active,
-fieldset[disabled] .btn-inverse.active {
-  background-color: #333333;
-  border-color: #cccccc;
-}
-
-.btn-inverse .badge {
-  color: #333333;
-  background-color: #333333;
-}
 
 
 
 /*------------------------------------*\
-    $FOOTER
+    $TOGGLE_SWITCH
 \*------------------------------------*/
 
-footer {
-    margin-top: 20px;
+.maintenance-mode-switch {
+  float:right;
 }
 
-.document-footer {
-    background-color: #F8F8F8;
-    border-top: 1px solid #E7E7E7;
-    color: #777;
-    padding: 10px 0;
+.onoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 
-.ownership,
-.copyright {
-    color: #777;
-    font-size: 0.8em;
+.onoffswitch-checkbox {
+    display: none;
 }
 
-.ownership {
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+
+.onoffswitch-inner:before {
+    content: "OFF";
+    padding-left: 10px;
+    background-color: #EEEEEE; color: #999999;
+
+}
+
+.onoffswitch-inner:after {
+    content: "ON";
+    padding-right: 10px;
+    background-color: #34A7C1; color: #FFFFFF;
     text-align: right;
 }
-@media only screen and (max-width: 767px) {
-    .ownership {
-        text-align: left;
-    }
+
+.onoffswitch-switch {
+    display: block; width: 16px; margin: 6px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 2px;
+    right: 56px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+
+.toggle.btn {
+    width: 130px;
+    min-width: 59px;
+    min-height: 34px;
+    float: right;
+}
+
+.onoffswitch {
+    width: 130px;
+    min-width: 59px;
+    min-height: 34px;
+    float: right;
+}
+
+
+
+
+/*------------------------------------*\
+    $WORKFLOW
+\*------------------------------------*/
+
+.state-status {
+    font-style: italic;
+    padding-left: 1em;
+    display: inherit;
 }
