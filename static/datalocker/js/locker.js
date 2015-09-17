@@ -400,7 +400,13 @@ $(document).ready(function () {
                     + ' ' + user.last_name + '</em></p>';
             }
         }
+    }).on("typeahead:open", function () {
+        var $menu = $(this).closest(".twitter-typeahead").find(".tt-menu");
+        if ($menu.width < $(this).width()) {
+            $menu.width($(this).width());
+        }
     });
+    $(".twitter-typeahead").attr("style", "position: relative;");
 
 
 

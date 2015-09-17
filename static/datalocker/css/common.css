@@ -146,6 +146,10 @@ button[role='edit-locker'] { display: inline-block; }
     -webkit-border-radius: 0px 5px 5px 5px;
 }
 
+.form-inline .tt-menu {
+    margin-top: 20px;
+}
+
 .tt-suggestion {
     padding: 2px 10px;
     font-size: 14px;

@@ -171,41 +171,35 @@
   </div>
 
 
-{% comment %}
-  Modal used for Edit the users of the Locker.
-  You can add or remove users from the existing
-  locker by adding or removing existing email addresses
-{% endcomment %}
   <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog"
-    aria-labelledby="dialog-edit-locker-title" aria-hidden="true"
-    data-locker-id="0">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form method="POST" name="modalLocker"
-            data-url="{% url 'datalocker:modify_locker' 0 %}">
-            {% csrf_token %}
+       aria-labelledby="dialog-edit-locker-title" aria-hidden="true"
+       data-locker-id="0">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post" action=""
+              data-url="{% url 'datalocker:modify_locker' 0 %}">
+          {% csrf_token %}
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title" id="dialog-edit-locker-title">Edit Locker</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
-             <label for="edit-locker">Name</label>
-               <input type="text"
-                  name="edit-locker"
-                  class="form-control"
-                  id="edit-locker"
-                  value="">
-               <br/>
+              <label for="locker-name">Locker name</label>
+              <input type="text"
+                     name="locker-name"
+                     class="form-control"
+                     id="locker-name"
+                     value="" />
             </div>
             <div class="form-group">
-              <label for="edit-owner">Owner</label>
-                <input type="text"
-                  name="edit-owner"
-                  class="form-control"
-                  id="edit-owner"
-                  placeholder="Enter a new owner's email address">
-               <br/>
+              <label for="locker-owner">Owner</label>
+              <input type="text"
+                     name="locker-owner"
+                     class="form-control typeahead autocomplete"
+                     id="locker-owner"
+                     placeholder="New owner's email address">
             </div>
             <input type="checkbox"
                 name="shared-users"
