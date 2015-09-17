@@ -78,9 +78,14 @@
           </tbody>
         </table>
       {% else %}
-        <p>You currently do not own any Lockers.
-        You can add lockers of your own by adding a forms from Plone Form Gen.
-        </p>
+        {% block no-my-lockers-message %}
+          <p>
+            You currently do not own any lockers.
+            <span class="text-muted">
+              A locker will be created for you when a form that you own is submitted.
+            </span>
+          </p>
+        {% endblock no-my-lockers-message %}
       {% endif %}
       <hr />
       {% if shared|length > 0 %}
