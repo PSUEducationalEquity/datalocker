@@ -7,10 +7,11 @@
  * CONTENTS.............You're reading it!
  * 404_PAGE.............Styling for the 404 page
  * ACCESSIBILITY........Improve the accessibility of certain structures
- * ARCHIVED.............Automatically hides archived classes by default on page load
+ * ARCHIVED.............Styling for archiving submissions and associated actions
  * BREADCRUMBS..........Breadcrumb list stying
  * BUTTONS..............Button styling
  * COMMENTING...........Commenting related styles
+ * DELETED..............Styles for deleting submissions and associated actions
  * EXISTING_USERS.......Styling for the list of existing users
  * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
@@ -272,6 +273,41 @@ button[role='comment-reply'] {
   font-weight: bold;
   border-radius: 5px;
 }
+
+
+
+
+/*------------------------------------*\
+    $DELETED
+\*------------------------------------*/
+
+/* show/hide the deleted rows */
+.is-deleted { display: none; }
+.js-show-deleted .is-deleted { display: table-row; }
+
+/* show/hide the delete labels */
+.js-show-deleted .is-deleted .deleted-label {
+    display: inline;
+    margin-left: .5em;
+}
+.deleted-label {
+    display: none;
+}
+
+/* show/hide the delete/undelete buttons */
+button[role='undelete-submission'] { display: none; }
+button[role='delete-submission']   { display: none; }
+.js-show-deleted button[role='undelete-submission'] { display: none; }
+.js-show-deleted button[role='delete-submission']   { display: inline-block; }
+.js-show-deleted .is-deleted button[role='undelete-submission'] { display: inline-block; }
+.js-show-deleted .is-deleted button[role='delete-submission'] { display: none; }
+
+/*
+#delete-warning{
+  width: 100%;
+  display: none
+}
+*/
 
 
 
