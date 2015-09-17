@@ -475,7 +475,62 @@ def get_comments_view(request, **kwargs):
 
 
 
+@login_required()
+@require_http_methods(["POST"])
+def locker_user_add(request, locker_id):
+    """
+    Adds the indicated user to the locker's list of users
+    """
+    if request.is_ajax():
+        user = get_object_or_404(User, email=request.POST.get('email', ''))
+        locker =  get_object_or_404(Locker, id=locker_id)
+        if not user in locker.users.all():
+            locker.users.add(user)
+            locker.save()
+            from_addr = _get_notification_from_address("locker access granted")
+            if from_addr:
+                subject = "Access to Locker: %s" % locker.name
+                to_addr = user.email
+                message = "The following Data Locker of form submissions has been " \
+                    "shared with you.\n\n" \
+                    "Locker: %s\n\n" \
+                    "You can view the submissions at:\n%s\n" % (
+                        locker.name,
+                        request.build_absolute_uri(
+                            reverse(
+                                'datalocker:submissions_list',
+                                kwargs={'locker_id': locker.id,}
+                                )
+                            ),
+                        )
+                try:
+                    send_mail(subject, message, from_addr, [to_addr])
+                except:
+                    logger.exception("Locker shared with you email failed to send")
+        return JsonResponse({ 'user': _get_public_user_dict(user) })
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
+
+@login_required()
+@require_http_methods(["POST"])
+def locker_user_delete(request, locker_id):
+    """
+    Removes the indicated user from the locker's list of users
+    """
+    if request.is_ajax():
+        user = get_object_or_404(User, id=request.POST.get('id', ''))
+        locker =  get_object_or_404(Locker, id=locker_id)
+        if user in locker.users.all():
+            locker.users.remove(user)
+            locker.save()
+        return JsonResponse({'user_id': user.id})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
+
+
+@login_required()
+@require_http_methods(["GET", "HEAD"])
 def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
@@ -485,57 +540,6 @@ def locker_users(request, locker_id):
         return JsonResponse({'users': users})
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
-
-
-
-
-class LockerUserAdd(View):
-    def post(self, *args, **kwargs):
-        try:
-            user = User.objects.get(email=self.request.POST.get('email', ''))
-            locker =  Locker.objects.get(id=kwargs['locker_id'])
-        except User.DoesNotExist:
-            return HttpResponse(status=404)
-        except Locker.DoesNotExist:
-            return HttpResponse(status=404)
-        if not user in locker.users.all():
-            locker.users.add(user)
-            locker.save()
-        from_addr = _get_notification_from_address("locker access granted")
-        if from_addr:
-            subject = "Access to Locker: %s" % locker.name
-            to_addr = self.request.POST.get('email', '')
-            message = "The following Data Locker of form submissions has been " \
-                "shared with you.\n\n" \
-                "Locker: %s\n\n" \
-                "You can view the submissions at:\n%s\n" % (
-                    locker.name,
-                    self.request.build_absolute_uri(
-                        reverse(
-                            'datalocker:submissions_list',
-                            kwargs={'locker_id': locker.id,}
-                            )
-                        ),
-                    )
-            try:
-                send_mail(subject, message, from_addr, [to_addr])
-            except:
-                logger.exception("Locker shared with you email failed to send")
-        return JsonResponse(_get_public_user_dict(user))
-
-
-
-
-class LockerUserDelete(View):
-    def post(self , *args, **kwargs):
-        user = get_object_or_404(User, id=self.request.POST.get('id', ''))
-        locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-        if user in locker.users.all():
-            locker.users.remove(user)
-            locker.save()
-        return JsonResponse({'user_id': user.id})
-
-
 
 
 class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.DetailView):
