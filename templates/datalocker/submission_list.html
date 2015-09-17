@@ -19,7 +19,7 @@
 {% block site-styles %}
   {{ block.super }}
   <link type="text/css" rel="stylesheet"
-        href="{% static 'datalocker/css/bootstrap-toggle.css' %}" />
+        href="{% static 'datalocker/css/bootstrap-toggle.min.css' %}" />
 {% endblock site-styles %}
 
 {% block content %}
@@ -27,15 +27,14 @@
     {% if locker.owner = user.username %}
       <div class="onoffswitch">
         <input type="checkbox"
-          id="onoffswitch"
-          class="onoffswitch-checkbox"
-          name="onoffswitch"
-          data-size="mini"
-          data-toggle="toggle"
-          data-onstyle="success"
-          data-offstyle="danger"
-          data-on="Done editing"
-          data-off="Edit submissions" />
+               class="onoffswitch-checkbox"
+               name="maintenance-mode-toggle"
+               data-size="mini"
+               data-toggle="toggle"
+               data-onstyle="success"
+               data-offstyle="danger"
+               data-on="Done editing"
+               data-off="Edit submissions" />
       </div>
     {% endif %}
     <h1>{{ locker.name }}</h1>
@@ -43,40 +42,44 @@
       {% for msg in messages %}
         <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
       {% endfor %}
-      <li class="alert alert-warning" id="delete-warning">
+      <li class="alert alert-warning warning-maintenance-mode">
         <strong>Note:</strong>
-        <em>Deleted</em> submissions will be automatically purged from the
-        system after {{ purge_days }} days.
+        <em>Deleted</em> submissions will be automatically purged
+        after {{ purge_days }} days.
       </li>
     </ul>
     <button type="button" class="btn btn-default btn-xs" role="filter-results">
     Select the fields to display in the table</button>
     <table class="table table-striped table-hover listing tablesorter"
-      name="submission listing"
-      id="submission-list"
-      data-locker-id="{{locker.id}}">
+           name="submission listing"
+           id="submission-list"
+           data-csrf-token="{{ csrf_token }}"
+           data-locker-id="{{ locker.id }}"
+           data-delete-url="{% url 'datalocker:delete_submission' locker.id 0 %}"
+           data-undelete-url="{% url 'datalocker:undelete_submission' locker.id 0 %}"
+           >
       <caption>Form Submissions</caption>
       <thead>
         {% for heading in column_headings %}
           <th>{{ heading }}</th>
         {% endfor %}
-        <th class="record-actions heading-display-for-submission">Delete Submissions
+        <th class="record-actions sr-only">Delete Submissions</th>
       </thead>
       <tbody>
         {# This is getting submissions that were submitted to the locker #}
         {% for submission in data %}
-          <tr data-id="{{submission.0 }}"
-            class="{% if submission.1 %}deleted{% else %}{% endif %}">
+          <tr class="{% if submission.1 %}is-deleted{% endif %}"
+              data-id="{{submission.0 }}"
+              data-deleted-timestamp="{{ submission.2|date:'c' }}"
+              >
             {% for value in submission %}
               {% if forloop.counter > 3 %}
                 <td name="date">
                   {% if forloop.counter == 4 %}
                     <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
-                      style="display:block;"
+                       style="display:block;"
                       >{{ value }}</a>
-                      <span class="label label-warning delete-label"
-                      id="delete-label-font-size"
-                      data-timestamp="{{ submission.2|date:'c' }}"></span>
+                    <span class="label label-danger label-deleted" />
                   {% else %}
                     {{ value }}
                   {% endif %}
@@ -86,23 +89,18 @@
             <td class="record-actions">
               <button type="button"
                 role="delete-submission"
-                class="btn btn-xs archive-button delete-submission
-                {% if submission.1 %}btn-success{% else %}btn-danger{% endif %}"
-                {% if submission.1 %}
-                data-url="{% url 'datalocker:undelete_submission' locker.id submission.0 %}"
-                {% else %
-                data-url="{% url 'datalocker:delete_submission' locker.id submission.0 %}"
-                {% endif %}
-                >{% if submission.1 %}Undelete{% else %}Delete{% endif %}</button>
+                class="btn btn-xs btn-danger"
+                >Delete</button>
+              <button type="button"
+                role="undelete-submission"
+                class="btn btn-xs btn-success"
+                >Undelete</button>
             </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <form method="POST" id="delete_undelete_form">
-   {% csrf_token %}
-  </form>
 </div>
 {% endblock %}
 

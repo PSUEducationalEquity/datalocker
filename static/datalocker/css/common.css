@@ -281,16 +281,23 @@ button[role='comment-reply'] {
     $DELETED
 \*------------------------------------*/
 
+/* show/hide maintenance mode warning */
+.warning-maintenance-mode { display: none; }
+.js-show-deleted .warning-maintenance-mode { display: block; }
+
 /* show/hide the deleted rows */
 .is-deleted { display: none; }
 .js-show-deleted .is-deleted { display: table-row; }
+.js-show-deleted table > tbody tr.is-deleted {
+    background-color: #CCC;
+}
 
 /* show/hide the delete labels */
-.js-show-deleted .is-deleted .deleted-label {
-    display: inline;
+.js-show-deleted .is-deleted .label-deleted {
+    display: inline-block;
     margin-left: .5em;
 }
-.deleted-label {
+.label-deleted {
     display: none;
 }
 

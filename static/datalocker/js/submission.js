@@ -1,14 +1,13 @@
 /*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
-
-    /**
-     * Delete's and Undelete's submissions
-     *
-     * @return     void
-     * @author     Hunter Yohn  <hay110@psu.edu>
-     */
+/**
+ * Interactions related to submissions
+ */
 
 
+/**
+ * Submission related actions
+ */
 (function (Submission, $, undefined)
 {
     // the AJAX objects that handles server communication
@@ -105,54 +104,85 @@
     }
 
 
-    Submission.build_timestamp_warning = function (element)
+
+    /**
+     * Updates the deleted submission warning message
+     *
+     * Looks at the associated timestamp and converts it into the number of
+     * days remaining
+     *
+     * @param  id  integer  an integer that references the submission id of
+     *                      the entry to update
+     * @return void
+     */
+    Submission.update_purge_warning = function (id)
     {
-        console.log(element);
-        var id = $(element).closest("tr").attr("data-id");
-        var deleted_timestamp = $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp");
-        return "Warning! This is submission is going to be deleted " + moment(deleted_timestamp).fromNow();
-
-
+        console.log(id);
+        var $element = $("tr[data-id='" + id + "']");
+        console.log($element);
+        var deleted_timestamp = $element.attr("data-deleted-timestamp");
+        console.log(deleted_timestamp);
+        $element.find("span.label").text(
+            "Will be removed "
+            + moment(deleted_timestamp).fromNow() + "."
+        );
     }
 
 }( window.Submission = window.Submission || {}, jQuery));
 
 
+
 $(document).ready(function(id)
 {
-    $("button[role='filter-results']").on("click", function (event){
-          $("#dialog-filter-results").modal('show');
-        });
+    // enable table sorting
     $('#submission-list').tablesorter();
 
-    //changes the html and css of the button when clicked to 'delete' or 'undelete'
-    $("#submission-list").on("click","button[role='delete-submission']", function (event) {
-        event.preventDefault();
-        var id = $(this).closest("tr").attr("data-id");
-        var locker_id = $(this).closest("table").attr("data-locker-id");
-        if ($(this).html() == "Delete") {
-            Submission.delete(locker_id, id);
-            $(this).html("Undelete");
-            $(this).removeClass("btn-danger").addClass("btn-success");
+
+    // handle the `select fields to display` button
+    $("button[role='filter-results']").on("click", function (event)
+    {
+        $("#dialog-filter-results").modal('show');
+    });
+
+
+    /**
+     * Enable/disable maintenance mode
+     *
+     * Shows/hides the deleted submissions and shows/hides the delete/undelete
+     * buttons.
+     */
+    $("[name='maintenance-mode-toggle']").on("change", function (event)
+    {
+        if ($("[name='maintenance-mode-toggle']").prop("checked")) {
+            $("body").addClass("js-show-deleted");
         } else {
-            Submission.undelete(locker_id, id);
-            $(this).removeClass("deleted");
-            $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp","");
-            $(this).removeClass("btn-success").addClass("btn-danger");
-            $(this).html("Delete");
+            $("body").removeClass("js-show-deleted");
         }
-    });
 
-    //shows the delete buttons and the all of the submissions
-    $(".onoffswitch").on("click", function (event) {
-        $("button[role='delete-submission']").toggle();
-        $(".deleted").toggle();
-        $("#delete-label").toggle();
-        $("#submission-list tr.deleted td span.label").each(function() {
-            $(this).html(Submission.build_timestamp_warning($(this)));
+        $("#submission-list tr.is-deleted").each(function() {
+            Submission.update_purge_warning($(this).attr("data-id"));
         });
-        $(".heading-display-for-submission").toggle();
-        $("#delete-warning").toggle();
-
     });
+    $("[name='maintenance-mode-toggle']").change();
+
+
+    //changes the html and css of the button when clicked to 'delete' or 'undelete'
+    // $("#submission-list").on("click","button[role='delete-submission']", function (event) {
+    //     event.preventDefault();
+    //     var id = $(this).closest("tr").attr("data-id");
+    //     var locker_id = $(this).closest("table").attr("data-locker-id");
+    //     if ($(this).html() == "Delete") {
+    //         Submission.delete(locker_id, id);
+    //         $(this).html("Undelete");
+    //         $(this).removeClass("btn-danger").addClass("btn-success");
+    //     } else {
+    //         Submission.undelete(locker_id, id);
+    //         $(this).removeClass("deleted");
+    //         $("#submission-list tr[data-id='" + id +"'] td span.label").attr("data-timestamp","");
+    //         $(this).removeClass("btn-success").addClass("btn-danger");
+    //         $(this).html("Delete");
+    //     }
+    // });
+
+
 });
