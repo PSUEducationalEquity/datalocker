@@ -25,16 +25,15 @@
       {% endfor %}
     </ul>
     <div class="container-fluid">
-      <div class="hide-show-archived-lockers-checkbox">
+      <div class="switch-toggle">
         <input type="checkbox"
-          id="hide-show-archived-lockers"
-          class="hide-show-archived-lockers-checkbox"
-          data-size="mini"
-          data-toggle="toggle"
-          data-onstyle="success"
-          data-offstyle="danger"
-          data-on="Hide Archived Lockers"
-          data-off="Show Archived Lockers" />
+               name="archived-lockers-toggle"
+               data-size="mini"
+               data-toggle="toggle"
+               data-onstyle="success"
+               data-offstyle="danger"
+               data-on="Hide Archived Lockers"
+               data-off="Show Archived Lockers" />
       </div>
       <h2 class="italic">My Lockers</h2>
       {% if owned|length > 0 %}
