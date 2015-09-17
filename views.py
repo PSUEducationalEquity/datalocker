@@ -21,7 +21,8 @@ from django.views.generic import View
 
 from .decorators import user_has_locker_access
 from .helpers import UserColorHelper
-from .models import Comment, Locker, LockerManager, LockerSetting, LockerQuerySet, Submission
+from .models import Comment, Locker, LockerManager, LockerSetting, \
+    LockerQuerySet, Submission
 
 import datetime, json, logging, requests
 
@@ -486,11 +487,6 @@ def locker_users(request, locker_id):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-def get_all_users(request):
-    return JsonResponse([ user.email for user in User.objects.all() ], safe = False)
-
-
-
 
 
 class LockerUserAdd(View):
@@ -661,3 +657,19 @@ def undelete_submission(request, **kwargs):
                 'deleted': submission.deleted
                 }
             ))
+
+
+@login_required()
+@require_http_methods(["GET", "HEAD"])
+def users_list(request, **kwargs):
+    """
+    Returns a list of all the user email addresses in the system
+    """
+    users_list = []
+    for user in User.objects.all():
+        users_list.append({
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            })
+    return JsonResponse({ 'users': users_list })
