@@ -1,57 +1,11 @@
 /*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
+
 (function (Locker, $, undefined)
 {
     // the AJAX objects that handles server communication
     Locker.dataRequest;
     Locker.addRequest;
     Locker.deleteRequest;
-
-    /**
-     *  Javascript to add users to existing lockers; Archive, Unarchive, &
-     *  Delete functionality handled here as well. JS code to activate
-     *  locker and users modals are located at the bottom of this file.
-     *
-    */
-
-
-    /* Add a user to the selected locker */
-    Locker.add = function () {
-        var email = $("#email").val();
-        var addUrl = $("#dialog-sharing form").attr("action");
-        Locker.addRequest = $.ajax({
-            url: addUrl,
-            type: "post",
-            data: {
-                email: email,
-                csrfmiddlewaretoken: $("#dialog-sharing").find(
-                    "input[name='csrfmiddlewaretoken']").val()
-                }
-        });
-
-        // callback handler: success
-        Locker.addRequest.done(function (response, textStatus, jqXHR) {
-            if ($("#no-users-message").length){
-                $("#no-users-message").remove();
-            }
-            $("#not-a-user-alert").hide();
-            $("#existing-users").append(Locker._build_user_list_entry(response));
-            $("#email").val("");
-            $("#email").focus();
-            Locker.addRequest = null;
-        });
-
-        // callback handler: failure
-        Locker.addRequest.fail(function (jqXHR, errorThrown) {
-            if (errorThrown != "abort") {
-                console.error("Locker.add in Locker.js AJAX error");
-            }
-            if (jqXHR.status == 404) {
-                $("#not-a-user-alert").show();
-            }
-            Locker.addRequest = null;
-        });
-    }
-
 
 
     /* Adds the ability to archive a locker */
@@ -110,37 +64,6 @@
 
 
 
-    /* Adds the ability to delete user from a locker */
-    Locker.delete = function (user_id) {
-        var deleteUrl =  $("#existing-users").attr("data-delete-url");
-        var locker_id = $("#dialog-sharing").attr("data-locker-id");
-        Locker.deleteRequest = $.ajax({
-            url: deleteUrl.replace("/0/", "/" + locker_id +"/"),
-            type: "post",
-            data: {
-                id : user_id,
-                csrfmiddlewaretoken: $("#dialog-sharing").find(
-                    "input[name='csrfmiddlewaretoken']").val()
-                  }
-        });
-        // callback handler: success
-        Locker.deleteRequest.done(function (response, textStatus, jqXHR) {
-            $("#existing-users li[data-id='" + response.user_id + "']").remove();
-            Locker.no_user_message();
-          Locker.deleteRequest = null;
-        });
-
-        // callback handler: failure
-        Locker.deleteRequest.fail(function (jqXHR, errorThrown) {
-            if (errorThrown != "abort") {
-               console.error("Locker.delete in Locker.js AJAX error");
-            }
-            Locker.deleteRequest = null;
-        });
-    }
-
-
-
     /**
      * Builds a single entry for the list of existing users
      *
@@ -150,7 +73,8 @@
      *          existing users list
      * @author  Hunter Yohn <hay110@psu.edu>
      */
-    Locker._build_user_list_entry = function (user) {
+    Locker._build_user_list_entry = function (user)
+    {
         return  $("<li />").attr("data-id", user.id).append(
             $("<div />").html(user.first_name + " " + user.last_name)).append(
                 $("<a />").attr("href", "#").attr(
@@ -175,7 +99,8 @@
      * @return  void
      * @author  Hunter Yohn <hay110@psu.edu>
      */
-    Locker.build_user_list = function (users) {
+    Locker.build_user_list = function (users)
+    {
         var locker_id = $("#dialog-sharing").attr("data-locker-id");
         var url = $("#dialog-sharing .list-existing-users").attr("data-url");
 
@@ -189,14 +114,10 @@
                 {
                     var $users_list = $("#dialog-sharing .list-existing-users");
                     $users_list.children(":not(.no-entries)").remove();
-                    if (response.users.length) {
-                        $.each(response.users, function (index, user) {
-                            $users_list.append(Locker._build_user_list_entry(user));
-                        });
-                        $users_list.children(".no-entries").hide();
-                    } else {
-                        $users_list.children(".no-entries").show();
-                    }
+                    $.each(response.users, function (index, user) {
+                        $users_list.append(Locker._build_user_list_entry(user));
+                    });
+                    Locker.no_user_message();
                     Locker.dataRequest = null;
                 },
                 error: function(jqXHR, textStatus, errorThrown)
@@ -214,13 +135,20 @@
         }
     }
 
-    Locker.no_user_message = function () {
-        if ($("#existing-users li").length == 0){
-            $("#existing-users").append(
-                $("<li />").attr('id','no-users-message'
-                    ).append(
-                        "There are no users for this locker")
-                    );
+
+
+    /**
+     * Shows/hides the "no users have access" message
+     *
+     * @return  void
+     */
+    Locker.no_user_message = function ()
+    {
+        var $users_list = $("#existing-users");
+        if ($users_list.children("li:not(.no-entries)").length == 0){
+            $users_list.children(".no-entries").show();
+        } else {
+            $users_list.children(".no-entries").hide();
         }
     }
 
@@ -233,6 +161,90 @@
             $("table").removeClass("js-show-archived");
         }
         document.cookie="show/hide=" + state;
+    }
+
+
+
+    /**
+     * Add a user to the current locker
+     *
+     * @param   integer user_id  an integer indicating the user id to add
+     * @return  void
+     */
+    Locker.user_add = function () {
+        var url = $("#dialog-sharing form").attr("action");
+        var csrf_token = $("#dialog-sharing").find("input[name='csrfmiddlewaretoken']").val();
+        Locker.addRequest = $.ajax({
+            url: url,
+            type: "post",
+            data: {
+                email: $("#email").val(),
+                csrfmiddlewaretoken: csrf_token,
+            },
+            success: function(response, textStatus, jqXHR)
+            {
+                $("#existing-users").append(
+                    Locker._build_user_list_entry(response.user)
+                );
+                Locker.no_user_message();
+                Locker.addRequest = null;
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                if (jqXHR.status == 404) {
+                    console.log("Invalid User");
+                    alert("Invalid User!");
+
+                } else if (errorThrown != "abort") {
+                    console.error(
+                        "Locker.add_user in locker.js AJAX error: "
+                            + textStatus,
+                        errorThrown
+                    );
+                }
+                Locker.addRequest = null;
+            }
+        });
+    }
+
+
+
+    /**
+     * Delete a user from the current locker
+     *
+     * @param   integer user_id  an integer indicating the user id to remove
+     * @return  void
+     */
+    Locker.user_delete = function (user_id)
+    {
+        var url =  $("#dialog-sharing .list-existing-users").attr("data-delete-url");
+        var locker_id = $("#dialog-sharing").attr("data-locker-id");
+        var csrf_token = $("#dialog-sharing").find("input[name='csrfmiddlewaretoken']").val();
+        Locker.deleteRequest = $.ajax({
+            url: url.replace("/0/", "/" + locker_id +"/"),
+            type: "post",
+            data: {
+                id : user_id,
+                csrfmiddlewaretoken: csrf_token,
+            },
+            success: function(response, textStatus, jqXHR)
+            {
+                $("#existing-users li[data-id='" + response.user_id + "']").remove();
+                Locker.no_user_message();
+                Locker.deleteRequest = null;
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                if (errorThrown != "abort") {
+                    console.error(
+                        "Locker.build_user_list in locker.js AJAX error: "
+                            + textStatus,
+                        errorThrown
+                    );
+                }
+                Locker.deleteRequest = null;
+            }
+        });
     }
 }( window.Locker = window.Locker || {}, jQuery));
 
@@ -268,16 +280,16 @@ $(document).ready(function () {
     $("#dialog-sharing form").on("submit", function (event)
     {
         event.preventDefault();
-        Locker.add();
+        Locker.user_add();
         $(".typeahead").typeahead('val', '');
     });
 
     // Sharing dialog: Delete user buttons
-    $("#dialog-sharing form ul").on("click", "a", function (event)
+    $("#dialog-sharing .list-existing-users").on("click", "a", function (event)
     {
         event.preventDefault();
         var user_id = $(this).closest("li").attr("data-id");
-        Locker.delete(user_id);
+        Locker.user_delete(user_id);
     });
 
 
@@ -293,7 +305,7 @@ $(document).ready(function () {
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
             url: $("#locker-list").attr("data-users-url"),
-            ttl: 720000,
+            cache: false,
             transform: function (response) {
                 return response.users;
             }
