@@ -343,10 +343,12 @@ $(document).ready(function () {
             "action",
             url.replace("/0/","/"+ locker_id + "/")
         );
-        Locker.build_user_list();
         var name = $(this).closest("tr").attr("data-name");
+
+        Locker.build_user_list();
         $("#dialog-sharing-title").html('Share access to ' + name);
-        $(".typeahead").typeahead('val', '');
+        $("#dialog-sharing .typeahead").typeahead('val', '');
+
         $("#dialog-sharing").modal('show');
     });
 
@@ -402,9 +404,7 @@ $(document).ready(function () {
         }
     }).on("typeahead:open", function () {
         var $menu = $(this).closest(".twitter-typeahead").find(".tt-menu");
-        if ($menu.width < $(this).width()) {
-            $menu.width($(this).width());
-        }
+        $menu.width($(this).width());
     });
     $(".twitter-typeahead").attr("style", "position: relative;");
 
@@ -412,69 +412,67 @@ $(document).ready(function () {
 
 
 
-
-
-
-
-    //opens the edit lockers modal dialog
-    $("button[role='edit-locker']").on("click", function (event) {
+    // Activate the Edit Locker dialog
+    $("[role='edit-locker']").on("click", function (event)
+    {
         event.preventDefault();
-        var id = $(this).closest("tr").attr("data-id");
-        $("#dialog-edit-locker").attr("data-locker-id", id);
+        var locker_id = $(this).closest("tr").attr("data-id");
+        $("#dialog-edit-locker").attr("data-locker-id", locker_id);
         var url = $("#dialog-edit-locker").find("form").attr("data-url");
         $("#dialog-edit-locker").find("form").attr(
-            "action", url.replace("/0/","/"+ id +"/"));
-        var name = $(this).closest("tr").attr("data-name");
-        $("#edit-locker").val(name);
+            "action",
+            url.replace("/0/","/"+ locker_id +"/")
+        );
+
+        // set the name and clear the owner field
+        $("#locker-name").val($(this).closest("tr").attr("data-name"));
+        $("#dialog-edit-locker .typeahead").typeahead('val', '');
+
+        // load the feature options
         var settings = jQuery.parseJSON($(this).closest("tr").attr("data-settings"));
         console.log(settings);
-        $("#dialog-edit-locker input[name='enable-workflow']").prop('checked', settings['workflow|enabled']);
-        if ($("#dialog-edit-locker input[name='enable-workflow']").is(':checked')) {
-            $('#locker-options').show();
-        } else {
-            $('#locker-options').hide();
-        }
-        $("#dialog-edit-locker input[name='shared-users']").prop('checked', settings['access|shared-users']);
-        $("#dialog-edit-locker input[name='users-can-edit-workflow']").prop('checked', settings['workflow|users-can-edit']);
-        $("#dialog-edit-locker input[name='enable-discussion']").prop('checked', settings['discussion|enabled']);
-        if ($("#dialog-edit-locker input[name='enable-discussion']").is(':checked')) {
-            $('#discussion-options').show();
-        } else {
-            $('#discussion-options').hide();
-        }
-        $("#dialog-edit-locker input[name='users-can-view-discussion']").prop('checked', settings['discussion|users-have-access-to-disccusion']);
-        $("#dialog-edit-locker textarea[name='workflow-states-textarea']").val(
+
+        // set the new submissions option
+        $("input[name='shared-users']").prop(
+            'checked',
+            settings['access|shared-users']
+        );
+
+        // set the workflow options
+        $("input[name='workflow-users-can-edit']").prop(
+            'checked',
+            settings['workflow|users-can-edit']
+        );
+        $("textarea[name='workflow-states']").val(
             settings['workflow|states'].join("\n")
         );
+        $("input[name='workflow-enable']").prop(
+            'checked',
+            settings['workflow|enabled']
+        ).change();
+
+        // set the discussion options
+        $("input[name='discussion-users-can-view']").prop(
+            'checked',
+            settings['discussion|users-have-access-to-disccusion']
+        );
+        $("input[name='discussion-enable']").prop(
+            'checked',
+            settings['discussion|enabled']
+        ).change();
+
+        // show the dialog
         $("#dialog-edit-locker").modal('show');
     });
 
-
-
-
-
-    $("#not-a-user-alert").hide();
-    $('#locker-options').hide();
-    $('#discussion-options').hide();
-
-
-
-
-    //show or hides the workflow options if checked
-    $('#enable-workflow').change(function(){
-        if (this.checked) {
-            $('#locker-options').show();
+    // Show/hide the various locker options
+    $(".locker-option").on("change", function ()
+    {
+        $sub_options = $("[role='" + $(this).attr("data-target") + "']");
+        if ($(this).prop("checked")) {
+            $sub_options.slideDown();
         } else {
-            $('#locker-options').hide();
-        }
-
-    });
-     //show or hides the discussion options if checked
-    $('#enable-discussion').change(function(){
-        if (this.checked) {
-            $('#discussion-options').show();
-        } else {
-            $('#discussion-options').hide();
+            $sub_options.slideUp();
         }
     });
 });

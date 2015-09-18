@@ -201,59 +201,77 @@
                      id="locker-owner"
                      placeholder="New owner's email address">
             </div>
-            <input type="checkbox"
-                name="shared-users"
-                id="shared-users"
-                class="always"
-                value="True"
-              >
-              <label for="shared-users">
-                Email users that have access to this locker
+
+            <h5>Locker features</h5>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"
+                       name="shared-users"
+                       value="True"
+                       />
+                Send new submission notifications to all users who have
+                access to this locker
               </label>
-            <div>
-              <input type="checkbox"
-                name="enable-workflow"
-                id="enable-workflow"
-                class="always"
-                value="True"
-                data-target="workflow"/
-              >
-              <label for="enable-workflow">
+            </div>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"
+                       name="workflow-enable"
+                       class="locker-option"
+                       value="True"
+                       data-target="js-workflow-options"
+                       />
                 Enable Workflow
               </label>
             </div>
-            <div id="locker-options">
-              <input type="checkbox"
-                name="users-can-edit-workflow"
-                class="always"
-                value="True"
-                id="users-can-edit-state">
+            <div class="checkbox sub-option" role="js-workflow-options">
+              <label>
+                <input type="checkbox"
+                       name="workflow-users-can-edit"
+                       value="True"
+                       />
                 Users can edit the workflow
-                <br/>
-              <textarea cols="20" rows="3"
-                name="workflow-states-textarea" id="workflow-states-textarea"> </textarea>   Workflow states <br/>
+              </label>
             </div>
-            <input type="checkbox"
-              name="enable-discussion"
-              class="always"
-              value="True"
-              id="enable-discussion">
-            <label for="enable-discussion">
-            Enable discussion
-            </label>
-            <div id="discussion-options">
-              <input type="checkbox"
-                name="users-can-view-discussion"
-                class="always"
-                value="True"
-                id="users-can-view-discussion">
-              Users have access to discussion<br/>
+            <div class="form-group sub-option" role="js-workflow-options">
+              <label for="workflow-states">
+                Workflow states
+                <small class="text-muted">One per line</small>
+              </label>
+              <textarea name="workflow-states"
+                        id="workflow-states"
+                        class="form-control"></textarea>
             </div>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"
+                       name="discussion-enable"
+                       class="locker-option"
+                       value="True"
+                       data-target="js-discussion-options"
+                       />
+                Enable discussion
+              </label>
+            </div>
+            <div class="checkbox sub-option" role="js-discussion-options">
+              <label>
+                <input type="checkbox"
+                       name="discussion-users-can-view"
+                       value="True"
+                       />
+                All users this locker is shared with can participate in the
+                discussion
+              </label>
+            </div>
+
           </div>
           <div class="modal-footer">
-            <input type="submit" class="btn btn-primary btn-sm pull-left" value="Save" />
+            <input type="submit" class="btn btn-primary btn-sm pull-left"
+                   value="Save" />
             <button type="button" class="btn btn-default btn-sm pull-left"
-              data-dismiss="modal">Close</button>
+                    data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>

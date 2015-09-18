@@ -13,6 +13,7 @@
  * BUTTONS..............Button styling
  * COMMENTING...........Commenting related styles
  * DELETED..............Styles for deleting submissions and associated actions
+ * EDIT_DIALOG..........Styling for the Edit Locker dialog
  * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
  * HEADER...............Styling specifically for the page header
@@ -347,6 +348,15 @@ button[role='delete-submission']   { display: none; }
 .js-show-deleted .is-deleted button[role='delete-submission'] { display: none; }
 
 
+
+
+/*------------------------------------*\
+    $EDIT_DIALOG
+\*------------------------------------*/
+
+.sub-option {
+    margin-left: 2em;
+}
 
 
 /*------------------------------------*\
