@@ -430,12 +430,11 @@ $(document).ready(function () {
 
         // load the feature options
         var settings = jQuery.parseJSON($(this).closest("tr").attr("data-settings"));
-        console.log(settings);
 
         // set the new submissions option
         $("input[name='shared-users']").prop(
             'checked',
-            settings['access|shared-users']
+            settings['submission-notifications|notify-shared-users']
         );
 
         // set the workflow options
@@ -443,8 +442,12 @@ $(document).ready(function () {
             'checked',
             settings['workflow|users-can-edit']
         );
+        workflow_states = [];
+        if (settings['workflow|states']) {
+            workflow_states = settings['workflow|states'];
+        }
         $("textarea[name='workflow-states']").val(
-            settings['workflow|states'].join("\n")
+            workflow_states.join("\n")
         );
         $("input[name='workflow-enable']").prop(
             'checked',
@@ -454,7 +457,7 @@ $(document).ready(function () {
         // set the discussion options
         $("input[name='discussion-users-can-view']").prop(
             'checked',
-            settings['discussion|users-have-access-to-disccusion']
+            settings['discussion|users-have-access']
         );
         $("input[name='discussion-enable']").prop(
             'checked',
