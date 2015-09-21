@@ -366,9 +366,8 @@ class UserHasLockerAccessMixin(object):
 @login_required()
 def locker_list_view(request):
     """
-    Accesses the logged in user and searched through all the lockers they
-    have access to. It only returns the lockers that they have access to
-    and don't own.
+    Returns a list of lockers owned by the current user and a list of those
+    lockers shared with the current user.
     """
     shared_lockers = Locker.objects.active().has_access(
         request.user
