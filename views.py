@@ -565,27 +565,21 @@ class SubmissionView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.Detai
 
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
+    """
+    Modifies locker name, ownership, and settings.
+    """
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    locker_name = locker.name
-    locker_owner = locker.owner
-    new_locker_name = request.POST.get('edit-locker', '')
-    new_owner = request.POST.get('edit-owner', '')
-    enabled_workflow = bool(request.POST.get('enable-workflow', False))
-    workflow_states_list = request.POST.get('workflow-states-textarea','')
-    shared_users = bool(request.POST.get('shared-users',False))
-    user_can_edit_workflow = bool(request.POST.get('users-can-edit-workflow', False))
-    enable_discussion =  bool(request.POST.get('enable-discussion', False))
-    users_can_view_discussion =  bool(request.POST.get('users-can-view-discussion', False))
-    locker =  get_object_or_404(Locker, id=kwargs['locker_id'])
-    previous_owner = User.objects.get(username=locker.owner)
-    new_locker_name = request.POST.get('edit-locker', '')
-    new_owner_email = request.POST.get('edit-owner', '')
+    try:
+        previous_owner = User.objects.get(username=locker.owner)
+    except User.DoesNotExist:
+        previous_owner = request.user
+    new_locker_name = request.POST.get('locker-name', '')
+    new_owner_email = request.POST.get('locker-owner', '')
     if new_locker_name != "":
         locker.name = new_locker_name
     if new_owner_email != "":
         try:
             new_owner = User.objects.get(email=new_owner_email).username
-            locker.owner = new_owner
         except User.DoesNotExist:
             logger.error(
                 "Attempted to reassign locker (%s) to non-existent user (%s)" %
@@ -594,35 +588,48 @@ def modify_locker(request, **kwargs):
             ### TODO: Report this problem back to the end user
         else:
             locker.owner = new_owner
-    locker.shared_users_receive_email(shared_users)
-    locker.enable_workflow(enabled_workflow)
-    locker.enable_discussion(enable_discussion)
-    locker.workflow_users_can_edit(user_can_edit_workflow)
-    locker.discussion_users_have_access(users_can_view_discussion)
-    locker.save_states(workflow_states_list)
-    from_addr = _get_notification_from_address("change locker owner")
-    if from_addr:
-        subject = "Ownership of Locker: %s" % locker.name
-        to_addr = request.POST.get('email', '')
-        message = "%s %s has changed the ownership of the following " \
-            "Data Locker of form submissions to you.\n\n" \
-            "Locker: %s\n\n" \
-            "You can view the submissions at:\n%s\n" % (
-                previous_owner.first_name,
-                previous_owner.last_name,
-                locker.name,
-                request.build_absolute_uri(
-                    reverse(
-                        'datalocker:submissions_list',
-                        kwargs={'locker_id': locker.id,}
+            from_addr = _get_notification_from_address("change locker owner")
+            if from_addr:
+                subject = "Ownership of Locker: %s" % locker.name
+                to_addr = request.POST.get('email', '')
+                message = "%s has changed the ownership of the following " \
+                    "Data Locker of form submissions to you.\n\n" \
+                    "Locker: %s\n\n" \
+                    "You can view the submissions at:\n%s\n" % (
+                        previous_owner.first_name,
+                        previous_owner.last_name,
+                        locker.name,
+                        request.build_absolute_uri(
+                            reverse(
+                                'datalocker:submissions_list',
+                                kwargs={'locker_id': locker.id,}
+                                )
+                            ),
                         )
-                    ),
-                )
-        try:
-            send_mail(subject, message, from_addr, [to_addr])
-        except:
-            logger.exception("Locker ownership changed to you email failed to send")
+                try:
+                    send_mail(subject, message, from_addr, [to_addr])
+                except:
+                    logger.exception("Locker ownership changed to you email " \
+                        "failed to send")
     locker.save()
+
+    # update the locker settings
+    locker.shared_users_notification(
+        bool(request.POST.get('shared-users', False))
+    )
+    locker.workflow_enabled(
+        bool(request.POST.get('workflow-enable', False))
+    )
+    locker.workflow_users_can_edit(
+        bool(request.POST.get('workflow-users-can-edit', False))
+    )
+    locker.workflow_states(request.POST.get('workflow-states', ''))
+    locker.discussion_enabled(
+        bool(request.POST.get('discussion-enable', False))
+    )
+    locker.discussion_users_have_access(
+        bool(request.POST.get('discussion-users-can-view', False))
+    )
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
