@@ -93,7 +93,7 @@ class Locker(models.Model):
         return self.name
 
 
-    def discussion_enable(self, enable=None):
+    def discussion_enabled(self, enable=None):
         """
         Gets or sets the discussion enabled setting on the locker.
 
@@ -302,7 +302,7 @@ class Locker(models.Model):
             setting.save()
 
 
-    def workflow_enable(self, enable=None):
+    def workflow_enabled(self, enable=None):
         """
         Gets or sets the workflow enabled setting on the locker.
 
