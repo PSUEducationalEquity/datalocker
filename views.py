@@ -628,7 +628,7 @@ def modify_locker(request, **kwargs):
         bool(request.POST.get('discussion-enable', False))
     )
     locker.discussion_users_have_access(
-        bool(request.POST.get('discussion-users-can-view', False))
+        bool(request.POST.get('discussion-users-have-access', False))
     )
     return HttpResponseRedirect(reverse('datalocker:index'))
 

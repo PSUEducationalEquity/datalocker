@@ -455,7 +455,7 @@ $(document).ready(function () {
         ).change();
 
         // set the discussion options
-        $("input[name='discussion-users-can-view']").prop(
+        $("input[name='discussion-users-have-access']").prop(
             'checked',
             settings['discussion|users-have-access']
         );
