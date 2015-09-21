@@ -39,7 +39,12 @@
                 $($holder).append($alert);
                 if (dismiss > 0) {
                     window.setTimeout(function () {
-                        $alert.alert("close");
+                        $alert.slideUp(
+                            400,
+                            function () {
+                                $alert.alert("close");
+                            }
+                        )
                     }, dismiss * 1000);
                 }
             }
