@@ -478,4 +478,10 @@ $(document).ready(function () {
             $sub_options.slideUp();
         }
     });
+
+    // disable the submit/cancel buttons when the edit locker form is submitted
+    $("#dialog-edit-locker form").on("submit", function (event) {
+        $("#dialog-edit-locker .modal-footer input").prop("disabled", true);
+        $("#dialog-edit-locker button.close").prop("disabled", true);
+    });
 });
