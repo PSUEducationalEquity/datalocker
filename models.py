@@ -233,7 +233,12 @@ class Locker(models.Model):
             try:
                 value = json.loads(setting.value)
             except:
-                value = setting.value
+                if setting.value == "False":
+                    value = False
+                elif setting.value == "True":
+                    value = True
+                else:
+                    value = setting.value
             settings_dict[key] = value
         return settings_dict
 
