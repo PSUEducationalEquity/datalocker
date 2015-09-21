@@ -92,44 +92,54 @@ class Locker(models.Model):
     def __str__(self):
         return self.name
 
-    def enable_discussion(self,enable=None):
-        discussion_setting, created =LockerSetting.objects.get_or_create(
+
+    def discussion_enable(self, enable=None):
+        """
+        Gets or sets the discussion enabled setting on the locker.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = LockerSetting.objects.get_or_create(
             category='discussion',
-            setting_identifier='discussion-enabled',
+            setting_identifier='enabled',
             locker=self,
             defaults={
                 'setting': 'Indicates if discussion is enabled or not',
                 'value': False,
                 }
             )
-        # import pdb; pdb.set_trace()
         if enable is None:
-            return True if discussion_setting.value == 'True' else False
+            return True if setting.value == 'True' else False
         elif enable in (True, False):
-            discussion_setting.value = str(enable)
-            discussion_setting.save()
+            setting.value = str(enable)
+            setting.save()
 
-    def enable_workflow(self, enable=None):
-        workflow_setting, created = LockerSetting.objects.get_or_create(
-            category='workflow',
-            setting_identifier='workflow-enabled',
+
+    def discussion_users_have_access(self, enable=None):
+        """
+        Gets or sets the discussion setting on the locker indicating if shared
+        users have access to the discussion.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = LockerSetting.objects.get_or_create(
+            category='discussion',
+            setting_identifier='users-have-access',
             locker=self,
             defaults={
-                'setting': 'Indicates if workflow is enabled or not',
+                'setting': 'Indicates if users have access to discussion',
                 'value': False,
                 }
             )
         if enable is None:
-            return True if workflow_setting.value == 'True' else False
+            return True if setting.value == 'True' else False
         elif enable in (True, False):
-            workflow_setting.value = str(enable)
-            workflow_setting.save()
-
-
-    def is_archived(self):
-        if archive_timestamp is None:
-            return False
-        return True
+            setting.value = str(enable)
+            setting.save()
 
 
     def get_all_fields_list(self):
@@ -187,21 +197,7 @@ class Locker(models.Model):
         return all_fields
 
 
-    def get_all_states(self):
-        try:
-            all_states_setting = self.settings.get(
-                category='workflow',
-                setting_identifier='states',
-                locker=self,
-                )
-        except LockerSetting.DoesNotExist:
-            all_states = []
-        else:
-            all_states = json.loads(all_states_setting.value)
-        return all_states
-
-
-    def get_default_state(self):
+    def get_default_workflow_state(self):
         states = self.get_all_states()
         try:
             return states[0]
@@ -227,26 +223,40 @@ class Locker(models.Model):
 
 
     def get_settings(self):
-        return {
-            'workflow|enabled': self.enable_workflow(),
-            'workflow|users-can-edit': self.workflow_users_can_edit(),
-            'workflow|states': self.get_all_states(),
-            'discussion|enabled': self.enable_discussion(),
-            'discussion|users-have-access-to-disccusion': self.discussion_users_have_access(),
-            'access|shared-users': self.shared_users_receive_email(),
-            }
-
+        """
+        Returns a dictionary of all the locker's settings
+        """
+        settings_dict = {}
+        settings = LockerSetting.objects.filter(locker=self)
+        for setting in settings:
+            key = "%s|%s" % (setting.category, setting.setting_identifier)
+            try:
+                value = json.loads(setting.value)
+            except:
+                value = setting.value
+            settings_dict[key] = value
+        return settings_dict
 
 
     def has_access(self, user):
         """
-
+        Returns a boolean indicating if the specified user has access to the
+        locker as either the owner or a shared user.
         """
         if user.username == self.owner:
             return True
-        elif user in self.users.all():            
+        elif user in self.users.all():
             return True
         return False
+
+
+    def is_archived(self):
+        """
+        Returns a boolean indicating if the locker has been archived
+        """
+        if archive_timestamp is None:
+            return False
+        return True
 
 
     def save_selected_fields_list(self, fields):
@@ -266,69 +276,106 @@ class Locker(models.Model):
         selected_fields_setting.save()
 
 
-    def save_states(self, states):
-        saved_state_setting, created = LockerSetting.objects.get_or_create(
+    def shared_users_notification(self, enable=None):
+        """
+        Gets or sets the setting on the locker indicating if shared users
+        receive an email when a new submission is received.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = LockerSetting.objects.get_or_create(
+            category='submission-notifications',
+            setting_identifier='notify-shared-users',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if shared users should receive an ' \
+                    'email when a new submission is received',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if setting.value == 'True' else False
+        elif enable in (True, False):
+            setting.value = str(enable)
+            setting.save()
+
+
+    def workflow_enable(self, enable=None):
+        """
+        Gets or sets the workflow enabled setting on the locker.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = LockerSetting.objects.get_or_create(
+            category='workflow',
+            setting_identifier='enabled',
+            locker=self,
+            defaults={
+                'setting': 'Indicates if workflow is enabled or not',
+                'value': False,
+                }
+            )
+        if enable is None:
+            return True if setting.value == 'True' else False
+        elif enable in (True, False):
+            setting.value = str(enable)
+            setting.save()
+
+
+    def workflow_states(self, states=None):
+        """
+        Gets or sets the workflow setting on the locker indicating the possible
+        workflow states.
+
+        Calling it with enable=None will return the current setting value
+        as a list.
+        Passing it a list of values, will set the value.
+        """
+        setting, created = LockerSetting.objects.get_or_create(
             category='workflow',
             setting_identifier='states',
             locker=self,
             defaults={
                 'setting': 'User-defined list of workflow states',
+                'value': json.dumps([]),
                 }
             )
-        saved_state_setting.value = json.dumps(
-            [ item.strip() for item in states.split("\n") if item.strip() ]
-            )
-        saved_state_setting.save()
+        if enable is None:
+            return json.loads(setting.value)
+        else:
+            setting.value = json.dumps(
+                [ item.strip() for item in states.split("\n") if item.strip() ]
+                )
+            setting.save()
 
 
     def workflow_users_can_edit(self, enable=None):
-        users_can_edit_setting, created = LockerSetting.objects.get_or_create(
+        """
+        Gets or sets the workflow setting on the locker indicating if shared
+        users can change the workflow state.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = LockerSetting.objects.get_or_create(
             category='workflow',
             setting_identifier='users-can-edit',
             locker=self,
             defaults={
-                'setting': 'Indicates if users can edit workflow',
+                'setting': 'Indicates if users can change the workflow state',
                 'value': False,
                 }
             )
         if enable is None:
-            return True if users_can_edit_setting.value == 'True' else False
+            return True if setting.value == 'True' else False
         elif enable in (True, False):
-            users_can_edit_setting.value = str(enable)
-            users_can_edit_setting.save()
-
-
-    def discussion_users_have_access(self, enable=None):
-        discussion_users_have_access_setting, created = LockerSetting.objects.get_or_create(
-            category='discussion',
-            setting_identifier='users-have-access-to-disccusion',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if users have access to discussion',
-                'value': False,
-                }
-            )
-        if enable is None:
-            return True if discussion_users_have_access_setting.value == 'True' else False
-        elif enable in (True, False):
-            discussion_users_have_access_setting.value = str(enable)
-            discussion_users_have_access_setting.save()
-
-    def shared_users_receive_email(self, enable=None):
-        shared_users_receive_email_setting, created = LockerSetting.objects.get_or_create(
-            category='email_users',
-            setting_identifier='shared-users-will-receive-email',
-            locker=self,
-            defaults={
-                'setting': 'Indicates shared users will receive an email when a new submission is submitted',
-                'value': False,
-                }
-            )
-        if enable is None:
-            return True if shared_users_receive_email_setting.value == 'True' else False
-        elif enable in (True, False):
-            shared_users_receive_email_setting.value = str(enable)
-            shared_users_receive_email_setting.save()
+            setting.value = str(enable)
+            setting.save()
 
 
 
