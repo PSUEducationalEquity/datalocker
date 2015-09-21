@@ -192,9 +192,13 @@
             error: function(jqXHR, textStatus, errorThrown)
             {
                 if (jqXHR.status == 404) {
-                    console.log("Invalid User");
-                    alert("Invalid User!");
-
+                    UserMessage.add(
+                        "<strong>Oops!</strong> the user you specified "
+                        + "does not exist.",
+                        "danger",
+                        5,
+                        "dialog-sharing"
+                    );
                 } else if (errorThrown != "abort") {
                     console.error(
                         "Locker.add_user in locker.js AJAX error: "
