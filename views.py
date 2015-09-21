@@ -1,6 +1,7 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -583,16 +584,23 @@ def modify_locker(request, **kwargs):
         except User.DoesNotExist:
             logger.error(
                 "Attempted to reassign locker (%s) to non-existent user (%s)" %
-                (locker.name, new_owner)
+                (locker.name, new_owner_email)
                 )
-            ### TODO: Report this problem back to the end user
+            messages.error(
+                request,
+                "<strong>Oops!</strong> The user (%s) you tryed to make the " \
+                "owner of the <strong>%s</strong> locker does not exist. " \
+                "<strong>You still own the locker.</strong>" % (
+                    new_owner_email,
+                    locker.name
+                    ))
         else:
             locker.owner = new_owner
             from_addr = _get_notification_from_address("change locker owner")
             if from_addr:
                 subject = "Ownership of Locker: %s" % locker.name
-                to_addr = request.POST.get('email', '')
-                message = "%s has changed the ownership of the following " \
+                to_addr = new_owner_email
+                message = "%s %s has changed the ownership of the following " \
                     "Data Locker of form submissions to you.\n\n" \
                     "Locker: %s\n\n" \
                     "You can view the submissions at:\n%s\n" % (
