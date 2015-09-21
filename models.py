@@ -344,7 +344,7 @@ class Locker(models.Model):
                 'value': json.dumps([]),
                 }
             )
-        if enable is None:
+        if states is None:
             return json.loads(setting.value)
         else:
             setting.value = json.dumps(
