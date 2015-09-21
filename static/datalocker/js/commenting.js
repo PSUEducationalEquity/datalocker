@@ -1,4 +1,5 @@
-/*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
+/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
+
 (function (Comment, $, undefined)
 {
     // the AJAX objects that handles server communication
