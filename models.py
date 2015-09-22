@@ -285,6 +285,21 @@ class Locker(models.Model):
         return True
 
 
+    def is_owner(self, user):
+        """
+        Returns a boolean indicating if the specified user is the locker owner
+        """
+        return True if user.username == self.owner else False
+
+
+    def is_user(self, user):
+        """
+        Returns a boolean indicating if the specified user has shared access
+        to the locker
+        """
+        return True if user in self.users else False
+
+
     def save_selected_fields_list(self, fields):
         selected_fields = []
         for field in self.get_all_fields_list():
