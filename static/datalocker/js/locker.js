@@ -275,7 +275,7 @@ function getCookieValue(key)
             return entry.substring(name.length, entry.length);
         }
     }
-    return "";
+    return 'false';
 }
 
 
@@ -411,7 +411,6 @@ $(document).ready(function () {
         $menu.width($(this).width());
     });
     $(".twitter-typeahead").attr("style", "position: relative;");
-
 
 
 
