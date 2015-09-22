@@ -569,8 +569,18 @@ header { margin-bottom: 20px; }
     $WORKFLOW
 \*------------------------------------*/
 
-.state-status {
-    font-style: italic;
-    padding-left: 1em;
-    display: inherit;
+.workflow-label {
+    display: inline-block;
+    font-size: 12px;
+}
+
+.workflow-state {
+    display: inline-block;
+    font-size: 22px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.panel-workflow form {
+    margin-top: 2em;
 }
