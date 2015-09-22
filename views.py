@@ -11,7 +11,8 @@ from django.core.urlresolvers import reverse
 from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, \
+    HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
@@ -210,22 +211,12 @@ def archive_locker(request, **kwargs):
 
 
 
-@require_http_methods(["POST"])
-def change_workflow_state(request, **kwargs):
-    submission = Submission.objects.get(id=kwargs['pk'])
-    new_state = request.POST.get('workflow_state_update', '')
-    submission.workflow_state = new_state
-    submission.save()
-    return JsonResponse({
-        'new state': new_state
-        })
-
-
-
 def custom_404(request):
     response = render_to_response('datalocker/404.html')
     response.status_code = 404
     return response
+
+
 
 
 @login_required()
@@ -703,11 +694,10 @@ def undelete_submission(request, **kwargs):
     else:
         return HttpResponseRedirect(reverse(
             'datalocker:submission_list',
-            kwargs={
-                'id': self.kwargs['id'],
-                'deleted': submission.deleted
-                }
+            kwargs={'locker_id': self.kwargs['id']}
             ))
+
+
 
 
 @login_required()
@@ -724,3 +714,32 @@ def users_list(request, **kwargs):
             'last_name': user.last_name,
             })
     return JsonResponse({ 'users': users_list })
+
+
+
+
+@login_required()
+@require_http_methods(["POST"])
+def workflow_modify(request, **kwargs):
+    submission = get_object_or_404(Submission, pk=kwargs['pk'])
+    new_state = request.POST.get('workflow-state', '')
+    if new_state in submission.locker.workflow_states():
+        submission.workflow_state = new_state
+        submission.save()
+        if request.is_ajax():
+            return JsonResponse({
+                'state': new_state
+                })
+    else:
+        error_msg = "<strong>Oops!</strong> Unknown workflow state specified."
+        if request.is_ajax():
+            return HttpResponseBadRequest(error_msg, content_type='text/plain');
+        else:
+            messages.error(request, error_msg)
+    return HttpResponseRedirect(reverse(
+        'datalocker:submission_view',
+        kwargs={
+            'locker_id': submission.locker.id,
+            'pk': submission.id,
+            }
+        ))
