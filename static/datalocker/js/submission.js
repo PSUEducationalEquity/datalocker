@@ -28,25 +28,21 @@
                 id: id,
                 csrfmiddlewaretoken: $("#submission-list").attr("data-csrf-token")
             },
-            success: function(response, textStatus, jqXHR)
-            {
-                $("#submission-list tr[data-id='" + response.id +"']").attr(
-                    "data-purge-timestamp",
-                    response.purge_timestamp
-                ).addClass("is-deleted");
-                Submission.update_purge_warning(response.id);
-                Submission.deleteRequest = null;
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                console.error(
-                    "Submission.delete in Submission.js AJAX error: "
-                    + textStatus,
-                    errorThrown
-                );
-            }
+        }).done(function(response, textStatus, jqXHR) {
+            $("#submission-list tr[data-id='" + response.id +"']").attr(
+                "data-purge-timestamp",
+                response.purge_timestamp
+            ).addClass("is-deleted");
+            Submission.update_purge_warning(response.id);
+            Submission.deleteRequest = null;
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(
+                "Submission.delete in Submission.js AJAX error: "
+                + textStatus,
+                errorThrown
+            );
+            Submission.deleteRequest = null;
         });
-        Submission.deleteRequest = null;
     }
 
 
@@ -68,24 +64,20 @@
                 id: id,
                 csrfmiddlewaretoken: $("#submission-list").attr("data-csrf-token")
             },
-            success: function(response, textStatus, jqXHR)
-            {
-                $("#submission-list tr[data-id='" + response.id +"']").attr(
-                    "data-purge-timestamp",
-                    ""
-                ).removeClass("is-deleted");
-                Submission.undeleteRequest = null;
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                console.error(
-                    "Submission.undelete in Submission.js AJAX error: "
-                    + textStatus,
-                    errorThrown
-                );
-            }
+        }).done(function(response, textStatus, jqXHR) {
+            $("#submission-list tr[data-id='" + response.id +"']").attr(
+                "data-purge-timestamp",
+                ""
+            ).removeClass("is-deleted");
+            Submission.undeleteRequest = null;
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(
+                "Submission.undelete in Submission.js AJAX error: "
+                + textStatus,
+                errorThrown
+            );
+            Submission.undeleteRequest = null;
         });
-        Submission.undeleteRequest = null;
     }
 
 

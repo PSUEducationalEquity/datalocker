@@ -19,18 +19,14 @@
                 csrfmiddlewaretoken: $("#dialog-sharing").find(
                     "input[name='csrfmiddlewaretoken']").val()
             },
-            // callback handler: success
-            success: function(data) {
-                $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
-            },
-            // callback handler: failure
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error(
-                    "Locker.archive in Locker.js AJAX error: "
-                    + textStatus,
-                    errorThrown
-                );
-            }
+        }).done(function(response, textStatus, jqXHR) {
+            $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(
+                "Locker.archive in Locker.js AJAX error: "
+                + textStatus,
+                errorThrown
+            );
         });
     }
 
@@ -47,18 +43,14 @@
                 csrfmiddlewaretoken: $("#dialog-sharing").find(
                     "input[name='csrfmiddlewaretoken']").val()
             },
-            // callback handler: success
-            success: function(data) {
-                $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
-            },
-            // callback handler: failure
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error(
-                    "Locker.archive in Locker.js AJAX error: "
-                    + textStatus,
-                    errorThrown
-                );
-            }
+        }).done(function(response, textStatus, jqXHR) {
+            $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(
+                "Locker.archive in Locker.js AJAX error: "
+                + textStatus,
+                errorThrown
+            );
         });
     }
 
@@ -110,27 +102,23 @@
                 url: url.replace("/0/", "/" + locker_id + "/"),
                 type: "get",
                 cache: false,
-                success: function(response, textStatus, jqXHR)
-                {
-                    var $users_list = $("#dialog-sharing .list-existing-users");
-                    $users_list.children(":not(.no-entries)").remove();
-                    $.each(response.users, function (index, user) {
-                        $users_list.append(Locker._build_user_list_entry(user));
-                    });
-                    Locker.no_user_message();
-                    Locker.dataRequest = null;
-                },
-                error: function(jqXHR, textStatus, errorThrown)
-                {
-                    if  (errorThrown != "abort") {
-                        console.error(
-                            "Locker.build_user_list in locker.js AJAX error: "
-                                + textStatus,
-                            errorThrown
-                        );
-                    }
-                    Locker.dataRequest = null;
+            }).done(function(response, textStatus, jqXHR) {
+                var $users_list = $("#dialog-sharing .list-existing-users");
+                $users_list.children(":not(.no-entries)").remove();
+                $.each(response.users, function (index, user) {
+                    $users_list.append(Locker._build_user_list_entry(user));
+                });
+                Locker.no_user_message();
+                Locker.dataRequest = null;
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                if  (errorThrown != "abort") {
+                    console.error(
+                        "Locker.build_user_list in locker.js AJAX error: "
+                            + textStatus,
+                        errorThrown
+                    );
                 }
+                Locker.dataRequest = null;
             });
         }
     }
@@ -181,33 +169,29 @@
                 email: $("#email").val(),
                 csrfmiddlewaretoken: csrf_token,
             },
-            success: function(response, textStatus, jqXHR)
-            {
-                $("#existing-users").append(
-                    Locker._build_user_list_entry(response.user)
+        }).done(function(response, textStatus, jqXHR) {
+            $("#existing-users").append(
+                Locker._build_user_list_entry(response.user)
+            );
+            Locker.no_user_message();
+            Locker.addRequest = null;
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 404) {
+                UserMessage.add(
+                    "<strong>Oops!</strong> the user you specified "
+                    + "does not exist.",
+                    "danger",
+                    5,
+                    "dialog-sharing"
                 );
-                Locker.no_user_message();
-                Locker.addRequest = null;
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                if (jqXHR.status == 404) {
-                    UserMessage.add(
-                        "<strong>Oops!</strong> the user you specified "
-                        + "does not exist.",
-                        "danger",
-                        5,
-                        "dialog-sharing"
-                    );
-                } else if (errorThrown != "abort") {
-                    console.error(
-                        "Locker.add_user in locker.js AJAX error: "
-                            + textStatus,
-                        errorThrown
-                    );
-                }
-                Locker.addRequest = null;
+            } else if (errorThrown != "abort") {
+                console.error(
+                    "Locker.add_user in locker.js AJAX error: "
+                        + textStatus,
+                    errorThrown
+                );
             }
+            Locker.addRequest = null;
         });
     }
 
@@ -231,23 +215,19 @@
                 id : user_id,
                 csrfmiddlewaretoken: csrf_token,
             },
-            success: function(response, textStatus, jqXHR)
-            {
-                $("#existing-users li[data-id='" + response.user_id + "']").remove();
-                Locker.no_user_message();
-                Locker.deleteRequest = null;
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                if (errorThrown != "abort") {
-                    console.error(
-                        "Locker.build_user_list in locker.js AJAX error: "
-                            + textStatus,
-                        errorThrown
-                    );
-                }
-                Locker.deleteRequest = null;
+        }).done(function(response, textStatus, jqXHR) {
+            $("#existing-users li[data-id='" + response.user_id + "']").remove();
+            Locker.no_user_message();
+            Locker.deleteRequest = null;
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if (errorThrown != "abort") {
+                console.error(
+                    "Locker.build_user_list in locker.js AJAX error: "
+                        + textStatus,
+                    errorThrown
+                );
             }
+            Locker.deleteRequest = null;
         });
     }
 }( window.Locker = window.Locker || {}, jQuery));

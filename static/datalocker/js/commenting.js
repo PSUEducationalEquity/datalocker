@@ -17,17 +17,11 @@
                 csrfmiddlewaretoken: $("#comments-div").find(
                     "input[name='csrfmiddlewaretoken']").val()
                 }
-        });
-
-        // Callback handler: success
-        Comment.addRequest.done(function (response, textStatus, jqXHR) {
+        }).done(function(response, textStatus, jqXHR) {
             $("#comment-list").append(Comment._build_comment_feed_entry(response));
             $("textarea#comment-text").val('');
             Comment.addRequest = null;
-        });
-
-        // Callback handler: failure
-        Comment.addRequest.fail(function (jqXHR, errorThrown) {
+        }).fail(function(jqXHR, textStatus, errorThrown) {
             if (errorThrown != "abort") {
                 console.error("Comment.add in commenting.js AJAX error");
             }
@@ -46,21 +40,15 @@
                 parent_comment: id,
                 csrfmiddlewaretoken: $("#comments-div").find(
                     "input[name='csrfmiddlewaretoken']").val()
-                }
-        });
-
-        // Callback handler: success
-        Comment.addRequest.done(function (response, textStatus, jqXHR) {
+            }
+        }).done(function(response, textStatus, jqXHR) {
             $("#comment-list").append(Comment._build_comment_feed_entry(response));
             $("#comment-list li[data-id='" + id + "'] textarea").val('');
             $("#comment-list li[data-id='" + id + "'] div.comment-reply-entry").addClass("hide");
             $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
 
             Comment.addRequest = null;
-        });
-
-        // Callback handler: failure
-        Comment.addRequest.fail(function (jqXHR, errorThrown) {
+        }).fail(function(jqXHR, textStatus, errorThrown) {
             if (errorThrown != "abort") {
                 console.error("Comment.add in commenting.js AJAX error");
             }
@@ -81,20 +69,14 @@
                 csrfmiddlewaretoken: $("#comments-div").find(
                     "input[name='csrfmiddlewaretoken']").val()
                 }
-        });
-
-        // Callback handler: success
-        Comment.addRequest.done(function (response, textStatus, jqXHR) {
+        }).done(function(response, textStatus, jqXHR) {
             $("#comment-list li[data-id='" + id + "'] textarea").val('');
             $("#comment-list li[data-id='" + id + "'] div.comment-reply-entry").addClass("hide");
             $("#comment-list li[data-id='" + id + "'] button[role='comment-reply']").show();
             $("#comment-list li[data-id='" + id + "'] button[role='comment-edit']").show();
 
             Comment.addRequest = null;
-        });
-
-        // Callback handler: failure
-        Comment.addRequest.fail(function (jqXHR, errorThrown) {
+        }).fail(function(jqXHR, textStatus, errorThrown) {
             if (errorThrown != "abort") {
                 console.error("Comment.add in commenting.js AJAX error");
             }
@@ -161,10 +143,7 @@
                 url: url,
                 type: "get",
                 cache: false
-            });
-
-            // callback handler: success
-            Comment.dataRequest.done(function (response, textStatus, jqXHR) {
+            }).done(function(response, textStatus, jqXHR) {
                 var $comments_list = $("#comment-list");
                 // build the list of Comment
                 $.each(response.comments, function (index, comment) {
@@ -174,10 +153,7 @@
                     $comments_list.append(Comment._build_comment_feed_entry(reply));
                     });
                 Comment.dataRequest = null;
-            });
-
-            // callback handler: failure
-            Comment.dataRequest.fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function(jqXHR, textStatus, errorThrown) {
                 if  (errorThrown != "abort") {
                     console.error(
                         "Comment.build_comment_feed in commenting.js AJAX error: "
