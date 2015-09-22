@@ -60,6 +60,27 @@ class LockerManager(models.Manager):
 
 
 
+class SubmissionManager(models.Manager):
+    def oldest(self, locker):
+        """
+        Returns the oldest submission based on the timestamp
+        """
+        return self.objects.filter(
+            locker=locker, deleted=None
+            ).earliest('timestamp')
+
+
+    def newest(self, locker):
+        """
+        Returns the newest submission based on the timestamp
+        """
+        return self.objects.filter(
+            locker=locker, deleted=None
+            ).latest('timestamp')
+
+
+
+
 ##
 # Models
 ##
@@ -424,18 +445,16 @@ class Submission(models.Model):
         max_length=25,
         default='Unreviewed',
         )
+    objects = SubmissionManager
 
 
     def __str__(self):
-        return str(self.locker)
-
-    def __unicode__ (self):
-        return str(self.id)
+        return "%s submission to %s" % (self.timestamp, self.locker)
 
 
     def data_dict(self):
         """
-        Returns the data field as an ordered dictionary instead of JSON
+        Returns the data field as an ordered dictionary
         """
         try:
             data = json.loads(self.data, object_pairs_hook=OrderedDict)
@@ -459,58 +478,38 @@ class Submission(models.Model):
 
     def newer(self):
         """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by timestamp and filter the first one with
-        a newer timestamp. If there isn't one newer it will return the current
-        Locker object to avoid and Index Out of Range Error.
+        Returns the submission object that was submitted immediately after
+        this one. If there isn't a newer submission, the current submission is
+        returned.
         """
         try:
             nextSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__gt=self.timestamp, deleted=None).order_by('timestamp')[0]
+                timestamp__gt=self.timestamp,
+                deleted=None
+                ).order_by('timestamp')[0]
         except IndexError:
-            nextSubmission = Submission.objects.filter(
-                locker=self.locker, deleted=None).order_by('-timestamp')[0]
-        return nextSubmission.id
+            return self
+        else:
+            return nextSubmission
 
 
     def older(self):
         """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by descending timestamp and filter
-        the first one with an older timestamp. If there isn't an older one it
-        will return the current Locker object to avoid and Index Out of Range Error.
+        Returns the submission object that was submitted immediately before
+        this one. If there isn't an older submission, the current submission is
+        reutrned.
         """
         try:
-            lastSubmission = Submission.objects.filter(
+            prevSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__lt=self.timestamp, deleted=None).order_by('-timestamp')[0]
+                timestamp__lt=self.timestamp,
+                deleted=None
+                ).order_by('-timestamp')[0]
         except IndexError:
-            lastSubmission = Submission.objects.filter(
-                locker=self.locker, deleted=None).order_by('timestamp')[0]
-        return lastSubmission.id
-
-
-    def oldest(self):
-        """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by timestamp and filter the Locker object
-        with the earliest timestamp.
-        """
-        oldestSubmission = Submission.objects.filter(
-            locker=self.locker, deleted=None).earliest('timestamp')
-        return oldestSubmission.id
-
-
-    def newest(self):
-        """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by timestamp and filter the Locker object
-        with the newest timestamp.
-        """
-        newestSubmission = Submission.objects.filter(
-            locker=self.locker, deleted=None).latest('timestamp')
-        return newestSubmission.id
+            return self
+        else:
+            return prevSubmission
 
 
 
