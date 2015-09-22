@@ -1,54 +1,76 @@
+/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
-/*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
-
-
-  /**
-   * Changes the workflow state for the submisison
-   *
-   * @return     void
-   * @author     Hunter Yohn  <hay110@psu.edu>
-  */
-
-
-(function (Submission, $, undefined)
+/**
+ * Handle manipulating the workflow state of a submission
+ *
+ * @return     void
+ * @author     Hunter Yohn  <hay110@psu.edu>
+ */
+(function (Workflow, $, undefined)
 {
     // the AJAX objects that handles server communication
-    Submission.workflowRequest;
+    Workflow.request;
 
 
-    Submission.changeWorkflowState = function (value) {
-        var changeWorkflowStateUrl = $("#workflow_form").attr("action");
-        var workflow_state_update = value;
-        Submission.workflowRequest = $.ajax({
-            url: changeWorkflowStateUrl,
-            type: "post",
-            data: {
-                workflow_state_update: workflow_state_update,
-                csrfmiddlewaretoken: $("#workflow_form").find(
-                    "input[name='csrfmiddlewaretoken']").val()
+    /**
+     * Change the workflow state
+     *
+     * @param   string value  a string containing the value to change the
+     *                        workflow state to
+     * @return  void
+     */
+    Workflow.change = function (value)
+    {
+        var csrf_token = $(".panel-workflow form").find(
+            "input[name='csrfmiddlewaretoken']"
+        ).val();
+        if (!Workflow.request) {
+            Workflow.request = $.ajax({
+                url: $(".panel-workflow form").attr("action"),
+                type: "post",
+                data: {
+                    'workflow-state': value,
+                    'csrfmiddlewaretoken': csrf_token,
                 }
-        });
+            }).done(function(response, textStatus, jqXHR) {
+                $(".js-workflow-current-state").html(response.state);
+                Workflow.request = null;
 
-        // callback handler: success
-        Submission.workflowRequest.done(function (response, textStatus, jqXHR) {
-
-            Submission.workflowRequest = null;
-        });
-
-        // callback handler: failure
-        Submission.workflowRequest.fail(function (jqXHR, errorThrown) {
-            if (errorThrown != "abort") {
-                console.error("Submission.add in workflow.js AJAX error");
-            }
-            Submission.workflowRequest = null;
-        });
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 400) {
+                    UserMessage.add(jqXHR.responseText, "danger", 5);
+                } else if (jqXHR.status == 404) {
+                    UserMessage.add(
+                        "<strong>Oops!</strong> the workflow state for this "
+                        + "submission could not be updated.",
+                        "danger",
+                        7
+                    );
+                } else if (errorThrown != "abort") {
+                    console.error(
+                        "Workflow.change in workflow.js AJAX error: "
+                        + textStatus,
+                        errorThrown
+                    );
+                }
+                Workflow.request = null;
+            });
+        }
     }
-}( window.Submission = window.Submission || {}, jQuery));
 
-$(document).ready(function () {
-    $('select[id=states]').change( function(){
-        var newText = $('option:selected',this).text();
-        $('#current_state').text("Current State: "+ newText);
-        Submission.changeWorkflowState(newText);
+}( window.Workflow = window.Workflow || {}, jQuery));
+
+
+$(document).ready(function ()
+{
+    // handle a change to the workflow state
+    $(".panel-workflow select#workflow-state").on("change", function () {
+        Workflow.change($(this).val());
+        $(this).val("0");
+    });
+
+    // prevent a form submission as it's not necessary
+    $(".panel-workflow form").on("submit", function (event) {
+        event.preventDefault();
     });
 });
