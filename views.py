@@ -310,7 +310,7 @@ def form_submission_view(request, **kwargs):
     except User.DoesNotExist:
         logger.warning("New submission saved to orphaned locker: %s" % (
             reverse(
-                'datalocker:submissions_view',
+                'datalocker:submission_view',
                 kwargs={'locker_id': locker.id, 'pk': submission.id}
                 ),
         ))
@@ -327,7 +327,7 @@ def form_submission_view(request, **kwargs):
                     request.POST.get('name', 'New Locker'),
                     request.build_absolute_uri(
                         reverse(
-                            'datalocker:submissions_view',
+                            'datalocker:submission_view',
                             kwargs={'locker_id': locker.id, 'pk': submission.id}
                             )
                         ),
@@ -466,11 +466,11 @@ def get_comments_view(request, **kwargs):
                 'replies': replies,
                 })
         else:
-            return HttpResponseRedirect(reverse('datalocker:submissions_view',
+            return HttpResponseRedirect(reverse('datalocker:submission_view',
          kwargs={'locker_id': locker.id, 'pk': pk}))
     else:
         pk = Submission.objects.get(id=kwargs['pk'])
-        return HttpResponseRedirect(reverse('datalocker:submissions_view',
+        return HttpResponseRedirect(reverse('datalocker:submission_view',
          kwargs={'locker_id': locker.id, 'pk': pk}))
 
 

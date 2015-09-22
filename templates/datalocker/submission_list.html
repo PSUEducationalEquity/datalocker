@@ -75,7 +75,7 @@
               {% if forloop.counter > 3 %}
                 <td name="date">
                   {% if forloop.counter == 4 %}
-                    <a href="{% url 'datalocker:submissions_view' locker.id submission.0 %}"
+                    <a href="{% url 'datalocker:submission_view' locker.id submission.0 %}"
                        style="display:block;"
                       >{{ value }}</a>
                     <span class="label label-danger label-deleted" />
