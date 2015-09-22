@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMessage
 from django.core.urlresolvers import reverse
@@ -636,6 +637,19 @@ def submission_view(request, **kwargs):
     newest = Submission.objects.newest(submission.locker)
     workflow_enabled = submission.locker.workflow_enabled()
     discussion_enabled = submission.locker.discussion_enabled()
+
+    # generate a message to the user if the submission is deleted
+    if submission.deleted:
+        purge_date = submission.deleted
+        purge_date += datetime.timedelta(days=settings.SUBMISSION_PURGE_DAYS)
+        messages.warning(
+            request,
+            "<strong>Heads up!</strong> This submission has been deleted " \
+            "and <strong>will be permanently removed</strong> from the " \
+            "locker <strong>%s</strong>." % (
+                naturaltime(purge_date)
+                )
+            )
     return render(request, 'datalocker/submission_view.html', {
         'submission': submission,
 
