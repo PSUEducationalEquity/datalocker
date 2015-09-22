@@ -17,8 +17,8 @@
  * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
  * HEADER...............Styling specifically for the page header
+ * KEY_VALUE_PAIRS......Key/value pair display styling
  * SHARING_DIALOG.......Styling for the sharing dialog
- * SUBMISSION_VIEW_PAGE.Styling for the submissions view page
  * TABLES...............Table specific styling
  * TOGGLE_SWITCH........Toggle Switch the stying when entering and exiting maintenance mode
  * WORKFLOW.............Styling for the workflow portlet
@@ -486,6 +486,28 @@ header { margin-bottom: 20px; }
 
 
 /*-----------------------------------*\
+    $KEY_VALUE_PAIRS
+\*-----------------------------------*/
+
+/*ol,ul*/ .key-value-pair {
+    margin-bottom: 1em;
+    margin-left: 2em;
+}
+
+/*ol,ul*/ .key-value-pair .key {
+    font-size: 14px;
+}
+
+/*ol,ul*/ .key-value-pair .value {
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 2em;
+}
+
+
+
+
+/*-----------------------------------*\
     $SHARE_DIALOG
 \*-----------------------------------*/
 
@@ -501,36 +523,6 @@ header { margin-bottom: 20px; }
 .dialog-sharing .list-existing-users li > a {
     margin-top: 2px;
     padding-left: 10px;
-}
-
-
-/*
-#no-users-message {
-  font-size: 15px;
-  color: #808080;
-  font-style: italic;
-}
-*/
-
-
-
-/*-----------------------------------*\
-    $SUBMISSION_VIEW_PAGE
-\*-----------------------------------*/
-
-ul {
-  list-style-type: none;
-}
-
-ul .header{
-  font-size: 16px;
-  padding-top: 1em;
-}
-
-ul .information {
-  font-size: 16px;
-  font-weight: bold;
-  padding-left: 2em;
 }
 
 

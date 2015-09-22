@@ -10,7 +10,7 @@
     </a>
   </li>
   <li>
-    <a href="{% url 'datalocker:submissions_list' locker.id %}">
+    <a href="{% url 'datalocker:submissions_list' submission.locker.id %}">
       All Submissions<span class="sr-only"> for {{ locker.name }}</span>
     </a>
   </li>
@@ -31,22 +31,28 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-{% if sidebar_enabled %}8{% else %}12{% endif %}">
-        <h1>{{ locker.name }}</h1>
+        <h1>{{ submission.locker.name }}</h1>
+
         <ul class="messages list-unstyled" id="user-messages">
             {% for msg in messages %}
-                <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+              <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
             {% endfor %}
         </ul>
+
         <div class="pagination" aria-label="submission navigation buttons">
           {% include "datalocker/pagination_template.html" %}
         </div>
 
-        <ul class="submission-view">
-          <li class="header">Submission Date</li>
-          <li class="information">{{ object.timestamp }}</li>
-          {% for key, value in object.data_dict.items %}
-            <li class="header">{{ key }}</li>
-            <li class="information">{{ value }}</li>
+        <ul class="list-unstyled">
+          <li class="key-value-pair">
+            <div class="key">Submission Date</div>
+            <div class="value">{{ submission.timestamp }}</div>
+          </li>
+          {% for key, value in submission.data_dict.items %}
+            <li class="key-value-pair">
+              <div class="key">{{ key }}</div>
+              <div class="value">{{ value }}</div>
+            </li>
           {% endfor %}
         </ul>
 
@@ -64,60 +70,61 @@
                 <div class="panel-title">Workflow</div>
               </div>
               <div class="panel-body">
-                <div id="current_state">Current State: {{ current_state }} </div>
+                <div id="current_state">Current State: {{ workflow_state }} </div>
                 {% if workflow_users_can_edit %}
-                  <form action="{% url 'datalocker:workflow_states' locker.id object.id %}"
-                    id="workflow_form" method="POST">
+                  <form action="{% url 'datalocker:workflow_states' submission.locker.id submission.id %}"
+                        id="workflow_form" method="POST">
                     {% csrf_token %}
-                      <label for="states">Workflow State</label>
-                      <select id="states" name="states" class="form-control">
-                        <option selected="selected" disabled="disabled">Pick a Workflow state</option>
-                        {% for states in  workflow_states %}
-                          <option name="states">{{ states }}</option>
-                        {% endfor %}
-                      </select>
+
+                    <label for="workflow-state">Change workflow state</label>
+                    <select id="workflow-state" name="workflow-state" class="form-control">
+                      <option selected="selected" disabled="disabled">Select a new workflow state</option>
+                      {% for state in workflow_states %}
+                        <option value="{{ state }}">{{ state }}</option>
+                      {% endfor %}
+                    </select>
                   </form>
                 {% endif %}
               </div>
             </div>
           {% endif %}
 
-          {% if commenting_enabled %}
-          {% if users_can_view_discussion %}
-          <div class="panel panel-default panel-comments"
-            id="comments-div">
-            <div class="panel-heading" >
-              <div class="panel-title">Comments</div>
-            </div>
-            <div class="panel-body">
-              <div class="comment-controls">
-                <form method="POST"
-                  id="comment-form"
-                  action="{% url 'datalocker:add_comment' object.locker.id object.pk %}"
-                  data-url="{% url 'datalocker:get_comments' object.locker.id object.pk %}">
-                {% csrf_token %}
-                  <textarea
-                    id="comment-text"
-                    name="comment"
-                    placeholder="Add Comment"
-                    class="comment-textarea"></textarea>
-                  <button type="button"
-                    id="comment-add"
-                    class="btn btn-primary btn-xs comment-button"
-                    role="add-comment"
-                    >Add</button>
-                </form>
+          {% if discussion_enabled %}
+            {% if discussion_users_have_access %}
+              <div class="panel panel-default panel-discussion" id="comments-div"
+                   data-url="{% url 'datalocker:get_comments' submission.locker.id submission.pk %}">
+                <div class="panel-heading" >
+                  <div class="panel-title">Discussion</div>
+                </div>
+                <div class="panel-body">
+                  <div class="discussion-controls">
+                    <form method="post"
+                          action="{% url 'datalocker:add_comment' submission.locker.id submission.pk %}">
+                      {% csrf_token %}
+
+                      <textarea name="comment"
+                                class="comment-textarea"
+                                id="comment-text"
+                                placeholder="Say something about this submission"
+                                ></textarea>
+                      <button type="button"
+                              class="btn btn-primary btn-xs comment-button"
+                              id="comment-add"
+                              role="add-comment"
+                              >Add</button>
+                    </form>
+                  </div>
+                  <div class="comment-feed-container">
+                    <ul class="media-list" id="comment-list">
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <div class="comment-feed-container">
-                <ul class="media-list" id="comment-list">
-                </ul>
-              </div>
-            </div>
-          </div>
-          {% endif %}
+            {% endif %}
           {% endif %}
         </div>
-    {% endif %}
+      {% endif %}
+    </div>
   </div>
 {% endblock %}
 
@@ -125,7 +132,7 @@
 {% block site-scripts %}
   {{ block.super }}
   <script type="text/javascript"
-          src="{% static 'datalocker/js/commenting.js' %}"></script>
-  <script type="text/javascript"
           src=" {% static 'datalocker/js/workflow.js' %}"></script>
+  <script type="text/javascript"
+          src="{% static 'datalocker/js/commenting.js' %}"></script>
 {% endblock site-scripts %}
