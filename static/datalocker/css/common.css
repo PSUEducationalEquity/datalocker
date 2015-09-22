@@ -262,6 +262,7 @@ fieldset[disabled] .btn-inverse.active {
     $COMMENTING
 \*-----------------------------------*/
 
+/*
 button[role='comment-edit'] {
   display: inline-block;
 }
@@ -311,6 +312,7 @@ button[role='comment-reply'] {
   font-weight: bold;
   border-radius: 5px;
 }
+*/
 
 
 
@@ -350,6 +352,35 @@ button[role='delete-submission']   { display: none; }
 
 
 
+/*-----------------------------------*\
+    $DISCUSSION
+\*-----------------------------------*/
+
+/*ol,ul*/.discussion-tree {
+    margin-top: 3em;
+}
+
+/*ol,ul*/.discussion-tree .user-icon {
+    border: 1px solid #999;
+    font-size: 20px;
+    font-weight: bold;
+    height: 45px;
+    padding-top: 7px;
+    text-align: center;
+    width: 45px;
+
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+}
+
+/*ol,ul*/.discussion-tree .discussion-replies {
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+
+
 /*------------------------------------*\
     $EDIT_DIALOG
 \*------------------------------------*/
@@ -357,6 +388,8 @@ button[role='delete-submission']   { display: none; }
 .sub-option {
     margin-left: 2em;
 }
+
+
 
 
 /*------------------------------------*\
