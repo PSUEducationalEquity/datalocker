@@ -65,7 +65,7 @@ class SubmissionManager(models.Manager):
         """
         Returns the oldest submission based on the timestamp
         """
-        return self.objects.filter(
+        return self.filter(
             locker=locker, deleted=None
             ).earliest('timestamp')
 
@@ -74,7 +74,7 @@ class SubmissionManager(models.Manager):
         """
         Returns the newest submission based on the timestamp
         """
-        return self.objects.filter(
+        return self.filter(
             locker=locker, deleted=None
             ).latest('timestamp')
 
@@ -445,7 +445,7 @@ class Submission(models.Model):
         max_length=25,
         default='Unreviewed',
         )
-    objects = SubmissionManager
+    objects = SubmissionManager()
 
 
     def __str__(self):

@@ -625,16 +625,15 @@ def modify_locker(request, **kwargs):
 
 @login_required()
 @require_http_methods(["GET", "HEAD"])
-@user_has_locker_access()
 def submission_view(request, **kwargs):
     """
     Displays an individual submission
     """
-    submission = get_object_or_404(Submission, pk=pk)
-    oldest = submission.objects.oldest(locker)
+    submission = get_object_or_404(Submission, pk=kwargs['pk'])
+    oldest = Submission.objects.oldest(submission.locker)
     older = submission.older()
     newer = submission.newer()
-    newest = submission.objects.newest(locker)
+    newest = Submission.objects.newest(submission.locker)
     workflow_enabled = submission.locker.workflow_enabled()
     discussion_enabled = submission.locker.discussion_enabled()
     return render(request, 'datalocker/submission_view.html', {
@@ -650,12 +649,12 @@ def submission_view(request, **kwargs):
         'newest_disabled': True if submission.id == newest.id else False,
 
         'workflow_enabled': workflow_enabled,
-        'workflow_users_can_edit': submission.locker.workflow_users_can_edit() or submission.locker.owner == self.request.user.username,
+        'workflow_users_can_edit': submission.locker.workflow_users_can_edit() or submission.locker.owner == request.user.username,
         'workflow_states': submission.locker.workflow_states(),
         'workflow_state': submission.workflow_state,
 
         'discussion_enabled': discussion_enabled,
-        'discussion_users_have_access'] = submission.locker.discussion_users_have_access() or submission.locker.owner == self.request.user.username,
+        'discussion_users_have_access': submission.locker.discussion_users_have_access() or submission.locker.owner == request.user.username,
 
         'sidebar_enabled': workflow_enabled or discussion_enabled,
         })
