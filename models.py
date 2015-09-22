@@ -554,19 +554,22 @@ class Comment(models.Model):
 
 
     def __str__(self):
-        return str(self.id)
+        return "%s in %s by %s" % (
+            self.submission.timestamp,
+            self.submission.locker,
+            self.user
+            )
 
 
+    @property
     def is_editable(self):
         """
-        Captures the current time and compares it to the timestamp
-        on the submission the submissions. editable is returned True
-        if the difference is within the timeframe set by COMMENT_EDIT_MAX
+        Indicates if the comment is editable because it was created within
+        COMMENT_EDIT_MAX time till now.
         """
-        time = timezone.now()
-        editTimeFrame = datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
-        editable = True if ((time - self.timestamp) < editTimeFrame) else False
-        return editable
+        oldest_timestamp = timezone.now()
+        oldest_timestamp -= datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
+        return True if (self.timestamp > oldest_timestamp) else False
 
 
     def to_dict(self):
