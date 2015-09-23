@@ -197,7 +197,14 @@ def comment_add(request, locker_id, submission_id):
     """
     submission = get_object_or_404(Submission, id=submission_id)
     comment_text = request.POST.get('comment', '').strip()
-    parent = request.POST.get('parent', None)
+    parent_id = request.POST.get('parent', None)
+    if parent_id:
+        try:
+            parent = Comment.objects.get(pk=parent_id)
+        except Comment.DoesNotExist:
+            parent = None
+    else:
+        parent = None
     if comment_text:
         comment = Comment(
             submission=submission,

@@ -13,29 +13,43 @@
      * Adds a comment or reply to the discussion
      *
      * @access  public
+     * @param   string  comment    a string containing the comment text
+     * @param   integer parent_id  an integer indicating the parent id for this
+     *                             comment (optional)
      * @return  void
      */
-    Discussion.add = function ()
+    Discussion.add = function (comment, parent_id)
     {
+        var form_data = {
+            comment: comment,
+            csrfmiddlewaretoken: $(".panel-discussion form:first").find(
+                "input[name='csrfmiddlewaretoken']"
+            ).val(),
+        }
+        if (typeof parent_id !== "undefined" && parent_id != "") {
+            form_data['parent'] = parseInt(parent_id);
+        }
         Comment.addRequest = $.ajax({
-            url: $(".panel-discussion form").attr("action"),
+            url: $(".panel-discussion form:first").attr("action"),
             type: "post",
-            data: {
-                comment: $("textarea#comment-text").val(),
-                csrfmiddlewaretoken: $(".panel-discussion form").find(
-                    "input[name='csrfmiddlewaretoken']"
-                ).val(),
-            }
+            data: form_data,
         }).done(function(response, textStatus, jqXHR) {
             var $discussion_tree = $(".panel-discussion .discussion-tree")
             if (response.parent_comment) {
-                $discussion_tree.find(
-                    "li[data-id='" + response.parent_comment + "'] .discussion-replies"
-                ).prepend(Discussion._build_entry(response));
+                var $parent = $discussion_tree.find(
+                    "li[data-id='" + response.parent_comment + "']"
+                );
+                $parent.find(".discussion-replies").prepend(
+                    Discussion._build_entry(response)
+                );
+                $("#discussion-reply-active-form").remove();
+                $("html, body").animate({
+                    scrollTop: $parent.offset().top
+                }, 1000);
             } else {
                 $discussion_tree.prepend(Discussion._build_entry(response));
+                $(".panel-discussion form:first textarea").val("");
             }
-            $(".panel-discussion form textarea").val("");
         }).fail(function(jqXHR, textStatus, errorThrown) {
             if (errorThrown != "abort") {
                 console.error(
@@ -379,9 +393,20 @@ $(document).ready(function() {
         event.preventDefault();
         var $textarea = $(this).find("textarea");
         if ($textarea.val() != "") {
+            // disable the UI
             $(this).find("input[type='submit']").prop("disabled", true);
             $textarea.prop("disabled", true);
-            Discussion.add();
+
+            // determine if there is a parent
+            var $replies_container = $(this).closest(".discussion-replies");
+            if ($replies_container.length) {
+                var $parent = $replies_container.closest("li[data-id]");
+            } else {
+                var $parent = $(this).closest("li[data-id]");
+            }
+
+            // add the comment to the discussion
+            Discussion.add($textarea.val(), $parent.attr("data-id"));
         }
     });
 
