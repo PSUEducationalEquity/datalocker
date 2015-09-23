@@ -138,6 +138,20 @@
 
 
     /**
+     * Closes/removes the edit comment UI
+     *
+     * @access  public
+     * @param   object comment  an object that represents the comment being edited
+     * @return  void
+     */
+    Discussion.close_edit_ui = function (comment)
+    {
+        $(comment).find("form").remove()
+        $(comment).find(".discussion-comment, .discussion-actions").show();
+    }
+
+
+    /**
      * Display the discussion tree on the page
      *
      * @access  public
@@ -180,6 +194,46 @@
                 Discussion.dataRequest = null;
             });
         }
+    }
+
+
+    /**
+     * Edit a comment
+     *
+     * @access  public
+     * @param   integer comment_id  an integer indicating which comment to edit
+     * @return  void
+     */
+    Discussion.edit = function (comment_id)
+    {
+        var $comment = $(".discussion-tree li[data-id='" + comment_id + "']");
+        var $form = $comment.find("form");
+        Comment.addRequest = $.ajax({
+            url: $form.attr("action"),
+            type: "post",
+            data: {
+                comment: $form.find("textarea").val(),
+                id: comment_id,
+                csrfmiddlewaretoken: $form.find(
+                    "input[name='csrfmiddlewaretoken']"
+                ).val(),
+            }
+        }).done(function(response, textStatus, jqXHR) {
+            var $comment = $(".discussion-tree li[data-id='" + response.id + "']");
+            $comment.find(".discussion-comment").html(response.comment);
+            Discussion.close_edit_ui($comment);
+            Comment.addRequest = null;
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if  (errorThrown != "abort") {
+                console.error(
+                    "Discussion.edit in commenting.js AJAX error: "
+                        + textStatus,
+                    errorThrown
+                );
+            }
+            Comment.addRequest = null;
+        });
+
     }
 
 
@@ -399,18 +453,25 @@ $(document).ready(function() {
         if ($textarea.val() != "") {
             // disable the UI
             $(this).find("input[type='submit']").prop("disabled", true);
+            $(this).find("input[type='button']").prop("disabled", true);
             $textarea.prop("disabled", true);
 
-            // determine if there is a parent
-            var $replies_container = $(this).closest(".discussion-replies");
-            if ($replies_container.length) {
-                var $parent = $replies_container.closest("li[data-id]");
+            // are we updating or adding?
+            if ($(this).find("input[type='submit']").val() == "Update") {
+                // update the existing comment
+                Discussion.edit($(this).closest("li[data-id]").attr("data-id"));
             } else {
-                var $parent = $(this).closest("li[data-id]");
-            }
+                // determine if there is a parent
+                var $replies_container = $(this).closest(".discussion-replies");
+                if ($replies_container.length) {
+                    var $parent = $replies_container.closest("li[data-id]");
+                } else {
+                    var $parent = $(this).closest("li[data-id]");
+                }
 
-            // add the comment to the discussion
-            Discussion.add($textarea.val(), $parent.attr("data-id"));
+                // add the comment to the discussion
+                Discussion.add($textarea.val(), $parent.attr("data-id"));
+            }
         }
     });
 
@@ -443,7 +504,6 @@ $(document).ready(function() {
     // Handle editing a comment
     $(".panel-discussion").on("click", "[role='discussion-edit']", function (event) {
         event.preventDefault();
-
         var $comment = $(this).closest("li");
         var $form = $(".panel-discussion form:first").clone();
         $form.attr("action", $form.attr("data-edit-url"));
@@ -452,18 +512,16 @@ $(document).ready(function() {
                 "btn btn-default btn-sm pull-right"
             ).attr("type", "button").attr("value", "Cancel")
         );
-        $form.find("textarea").val($comment.find(".discussion-comment").text());
-        $comment.find(".media-body").append($form);
-        $comment.find(".discussion-comment, .discussion-actions").hide();
+        $form.find("textarea").val($comment.find(".discussion-comment:first").text());
+        $comment.find(".media-body:first").append($form);
+        $comment.find(".discussion-comment:first, .discussion-actions:first").hide();
         $form.find("textarea").focus();
     });
 
     // Handle canceling the editting UI
     $(".panel-discussion").on("click", "form input[type='button']", function (event) {
         event.preventDefault();
-        var $comment = $(this).closest("li");
-        $comment.find("form").remove()
-        $comment.find(".discussion-comment, .discussion-actions").show();
+        Discussion.close_edit_ui($(this).closest("li"));
     });
 
 
