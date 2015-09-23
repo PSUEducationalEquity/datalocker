@@ -1,5 +1,6 @@
 ###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 
+from django.conf import settings
 from django.conf.urls import patterns, url
 from datalocker import views
 
@@ -62,11 +63,23 @@ urlpatterns = patterns('',
         views.LockerSubmissionsListView.as_view(context_object_name='my_submission_list'),
         name='submissions_list',
         ),
-    url(r'^404$',
-        views.custom_404,
-        name='404',
-        ),
-)
+    )
+
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^testing/400$',
+            views.bad_request_view,
+            name='testing_bad_request',
+            ),
+        url(r'^testing/404$',
+            views.not_found_view,
+            name='testing_not_found',
+            ),
+        url(r'^testing/500$',
+            views.server_error_view,
+            name='testing_server_error',
+            ),
+        )
 
 ##
 # EXAMPLE Urls
