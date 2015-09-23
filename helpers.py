@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from random import randint
+
 import logging, os
 
 
@@ -79,8 +81,12 @@ class UserColors():
 
     def _pop(self):
         """
-        Pops an available color from the list and returns it
+        Pops a random available color from the list and returns it
         """
-        color = self.request.session[COLOR_HELPER_AVAILABLE_COLORS].pop()
+        index = randint(
+            0,
+            len(self.request.session[COLOR_HELPER_AVAILABLE_COLORS]) - 1
+        )
+        color = self.request.session[COLOR_HELPER_AVAILABLE_COLORS].pop(index)
         self.request.session.modified = True
         return color
