@@ -23,7 +23,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
 from .decorators import user_has_locker_access
-from .helpers import UserColorHelper
+from .helpers import UserColors
 from .models import Comment, Locker, LockerManager, LockerSetting, \
     LockerQuerySet, Submission
 
@@ -98,31 +98,11 @@ def _get_public_comment_dict(request, comment):
 
 
 
-def _user_color_lookup(request, locker):
-    colors = UserColorHelper()
-    avail_colors = colors.list_of_available_colors()
-    users = {}
-    try:
-        users[locker.owner] = avail_colors.pop()
-    except Exception:
-        pass
-    for user in locker.users.all():
-        try:
-            color = avail_colors.pop()
-        except Exception:
-            return ''
-        users[user.username] = color
-    return users
-
-
-
-
 ##
 ## Views
 ##
 
-
-
+@login_required
 @require_http_methods(["POST"])
 def add_comment(request, **kwargs):
     submission = get_object_or_404(Submission, id=kwargs['pk'])
