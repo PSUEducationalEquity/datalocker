@@ -270,6 +270,13 @@ def delete_submission(request, **kwargs):
             ))
 
 
+def forbidden_view(request):
+    """
+    Displays a custom forbidden (403) page
+    """
+    return render(request, 'datalocker/403.html', {})
+
+
 @csrf_exempt
 def form_submission_view(request, **kwargs):
     """
