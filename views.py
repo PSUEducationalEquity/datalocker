@@ -72,31 +72,6 @@ def _get_public_user_dict(user):
 
 
 
-def _get_public_comment_dict(request, comment):
-    public_fields = ['comment', 'submission', 'user', 'id', 'parent_comment', 'color']
-    comment_dict = {}
-    submission = comment.submission
-    locker = Locker.objects.get(submissions=submission)
-    for key, value in model_to_dict(comment).iteritems():
-        if key in public_fields:
-            if key == 'user':
-                name = User.objects.get(id=value).username
-                comment_dict[key] = name
-                try:
-                    if not request.session.get(name + '-color', None):
-                        color_mapping = _user_color_lookup(request, locker)
-                        request.session[name + '-color'] = color_mapping[name]
-                        comment_dict['color'] = request.session[name + '-color']
-                    else:
-                        comment_dict['color'] = request.session[name + '-color']
-                except KeyError:
-                    comment_dict['color'] = ''
-            else:
-                comment_dict[key] = value
-    return comment_dict
-
-
-
 
 ##
 ## Views
@@ -454,37 +429,6 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         locker.save_selected_fields_list(self.request.POST)
         return HttpResponseRedirect(reverse('datalocker:submissions_list',
             kwargs={'locker_id': self.kwargs['locker_id']}))
-
-
-
-
-def get_comments_view(request, **kwargs):
-    locker = Locker.objects.get(id=kwargs['locker_id'])
-    if Locker.get_settings(locker):
-        if request.is_ajax():
-            # If statement to make sure the user should be able to see the comments
-            all_comments = Comment.objects.filter(submission=kwargs['pk'], parent_comment=None)
-            all_replies = Comment.objects.filter(submission=kwargs['pk']
-                ).exclude(parent_comment=None)
-            comments = []
-            replies = []
-            for comment in all_comments:
-                comments.append(_get_public_comment_dict(request, comment))
-            for comment in all_replies:
-                replies.append(_get_public_comment_dict(request, comment))
-            return JsonResponse(
-                {
-                'comments': comments,
-                'replies': replies,
-                })
-        else:
-            return HttpResponseRedirect(reverse('datalocker:submission_view',
-         kwargs={'locker_id': locker.id, 'pk': pk}))
-    else:
-        pk = Submission.objects.get(id=kwargs['pk'])
-        return HttpResponseRedirect(reverse('datalocker:submission_view',
-         kwargs={'locker_id': locker.id, 'pk': pk}))
-
 
 
 @login_required()
