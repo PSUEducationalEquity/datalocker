@@ -375,7 +375,7 @@ $(document).ready(function() {
 
 
     // Handle adding a new comment
-    $(".panel-discussion form").on("submit", function (event) {
+    $(".panel-discussion").on("submit", "form", function (event) {
         event.preventDefault();
         var $textarea = $(this).find("textarea");
         if ($textarea.val() != "") {
@@ -386,11 +386,50 @@ $(document).ready(function() {
     });
 
     // Shift-enter in TextArea should submit the form
-    $(".panel-discussion textarea").on("keypress", function (event) {
+    $(".panel-discussion").on("keypress", "textarea", function (event) {
         if (event.keyCode == 13 && event.shiftKey) {
             event.preventDefault();
             $(this).closest("form").submit();
         }
+    });
+
+    // Esc in TextArea should remove it
+    $(".panel-discussion").on("keypress", "textarea", function (event) {
+        if (event.keyCode == 27) {
+            event.preventDefault();
+            if ($(this).closest(".discussion-replies").length) {
+                $(this).closest("li").remove();
+            }
+        }
+    })
+
+
+    // Handle repling to a comment
+    $(".panel-discussion").on("click", "[role='discussion-reply']", function (event) {
+        event.preventDefault();
+
+        // remove all but the main form
+        if ($(".panel-discussion form").length > 1) {
+            $(".panel-discussion form").each(function (index, form) {
+                if (index > 0) {
+                    $(form).closest("li").remove();
+                }
+            });
+        }
+
+        // clone the main form and insert it for use creating a reply
+        var $form = $(".panel-discussion form").clone();
+        $form.find("textarea").attr(
+            "placeholder",
+            "Say something in response to the above comment"
+        );
+        $(this).closest("li").find(".discussion-replies").append(
+            $("<li />").attr(
+                "id",
+                "discussion-reply-active-form"
+            ).addClass("media").append($form)
+        );
+        $form.find("textarea").focus();
     });
 
 

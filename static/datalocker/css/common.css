@@ -379,6 +379,7 @@ button[role='delete-submission']   { display: none; }
 }
 
 /*ol,ul*/.discussion-tree .discussion-replies {
+    list-style-type: none;
     margin-left: 15px;
     margin-top: 15px;
 }
