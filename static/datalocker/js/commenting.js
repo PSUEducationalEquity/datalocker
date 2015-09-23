@@ -12,9 +12,11 @@
     /**
      * Adds a comment or reply to the discussion
      *
+     * @access  public
      * @return  void
      */
-    Discussion.add = function () {
+    Discussion.add = function ()
+    {
         Comment.addRequest = $.ajax({
             url: $(".panel-discussion form").attr("action"),
             type: "post",
@@ -73,6 +75,7 @@
      *    <ul class="discussion-replies"></ul>
      *  </li>
      *
+     * @access  private
      * @param   object comment  an object that represents a comment
      * @return  object  an object that contains the HTML to display a comment
      */
@@ -123,7 +126,7 @@
     /**
      * Display the discussion tree on the page
      *
-     * @param
+     * @access  public
      * @return  void
      */
     Discussion.display = function ()
