@@ -58,7 +58,7 @@ urlpatterns = patterns('',
         views.comments_list,
         name='comments_list',
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<pk>[0-9]+)$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)$',
     	views.submission_view,
     	name='submission_view'
     	),

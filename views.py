@@ -644,11 +644,11 @@ def modify_locker(request, **kwargs):
 
 @login_required()
 @require_http_methods(["GET", "HEAD"])
-def submission_view(request, **kwargs):
+def submission_view(request, locker_id, submission_id):
     """
     Displays an individual submission
     """
-    submission = get_object_or_404(Submission, pk=kwargs['pk'])
+    submission = get_object_or_404(Submission, pk=submission_id)
     oldest = Submission.objects.oldest(submission.locker)
     older = submission.older()
     newer = submission.newer()
