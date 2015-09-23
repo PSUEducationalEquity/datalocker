@@ -63,7 +63,7 @@ def _get_public_user_dict(user):
     Converts a user object to a dictionary and only returns certain
     publically-available fields for the user.
     """
-    public_fields = ['id', 'email', 'first_name', 'last_name']
+    public_fields = ['id', 'username', 'email', 'first_name', 'last_name']
     user_dict = {}
     for key, value in model_to_dict(user).iteritems():
         if key in public_fields:
