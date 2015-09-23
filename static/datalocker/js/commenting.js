@@ -125,7 +125,9 @@
             "data-timestamp",
             comment.timestamp
         ).html(moment(comment.timestamp).fromNow());
-        $entry.find(".discussion-comment").html(comment.comment);
+        $entry.find(".discussion-comment").html(
+            comment.comment.replace(/\n/g, "<br>")
+        );
         if (!comment.editable) {
             $entry.find("[role='discussion-edit']").remove();
             $entry.find(".action-separator").remove();
@@ -220,7 +222,9 @@
             }
         }).done(function(response, textStatus, jqXHR) {
             var $comment = $(".discussion-tree li[data-id='" + response.id + "']");
-            $comment.find(".discussion-comment").html(response.comment);
+            $comment.find(".discussion-comment").html(
+                response.comment.replace(/\n/g, "<br>")
+            );
             Discussion.close_edit_ui($comment);
             Comment.addRequest = null;
         }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -512,7 +516,9 @@ $(document).ready(function() {
                 "btn btn-default btn-sm pull-right"
             ).attr("type", "button").attr("value", "Cancel")
         );
-        $form.find("textarea").val($comment.find(".discussion-comment:first").text());
+        $form.find("textarea").val(
+            $comment.find(".discussion-comment:first").html().replace(/<br>/g, "\n")
+        );
         $comment.find(".media-body:first").append($form);
         $comment.find(".discussion-comment:first, .discussion-actions:first").hide();
         $form.find("textarea").focus();
