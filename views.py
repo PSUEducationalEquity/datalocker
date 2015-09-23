@@ -218,6 +218,12 @@ def comment_add(request, locker_id, submission_id):
             comment_dict = comment.to_dict()
             comment_dict['user']['color'] = color_helper.get(comment.user.username)
             return JsonResponse(comment_dict)
+        else:
+            messages.success(
+                request,
+                "<strong>Success!</strong> " \
+                "Your comment was added to the discussion."
+            )
     else:
         error_msg = "<strong>Oops!</strong> Your comment was blank."
         if request.is_ajax():
