@@ -106,7 +106,9 @@
                 </div>
                 <div class="panel-body">
                   <form method="post"
-                        action="{% url 'datalocker:comment_add' submission.locker.id submission.pk %}">
+                        action="{% url 'datalocker:comment_add' submission.locker.id submission.pk %}"
+                        data-edit-url="{% url 'datalocker:comment_modify' submission.locker.id submission.pk %}"
+                        >
                     {% csrf_token %}
 
                     <div class="form-group">
@@ -122,7 +124,6 @@
 
                     <input type="submit"
                            class="btn btn-primary btn-sm pull-right"
-                           role="comment-add-new"
                            value="Post" />
                   </form>
 

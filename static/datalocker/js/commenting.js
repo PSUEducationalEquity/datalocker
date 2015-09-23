@@ -428,9 +428,43 @@ $(document).ready(function() {
             event.preventDefault();
             if ($(this).closest(".discussion-replies").length) {
                 $(this).closest("li").remove();
+            } else {
+                var $cancel_btn = $(this).closest("li").find(
+                    "form input[type='button']"
+                );
+                if ($cancel_btn.length) {
+                    $cancel_btn.click();
+                }
             }
         }
     })
+
+
+    // Handle editing a comment
+    $(".panel-discussion").on("click", "[role='discussion-edit']", function (event) {
+        event.preventDefault();
+
+        var $comment = $(this).closest("li");
+        var $form = $(".panel-discussion form:first").clone();
+        $form.attr("action", $form.attr("data-edit-url"));
+        $form.find("input[type='submit']").attr("value", "Update").after(
+            $("<input />").addClass(
+                "btn btn-default btn-sm pull-right"
+            ).attr("type", "button").attr("value", "Cancel")
+        );
+        $form.find("textarea").val($comment.find(".discussion-comment").text());
+        $comment.find(".media-body").append($form);
+        $comment.find(".discussion-comment, .discussion-actions").hide();
+        $form.find("textarea").focus();
+    });
+
+    // Handle canceling the editting UI
+    $(".panel-discussion").on("click", "form input[type='button']", function (event) {
+        event.preventDefault();
+        var $comment = $(this).closest("li");
+        $comment.find("form").remove()
+        $comment.find(".discussion-comment, .discussion-actions").show();
+    });
 
 
     // Handle repling to a comment
@@ -441,13 +475,15 @@ $(document).ready(function() {
         if ($(".panel-discussion form").length > 1) {
             $(".panel-discussion form").each(function (index, form) {
                 if (index > 0) {
-                    $(form).closest("li").remove();
+                    if ($(form).parent("li").length) {
+                        $(form).parent("li").remove();
+                    }
                 }
             });
         }
 
         // clone the main form and prepare it for use creating a reply
-        var $form = $(".panel-discussion form").clone();
+        var $form = $(".panel-discussion form:first").clone();
         $form.find("textarea").attr(
             "placeholder",
             "Say something in response to the above comment"

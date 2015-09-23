@@ -356,7 +356,9 @@ button[role='delete-submission']   { display: none; }
     $DISCUSSION
 \*-----------------------------------*/
 
-.panel-discussion form input[type='submit'] {
+.panel-discussion form input[type='submit'],
+.panel-discussion form input[type='button'] {
+   margin-left: 5px;
     margin-top: -10px;
 }
 
