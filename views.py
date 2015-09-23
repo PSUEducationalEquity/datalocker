@@ -74,6 +74,26 @@ def _get_public_user_dict(user):
 
 
 ##
+## Mixins
+##
+
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+class UserHasLockerAccessMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(UserHasLockerAccessMixin, cls).as_view(**initkwargs)
+        return user_has_locker_access(view)
+
+
+
+
+##
 ## Views
 ##
 
@@ -333,25 +353,8 @@ def form_submission_view(request, **kwargs):
     return HttpResponse(status=201)
 
 
-
-
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
-
-
-
-class UserHasLockerAccessMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(UserHasLockerAccessMixin, cls).as_view(**initkwargs)
-        return user_has_locker_access(view)
-
-
-
 @login_required()
+@require_http_methods(["GET", "HEAD"])
 def locker_list_view(request):
     """
     Returns a list of lockers owned by the current user and a list of those
@@ -371,7 +374,6 @@ def locker_list_view(request):
         'shared': shared_lockers,
         'owned': my_lockers,
         })
-
 
 
 class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
@@ -498,8 +500,7 @@ def locker_users(request, locker_id):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-
-
+@login_required()
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     """
@@ -577,8 +578,6 @@ def modify_locker(request, **kwargs):
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-
-
 @login_required()
 @require_http_methods(["GET", "HEAD"])
 def submission_view(request, locker_id, submission_id):
@@ -629,8 +628,6 @@ def submission_view(request, locker_id, submission_id):
         })
 
 
-
-
 @login_required
 @require_http_methods(["POST"])
 def unarchive_locker(request, **kwargs):
@@ -639,8 +636,6 @@ def unarchive_locker(request, **kwargs):
     locker.archive_timestamp = None
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
-
-
 
 
 @login_required()
@@ -664,8 +659,6 @@ def undelete_submission(request, **kwargs):
             ))
 
 
-
-
 @login_required()
 @require_http_methods(["GET", "HEAD"])
 def users_list(request, **kwargs):
@@ -680,8 +673,6 @@ def users_list(request, **kwargs):
             'last_name': user.last_name,
             })
     return JsonResponse({ 'users': users_list })
-
-
 
 
 @login_required()
