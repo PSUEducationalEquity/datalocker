@@ -577,6 +577,16 @@ class Comment(models.Model):
         Returns the entire object as a Python dictionary
         """
         result = model_to_dict(self)
-        result['editable'] = self.is_editable()
-        result['color'] = "red"
+        result['editable'] = self.is_editable
+        # model_to_dict skips fields that are not editable and fields that have
+        # auto_now_add=True are considered not editable, thus we add the
+        # submission timestamp back in manually
+        result['timestamp'] = self.timestamp.isoformat()
+        result['user'] = {
+            'id': self.user.id,
+            'username': self.user.username,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+            'email': self.user.email,
+            }
         return result
