@@ -260,7 +260,7 @@ def comment_modify(request, locker_id, submission_id):
             )
     else:
         error_msg = "<strong>D'oh!</strong> This comment is no longer editable."
-        if request.is_ajax();
+        if request.is_ajax():
             return HttpResponseBadRequest(error_msg)
         else:
             messages.warning(request, error_msg)
