@@ -11,8 +11,8 @@
  * AUTO_COMPLETE........Styling for the auto-complete dialog
  * BREADCRUMBS..........Breadcrumb list stying
  * BUTTONS..............Button styling
- * COMMENTING...........Commenting related styles
  * DELETED..............Styles for deleting submissions and associated actions
+ * DISCUSSION...........Discussion display and editing
  * EDIT_DIALOG..........Styling for the Edit Locker dialog
  * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
@@ -258,65 +258,6 @@ fieldset[disabled] .btn-inverse.active {
 
 
 
-/*-----------------------------------*\
-    $COMMENTING
-\*-----------------------------------*/
-
-/*
-button[role='comment-edit'] {
-  display: inline-block;
-}
-
-button[role='comment-reply'] {
-  display: inline-block;
-  float: left;
-}
-
-.comment {
-  display: block;
-}
-
-.comment-actions {
-  display: inline-block;
-}
-
-.comment-button {
-  clear: left;
-  float: right;
-}
-
-.comment-feed-container {
-  margin-top: 25px;
-}
-
-.comment-textarea {
-  padding: 10px;
-  border: solid 1px #dcdcdc;
-  height: 75px;
-  width: 100%;
-  resize: none;
-}
-
-.comment-reply-textarea {
-  padding: 10px;
-  border: solid 1px #dcdcdc;
-  height: 75px;
-  width: 100%;
-}
-
-.media-left span {
-  width: 35px;
-  height: 35px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 5px;
-}
-*/
-
-
-
-
 /*------------------------------------*\
     $DELETED
 \*------------------------------------*/
@@ -385,6 +326,7 @@ button[role='delete-submission']   { display: none; }
     margin-left: 15px;
     margin-top: 15px;
 }
+
 
 
 
