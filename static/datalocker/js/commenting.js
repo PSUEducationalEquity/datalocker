@@ -109,7 +109,7 @@
             comment.timestamp
         ).html(moment(comment.timestamp).fromNow());
         $entry.find(".discussion-comment").html(comment.comment);
-        if (!comment.is_editable) {
+        if (!comment.editable) {
             $entry.find("[role='discussion-edit']").remove();
             $entry.find(".action-separator").remove();
         }
