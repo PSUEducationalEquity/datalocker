@@ -417,18 +417,24 @@ $(document).ready(function() {
             });
         }
 
-        // clone the main form and insert it for use creating a reply
+        // clone the main form and prepare it for use creating a reply
         var $form = $(".panel-discussion form").clone();
         $form.find("textarea").attr(
             "placeholder",
             "Say something in response to the above comment"
         );
-        $(this).closest("li").find(".discussion-replies").append(
-            $("<li />").attr(
-                "id",
-                "discussion-reply-active-form"
-            ).addClass("media").append($form)
-        );
+        var $wrapper = $("<li />").attr(
+            "id",
+            "discussion-reply-active-form"
+        ).addClass("media").append($form)
+
+        // find the appropriate container for the reply UI
+        var $container = $(this).closest("li").find(".discussion-replies");
+        if ($container.length) {
+            $container.prepend($wrapper);
+        } else {
+            $(this).closest("li").after($wrapper);
+        }
         $form.find("textarea").focus();
     });
 
