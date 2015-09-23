@@ -255,7 +255,11 @@ def comments_list(request, locker_id, submission_id):
                         comment.user.username
                     )
                     comments.append(comment_dict)
-                return JsonResponse({ 'discussion': comments })
+                return JsonResponse({
+                    'discussion': comments,
+                    'editing_time_value': settings.COMMENT_EDIT_MAX,
+                    'editing_time_units': 'minutes',
+                    })
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
         {'locker_id': locker_id, 'submission_id': submission_id }

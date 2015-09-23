@@ -137,6 +137,10 @@
                 cache: false
             }).done(function(response, textStatus, jqXHR) {
                 var $discussion_tree = $(".panel-discussion .discussion-tree");
+                $discussion_tree.attr(
+                    "data-editing-time",
+                    response.editing_time_value + "|" + response.editing_time_units
+                );
                 $discussion_tree.children("li").remove();
                 $.each(response.discussion, function (index, comment) {
                     if (comment.parent_comment) {
@@ -159,6 +163,27 @@
                 Discussion.dataRequest = null;
             });
         }
+    }
+
+
+    /**
+     * Update the times and editability of the discussion comments
+     *
+     * @access  public
+     * @return  void
+     */
+    Discussion.update = function ()
+    {
+        var editing_time = $(".discussion-tree").attr('data-editing-time').split("|");
+        var oldest_timestamp = moment().subtract(editing_time[0], editing_time[1]);
+        $(".discussion-tree .discussion-timestamp").each(function () {
+            var timestamp = moment($(this).attr("data-timestamp"));
+            $(this).html(timestamp.fromNow());
+            if (timestamp < oldest_timestamp) {
+                $(this).closest("li").find("[role='discussion-edit']").remove();
+                $(this).closest("li").find(".action-separator").remove();
+            }
+        });
     }
 
 }(window.Discussion = window.Discussion || {}, jQuery))
@@ -340,6 +365,11 @@
 
 $(document).ready(function() {
     Discussion.display();
+
+
+    // Update discussion timestamps and editablity every minute
+    setInterval(function () { Discussion.update(); }, 60000);
+
 
     // Handle adding a new comment
     $(".panel-discussion form").on("submit", function (event) {
