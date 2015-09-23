@@ -102,6 +102,8 @@ def _get_public_comment_dict(request, comment):
 ## Views
 ##
 
+@login_required
+@require_http_methods(["POST"])
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = locker.owner
@@ -685,6 +687,8 @@ def submission_view(request, locker_id, submission_id):
 
 
 
+@login_required
+@require_http_methods(["POST"])
 def unarchive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     owner = locker.owner
