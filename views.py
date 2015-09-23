@@ -242,7 +242,32 @@ def comment_modify(request, locker_id, submission_id):
     """
     Modifies the existing comment if it is still editable
     """
-    pass
+    comment = get_object_or_404(Comment, id=request.POST.get('id', ''))
+    if comment.is_editable:
+        comment_text = request.POST.get('comment', '').strip()
+        comment.comment = comment_text
+        comment.save()
+        if request.is_ajax():
+            return JsonResponse({
+                'comment': comment_text,
+                'id': comment.id,
+                })
+        else:
+            messages.success(
+                request,
+                "<strong>Success!</strong> " \
+                "Your comment was added to the discussion."
+            )
+    else:
+        error_msg = "<strong>D'oh!</strong> This comment is no longer editable."
+        if request.is_ajax();
+            return HttpResponseBadRequest(error_msg)
+        else:
+            messages.warning(request, error_msg)
+    return HttpResponseRedirect(reverse(
+        'datalocker:submission_view',
+        kwargs={'locker_id': locker_id, 'submission_id': submission_id }
+        ))
 
 
 @login_required
