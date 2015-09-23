@@ -1,5 +1,133 @@
 /* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
+/**
+ * Handle the discussion functionality for a submission
+ */
+(function (Discussion, $, undefined) {
+    // the AJAX objects that handle the server communication
+    Discussion.addRequest;
+    Discussion.dataRequest;
+
+
+    /**
+     * Build a comment entry for the discussion tree
+     *
+     * Example Entry:
+     *  <li class="media">
+     *    <div class="media-left">
+     *      <span class="media-object user-icon user-color-azure">PR</span>
+     *    </div>
+     *    <div class="media-body">
+     *      <h4 class="media-heading">Paul Rentschler</h4>
+     *      <p class="discussion-timestamp text-muted">10 minutes ago</p>
+     *      <p class="discussion-comment">
+     *        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+     *      </p>
+     *      <div class="discussion-actions">
+     *        <a href="#" role="discussion-reply">Reply</a>
+     *        &#149;
+     *        <a href="#" role="discussion-edit">Edit</a>
+     *      </div>
+     *    </div>
+     *    <ul class="discussion-replies"></ul>
+     *  </li>
+     *
+     * @param   object comment  an object that represents a comment
+     * @return  object  an object that contains the HTML to display a comment
+     */
+    Discussion._build_entry = function (comment)
+    {
+        var $template = $('<li class="media" />').html(
+            '<div class="media-left">' +
+            '  <span class="media-object user-icon"></span>' +
+            '</div>' +
+            '<div class="media-body">' +
+            '  <h4 class="media-heading"></h4>' +
+            '  <p class="discussion-timestamp text-muted"></p>' +
+            '  <p class="discussion-comment"></p>' +
+            '  <div class="discussion-actions">' +
+            '    <a href="#" role="discussion-reply">Reply</a>' +
+            '    <span class="action-separator">&#149;</span>' +
+            '    <a href="#" role="discussion-edit">Edit</a>' +
+            '  </div>' +
+            '</div>' +
+            '<ul class="discussion-replies"></ul>'
+        );
+
+        var $entry = $template;
+        $entry.attr("data-id", comment.id);
+        $entry.find(".user-icon").addClass(comment.user.color).html(
+            comment.user.first_name[0].toUpperCase()
+            + comment.user.last_name[0].toUpperCase()
+        );
+        $entry.find("h4.media-heading").html(
+            comment.user.first_name + " " + comment.user.last_name
+        );
+        $entry.find(".discussion-timestamp").attr(
+            "data-timestamp",
+            comment.timestamp
+        ).html(moment(comment.timestamp).fromNow());
+        $entry.find(".discussion-comment").html(comment.comment);
+        if (!comment.is_editable) {
+            $entry.find("[role='discussion-edit']").remove();
+            $entry.find(".action-separator").remove();
+        }
+        if (comment.parent_comment) {
+            $entry.find(".discussion-replies").remove();
+        }
+        return $entry;
+    }
+
+
+    /**
+     * Display the discussion tree on the page
+     *
+     * @param
+     * @return  void
+     */
+    Discussion.display = function ()
+    {
+        var url = $(".panel-discussion").attr("data-url");
+        // submit the request (if none are pending)
+        if  (!Discussion.dataRequest && url) {
+            Discussion.dataRequest = $.ajax({
+                url: url,
+                type: "get",
+                cache: false
+            }).done(function(response, textStatus, jqXHR) {
+                var $discussion_tree = $(".panel-discussion .discussion-tree");
+                $discussion_tree.children("li").remove();
+                $.each(response.discussion, function (index, comment) {
+                    if (comment.parent_comment) {
+                        $discussion_tree.find(
+                            "li[data-id='" + comment.parent_comment + "'] .discussion-replies"
+                        ).append(Discussion._build_entry(comment))
+                    } else {
+                        $discussion_tree.append(Discussion._build_entry(comment));
+                    }
+                });
+                Discussion.dataRequest = null;
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                if  (errorThrown != "abort") {
+                    console.error(
+                        "Discussion.display in commenting.js AJAX error: "
+                            + textStatus,
+                        errorThrown
+                    );
+                }
+                Discussion.dataRequest = null;
+            });
+        }
+    }
+
+}(window.Discussion = window.Discussion || {}, jQuery))
+
+
+
+
+
+
+/*
 (function (Comment, $, undefined)
 {
     // the AJAX objects that handles server communication
@@ -167,9 +295,15 @@
     }
 
 }( window.Comment = window.Comment || {}, jQuery));
-
+*/
 
 $(document).ready(function() {
+    Discussion.display();
+
+
+
+
+/*
     Comment.build_comment_feed();
 
     //Appends the text from the box to the commenting feed
@@ -227,4 +361,5 @@ $(document).ready(function() {
         $("#comment-list li[data-id='" + id + "'] button[role='comment-edit']").show();
         $(this).hide();
     });
+*/
 });

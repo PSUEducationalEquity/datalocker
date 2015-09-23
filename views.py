@@ -189,6 +189,53 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+@login_required
+@require_http_methods(["POST"])
+def comment_add(request, locker_id, submission_id):
+    """
+    Adds a comment or reply to the specified submission
+    """
+    pass
+
+
+@login_required
+@require_http_methods(["POST"])
+def comment_modify(request, locker_id, submission_id):
+    """
+    Modifies the existing comment if it is still editable
+    """
+    pass
+
+
+@login_required
+@require_http_methods(["GET", "HEAD"])
+def comments_list(request, locker_id, submission_id):
+    """
+    Returns a list of comments for the specified submission
+    """
+    submission = get_object_or_404(Submission, pk=submission_id)
+    if submission.locker.discussion_enabled():
+        if submission.locker.is_owner(request.user) or (
+            submission.locker.is_user(request.user) and submission.locker.discussion_users_have_access()
+        ):
+            if request.is_ajax():
+                color_helper = UserColors(request)
+                comments = []
+                comment_objs = submission.comments.order_by(
+                    'parent_comment', '-timestamp'
+                )
+                for comment in comment_objs:
+                    comment_dict = comment.to_dict()
+                    comment_dict['user']['color'] = color_helper.get(
+                        comment.user.username
+                    )
+                    comments.append(comment_dict)
+                return JsonResponse({ 'discussion': comments })
+    return HttpResponseRedirect(reverse(
+        'datalocker:submission_view',
+        {'locker_id': locker_id, 'submission_id': submission_id }
+        ))
+
 
 
 def custom_404(request):
