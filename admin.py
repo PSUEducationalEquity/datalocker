@@ -13,9 +13,6 @@ class DataLockerAdminSite(AdminSite):
     site_url = '/datalocker'
 
 
-
-
-# Register your models here.
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id',
         'submission',
@@ -24,20 +21,6 @@ class CommentAdmin(admin.ModelAdmin):
         'comment',
         'parent_comment'
         ]
-
-
-
-
-class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ['id',
-        'locker',
-        'timestamp',
-        'data',
-        'deleted',
-        'workflow_state'
-        ]
-
-
 
 
 class LockerAdmin(admin.ModelAdmin):
@@ -51,8 +34,6 @@ class LockerAdmin(admin.ModelAdmin):
         ]
 
 
-
-
 class SettingAdmin(admin.ModelAdmin):
     list_display = ['category',
         'setting',
@@ -62,6 +43,14 @@ class SettingAdmin(admin.ModelAdmin):
         ]
 
 
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ['id',
+        'locker',
+        'timestamp',
+        'data',
+        'deleted',
+        'workflow_state'
+        ]
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -75,12 +64,11 @@ class UserAdmin(admin.ModelAdmin):
         ]
 
 
-
-
+# Register your models here.
 admin_site = DataLockerAdminSite(name='datalockeradmin')
 admin_site.register(Comment, CommentAdmin)
 admin_site.register(Group, GroupAdmin)
 admin_site.register(Locker, LockerAdmin)
-admin_site.register(Submission, SubmissionAdmin)
 admin_site.register(LockerSetting, SettingAdmin)
+admin_site.register(Submission, SubmissionAdmin)
 admin_site.register(User, UserAdmin)
