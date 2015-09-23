@@ -464,7 +464,7 @@ class Submission(models.Model):
 
 
     def __str__(self):
-        return "%s submission to %s" % (self.timestamp, self.locker)
+        return "%s to %s" % (self.timestamp, self.locker)
 
 
     def data_dict(self):
