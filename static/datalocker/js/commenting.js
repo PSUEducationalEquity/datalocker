@@ -193,12 +193,16 @@
     {
         var editing_time = $(".discussion-tree").attr('data-editing-time').split("|");
         var oldest_timestamp = moment().subtract(editing_time[0], editing_time[1]);
-        $(".discussion-tree .discussion-timestamp").each(function () {
-            var timestamp = moment($(this).attr("data-timestamp"));
-            $(this).html(timestamp.fromNow());
+        $(".discussion-tree .discussion-timestamp").each(function (index, entry) {
+            var text = $(entry).next().text().substr(0, 40);
+            var timestamp = moment($(entry).attr("data-timestamp"));
+            $(entry).html(timestamp.fromNow());
             if (timestamp < oldest_timestamp) {
-                $(this).closest("li").find("[role='discussion-edit']").remove();
-                $(this).closest("li").find(".action-separator").remove();
+                var $actions = $(entry).closest("li").find(
+                    ".discussion-actions:first"
+                );
+                $actions.find("[role='discussion-edit']").remove();
+                $actions.find(".action-separator").remove();
             }
         });
     }
