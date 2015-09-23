@@ -243,12 +243,12 @@ def custom_404(request):
 
 @login_required()
 @require_http_methods(["POST"])
-def delete_submission(request, **kwargs):
+def delete_submission(request, locker_id, submission_id):
     """
     Marks a submission as deleted in the database.
     """
     if request.is_ajax():
-        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        submission = get_object_or_404(Submission, id=submission_id)
         submission.deleted = timezone.now()
         submission.save()
         purge_timestamp = submission.deleted + datetime.timedelta(
@@ -264,7 +264,7 @@ def delete_submission(request, **kwargs):
         return HttpResponseRedirect(reverse(
             'datalocker:submission_list',
             kwargs={
-                'id': self.kwargs['id'],
+                'id': submission_id,
                 'deleted': submission.deleted
                 }
             ))
@@ -658,8 +658,8 @@ def submission_view(request, locker_id, submission_id):
 
 @login_required
 @require_http_methods(["POST"])
-def unarchive_locker(request, **kwargs):
-    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+def unarchive_locker(request, locker_id):
+    locker = get_object_or_404(Locker, id=locker_id)
     owner = locker.owner
     locker.archive_timestamp = None
     locker.save()
@@ -668,12 +668,12 @@ def unarchive_locker(request, **kwargs):
 
 @login_required()
 @require_http_methods(["POST"])
-def undelete_submission(request, **kwargs):
+def undelete_submission(request, locker_id, submission_id):
     """
     Removes the deleted timestamp from a submission
     """
     if request.is_ajax():
-        submission = get_object_or_404(Submission, id=kwargs['pk'])
+        submission = get_object_or_404(Submission, id=submission_id)
         submission.deleted = None
         submission.save()
         return JsonResponse({
@@ -683,7 +683,7 @@ def undelete_submission(request, **kwargs):
     else:
         return HttpResponseRedirect(reverse(
             'datalocker:submission_list',
-            kwargs={'locker_id': self.kwargs['id']}
+            kwargs={'locker_id': submission_id}
             ))
 
 
@@ -705,8 +705,8 @@ def users_list(request, **kwargs):
 
 @login_required()
 @require_http_methods(["POST"])
-def workflow_modify(request, **kwargs):
-    submission = get_object_or_404(Submission, pk=kwargs['pk'])
+def workflow_modify(request, locker_id, submission_id):
+    submission = get_object_or_404(Submission, pk=submission_id)
     new_state = request.POST.get('workflow-state', '')
     if new_state in submission.locker.workflow_states():
         submission.workflow_state = new_state
