@@ -110,6 +110,13 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+def bad_request_view(request):
+    """
+    Displays a custom bad request (400) page
+    """
+    return render(request, 'datalocker/400.html', {})
+
+
 @login_required
 @require_http_methods(["POST"])
 def comment_add(request, locker_id, submission_id):
@@ -576,6 +583,20 @@ def modify_locker(request, **kwargs):
         bool(request.POST.get('discussion-users-have-access', False))
     )
     return HttpResponseRedirect(reverse('datalocker:index'))
+
+
+def not_found_view(request):
+    """
+    Displays a custom not found (404) page
+    """
+    return render(request, 'datalocker/404.html', {})
+
+
+def server_error_view(request):
+    """
+    Displays a custom internal server error (500) page
+    """
+    return render(request, 'datalocker/500.html', {})
 
 
 @login_required()
