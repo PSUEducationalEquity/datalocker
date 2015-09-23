@@ -109,16 +109,21 @@
                         action="{% url 'datalocker:comment_add' submission.locker.id submission.pk %}">
                     {% csrf_token %}
 
-                    <textarea name="comment"
-                              class="comment-textarea"
-                              id="comment-text"
-                              placeholder="Say something about this submission"
-                              ></textarea>
-                    <button type="button"
-                            class="btn btn-primary btn-xs comment-button"
-                            id="comment-add"
-                            role="add-comment"
-                            >Add</button>
+                    <div class="form-group">
+                      <label for="comment-text" class="sr-only">
+                        Comment on this submission
+                      </label>
+                      <textarea name="comment"
+                                class="form-control"
+                                id="comment-text"
+                                placeholder="Say something about this submission"
+                                ></textarea>
+                    </div>
+
+                    <input type="submit"
+                           class="btn btn-primary btn-sm pull-right"
+                           role="comment-add-new"
+                           value="Post" />
                   </form>
 
                   <ul class="media-list discussion-tree">

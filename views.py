@@ -195,7 +195,32 @@ def comment_add(request, locker_id, submission_id):
     """
     Adds a comment or reply to the specified submission
     """
-    pass
+    submission = get_object_or_404(Submission, id=submission_id)
+    comment_text = request.POST.get('comment', '').strip()
+    parent = request.POST.get('parent', None)
+    if comment_text:
+        comment = Comment(
+            submission=submission,
+            comment=comment_text,
+            user=request.user,
+            parent_comment=parent
+            )
+        comment.save()
+        if request.is_ajax():
+            color_helper = UserColors(request)
+            comment_dict = comment.to_dict()
+            comment_dict['user']['color'] = color_helper.get(comment.user.username)
+            return JsonResponse(comment_dict)
+    else:
+        error_msg = "<strong>Oops!</strong> Your comment was blank."
+        if request.is_ajax():
+            return HttpResponseBadRequest(error_msg)
+        else:
+            messages.error(request, error_msg)
+    return HttpResponseRedirect(reverse(
+        'datalocker:submission_view',
+        kwargs={'locker_id': locker_id, 'submission_id': submission_id }
+        ))
 
 
 @login_required

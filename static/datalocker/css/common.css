@@ -356,8 +356,12 @@ button[role='delete-submission']   { display: none; }
     $DISCUSSION
 \*-----------------------------------*/
 
+.panel-discussion form input[type='submit'] {
+    margin-top: -10px;
+}
+
 /*ol,ul*/.discussion-tree {
-    margin-top: 3em;
+    margin-top: 5em;
 }
 
 /*ol,ul*/.discussion-tree .user-icon {

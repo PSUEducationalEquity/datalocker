@@ -10,6 +10,47 @@
 
 
     /**
+     * Adds a comment or reply to the discussion
+     *
+     * @return  void
+     */
+    Discussion.add = function () {
+        Comment.addRequest = $.ajax({
+            url: $(".panel-discussion form").attr("action"),
+            type: "post",
+            data: {
+                comment: $("textarea#comment-text").val(),
+                csrfmiddlewaretoken: $(".panel-discussion form").find(
+                    "input[name='csrfmiddlewaretoken']"
+                ).val(),
+            }
+        }).done(function(response, textStatus, jqXHR) {
+            var $discussion_tree = $(".panel-discussion .discussion-tree")
+            if (response.parent_comment) {
+                $discussion_tree.find(
+                    "li[data-id='" + response.parent_comment + "'] .discussion-replies"
+                ).prepend(Discussion._build_entry(response));
+            } else {
+                $discussion_tree.prepend(Discussion._build_entry(response));
+            }
+            $(".panel-discussion form textarea").val("");
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if (errorThrown != "abort") {
+                console.error(
+                    "Discussion.display in commenting.js AJAX error: "
+                        + textStatus,
+                    errorThrown
+                );
+            }
+        }).always(function(jqXHR, textStatus, errorThrown) {
+            $(".panel-discussion form input[type='submit']").prop("disabled", false);
+            $(".panel-discussion form textarea").prop("disabled", false);
+            Comment.addRequest = null;
+        });
+    }
+
+
+    /**
      * Build a comment entry for the discussion tree
      *
      * Example Entry:
@@ -299,6 +340,25 @@
 
 $(document).ready(function() {
     Discussion.display();
+
+    // Handle adding a new comment
+    $(".panel-discussion form").on("submit", function (event) {
+        event.preventDefault();
+        var $textarea = $(this).find("textarea");
+        if ($textarea.val() != "") {
+            $(this).find("input[type='submit']").prop("disabled", true);
+            $textarea.prop("disabled", true);
+            Discussion.add();
+        }
+    });
+
+    // Shift-enter in TextArea should submit the form
+    $(".panel-discussion textarea").on("keypress", function (event) {
+        if (event.keyCode == 13 && event.shiftKey) {
+            event.preventDefault();
+            $(this).closest("form").submit();
+        }
+    });
 
 
 
