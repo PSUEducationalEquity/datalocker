@@ -2,7 +2,8 @@
 
 from django.conf import settings
 from django.conf.urls import patterns, url
-from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import login, logout, \
+    password_change, password_change_done
 
 from datalocker import views
 
@@ -19,6 +20,15 @@ urlpatterns = patterns('',
     url(r'^logout$',
         logout,
         name="app_logout"
+        ),
+    url(r'^password_change$',
+        password_change,
+        {'post_change_redirect': 'datalocker:password_change_done'},
+        name="password_change"
+        ),
+    url(r'^password_change_done$',
+        password_change_done,
+        name="password_change_done"
         ),
     url(r'^submission$',
         views.form_submission_view,
