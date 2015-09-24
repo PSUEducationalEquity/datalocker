@@ -296,7 +296,7 @@ class Locker(models.Model):
         Returns a boolean indicating if the specified user has access to the
         locker as either the owner or a shared user.
         """
-        return self.is_owner or self.is_user
+        return self.is_owner(user) or self.is_user(user)
 
 
     def is_archived(self):
