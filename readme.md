@@ -27,6 +27,14 @@ information. The owner can then share access to the locker with other users.
 Tested for use with Django 1.8.x, backwards compatibility is unknown and highly
 unlikely beyond 1.7.x due to the use of build-in database schema migrations.
 
+Includes:
+
+* [Bootstrap 3.3.5](http://getbootstrap.com) for the look and feel.
+* [jQuery 2.1.4](https://jquery.com/) for client interactivity.
+* [Moment.js 2.10.3](http://momentjs.com/) for client-side data manipulation.
+* [Typeahead.js 0.11.1](https://twitter.github.io/typeahead.js/) for user
+  email address auto-completion.
+
 
 ## Installation
 
