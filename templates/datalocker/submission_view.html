@@ -75,7 +75,7 @@
                   <div class="workflow-state js-workflow-current-state">{{ workflow_state }}</div>
                 </div>
                 {% if workflow_users_can_edit %}
-                  <form action="{% url 'datalocker:workflow_states' submission.locker.id submission.id %}"
+                  <form action="{% url 'datalocker:workflow_modify' submission.locker.id submission.id %}"
                         id="workflow_form" method="POST">
                     {% csrf_token %}
 
