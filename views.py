@@ -270,8 +270,13 @@ def form_submission_view(request, **kwargs):
             )
         locker.save()
         created = True
+    if locker.workflow_enabled:
+        workflow_state = locker.workflow_default_state()
+    else:
+        workflow_state = ''
     submission = Submission(
         locker = locker,
+        workflow_state = workflow_state,
         data = safe_values['data'],
         )
     submission.save()
@@ -294,7 +299,7 @@ def form_submission_view(request, **kwargs):
         logger.warning("New submission saved to orphaned locker: %s" % (
             reverse(
                 'datalocker:submission_view',
-                kwargs={'locker_id': locker.id, 'pk': submission.id}
+                kwargs={'locker_id': locker.id, 'submission_id': submission.id}
                 ),
         ))
     else:
@@ -311,7 +316,7 @@ def form_submission_view(request, **kwargs):
                     request.build_absolute_uri(
                         reverse(
                             'datalocker:submission_view',
-                            kwargs={'locker_id': locker.id, 'pk': submission.id}
+                            kwargs={'locker_id': locker.id, 'submission_id': submission.id}
                             )
                         ),
                     request.build_absolute_uri(
@@ -715,6 +720,6 @@ def workflow_modify(request, locker_id, submission_id):
         'datalocker:submission_view',
         kwargs={
             'locker_id': submission.locker.id,
-            'pk': submission.id,
+            'submission_id': submission.id,
             }
         ))
