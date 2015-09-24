@@ -463,7 +463,8 @@ class Submission(models.Model):
         )
     workflow_state = models.CharField(
         max_length=25,
-        default='Unreviewed',
+        blank=True,
+        default='',
         )
     objects = SubmissionManager()
 
