@@ -232,15 +232,6 @@ def comments_list(request, locker_id, submission_id):
         ))
 
 
-
-def custom_404(request):
-    response = render_to_response('datalocker/404.html')
-    response.status_code = 404
-    return response
-
-
-
-
 def forbidden_view(request):
     """
     Displays a custom forbidden (403) page
