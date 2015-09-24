@@ -122,14 +122,11 @@ class Locker(models.Model):
         as a boolean.
         Passing it a boolean value, will set the value.
         """
-        setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='discussion',
-            setting_identifier='enabled',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if discussion is enabled or not',
-                'value': False,
-                }
+            identifier='enabled',
+            setting='Indicates if discussion is enabled or not',
+            value=False
             )
         if enable is None:
             return True if setting.value == 'True' else False
@@ -147,14 +144,11 @@ class Locker(models.Model):
         as a boolean.
         Passing it a boolean value, will set the value.
         """
-        setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='discussion',
-            setting_identifier='users-have-access',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if users have access to discussion',
-                'value': False,
-                }
+            identifier='users-have-access',
+            setting='Indicates if users have access to discussion',
+            value=False
             )
         if enable is None:
             return True if setting.value == 'True' else False
@@ -168,15 +162,13 @@ class Locker(models.Model):
         Returns a list of all the fields that appear in any of the
         form submissions
         """
-        try:
-            all_fields_setting = self.settings.get(
-                category='fields-list',
-                setting_identifier='all-fields'
-                )
-        except LockerSetting.DoesNotExist:
-            all_fields = []
-        else:
-            all_fields = json.loads(all_fields_setting.value)
+        all_fields_setting, created = self._get_or_create_setting(
+            category='fields-list',
+            identifier='all-fields',
+            setting='List of all fields',
+            value=json.dumps([])
+            )
+        all_fields = json.loads(all_fields_setting.value)
         is_dirty = False
 
         # include 'Workflow state' if workflow is enabled
@@ -193,12 +185,13 @@ class Locker(models.Model):
                 is_dirty = True
 
         # see if there are new submissions to review
-        try:
-            last_updated_setting = self.settings.get(
-                category='fields-list',
-                setting_identifier='last-updated'
-                )
-        except LockerSetting.DoesNotExist:
+        last_updated_setting, created = self._get_or_create_setting(
+            category='fields-list',
+            identifier='last-updated',
+            setting='Date/time all fields list last updated',
+            value=timezone.now()
+            )
+        if created:
             submissions = self.submissions.all()
         else:
             submissions = self.submissions.filter(
@@ -212,27 +205,9 @@ class Locker(models.Model):
 
         # save the changes
         if is_dirty:
-            try:
-                all_fields_setting.value = json.dumps(all_fields)
-            except UnboundLocalError:
-                all_fields_setting = LockerSetting(
-                    category='fields-list',
-                    setting='List of all fields',
-                    setting_identifier='all-fields',
-                    value=json.dumps(all_fields),
-                    locker=self,
-                    )
+            all_fields_setting.value = json.dumps(all_fields)
             all_fields_setting.save()
-            try:
-                last_updated_setting.value = timezone.now()
-            except UnboundLocalError:
-                last_updated_setting = LockerSetting(
-                    category='fields-list',
-                    setting='Date/time all fields list last updated',
-                    setting_identifier='last-updated',
-                    value=timezone.now(),
-                    locker=self,
-                    )
+            last_updated_setting.value = timezone.now()
             last_updated_setting.save()
         return all_fields
 
@@ -254,42 +229,46 @@ class Locker(models.Model):
 
             `fields` is a list of field names or slugified field names.
         """
-        CATEGORY = 'fields-list'
-        IDENTIFIER = 'selected-fields'
-
+        setting, created = self._get_or_create_setting(
+            category='fields-list',
+            identifier='selected-fields',
+            setting='User-defined list of fields to display in tabular view',
+            value=json.dumps([])
+            )
         if fields is None:
-            try:
-                selected_fields_setting = self.settings.get(
-                    category=CATEGORY,
-                    setting_identifier=IDENTIFIER
-                    )
-            except LockerSetting.DoesNotExist:
-                return []
-            else:
-                return json.loads(selected_fields_setting.value)
+            return json.loads(setting.value)
         else:
             selected_fields = []
             for field in self.fields_all():
                 if field in fields or slugify(field) in fields:
                     selected_fields.append(field)
-            selected_fields_setting, created = LockerSetting.objects.get_or_create(
-                category=CATEGORY,
-                setting_identifier=IDENTIFIER,
-                locker=self,
-                defaults={
-                    'setting': 'User-defined list of fields to display in tabular view',
-                    }
-                )
-            selected_fields_setting.value = json.dumps(selected_fields)
-            selected_fields_setting.save()
+            setting.value = json.dumps(selected_fields)
+            setting.save()
 
 
-    def get_default_workflow_state(self):
-        states = self.get_all_states()
+    def _get_or_create_setting(self, category, identifier, setting, value):
+        """
+        Gets or creates a setting from the current object's `settings` field.
+        """
         try:
-            return states[0]
-        except:
-            return ''
+            setting = self.settings.get(
+                category=category,
+                setting_identifier=identifier
+                )
+        except LockerSetting.DoesNotExist:
+            setting = LockerSetting(
+                category=category,
+                setting_identifier=identifier,
+                locker=self,
+                setting=setting,
+                value=value
+                )
+            setting.save()
+            self.settings.add(setting)
+            self.save()
+            return (setting, True)
+        else:
+            return (setting, False)
 
 
     def get_settings(self):
@@ -297,8 +276,7 @@ class Locker(models.Model):
         Returns a dictionary of all the locker's settings
         """
         settings_dict = {}
-        settings = LockerSetting.objects.filter(locker=self)
-        for setting in settings:
+        for setting in self.settings:
             key = "%s|%s" % (setting.category, setting.setting_identifier)
             try:
                 value = json.loads(setting.value)
@@ -358,21 +336,26 @@ class Locker(models.Model):
         as a boolean.
         Passing it a boolean value, will set the value.
         """
-        setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='submission-notifications',
-            setting_identifier='notify-shared-users',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if shared users should receive an ' \
-                    'email when a new submission is received',
-                'value': False,
-                }
+            identifier='notify-shared-users',
+            setting='Indicates if shared users should receive an ' \
+                'email when a new submission is received',
+            value=False
             )
         if enable is None:
             return True if setting.value == 'True' else False
         elif enable in (True, False):
             setting.value = str(enable)
             setting.save()
+
+
+    def workflow_default_state(self):
+        states = self.workflow_states()
+        try:
+            return states[0]
+        except:
+            return ''
 
 
     def workflow_enabled(self, enable=None):
@@ -383,14 +366,11 @@ class Locker(models.Model):
         as a boolean.
         Passing it a boolean value, will set the value.
         """
-        setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='workflow',
-            setting_identifier='enabled',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if workflow is enabled or not',
-                'value': False,
-                }
+            identifier='enabled',
+            setting='Indicates if workflow is enabled or not',
+            value=False
             )
         if enable is None:
             return True if setting.value == 'True' else False
@@ -417,14 +397,11 @@ class Locker(models.Model):
         as a list.
         Passing it a list of values, will set the value.
         """
-        setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='workflow',
-            setting_identifier='states',
-            locker=self,
-            defaults={
-                'setting': 'User-defined list of workflow states',
-                'value': json.dumps([]),
-                }
+            identifier='states',
+            setting='User-defined list of workflow states',
+            value=json.dumps([])
             )
         if states is None:
             return json.loads(setting.value)
@@ -444,14 +421,11 @@ class Locker(models.Model):
         as a boolean.
         Passing it a boolean value, will set the value.
         """
-        setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='workflow',
-            setting_identifier='users-can-edit',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if users can change the workflow state',
-                'value': False,
-                }
+            identifier='users-can-edit',
+            setting='Indicates if users can change the workflow state',
+            value=False
             )
         if enable is None:
             return True if setting.value == 'True' else False
