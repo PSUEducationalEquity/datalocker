@@ -241,35 +241,6 @@ def custom_404(request):
 
 
 
-@login_required()
-@require_http_methods(["POST"])
-def delete_submission(request, locker_id, submission_id):
-    """
-    Marks a submission as deleted in the database.
-    """
-    if request.is_ajax():
-        submission = get_object_or_404(Submission, id=submission_id)
-        submission.deleted = timezone.now()
-        submission.save()
-        purge_timestamp = submission.deleted + datetime.timedelta(
-            days=settings.SUBMISSION_PURGE_DAYS
-            )
-        return JsonResponse({
-            'id': submission.id,
-            'timestamp': submission.timestamp,
-            'deleted': submission.deleted,
-            'purge_timestamp': purge_timestamp,
-            })
-    else:
-        return HttpResponseRedirect(reverse(
-            'datalocker:submission_list',
-            kwargs={
-                'id': submission_id,
-                'deleted': submission.deleted
-                }
-            ))
-
-
 def forbidden_view(request):
     """
     Displays a custom forbidden (403) page
@@ -607,6 +578,53 @@ def server_error_view(request):
 
 
 @login_required()
+@require_http_methods(["POST"])
+def submission_delete(request, locker_id, submission_id):
+    """
+    Marks a submission as deleted in the database.
+    """
+    if request.is_ajax():
+        submission = get_object_or_404(Submission, id=submission_id)
+        submission.deleted = timezone.now()
+        submission.save()
+        purge_timestamp = submission.deleted + datetime.timedelta(
+            days=settings.SUBMISSION_PURGE_DAYS
+            )
+        return JsonResponse({
+            'id': submission.id,
+            'timestamp': submission.timestamp,
+            'deleted': submission.deleted,
+            'purge_timestamp': purge_timestamp,
+            })
+    else:
+        return HttpResponseRedirect(reverse(
+            'datalocker:submissions_list',
+            kwargs={'locker_id': locker_id}
+            ))
+
+
+@login_required()
+@require_http_methods(["POST"])
+def submission_undelete(request, locker_id, submission_id):
+    """
+    Removes the deleted timestamp from a submission
+    """
+    if request.is_ajax():
+        submission = get_object_or_404(Submission, id=submission_id)
+        submission.deleted = None
+        submission.save()
+        return JsonResponse({
+            'id': submission.id,
+            'timestamp': submission.timestamp,
+            })
+    else:
+        return HttpResponseRedirect(reverse(
+            'datalocker:submissions_list',
+            kwargs={'locker_id': locker_id}
+            ))
+
+
+@login_required()
 @require_http_methods(["GET", "HEAD"])
 def submission_view(request, locker_id, submission_id):
     """
@@ -664,27 +682,6 @@ def unarchive_locker(request, locker_id):
     locker.archive_timestamp = None
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
-
-
-@login_required()
-@require_http_methods(["POST"])
-def undelete_submission(request, locker_id, submission_id):
-    """
-    Removes the deleted timestamp from a submission
-    """
-    if request.is_ajax():
-        submission = get_object_or_404(Submission, id=submission_id)
-        submission.deleted = None
-        submission.save()
-        return JsonResponse({
-            'id': submission.id,
-            'timestamp': submission.timestamp,
-            })
-    else:
-        return HttpResponseRedirect(reverse(
-            'datalocker:submission_list',
-            kwargs={'locker_id': submission_id}
-            ))
 
 
 @login_required()

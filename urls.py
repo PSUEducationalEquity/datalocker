@@ -30,8 +30,8 @@ urlpatterns = patterns('',
         name='unarchive_locker'
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/delete$',
-        views.delete_submission,
-        name='delete_submission'
+        views.submission_delete,
+        name='submission_delete'
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion/add$',
         views.comment_add,
@@ -46,8 +46,8 @@ urlpatterns = patterns('',
         name='comments_list',
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/undelete$',
-        views.undelete_submission,
-        name='undelete_submission'
+        views.submission_undelete,
+        name='submission_undelete'
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/workflow/modify$',
         views.workflow_modify,
