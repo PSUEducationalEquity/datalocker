@@ -394,6 +394,15 @@ class Locker(models.Model):
         elif enable in (True, False):
             setting.value = str(enable)
             setting.save()
+            if not enable:
+                # remove the workflow state from the selected fields list
+                fields = self.get_selected_fields_list()
+                try:
+                    fields.remove("Workflow state")
+                except ValueError:
+                    pass
+                else:
+                    self.save_selected_fields_list(fields)
 
 
     def workflow_states(self, states=None):
