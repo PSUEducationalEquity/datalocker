@@ -319,9 +319,20 @@ class Locker(models.Model):
 
 
     def save_selected_fields_list(self, fields):
+        """
+        Validate and save the list of selected fields to display
+
+        Validation involves ensuring there is a match between each specified
+        field and the list of all fields possible for this locker.
+
+        `fields` is expected to be a slugified list of field names because
+        it is coming from a form submission.
+
+        `fields` can also be just a list of field names which will work too.
+        """
         selected_fields = []
         for field in self.get_all_fields_list():
-            if slugify(field) in fields:
+            if slugify(field) in fields or field in fields:
                 selected_fields.append(field)
         selected_fields_setting, created = LockerSetting.objects.get_or_create(
             category='fields-list',
