@@ -15,7 +15,6 @@ from collections import OrderedDict
 import datetime, json
 
 
-
 ##
 # Model Managers
 ##
@@ -276,7 +275,7 @@ class Locker(models.Model):
         Returns a dictionary of all the locker's settings
         """
         settings_dict = {}
-        for setting in self.settings:
+        for setting in self.settings.all():
             key = "%s|%s" % (setting.category, setting.setting_identifier)
             try:
                 value = json.loads(setting.value)
