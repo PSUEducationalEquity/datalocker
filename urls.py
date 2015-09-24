@@ -2,12 +2,23 @@
 
 from django.conf import settings
 from django.conf.urls import patterns, url
+from django.contrib.auth.views import login, logout
+
 from datalocker import views
+
 
 urlpatterns = patterns('',
     url(r'^$',
         views.locker_list_view,
         name='index',
+        ),
+    url(r'^login$',
+        login,
+        name="app_login"
+        ),
+    url(r'^logout$',
+        logout,
+        name="app_logout"
         ),
     url(r'^submission$',
         views.form_submission_view,

@@ -1,60 +1,101 @@
-{% extends "admin/base_site.html" %}
-{% load i18n admin_static %}
+{% extends "datalocker/app_template.html" %}
+{% load staticfiles %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />{% endblock %}
+{% block personal-bar-wrapper %}{% endblock %}
 
-{% block title %}Datalocker Login{% endblock %}
-{% block branding %}<h1 id="site-name">Datalocker Login</h1>{% endblock %}
+{% block breadcrumb-trail %}
+  <li class="active">
+    Login
+  </li>
+{% endblock breadcrumb-trail %}
 
-{% block bodyclass %}{{ block.super }} login{% endblock %}
-
-{% block usertools %}{% endblock %}
-
-{% block nav-global %}{% endblock %}
-
-{% block content_title %}{% endblock %}
-
-{% block breadcrumbs %}{% endblock %}
+{% block page-meta-title %}Login{% endblock page-meta-title %}
 
 {% block content %}
-{% if form.errors and not form.non_field_errors %}
-<p class="errornote">
-{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
-</p>
-{% endif %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <h1>Login</h1>
 
-{% if form.non_field_errors %}
-{% for error in form.non_field_errors %}
-<p class="errornote">
-    {{ error }}
-</p>
-{% endfor %}
-{% endif %}
+        <ul class="messages list-unstyled" id="user-messages">
+          {% for msg in messages %}
+            <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+          {% endfor %}
 
-<div id="content-main">
-<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row">
-    {{ form.username.errors }}
-    {{ form.username.label_tag }} {{ form.username }}
-  </div>
-  <div class="form-row">
-    {{ form.password.errors }}
-    {{ form.password.label_tag }} {{ form.password }}
-    <input type="hidden" name="next" value="{{ next }}" />
-  </div>
-  {% url 'admin_password_reset' as password_reset_url %}
-  {% if password_reset_url %}
-  <div class="password-reset-link">
-    <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
-  </div>
-  {% endif %}
-  <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
-  </div>
-</form>
+          {% if form.errors and not form.non_field_errors %}
+            <li class="alert alert-danger">
+              <strong>Oops!</strong>
+              {% if form.errors.items|length == 1 %}
+                Please correct the error below.
+              {% else %}
+                Please correct the errors below.
+              {% endif %}
+            </li>
+          {% endif %}
 
-<script type="text/javascript">
-document.getElementById('id_username').focus()
-</script>
-</div>
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <li class="alert alert-danger">
+                <strong>Oops!</strong> {{ error }}
+              </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+
+        <form action="{{ app_path }}" method="post" id="login-form">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}" />
+
+          <div class="form-group {% if form.username.errors %}has-error has-feedback{% endif %}">
+            <label for="id-username" class="control-label">Username</label>
+            <input type="text" id="id-username" name="username"
+                   class="form-control"
+                   value="{{ form.username.value|default_if_none:'' }}"
+                   {% if form.username.errors %}aria-describedby="id-username-error-status"{% endif %}
+                   />
+            {% if form.username.errors %}
+              <span class="glyphicon glyphicon-remove form-control-feedback"
+                    aria-hidden="true"></span>
+              <span id="id-username-error-status" class="help-block">
+                {{ form.username.errors }}
+              </span>
+            {% endif %}
+          </div>
+          <div class="form-group {% if form.password.errors %}has-error has-feedback{% endif %}">
+            <label for="id-password" class="control-label">Password</label>
+            <input type="password" id="id-password" name="password"
+                   class="form-control"
+                   {% if form.password.errors %}aria-describedby="id-password-error-status"{% endif %} />
+            {% if form.password.errors %}
+              <span class="glyphicon glyphicon-remove form-control-feedback"
+                    aria-hidden="true"></span>
+              <span id="id-password-error-status" class="help-block">
+                {{ form.password.errors }}
+              </span>
+            {% endif %}
+          </div>
+
+          {% url 'admin_password_reset' as password_reset_url %}
+          {% if password_reset_url %}
+            <div class="password-reset-link">
+              <a href="{{ password_reset_url }}"
+                 >Forgotten your password or username?</a>
+            </div>
+          {% endif %}
+
+          <div class="submit-row">
+            <input type="submit" class="btn btn-primary" value="Log in" />
+          </div>
+        </form>
+      </div>
+  </div>
 {% endblock %}
+
+{% block site-scripts %}
+    {{ block.super }}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/messages.js' %}"></script>
+    <script type="text/javascript">
+      document.getElementById('id_username').focus()
+    </script>
+{% endblock site-scripts %}

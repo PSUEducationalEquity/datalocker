@@ -137,7 +137,7 @@
                             <li role="presentation"
                               ><a role="menuitem"
                                   tabindex="-1"
-                                  href="{% block logout-url %}{% url 'admin:logout' %}{% endblock %}"
+                                  href="{% block logout-url %}{% url 'datalocker:app_logout' %}{% endblock %}"
                                 >{% block logout-label %}Log out{% endblock logout-label %}</a>
                             </li>
                             {% block menuitem-password-change %}
@@ -163,10 +163,8 @@
 
                     {% else %}
                       <li>
-                        <a href="{% block login-url %}
-                            {% url 'admin:login' %}
-                          {% endblock %}"
-                          >{% block login-label %}Log In{% endblock login-label %}</a>
+                        <a href="{% block login-url %}{% url 'datalocker:app_login' %}{% endblock %}"
+                           >{% block login-label %}Log In{% endblock login-label %}</a>
                       </li>
                     {% endif %}
                   </ul>
