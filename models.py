@@ -202,34 +202,37 @@ class Locker(models.Model):
         else:
             submissions = self.submissions.filter(
                 timestamp__gte=last_updated_setting.value)
-
         for submission in submissions:
             fields = submission.data_dict().keys()
             for field in fields:
                 if not field in all_fields:
                     all_fields.append(field)
-        try:
-            all_fields_setting.value = json.dumps(all_fields)
-        except UnboundLocalError:
-            all_fields_setting = LockerSetting(
-                category='fields-list',
-                setting='List of all fields',
-                setting_identifier='all-fields',
-                value=json.dumps(all_fields),
-                locker=self,
-                )
-        all_fields_setting.save()
-        try:
-            last_updated_setting.value = timezone.now()
-        except UnboundLocalError:
-            last_updated_setting = LockerSetting(
-                category='fields-list',
-                setting='Date/time all fields list last updated',
-                setting_identifier='last-updated',
-                value=timezone.now(),
-                locker=self,
-                )
-        last_updated_setting.save()
+                    is_dirty = True
+
+        # save the changes
+        if is_dirty:
+            try:
+                all_fields_setting.value = json.dumps(all_fields)
+            except UnboundLocalError:
+                all_fields_setting = LockerSetting(
+                    category='fields-list',
+                    setting='List of all fields',
+                    setting_identifier='all-fields',
+                    value=json.dumps(all_fields),
+                    locker=self,
+                    )
+            all_fields_setting.save()
+            try:
+                last_updated_setting.value = timezone.now()
+            except UnboundLocalError:
+                last_updated_setting = LockerSetting(
+                    category='fields-list',
+                    setting='Date/time all fields list last updated',
+                    setting_identifier='last-updated',
+                    value=timezone.now(),
+                    locker=self,
+                    )
+            last_updated_setting.save()
         return all_fields
 
 
