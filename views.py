@@ -391,7 +391,7 @@ def locker_list_view(request):
 
 
 class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
-    template_name = 'datalocker/submission_list.html'
+    template_name = 'datalocker/submissions_list.html'
 
 
     def get_context_data(self, **kwargs):

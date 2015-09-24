@@ -54,8 +54,8 @@
            id="submission-list"
            data-csrf-token="{{ csrf_token }}"
            data-locker-id="{{ locker.id }}"
-           data-delete-url="{% url 'datalocker:delete_submission' locker.id 0 %}"
-           data-undelete-url="{% url 'datalocker:undelete_submission' locker.id 0 %}"
+           data-delete-url="{% url 'datalocker:submission_delete' locker.id 0 %}"
+           data-undelete-url="{% url 'datalocker:submission_undelete' locker.id 0 %}"
            >
       <caption>Form Submissions</caption>
       <thead>
