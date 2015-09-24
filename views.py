@@ -373,7 +373,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         context['fields_list'] = fields_list
         selected_fields = locker.get_selected_fields_list()
         context['selected_fields'] = selected_fields
-        context['column_headings'] = ['Submitted Date', ] + selected_fields
+        context['column_headings'] = ['Submitted date', ] + selected_fields
         context['purge_days'] = settings.SUBMISSION_PURGE_DAYS
 
         # build the list of submissions to be displayed
