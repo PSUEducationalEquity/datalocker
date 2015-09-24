@@ -369,9 +369,9 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         context = super(LockerSubmissionsListView, self).get_context_data(**kwargs)
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         context['locker'] = locker
-        fields_list = locker.get_all_fields_list()
+        fields_list = locker.fields_all()
         context['fields_list'] = fields_list
-        selected_fields = locker.get_selected_fields_list()
+        selected_fields = locker.fields_selected()
         context['selected_fields'] = selected_fields
         context['column_headings'] = ['Submitted date', ] + selected_fields
         context['purge_days'] = settings.SUBMISSION_PURGE_DAYS
@@ -415,7 +415,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         load thereafter.
         """
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        locker.save_selected_fields_list(self.request.POST)
+        locker.fields_selected(self.request.POST)
         return HttpResponseRedirect(reverse('datalocker:submissions_list',
             kwargs={'locker_id': self.kwargs['locker_id']}))
 

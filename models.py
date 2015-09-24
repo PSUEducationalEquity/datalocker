@@ -163,9 +163,10 @@ class Locker(models.Model):
             setting.save()
 
 
-    def get_all_fields_list(self):
+    def fields_all(self):
         """
-        This gets all of the fields that were submitted to the form
+        Returns a list of all the fields that appear in any of the
+        form submissions
         """
         try:
             all_fields_setting = self.settings.get(
@@ -236,29 +237,59 @@ class Locker(models.Model):
         return all_fields
 
 
+    def fields_selected(self, fields=None):
+        """
+        Gets/sets the list of fields to display for a submissions list
+
+        If `fields` is None:
+
+            Returns a list of fields the user selected to be displayed as part
+            of the list of submissions
+
+        If `fields` is specified:
+
+            Validates and saves the list of selected fields to display.
+            Validation involves ensuring there is a match between each specified
+            field and the list of all fields possible for this locker.
+
+            `fields` is a list of field names or slugified field names.
+        """
+        CATEGORY = 'fields-list'
+        IDENTIFIER = 'selected-fields'
+
+        if fields is None:
+            try:
+                selected_fields_setting = self.settings.get(
+                    category=CATEGORY,
+                    setting_identifier=IDENTIFIER
+                    )
+            except LockerSetting.DoesNotExist:
+                return []
+            else:
+                return json.loads(selected_fields_setting.value)
+        else:
+            selected_fields = []
+            for field in self.fields_all():
+                if field in fields or slugify(field) in fields:
+                    selected_fields.append(field)
+            selected_fields_setting, created = LockerSetting.objects.get_or_create(
+                category=CATEGORY,
+                setting_identifier=IDENTIFIER,
+                locker=self,
+                defaults={
+                    'setting': 'User-defined list of fields to display in tabular view',
+                    }
+                )
+            selected_fields_setting.value = json.dumps(selected_fields)
+            selected_fields_setting.save()
+
+
     def get_default_workflow_state(self):
         states = self.get_all_states()
         try:
             return states[0]
         except:
             return ''
-
-
-    def get_selected_fields_list(self):
-        """
-        Get's the selected fields off of the Submission List Page,
-        and inserts them into the table
-        """
-        try:
-            selected_fields_setting = self.settings.get(
-                category='fields-list',
-                setting_identifier='selected-fields'
-                )
-        except LockerSetting.DoesNotExist:
-            selected_fields = []
-        else:
-            selected_fields = json.loads(selected_fields_setting.value)
-        return selected_fields
 
 
     def get_settings(self):
@@ -318,34 +349,6 @@ class Locker(models.Model):
         return True if user in self.users else False
 
 
-    def save_selected_fields_list(self, fields):
-        """
-        Validate and save the list of selected fields to display
-
-        Validation involves ensuring there is a match between each specified
-        field and the list of all fields possible for this locker.
-
-        `fields` is expected to be a slugified list of field names because
-        it is coming from a form submission.
-
-        `fields` can also be just a list of field names which will work too.
-        """
-        selected_fields = []
-        for field in self.get_all_fields_list():
-            if slugify(field) in fields or field in fields:
-                selected_fields.append(field)
-        selected_fields_setting, created = LockerSetting.objects.get_or_create(
-            category='fields-list',
-            setting_identifier='selected-fields',
-            locker=self,
-            defaults={
-                'setting': 'User-defined list of fields to display in tabular view',
-                }
-            )
-        selected_fields_setting.value = json.dumps(selected_fields)
-        selected_fields_setting.save()
-
-
     def shared_users_notification(self, enable=None):
         """
         Gets or sets the setting on the locker indicating if shared users
@@ -396,13 +399,13 @@ class Locker(models.Model):
             setting.save()
             if not enable:
                 # remove the workflow state from the selected fields list
-                fields = self.get_selected_fields_list()
+                fields = self.fields_selected()
                 try:
                     fields.remove("Workflow state")
                 except ValueError:
                     pass
                 else:
-                    self.save_selected_fields_list(fields)
+                    self.fields_selected(fields)
 
 
     def workflow_states(self, states=None):
@@ -472,11 +475,6 @@ class LockerSetting(models.Model):
 
 
 
-##
-# Model used for the actual Submission of the form
-# Needs to include the locer name, Submission timestamp,
-# the data that is on the form and then it is needed to be returned readable
-##
 
 class Submission(models.Model):
     locker = models.ForeignKey(
