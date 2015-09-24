@@ -396,6 +396,8 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
             for field, value in submission.data_dict().iteritems():
                 if field in selected_fields:
                     entry.append(value)
+            if 'Workflow state' in selected_fields:
+                entry.append(submission.workflow_state)
             context['data'].append(entry)
         return context
 
