@@ -35,7 +35,7 @@
              data-on="Hide Archived Lockers"
              data-off="Show Archived Lockers" />
     </div>
-    <h2 class="italic">My Lockers</h2>
+    <h2>My Lockers</h2>
     {% if owned|length > 0 %}
       <table class="table table-striped table-hover listing tablesorter"
              data-archive-url="{% url 'datalocker:archive_locker' 0 %}"
@@ -89,7 +89,7 @@
     {% endif %}
     <hr />
     {% if shared|length > 0 %}
-      <h2 class="italic">Lockers Shared with Me</h2>
+      <h2>Lockers Shared with Me</h2>
       <table class="table table-striped table-hover listing tablesorter"
         id="shared-locker-list">
         <caption class="sr-only">List of lockers that have been shared with me</caption>

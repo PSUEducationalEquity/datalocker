@@ -378,11 +378,6 @@ footer {
     $GENERAL
 \*------------------------------------*/
 
-/*.add-btn {
-  padding:3px 4px;
-  vertical-align: top;
-}
-*/
 caption {
   font-size: 1.75em;
 }
@@ -403,30 +398,19 @@ caption {
   clear: left;
   text-align: justify;
   padding-left: 2em;
-  /*text-overflow: ellipsis;*/
- /* white-space: nowrap;*/
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
   font-size:16px;
 }
 
-h2.italic {
-  font-style: italic;
-}
-
 h5 {
-  font-weight: bold;
+    font-weight: bold;
 }
 
-.pagination {
-  margin: .5em;
-}
-
+.pagination,
 .pagination a {
-  margin: .5em;
+    margin: .5em;
  }
-
-.rounding {
-  border-radius: 5px;
-}
 
 .select-all-checkbox {
   font-size: 12px;
