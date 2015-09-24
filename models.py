@@ -176,7 +176,22 @@ class Locker(models.Model):
             all_fields = []
         else:
             all_fields = json.loads(all_fields_setting.value)
+        is_dirty = False
 
+        # include 'Workflow state' if workflow is enabled
+        if self.workflow_enabled():
+            if 'Workflow state' not in all_fields:
+                all_fields.append('Workflow state')
+                is_dirty = True
+        else:
+            try:
+                all_fields.remove('Workflow state')
+            except ValueError:
+                pass
+            else:
+                is_dirty = True
+
+        # see if there are new submissions to review
         try:
             last_updated_setting = self.settings.get(
                 category='fields-list',
