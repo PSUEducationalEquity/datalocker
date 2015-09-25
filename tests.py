@@ -110,6 +110,7 @@ class SubmissionTestCase(TestCase):
             'data': data,
             u'id': submission.id,
             'timestamp': submission.timestamp.isoformat(),
+            'workflow_state': '',
             }
         self.maxDiff = None
         self.assertDictEqual(
@@ -230,8 +231,8 @@ class SubmissionViewTestCase(TestCase):
             self.assertTrue(False)
         else:
             self.assertEqual(len(Locker.objects.all()), 2)
-            
-            
+
+
     def test_submission_view_no_data_submission(self):
         """
         Form submission should add a submission with no data,
@@ -256,5 +257,3 @@ class SubmissionViewTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         submission = Submission.objects.get(id=1)
         submission.data_dict()
-        
-        
