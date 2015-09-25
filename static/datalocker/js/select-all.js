@@ -1,4 +1,4 @@
-/*! Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
+/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
 
 /**
  * Select-all script uses a single checkbox to select or deselect every checkbox

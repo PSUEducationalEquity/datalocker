@@ -4,29 +4,36 @@
 
 {% block breadcrumb-trail %}
   <li class="active">
-    Not found error
+    Access forbidden
   </li>
 {% endblock breadcrumb-trail %}
 
-{% block page-meta-title %}Not Found{% endblock page-meta-title %}
+{% block page-meta-title %}Forbidden{% endblock page-meta-title %}
 
 {% block content %}
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-10 col-sm-offset-1">
-        <h1>Oops!</h1>
+        <h1>D'oh!</h1>
         <ul class="messages list-unstyled" id="user-messages">
           {% for msg in messages %}
             <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
           {% endfor %}
         </ul>
         <p class="lead">
-          Well this is a bit embarrassing but you have apparently asked for
-          something that we have misplaced.
+          It appears you do not have permission to access that.
         </p>
         <p>
-          Sorry for the inconvenience. Please try
-          <a href="{% url 'datalocker:index' %}">starting from the beginning</a>.
+          {% block contact-support %}
+          If you feel you have gotten this message in error, please contact
+          support to resolve the problem.
+          {% endblock contact-support %}
+        </p>
+        <p>
+          Please try
+          <a href="{% url 'datalocker:index' %}">
+            starting over from the beginning
+          </a>.
         </p>
       </div>
     </div>

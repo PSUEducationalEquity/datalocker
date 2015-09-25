@@ -5,444 +5,39 @@
 \*------------------------------------*/
 /**
  * CONTENTS.............You're reading it!
- * ARCHIVED.............Automatically hides archived classes by default on page load
+ * 404_PAGE.............Styling for the 404 page
+ * ACCESSIBILITY........Improve the accessibility of certain structures
+ * ARCHIVED.............Styling for archiving submissions and associated actions
+ * AUTO_COMPLETE........Styling for the auto-complete dialog
  * BREADCRUMBS..........Breadcrumb list stying
- * TOGGLESWITCH.........Toggle Switch the stying when entering and exiting maintenance mode
+ * BUTTONS..............Button styling
+ * DELETED..............Styles for deleting submissions and associated actions
+ * DISCUSSION...........Discussion display and editing
+ * EDIT_DIALOG..........Styling for the Edit Locker dialog
+ * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
  * HEADER...............Styling specifically for the page header
- * ACCESSIBILITY........Improve the accessibility of certain structures
- * BUTTONS..............Button styling
- * FOOTER...............Styling specifically for the page footer
+ * KEY_VALUE_PAIRS......Key/value pair display styling
+ * SHARING_DIALOG.......Styling for the sharing dialog
+ * TABLES...............Table specific styling
+ * TOGGLE_SWITCH........Toggle Switch the stying when entering and exiting maintenance mode
+ * WORKFLOW.............Styling for the workflow portlet
  */
 
+
+
+
 /*------------------------------------*\
-    $404 PAGE
+    $404_PAGE
 \*------------------------------------*/
+
 .error-message {
   text-align: center;
 }
+
 .error-message h1 {
   font-weight: bold;
 }
-
-
-
-/*------------------------------------*\
-    $ARCHIVED
-\*------------------------------------*/
-.button-archived-showhide .is-active {
-  display: active;
-}
-
-/* show/hide the archived rows */
-.is-archived { display: none; }
-.js-show-archived .is-archived { display: table-row; }
-
-/* show/hide the archive labels */
-.is-archived .archived-label {
-  display: inline;
-  margin-left: .5em;
-}
-.archived-label {
-  display: none;
-}
-
-/* show/hide the archive/unarchive buttons */
-button[role='unarchive-locker'] { display: none; }
-button[role='archive-locker']   { display: inline-block; }
-.is-archived button[role='unarchive-locker'] { display: inline-block; }
-.is-archived button[role='archive-locker'] { display: none; }
-
-/* if archived locker hide locker option buttons */
-button[role='edit-users'] { display: inline-block; }
-button[role='edit-locker'] { display: inline-block; }
-.is-archived button[role='edit-users'] { display: none; }
-.is-archived button[role='edit-locker'] { display: none; }
-
-#delete-warning{
-  width: 100%;
-  display: none
-}
-
-
-
-/*-----------------------------------*\
-    $BREADCRUMBS
-\*-----------------------------------*/
-
-.document-breadcrumbs {
-  margin: 0.2em 1em;
-}
-
-/*ol*/.breadcrumb-trail {
-  display: inline-block;
-  list-style-type: none;
-  padding-left: 0.5em;
-}
-
-/*ol*/.breadcrumb-trail > li {
-    display: inline-block;
-}
-
-/*ol*/.breadcrumb-trail > li + li:before {
-  padding: 0 5px;
-  color: #ccc;
-  content: "/\00a0";
-}
-
-/*ol*/.breadcrumb-trail > .active {
-  color: #777;
-}
-
-
-
-/*-----------------------------------*\
-    $COMMENTING
-\*-----------------------------------*/
-
-button[role='comment-edit'] {
-  display: inline-block;
-}
-
-button[role='comment-reply'] {
-  display: inline-block;
-  float: left;
-}
-
-.comment {
-  display: block;
-}
-
-.comment-actions {
-  display: inline-block;
-}
-
-.comment-button {
-  clear: left;
-  float: right;
-}
-
-.comment-feed-container {
-  margin-top: 25px;
-}
-
-.comment-textarea {
-  padding: 10px;
-  border: solid 1px #dcdcdc;
-  height: 75px;
-  width: 100%;
-  resize: none;
-}
-
-.comment-reply-textarea {
-  padding: 10px;
-  border: solid 1px #dcdcdc;
-  height: 75px;
-  width: 100%;
-}
-
-.media-left span {
-  width: 35px;
-  height: 35px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 5px;
-}
-
-
-
-/*-----------------------------------*\
-    $EXISTINGUSERS
-\*-----------------------------------*/
-
-#existing-users {
-  display: inline-block;
-}
-
-.existing-users-list {
-  display: inline-block;
-}
-
-#no-users-message {
-  font-size: 15px;
-  color: #808080;
-  font-style: italic;
-}
-
-.remove-users {
-  padding-left: 10px;
-  margin-top: 2px;
-}
-
-
-
-/*-----------------------------------*\
-    $SHAREDIALOG
-\*-----------------------------------*/
-#dialog-edit-access-users-title {
-  margin-top: 65px;
-}
-
-
-
-/*-----------------------------------*\
-    $SUBMISSIONVIEWPAGE
-\*-----------------------------------*/
-
-ul {
-  list-style-type: none;
-}
-
-ul .header{
-  font-size: 16px;
-  padding-top: 1em;
-}
-
-ul .information {
-  font-size: 16px;
-  font-weight: bold;
-  padding-left: 2em;
-}
-
-
-
-/*------------------------------------*\
-    $TABLES
-\*------------------------------------*/
-
-.record-actions {
-  text-align: right;
-}
-
-.record-name {
-  width: 600px;
-}
-
-.url {
-  display: block;
-  margin-left: 1em;
-  font-size: 13px;
-  opacity: 0.75;
-}
-
-
-
-/*------------------------------------*\
-    $TOGGLESWITCH
-\*------------------------------------*/
-
-.maintenance-mode-switch {
-  float:right;
-}
-
-.onoffswitch {
-    position: relative; width: 90px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-
-.onoffswitch-checkbox {
-    display: none;
-}
-
-.onoffswitch-label {
-    display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #999999; border-radius: 20px;
-}
-
-.onoffswitch-inner {
-    display: block; width: 200%; margin-left: -100%;
-    transition: margin 0.3s ease-in 0s;
-}
-
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
-    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
-    box-sizing: border-box;
-}
-
-.onoffswitch-inner:before {
-    content: "OFF";
-    padding-left: 10px;
-    background-color: #EEEEEE; color: #999999;
-
-}
-
-.onoffswitch-inner:after {
-    content: "ON";
-    padding-right: 10px;
-    background-color: #34A7C1; color: #FFFFFF;
-    text-align: right;
-}
-
-.onoffswitch-switch {
-    display: block; width: 16px; margin: 6px;
-    background: #FFFFFF;
-    position: absolute; top: 0; bottom: 2px;
-    right: 56px;
-    border: 2px solid #999999; border-radius: 20px;
-    transition: all 0.3s ease-in 0s;
-}
-
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-    margin-left: 0;
-}
-
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px;
-}
-
-.toggle.btn {
-  width: 130px;
-  min-width: 59px;
-  min-height: 34px;
-  float: right;
- }
-
-.onoffswitch {
-  width: 130px;
-  min-width: 59px;
-  min-height: 34px;
-  float: right;
- }
-/*-----------End code for the toggle switch --------*/
-
-
-
-/*------------------------------------*\
-    $Workflow
-\*------------------------------------*/
-
-.state-status {
-  font-style: italic;
-  padding-left: 1em;
-  display: inherit;
-}
-
-
-
-/*------------------------------------*\
-    $GENERAL
-\*------------------------------------*/
-
-.add-btn {
-  padding:3px 4px;
-  vertical-align: top;
-}
-
-caption {
-  font-size: 1.75em;
-}
-
-.document-footer {
-  margin-top: 150px;
-}
-
-.deleted {
-  display: none;
- /* text-decoration: line-through;*/
-}
-
-.delete-label{
-  display: none;
-}
-
-.deleted .delete-label{
-  display: inline;
-}
-
-#delete-label-font-size{
-  font-size: 90%;
-}
-
-.delete-submission {
-  display: none;
-}
-
-.heading-display-for-submission {
-  display: none;
-}
-
-.submission-deleted {
-  display: table-row;
-}
-
-.dl-horizontal dd {
-  margin-left: 150px;
-  line-height: 2.5;
-  font-size:16px;
-}
-
-.dl-horizontal dt {
-  float: left;
-  width: 450px;
-  clear: left;
-  text-align: justify;
-  padding-left: 2em;
-  /*text-overflow: ellipsis;*/
- /* white-space: nowrap;*/
-  font-size:16px;
-}
-
-h1.hidden {
-  visibility: hidden;
-}
-
-h2.italic {
-  font-style: italic;
-}
-
-.pagination {
-  margin: .5em;
-}
-
-.pagination a {
-  margin: .5em;
- }
-
-.rounding {
-  border-radius: 5px;
-}
-
-.select-all-checkbox {
-  font-size: 12px;
-  font-weight: normal;
-}
-
-.submission-heading {
-  font-weight: bold;
-}
-
-.sub-list {
-  margin-left: 2em;
-  font-size: 16px;
-}
-
-.sub-list dd {
-  padding-bottom: 1em;
-}
-
-.tt-dataset {
-  background-color: #E5E5E5;
-}
-
-.undeleted-submission{
-  display: none;
-}
-
-
-
-
-/*-----------------------------------*\
-    $HEADER
-\*-----------------------------------*/
-
-/**
- * Bootstrap implements a margin below a navigation bar, this shifts that
- * margin to the overall header and not just the navigation bar.
- */
-.document-header .navbar { margin-bottom: 0; }
-header { margin-bottom: 20px; }
 
 
 
@@ -504,6 +99,110 @@ header { margin-bottom: 20px; }
 
 
 /*------------------------------------*\
+    $ARCHIVED
+\*------------------------------------*/
+
+.button-archived-showhide .is-active {
+  display: active;
+}
+
+/* show/hide the archived rows */
+.is-archived { display: none; }
+.js-show-archived .is-archived { display: table-row; }
+
+/* show/hide the archive labels */
+.is-archived .archived-label {
+  display: inline;
+  margin-left: .5em;
+}
+.archived-label {
+  display: none;
+}
+
+/* show/hide the archive/unarchive buttons */
+button[role='unarchive-locker'] { display: none; }
+button[role='archive-locker']   { display: inline-block; }
+.is-archived button[role='unarchive-locker'] { display: inline-block; }
+.is-archived button[role='archive-locker'] { display: none; }
+
+/* if archived locker hide locker option buttons */
+button[role='edit-users'] { display: inline-block; }
+button[role='edit-locker'] { display: inline-block; }
+.is-archived button[role='edit-users'] { display: none; }
+.is-archived button[role='edit-locker'] { display: none; }
+
+
+
+
+/*------------------------------------*\
+    $AUTO_COMPLETE
+\*------------------------------------*/
+
+.tt-menu {
+    background-color: #FFF;
+    border: 1px solid #999;
+    padding: 8px;
+    border-radius: 0px 5px 5px 5px;
+    -moz-border-radius: 0px 5px 5px 5px;
+    -webkit-border-radius: 0px 5px 5px 5px;
+}
+
+.form-inline .tt-menu {
+    margin-top: 20px;
+}
+
+.tt-suggestion {
+    padding: 2px 10px;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.tt-suggestion:hover {
+    background-color: #337AB7;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.tt-suggestion.tt-cursor {
+    background-color: #337AB7;
+    color: #FFF;
+}
+
+
+
+
+/*-----------------------------------*\
+    $BREADCRUMBS
+\*-----------------------------------*/
+
+.document-breadcrumbs {
+  margin: 0.2em 1em;
+}
+
+/*ol*/.breadcrumb-trail {
+  display: inline-block;
+  list-style-type: none;
+  padding-left: 0.5em;
+}
+
+/*ol*/.breadcrumb-trail > li {
+    display: inline-block;
+}
+
+/*ol*/.breadcrumb-trail > li + li:before {
+  padding: 0 5px;
+  color: #ccc;
+  content: "/\00a0";
+}
+
+/*ol*/.breadcrumb-trail > .active {
+  color: #777;
+}
+
+
+
+
+/*------------------------------------*\
     $BUTTONS
 \*------------------------------------*/
 
@@ -558,6 +257,90 @@ fieldset[disabled] .btn-inverse.active {
 
 
 
+
+/*------------------------------------*\
+    $DELETED
+\*------------------------------------*/
+
+/* show/hide maintenance mode warning */
+.warning-maintenance-mode { display: none; }
+.js-show-deleted .warning-maintenance-mode { display: block; }
+
+/* show/hide the deleted rows */
+.is-deleted { display: none; }
+.js-show-deleted .is-deleted { display: table-row; }
+.js-show-deleted table > tbody tr.is-deleted {
+    background-color: #CCC;
+}
+
+/* show/hide the delete labels */
+.js-show-deleted .is-deleted .label-deleted {
+    display: inline-block;
+    margin-left: .5em;
+}
+.label-deleted {
+    display: none;
+}
+
+/* show/hide the delete/undelete buttons */
+button[role='undelete-submission'] { display: none; }
+button[role='delete-submission']   { display: none; }
+.js-show-deleted button[role='undelete-submission'] { display: none; }
+.js-show-deleted button[role='delete-submission']   { display: inline-block; }
+.js-show-deleted .is-deleted button[role='undelete-submission'] { display: inline-block; }
+.js-show-deleted .is-deleted button[role='delete-submission'] { display: none; }
+
+
+
+
+/*-----------------------------------*\
+    $DISCUSSION
+\*-----------------------------------*/
+
+.panel-discussion form input[type='submit'],
+.panel-discussion form input[type='button'] {
+   margin-left: 5px;
+    margin-top: -10px;
+}
+
+/*ol,ul*/.discussion-tree {
+    margin-top: 5em;
+}
+
+/*ol,ul*/.discussion-tree .user-icon {
+    border: 1px solid #999;
+    font-size: 20px;
+    font-weight: bold;
+    height: 45px;
+    padding-top: 7px;
+    text-align: center;
+    width: 45px;
+
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+}
+
+/*ol,ul*/.discussion-tree .discussion-replies {
+    list-style-type: none;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+
+
+
+/*------------------------------------*\
+    $EDIT_DIALOG
+\*------------------------------------*/
+
+.sub-option {
+    margin-left: 2em;
+}
+
+
+
+
 /*------------------------------------*\
     $FOOTER
 \*------------------------------------*/
@@ -586,4 +369,180 @@ footer {
     .ownership {
         text-align: left;
     }
+}
+
+
+
+
+/*------------------------------------*\
+    $GENERAL
+\*------------------------------------*/
+
+caption {
+  font-size: 1.75em;
+}
+
+.document-footer {
+  margin-top: 150px;
+}
+
+.dl-horizontal dd {
+  margin-left: 150px;
+  line-height: 2.5;
+  font-size:16px;
+}
+
+.dl-horizontal dt {
+  float: left;
+  width: 450px;
+  clear: left;
+  text-align: justify;
+  padding-left: 2em;
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
+  font-size:16px;
+}
+
+h5 {
+    font-weight: bold;
+}
+
+.pagination,
+.pagination a {
+    margin: .5em;
+ }
+
+.select-all-checkbox {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.submission-heading {
+  font-weight: bold;
+}
+
+.sub-list {
+  margin-left: 2em;
+  font-size: 16px;
+}
+
+.sub-list dd {
+  padding-bottom: 1em;
+}
+
+
+
+
+/*-----------------------------------*\
+    $HEADER
+\*-----------------------------------*/
+
+/**
+ * Bootstrap implements a margin below a navigation bar, this shifts that
+ * margin to the overall header and not just the navigation bar.
+ */
+.document-header .navbar { margin-bottom: 0; }
+header { margin-bottom: 20px; }
+
+
+
+
+/*-----------------------------------*\
+    $KEY_VALUE_PAIRS
+\*-----------------------------------*/
+
+/*ol,ul*/ .key-value-pair {
+    margin-bottom: 1em;
+    margin-left: 2em;
+}
+
+/*ol,ul*/ .key-value-pair .key {
+    font-size: 14px;
+}
+
+/*ol,ul*/ .key-value-pair .value {
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 2em;
+}
+
+
+
+
+/*-----------------------------------*\
+    $SHARE_DIALOG
+\*-----------------------------------*/
+
+.dialog-sharing .list-existing-users {
+    margin-bottom: 3em;
+}
+
+.dialog-sharing .list-existing-users,
+.dialog-sharing .list-existing-users li > div {
+    display: inline-block;
+}
+
+.dialog-sharing .list-existing-users li > a {
+    margin-top: 2px;
+    padding-left: 10px;
+}
+
+
+
+
+/*------------------------------------*\
+    $TABLES
+\*------------------------------------*/
+
+.record-actions {
+  text-align: right;
+}
+
+.record-name {
+  width: 600px;
+}
+
+.url {
+  display: block;
+  margin-left: 1em;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+
+
+
+/*------------------------------------*\
+    $TOGGLE_SWITCH
+\*------------------------------------*/
+
+.switch-toggle {
+    float: right;
+}
+
+.toggle.btn {
+    width: 150px;
+}
+
+
+
+
+/*------------------------------------*\
+    $WORKFLOW
+\*------------------------------------*/
+
+.workflow-label {
+    display: inline-block;
+    font-size: 12px;
+}
+
+.workflow-state {
+    display: inline-block;
+    font-size: 22px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.panel-workflow form {
+    margin-top: 2em;
 }

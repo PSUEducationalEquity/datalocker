@@ -1,31 +1,36 @@
 {# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
 
-{# This is a generic template for pagination that is inserted in the Submission_View.html #}
+{% comment %}
+  Generic template for submission pagination
+
+  Intended for use with the submission_view.html template
+{% endcomment %}
+
   <a class="btn btn-default {% if newest_disabled %}disabled{% endif %}"
-    role="group"
-    aria-label="newest submission"
-    title="Newest Submission"
-    href="{% url 'datalocker:submissions_view' object.locker.id object.newest %}">
+     role="group"
+     aria-label="newest submission"
+     title="Newest submission"
+     href="{% url 'datalocker:submission_view' submission.locker.id newest.id %}">
     <span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
   </a>
   <a class="btn btn-default {% if newer_disabled %}disabled{% endif %}"
-    role="group"
-    aria-label="next submission"
-    title="Newer Submission"
-    href="{% url 'datalocker:submissions_view' object.locker.id object.newer %}">
+     role="group"
+     aria-label="next submission"
+     title="Newer submission"
+     href="{% url 'datalocker:submission_view' submission.locker.id newer.id %}">
     <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
   </a>
   <a class="btn btn-default {% if older_disabled %}disabled{% endif %}"
-    role="group"
-    aria-label="last submission"
-    title="Older Submission"
-    href="{% url 'datalocker:submissions_view' object.locker.id object.older %}">
+     role="group"
+     aria-label="last submission"
+     title="Older submission"
+     href="{% url 'datalocker:submission_view' submission.locker.id older.id %}">
     <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
   </a>
   <a class="btn btn-default {% if oldest_disabled %}disabled{% endif %}"
-    role="group"
-    aria-label="oldest submission"
-    title="Oldest Submission"
-    href="{% url 'datalocker:submissions_view' object.locker.id object.oldest %}">
+     role="group"
+     aria-label="oldest submission"
+     title="Oldest submission"
+     href="{% url 'datalocker:submission_view' submission.locker.id oldest.id %}">
     <span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
   </a>

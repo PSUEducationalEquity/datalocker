@@ -15,7 +15,6 @@ from collections import OrderedDict
 import datetime, json
 
 
-
 ##
 # Model Managers
 ##
@@ -60,6 +59,27 @@ class LockerManager(models.Manager):
 
 
 
+class SubmissionManager(models.Manager):
+    def oldest(self, locker):
+        """
+        Returns the oldest submission based on the timestamp
+        """
+        return self.filter(
+            locker=locker, deleted=None
+            ).earliest('timestamp')
+
+
+    def newest(self, locker):
+        """
+        Returns the newest submission based on the timestamp
+        """
+        return self.filter(
+            locker=locker, deleted=None
+            ).latest('timestamp')
+
+
+
+
 ##
 # Models
 ##
@@ -92,243 +112,321 @@ class Locker(models.Model):
     def __str__(self):
         return self.name
 
-    def enable_discussion(self,enable=None):
-        discussion_setting, created =LockerSetting.objects.get_or_create(
+
+    def discussion_enabled(self, enable=None):
+        """
+        Gets or sets the discussion enabled setting on the locker.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = self._get_or_create_setting(
             category='discussion',
-            setting_identifier='discussion-enabled',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if discussion is enabled or not',
-                'value': False,
-                }
-            )
-        # import pdb; pdb.set_trace()
-        if enable is None:
-            return True if discussion_setting.value == 'True' else False
-        elif enable in (True, False):
-            discussion_setting.value = str(enable)
-            discussion_setting.save()
-
-    def enable_workflow(self, enable=None):
-        workflow_setting, created = LockerSetting.objects.get_or_create(
-            category='workflow',
-            setting_identifier='workflow-enabled',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if workflow is enabled or not',
-                'value': False,
-                }
+            identifier='enabled',
+            setting='Indicates if discussion is enabled or not',
+            value=False
             )
         if enable is None:
-            return True if workflow_setting.value == 'True' else False
+            return True if setting.value == 'True' else False
         elif enable in (True, False):
-            workflow_setting.value = str(enable)
-            workflow_setting.save()
+            setting.value = str(enable)
+            setting.save()
 
 
-    def is_archived(self):
-        if archive_timestamp is None:
-            return False
-        return True
-
-
-    def get_all_fields_list(self):
+    def discussion_users_have_access(self, enable=None):
         """
-        This gets all of the fields that were submitted to the form
+        Gets or sets the discussion setting on the locker indicating if shared
+        users have access to the discussion.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
         """
-        try:
-            all_fields_setting = self.settings.get(
-                category='fields-list',
-                setting_identifier='all-fields'
-                )
-        except LockerSetting.DoesNotExist:
-            all_fields = []
+        setting, created = self._get_or_create_setting(
+            category='discussion',
+            identifier='users-have-access',
+            setting='Indicates if users have access to discussion',
+            value=False
+            )
+        if enable is None:
+            return True if setting.value == 'True' else False
+        elif enable in (True, False):
+            setting.value = str(enable)
+            setting.save()
+
+
+    def fields_all(self):
+        """
+        Returns a list of all the fields that appear in any of the
+        form submissions
+        """
+        all_fields_setting, created = self._get_or_create_setting(
+            category='fields-list',
+            identifier='all-fields',
+            setting='List of all fields',
+            value=json.dumps([])
+            )
+        all_fields = json.loads(all_fields_setting.value)
+        is_dirty = False
+
+        # include 'Workflow state' if workflow is enabled
+        if self.workflow_enabled():
+            if 'Workflow state' not in all_fields:
+                all_fields.append('Workflow state')
+                is_dirty = True
         else:
-            all_fields = json.loads(all_fields_setting.value)
+            try:
+                all_fields.remove('Workflow state')
+            except ValueError:
+                pass
+            else:
+                is_dirty = True
 
-        try:
-            last_updated_setting = self.settings.get(
-                category='fields-list',
-                setting_identifier='last-updated'
-                )
-        except LockerSetting.DoesNotExist:
+        # see if there are new submissions to review
+        last_updated_setting, created = self._get_or_create_setting(
+            category='fields-list',
+            identifier='last-updated',
+            setting='Date/time all fields list last updated',
+            value=timezone.now()
+            )
+        if created:
             submissions = self.submissions.all()
         else:
             submissions = self.submissions.filter(
                 timestamp__gte=last_updated_setting.value)
-
         for submission in submissions:
             fields = submission.data_dict().keys()
             for field in fields:
                 if not field in all_fields:
                     all_fields.append(field)
-        try:
+                    is_dirty = True
+
+        # save the changes
+        if is_dirty:
             all_fields_setting.value = json.dumps(all_fields)
-        except UnboundLocalError:
-            all_fields_setting = LockerSetting(
-                category='fields-list',
-                setting='List of all fields',
-                setting_identifier='all-fields',
-                value=json.dumps(all_fields),
-                locker=self,
-                )
-        all_fields_setting.save()
-        try:
+            all_fields_setting.save()
             last_updated_setting.value = timezone.now()
-        except UnboundLocalError:
-            last_updated_setting = LockerSetting(
-                category='fields-list',
-                setting='Date/time all fields list last updated',
-                setting_identifier='last-updated',
-                value=timezone.now(),
-                locker=self,
-                )
-        last_updated_setting.save()
+            last_updated_setting.save()
         return all_fields
 
 
-    def get_all_states(self):
+    def fields_selected(self, fields=None):
+        """
+        Gets/sets the list of fields to display for a submissions list
+
+        If `fields` is None:
+
+            Returns a list of fields the user selected to be displayed as part
+            of the list of submissions
+
+        If `fields` is specified:
+
+            Validates and saves the list of selected fields to display.
+            Validation involves ensuring there is a match between each specified
+            field and the list of all fields possible for this locker.
+
+            `fields` is a list of field names or slugified field names.
+        """
+        setting, created = self._get_or_create_setting(
+            category='fields-list',
+            identifier='selected-fields',
+            setting='User-defined list of fields to display in tabular view',
+            value=json.dumps([])
+            )
+        if fields is None:
+            return json.loads(setting.value)
+        else:
+            selected_fields = []
+            for field in self.fields_all():
+                if field in fields or slugify(field) in fields:
+                    selected_fields.append(field)
+            setting.value = json.dumps(selected_fields)
+            setting.save()
+
+
+    def _get_or_create_setting(self, category, identifier, setting, value):
+        """
+        Gets or creates a setting from the current object's `settings` field.
+        """
         try:
-            all_states_setting = self.settings.get(
-                category='workflow',
-                setting_identifier='states',
-                locker=self,
+            setting = self.settings.get(
+                category=category,
+                setting_identifier=identifier
                 )
         except LockerSetting.DoesNotExist:
-            all_states = []
+            setting = LockerSetting(
+                category=category,
+                setting_identifier=identifier,
+                locker=self,
+                setting=setting,
+                value=value
+                )
+            setting.save()
+            self.settings.add(setting)
+            self.save()
+            return (setting, True)
         else:
-            all_states = json.loads(all_states_setting.value)
-        return all_states
+            return (setting, False)
 
 
-    def get_default_state(self):
-        states = self.get_all_states()
+    def get_settings(self):
+        """
+        Returns a dictionary of all the locker's settings
+        """
+        settings_dict = {}
+        for setting in self.settings.all():
+            key = "%s|%s" % (setting.category, setting.setting_identifier)
+            try:
+                value = json.loads(setting.value)
+            except:
+                if setting.value == "False":
+                    value = False
+                elif setting.value == "True":
+                    value = True
+                else:
+                    value = setting.value
+            settings_dict[key] = value
+        return settings_dict
+
+
+    def has_access(self, user):
+        """
+        Returns a boolean indicating if the specified user has access to the
+        locker as either the owner or a shared user.
+        """
+        return self.is_owner(user) or self.is_user(user)
+
+
+    def is_archived(self):
+        """
+        Returns a boolean indicating if the locker has been archived
+        """
+        if archive_timestamp is None:
+            return False
+        return True
+
+
+    def is_owner(self, user):
+        """
+        Returns a boolean indicating if the specified user is the locker owner
+        """
+        return user.username == self.owner
+
+
+    def is_user(self, user):
+        """
+        Returns a boolean indicating if the specified user has shared access
+        to the locker
+        """
+        return user in self.users
+
+
+    def shared_users_notification(self, enable=None):
+        """
+        Gets or sets the setting on the locker indicating if shared users
+        receive an email when a new submission is received.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = self._get_or_create_setting(
+            category='submission-notifications',
+            identifier='notify-shared-users',
+            setting='Indicates if shared users should receive an ' \
+                'email when a new submission is received',
+            value=False
+            )
+        if enable is None:
+            return True if setting.value == 'True' else False
+        elif enable in (True, False):
+            setting.value = str(enable)
+            setting.save()
+
+
+    def workflow_default_state(self):
+        states = self.workflow_states()
         try:
             return states[0]
         except:
             return ''
 
 
-    def get_selected_fields_list(self):
+    def workflow_enabled(self, enable=None):
         """
-        Get's the selected fields off of the Submission List Page,
-        and inserts them into the table
+        Gets or sets the workflow enabled setting on the locker.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
         """
-        try:
-            selected_fields_setting = self.settings.get(
-                category='fields-list',
-                setting_identifier='selected-fields'
-                )
-        except LockerSetting.DoesNotExist:
-            selected_fields = []
-        else:
-            selected_fields = json.loads(selected_fields_setting.value)
-        return selected_fields
-
-
-    def get_settings(self):
-        return {
-            'workflow|enabled': self.enable_workflow(),
-            'workflow|users-can-edit': self.workflow_users_can_edit(),
-            'workflow|states': self.get_all_states(),
-            'discussion|enabled': self.enable_discussion(),
-            'discussion|users-have-access-to-disccusion': self.discussion_users_have_access(),
-            'access|shared-users': self.shared_users_receive_email(),
-            }
-
-
-
-    def has_access(self, user):
-        """
-
-        """
-        if user.username == self.owner:
-            return True
-        elif user in self.users.all():            
-            return True
-        return False
-
-
-    def save_selected_fields_list(self, fields):
-        selected_fields = []
-        for field in self.get_all_fields_list():
-            if slugify(field) in fields:
-                selected_fields.append(field)
-        selected_fields_setting, created = LockerSetting.objects.get_or_create(
-            category='fields-list',
-            setting_identifier='selected-fields',
-            locker=self,
-            defaults={
-                'setting': 'User-defined list of fields to display in tabular view',
-                }
-            )
-        selected_fields_setting.value = json.dumps(selected_fields)
-        selected_fields_setting.save()
-
-
-    def save_states(self, states):
-        saved_state_setting, created = LockerSetting.objects.get_or_create(
+        setting, created = self._get_or_create_setting(
             category='workflow',
-            setting_identifier='states',
-            locker=self,
-            defaults={
-                'setting': 'User-defined list of workflow states',
-                }
+            identifier='enabled',
+            setting='Indicates if workflow is enabled or not',
+            value=False
             )
-        saved_state_setting.value = json.dumps(
-            [ item.strip() for item in states.split("\n") if item.strip() ]
+        if enable is None:
+            return True if setting.value == 'True' else False
+        elif enable in (True, False):
+            setting.value = str(enable)
+            setting.save()
+            if not enable:
+                # remove the workflow state from the selected fields list
+                fields = self.fields_selected()
+                try:
+                    fields.remove("Workflow state")
+                except ValueError:
+                    pass
+                else:
+                    self.fields_selected(fields)
+
+
+    def workflow_states(self, states=None):
+        """
+        Gets or sets the workflow setting on the locker indicating the possible
+        workflow states.
+
+        Calling it with enable=None will return the current setting value
+        as a list.
+        Passing it a list of values, will set the value.
+        """
+        setting, created = self._get_or_create_setting(
+            category='workflow',
+            identifier='states',
+            setting='User-defined list of workflow states',
+            value=json.dumps([])
             )
-        saved_state_setting.save()
+        if states is None:
+            return json.loads(setting.value)
+        else:
+            setting.value = json.dumps(
+                [ item.strip() for item in states.split("\n") if item.strip() ]
+                )
+            setting.save()
 
 
     def workflow_users_can_edit(self, enable=None):
-        users_can_edit_setting, created = LockerSetting.objects.get_or_create(
+        """
+        Gets or sets the workflow setting on the locker indicating if shared
+        users can change the workflow state.
+
+        Calling it with enable=None will return the current setting value
+        as a boolean.
+        Passing it a boolean value, will set the value.
+        """
+        setting, created = self._get_or_create_setting(
             category='workflow',
-            setting_identifier='users-can-edit',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if users can edit workflow',
-                'value': False,
-                }
+            identifier='users-can-edit',
+            setting='Indicates if users can change the workflow state',
+            value=False
             )
         if enable is None:
-            return True if users_can_edit_setting.value == 'True' else False
+            return True if setting.value == 'True' else False
         elif enable in (True, False):
-            users_can_edit_setting.value = str(enable)
-            users_can_edit_setting.save()
-
-
-    def discussion_users_have_access(self, enable=None):
-        discussion_users_have_access_setting, created = LockerSetting.objects.get_or_create(
-            category='discussion',
-            setting_identifier='users-have-access-to-disccusion',
-            locker=self,
-            defaults={
-                'setting': 'Indicates if users have access to discussion',
-                'value': False,
-                }
-            )
-        if enable is None:
-            return True if discussion_users_have_access_setting.value == 'True' else False
-        elif enable in (True, False):
-            discussion_users_have_access_setting.value = str(enable)
-            discussion_users_have_access_setting.save()
-
-    def shared_users_receive_email(self, enable=None):
-        shared_users_receive_email_setting, created = LockerSetting.objects.get_or_create(
-            category='email_users',
-            setting_identifier='shared-users-will-receive-email',
-            locker=self,
-            defaults={
-                'setting': 'Indicates shared users will receive an email when a new submission is submitted',
-                'value': False,
-                }
-            )
-        if enable is None:
-            return True if shared_users_receive_email_setting.value == 'True' else False
-        elif enable in (True, False):
-            shared_users_receive_email_setting.value = str(enable)
-            shared_users_receive_email_setting.save()
+            setting.value = str(enable)
+            setting.save()
 
 
 
@@ -346,11 +444,6 @@ class LockerSetting(models.Model):
 
 
 
-##
-# Model used for the actual Submission of the form
-# Needs to include the locer name, Submission timestamp,
-# the data that is on the form and then it is needed to be returned readable
-##
 
 class Submission(models.Model):
     locker = models.ForeignKey(
@@ -370,20 +463,19 @@ class Submission(models.Model):
         )
     workflow_state = models.CharField(
         max_length=25,
-        default='Unreviewed',
+        blank=True,
+        default='',
         )
+    objects = SubmissionManager()
 
 
     def __str__(self):
-        return str(self.locker)
-
-    def __unicode__ (self):
-        return str(self.id)
+        return "%s to %s" % (self.timestamp, self.locker)
 
 
     def data_dict(self):
         """
-        Returns the data field as an ordered dictionary instead of JSON
+        Returns the data field as an ordered dictionary
         """
         try:
             data = json.loads(self.data, object_pairs_hook=OrderedDict)
@@ -407,58 +499,38 @@ class Submission(models.Model):
 
     def newer(self):
         """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by timestamp and filter the first one with
-        a newer timestamp. If there isn't one newer it will return the current
-        Locker object to avoid and Index Out of Range Error.
+        Returns the submission object that was submitted immediately after
+        this one. If there isn't a newer submission, the current submission is
+        returned.
         """
         try:
             nextSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__gt=self.timestamp, deleted=None).order_by('timestamp')[0]
+                timestamp__gt=self.timestamp,
+                deleted=None
+                ).order_by('timestamp')[0]
         except IndexError:
-            nextSubmission = Submission.objects.filter(
-                locker=self.locker, deleted=None).order_by('-timestamp')[0]
-        return nextSubmission.id
+            return self
+        else:
+            return nextSubmission
 
 
     def older(self):
         """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by descending timestamp and filter
-        the first one with an older timestamp. If there isn't an older one it
-        will return the current Locker object to avoid and Index Out of Range Error.
+        Returns the submission object that was submitted immediately before
+        this one. If there isn't an older submission, the current submission is
+        reutrned.
         """
         try:
-            lastSubmission = Submission.objects.filter(
+            prevSubmission = Submission.objects.filter(
                 locker=self.locker,
-                timestamp__lt=self.timestamp, deleted=None).order_by('-timestamp')[0]
+                timestamp__lt=self.timestamp,
+                deleted=None
+                ).order_by('-timestamp')[0]
         except IndexError:
-            lastSubmission = Submission.objects.filter(
-                locker=self.locker, deleted=None).order_by('timestamp')[0]
-        return lastSubmission.id
-
-
-    def oldest(self):
-        """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by timestamp and filter the Locker object
-        with the earliest timestamp.
-        """
-        oldestSubmission = Submission.objects.filter(
-            locker=self.locker, deleted=None).earliest('timestamp')
-        return oldestSubmission.id
-
-
-    def newest(self):
-        """
-        Searches through all the submissions in the database for the indicated
-        Locker and it will order them by timestamp and filter the Locker object
-        with the newest timestamp.
-        """
-        newestSubmission = Submission.objects.filter(
-            locker=self.locker, deleted=None).latest('timestamp')
-        return newestSubmission.id
+            return self
+        else:
+            return prevSubmission
 
 
 
@@ -488,19 +560,22 @@ class Comment(models.Model):
 
 
     def __str__(self):
-        return str(self.id)
+        return "%s in %s by %s" % (
+            self.submission.timestamp,
+            self.submission.locker,
+            self.user
+            )
 
 
+    @property
     def is_editable(self):
         """
-        Captures the current time and compares it to the timestamp
-        on the submission the submissions. editable is returned True
-        if the difference is within the timeframe set by COMMENT_EDIT_MAX
+        Indicates if the comment is editable because it was created within
+        COMMENT_EDIT_MAX time till now.
         """
-        time = timezone.now()
-        editTimeFrame = datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
-        editable = True if ((time - self.timestamp) < editTimeFrame) else False
-        return editable
+        oldest_timestamp = timezone.now()
+        oldest_timestamp -= datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
+        return True if (self.timestamp > oldest_timestamp) else False
 
 
     def to_dict(self):
@@ -508,6 +583,16 @@ class Comment(models.Model):
         Returns the entire object as a Python dictionary
         """
         result = model_to_dict(self)
-        result['editable'] = self.is_editable()
-        result['color'] = "red"
+        result['editable'] = self.is_editable
+        # model_to_dict skips fields that are not editable and fields that have
+        # auto_now_add=True are considered not editable, thus we add the
+        # submission timestamp back in manually
+        result['timestamp'] = self.timestamp.isoformat()
+        result['user'] = {
+            'id': self.user.id,
+            'username': self.user.username,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+            'email': self.user.email,
+            }
         return result

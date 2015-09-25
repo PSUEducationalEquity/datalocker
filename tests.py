@@ -110,6 +110,7 @@ class SubmissionTestCase(TestCase):
             'data': data,
             u'id': submission.id,
             'timestamp': submission.timestamp.isoformat(),
+            'workflow_state': '',
             }
         self.maxDiff = None
         self.assertDictEqual(
@@ -120,8 +121,8 @@ class SubmissionTestCase(TestCase):
 
 
 
-class SubmissionViewTestCase(TestCase):
-    def test_submission_view_new_form_entry(self):
+class FormSubmissionTestCase(TestCase):
+    def test_new_form_entry(self):
         """
         Form submission should create a new locker and save the submission.
         """
@@ -152,7 +153,7 @@ class SubmissionViewTestCase(TestCase):
             self.assertEqual(len(locker.submissions.all()), 1)
 
 
-    def test_submission_view_new_submission_existing_locker(self):
+    def test_new_submission_existing_locker(self):
         """
         Form submission should add the submission to an existing locker.
         """
@@ -191,7 +192,7 @@ class SubmissionViewTestCase(TestCase):
             self.assertEqual(len(locker.submissions.all()), 1)
 
 
-    def test_submission_view_archive_locker_create_new_locker(self):
+    def test_archive_locker_create_new_locker(self):
         """
         Form submission should create a new locker because
         the original was archived and save the submission.
@@ -230,9 +231,9 @@ class SubmissionViewTestCase(TestCase):
             self.assertTrue(False)
         else:
             self.assertEqual(len(Locker.objects.all()), 2)
-            
-            
-    def test_submission_view_no_data_submission(self):
+
+
+    def test_no_data_submission(self):
         """
         Form submission should add a submission with no data,
         which shouldn't generate any errors to the user.
@@ -254,7 +255,9 @@ class SubmissionViewTestCase(TestCase):
                 'name': 'Contact Us',
             })
         self.assertEqual(response.status_code, 201)
-        submission = Submission.objects.get(id=1)
-        submission.data_dict()
-        
-        
+        try:
+            submission = Submission.objects.all()[0]
+        except IndexError:
+            self.assertTrue(False)
+        else:
+            self.assertDictEqual(submission.data_dict(), {})

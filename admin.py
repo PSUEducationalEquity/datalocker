@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from django.contrib.admin import AdminSite
-from django.contrib.auth.admin import GroupAdmin, UserAdmin
+from django.contrib.auth.admin import GroupAdmin, UserAdmin as auth_UserAdmin
 from django.contrib.auth.models import Group, User
 
 from .models import Locker, LockerSetting, Submission, Comment
@@ -15,7 +15,6 @@ class DataLockerAdminSite(AdminSite):
 
 
 
-# Register your models here.
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id',
         'submission',
@@ -24,20 +23,6 @@ class CommentAdmin(admin.ModelAdmin):
         'comment',
         'parent_comment'
         ]
-
-
-
-
-class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ['id',
-        'locker',
-        'timestamp',
-        'data',
-        'deleted',
-        'workflow_state'
-        ]
-
-
 
 
 class LockerAdmin(admin.ModelAdmin):
@@ -51,8 +36,6 @@ class LockerAdmin(admin.ModelAdmin):
         ]
 
 
-
-
 class SettingAdmin(admin.ModelAdmin):
     list_display = ['category',
         'setting',
@@ -62,25 +45,34 @@ class SettingAdmin(admin.ModelAdmin):
         ]
 
 
-
-
-class UserAdmin(admin.ModelAdmin):
+class SubmissionAdmin(admin.ModelAdmin):
     list_display = ['id',
-        'username',
-        'email',
-        'first_name',
-        'last_name',
-        'is_superuser',
-        'is_staff'
+        'locker',
+        'timestamp',
+        'data',
+        'deleted',
+        'workflow_state'
         ]
 
+
+class UserAdmin(auth_UserAdmin):
+    list_display = (
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'is_staff',
+        'is_superuser',
+        )
+    list_display_links = ('username', 'first_name', 'last_name')
 
 
 
 admin_site = DataLockerAdminSite(name='datalockeradmin')
+
 admin_site.register(Comment, CommentAdmin)
 admin_site.register(Group, GroupAdmin)
 admin_site.register(Locker, LockerAdmin)
-admin_site.register(Submission, SubmissionAdmin)
 admin_site.register(LockerSetting, SettingAdmin)
+admin_site.register(Submission, SubmissionAdmin)
 admin_site.register(User, UserAdmin)
