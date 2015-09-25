@@ -255,5 +255,9 @@ class FormSubmissionTestCase(TestCase):
                 'name': 'Contact Us',
             })
         self.assertEqual(response.status_code, 201)
-        submission = Submission.objects.get(id=1)
-        submission.data_dict()
+        try:
+            submission = Submission.objects.all()[0]
+        except IndexError:
+            self.assertTrue(False)
+        else:
+            self.assertDictEqual(submission.data_dict(), {})
