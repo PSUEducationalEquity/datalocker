@@ -142,17 +142,6 @@
 
 
 
-    Locker.show_hide_archived = function (state) {
-        if (state == 'show') {
-            $("table").addClass("js-show-archived");
-        } else if (state == 'hide') {
-            $("table").removeClass("js-show-archived");
-        }
-        document.cookie="show/hide=" + state;
-    }
-
-
-
     /**
      * Add a user to the current locker
      *
