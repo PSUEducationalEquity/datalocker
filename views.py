@@ -362,6 +362,20 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
 
 
     def get_context_data(self, **kwargs):
+        """
+        Build the data that is made available to the template
+
+        context['data'] contains all the data and metadata for displaying
+        the list of submissions table.
+
+        Format:
+            [
+                [<list of table cell data>],
+                submission id,
+                deleted (True/False),
+                purged date
+            ]
+        """
         context = super(LockerSubmissionsListView, self).get_context_data(**kwargs)
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         context['locker'] = locker
@@ -381,22 +395,28 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
                     )
             else:
                 purge_date = None
-            # the first 4 elements are fixed values
             entry = [
+                [submission.timestamp, ],
                 submission.id,
                 True if submission.deleted else False,
                 purge_date,
-                submission.timestamp,
                 ]
-            # the remaining elements are based on the user-selected fields
             submission_data = submission.data_dict()
             for field in selected_fields:
                 try:
-                    entry.append(submission_data[field])
+                    entry[0].append(submission_data[field])
                 except KeyError:
                     if field == 'Workflow state':
-                        entry.append(submission.workflow_state)
+                        entry[0].append(submission.workflow_state)
             context['data'].append(entry)
+        # determine which indices in the cell data list will be linked
+        context['linkable_indices'] = []
+        try:
+            context['linkable_indices'].append(context['column_headings'].index('Submitted date'))
+        except ValueError:
+            pass
+        if not context['linkable_indices']:
+            context['linkable_indices'] = [0,]
         return context
 
 

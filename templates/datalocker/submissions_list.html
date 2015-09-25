@@ -67,23 +67,21 @@
       <tbody>
         {# This is getting submissions that were submitted to the locker #}
         {% for submission in data %}
-          <tr class="{% if submission.1 %}is-deleted{% endif %}"
-              data-id="{{submission.0 }}"
-              data-purge-timestamp="{{ submission.2|date:'c' }}"
+          <tr class="{% if submission.2 %}is-deleted{% endif %}"
+              data-id="{{submission.1 }}"
+              data-purge-timestamp="{{ submission.3|date:'c' }}"
               >
-            {% for value in submission %}
-              {% if forloop.counter > 3 %}
-                <td name="date">
-                  {% if forloop.counter == 4 %}
-                    <a href="{% url 'datalocker:submission_view' locker.id submission.0 %}"
-                       style="display:block;"
-                      >{{ value }}</a>
-                    <span class="label label-danger label-deleted" />
-                  {% else %}
-                    {{ value }}
-                  {% endif %}
-                </td>
-              {% endif %}
+            {% for value in submission.0 %}
+              <td data-count="{{ forloop.counter0 }}">
+                {% if forloop.counter0 in linkable_indices %}
+                  <a href="{% url 'datalocker:submission_view' locker.id submission.1 %}"
+                     style="display:block;"
+                    >{{ value }}</a>
+                  <span class="label label-danger label-deleted" />
+                {% else %}
+                  {{ value }}
+                {% endif %}
+              </td>
             {% endfor %}
             <td class="record-actions">
               <button type="button"
