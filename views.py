@@ -341,20 +341,27 @@ def locker_list_view(request):
     Returns a list of lockers owned by the current user and a list of those
     lockers shared with the current user.
     """
-    shared_lockers = Locker.objects.active().has_access(
+    context = {}
+    context['owned'] = Locker.objects.active().has_access(
         request.user
     ).annotate(
-        latest_submission= Max('submissions__timestamp')
-    ).order_by('name').exclude(owner=request.user)
-    my_lockers = Locker.objects.active().has_access(
-        request.user
-    ).annotate(
-        latest_submission= Max('submissions__timestamp')
+        latest_submission=Max('submissions__timestamp')
     ).order_by('name').filter(owner=request.user)
-    return render(request, 'datalocker/index.html', {
-        'shared': shared_lockers,
-        'owned': my_lockers,
-        })
+    context['shared'] = Locker.objects.active().has_access(
+        request.user
+    ).annotate(
+        latest_submission=Max('submissions__timestamp')
+    ).order_by('name').exclude(owner=request.user)
+
+    if request.user.is_superuser:
+        context['all'] = Locker.objects.all().annotate(
+            latest_submission=Max('submissions__timestamp')
+        ).order_by('name')
+        context['orphaned'] = Locker.objects.filter(owner=None).annotate(
+            latest_submission=Max('submissions__timestamp')
+        ).order_by('name')
+
+    return render(request, 'datalocker/index.html', context)
 
 
 class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
