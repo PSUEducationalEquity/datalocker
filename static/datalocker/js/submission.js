@@ -108,7 +108,7 @@
 $(document).ready(function(id)
 {
     // enable table sorting
-    $('#submission-list').tablesorter();
+    //$('#submission-list').tablesorter();
 
 
     // handle the `select fields to display` button

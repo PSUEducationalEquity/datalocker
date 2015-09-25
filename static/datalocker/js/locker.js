@@ -279,7 +279,7 @@ function toBool(value)
 
 $(document).ready(function () {
     // enable table sorting
-    $('table.tablesorter').tablesorter();
+    //$('table.tablesorter').tablesorter();
 
 
     // Show/hide archived lockers
