@@ -389,11 +389,13 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
                 submission.timestamp,
                 ]
             # the remaining elements are based on the user-selected fields
-            for field, value in submission.data_dict().iteritems():
-                if field in selected_fields:
-                    entry.append(value)
-            if 'Workflow state' in selected_fields:
-                entry.append(submission.workflow_state)
+            submission_data = submission.data_dict()
+            for field in selected_fields:
+                try:
+                    entry.append(submission_data[field])
+                except KeyError:
+                    if field == 'Workflow state':
+                        entry.append(submission.workflow_state)
             context['data'].append(entry)
         return context
 
