@@ -21,7 +21,7 @@ class CommentAdmin(admin.ModelAdmin):
         'user',
         'timestamp',
         'comment',
-        'parent_comment'
+        'parent'
         ]
 
 
@@ -39,7 +39,7 @@ class LockerAdmin(admin.ModelAdmin):
 class SettingAdmin(admin.ModelAdmin):
     list_display = ['category',
         'setting',
-        'setting_identifier',
+        'identifier',
         'value',
         'locker'
         ]
