@@ -108,7 +108,7 @@ class Locker(models.Model):
         on_delete=models.SET_NULL,
         )
     users = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='shared_lockers',
         blank=True,
         )
