@@ -18,8 +18,9 @@
 {% endblock site-styles %}
 
 {% block content %}
-  <h1>Data lockers</h1>
   <div class="container-fluid">
+    <h1>Data lockers</h1>
+
     <ul class="messages list-unstyled" id="user-messages">
       {% for msg in messages %}
         <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
