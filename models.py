@@ -271,12 +271,12 @@ class Locker(models.Model):
         try:
             setting = self.settings.get(
                 category=category,
-                setting_identifier=identifier
+                identifier=identifier
                 )
         except LockerSetting.DoesNotExist:
             setting = LockerSetting(
                 category=category,
-                setting_identifier=identifier,
+                identifier=identifier,
                 locker=self,
                 setting=setting,
                 value=value
@@ -330,7 +330,7 @@ class Locker(models.Model):
         """
         Returns a boolean indicating if the specified user is the locker owner
         """
-        return user.username == self.owner
+        return user == self.owner
 
 
     def is_user(self, user):

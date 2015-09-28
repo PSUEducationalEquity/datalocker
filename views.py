@@ -101,7 +101,6 @@ class UserHasLockerAccessMixin(object):
 @require_http_methods(["POST"])
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    owner = locker.owner
     locker.archive_timestamp = timezone.now()
     locker.save()
     if request.is_ajax():
@@ -126,19 +125,16 @@ def comment_add(request, locker_id, submission_id):
     submission = get_object_or_404(Submission, id=submission_id)
     comment_text = request.POST.get('comment', '').strip()
     parent_id = request.POST.get('parent', None)
-    if parent_id:
-        try:
-            parent = Comment.objects.get(pk=parent_id)
-        except Comment.DoesNotExist:
-            parent = None
-    else:
+    try:
+        parent = Comment.objects.get(pk=parent_id)
+    except Comment.DoesNotExist:
         parent = None
     if comment_text:
         comment = Comment(
             submission=submission,
             comment=comment_text,
             user=request.user,
-            parent_comment=parent
+            parent=parent
             )
         comment.save()
         if request.is_ajax():
@@ -171,7 +167,7 @@ def comment_modify(request, locker_id, submission_id):
     Modifies the existing comment if it is still editable
     """
     comment = get_object_or_404(Comment, id=request.POST.get('id', ''))
-    if comment.is_editable:
+    if comment.is_editable and comment.user == request.user:
         comment_text = request.POST.get('comment', '').strip()
         comment.comment = comment_text
         comment.save()
@@ -213,13 +209,15 @@ def comments_list(request, locker_id, submission_id):
                 color_helper = UserColors(request)
                 comments = []
                 comment_objs = submission.comments.order_by(
-                    'parent_comment', '-timestamp'
+                    'parent', '-timestamp'
                 )
                 for comment in comment_objs:
                     comment_dict = comment.to_dict()
                     comment_dict['user']['color'] = color_helper.get(
                         comment.user.username
                     )
+                    if comment.user != request.user:
+                        comment_dict['editable'] = False
                     comments.append(comment_dict)
                 return JsonResponse({
                     'discussion': comments,
@@ -252,9 +250,13 @@ def form_submission_view(request, **kwargs):
         'identifier': request.POST.get('form-id', '').strip(),
         'name': request.POST.get('name', 'New Locker').strip(),
         'url': request.POST.get('url', '').strip(),
-        'owner': request.POST.get('owner', '').strip(),
+        'owner_name': request.POST.get('owner', '').strip(),
         'data': request.POST.get('data', '').strip(),
         }
+    try:
+        safe_values['owner'] = User.objects.get(username=safe_values['owner_name'])
+    except User.DoesNotExist:
+        safe_values['owner'] = None
     try:
         locker = Locker.objects.filter(
             form_identifier=safe_values['identifier'],
@@ -287,15 +289,8 @@ def form_submission_view(request, **kwargs):
         locker.pk
         ))
 
-    try:
-        address = []
-        address.append(User.objects.get(username=safe_values['owner']).email)
-        try:
-            if Locker.shared_users_receive_email(locker):
-                for user in locker.users.all(): address.append(user.email)
-        except Exception:
-            logger.warning("No setting saved")
-    except User.DoesNotExist:
+    notify_addresses = []
+    if not safe_values['owner']:
         logger.warning("New submission saved to orphaned locker: %s" % (
             reverse(
                 'datalocker:submission_view',
@@ -303,6 +298,11 @@ def form_submission_view(request, **kwargs):
                 ),
         ))
     else:
+        notify_addresses.append(safe_values['owner'].email)
+    if Locker.shared_users_receive_email(locker):
+        for user in locker.users.all():
+            notify_addresses.append(user.email)
+    if notify_addresses:
         from_addr = _get_notification_from_address("new submission")
         if from_addr:
             subject = "%s - new submission" % safe_values['name']
@@ -327,9 +327,9 @@ def form_submission_view(request, **kwargs):
                         ),
                     )
             try:
-                for to_email in address:
+                for to_email in notify_addresses:
                     send_mail(subject, message, from_addr, [to_email])
-            except Exception, e:
+            except:
                 logger.exception("New submission email to the locker owner failed")
     return HttpResponse(status=201)
 
@@ -419,7 +419,9 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         # determine which indices in the cell data list will be linked
         context['linkable_indices'] = []
         try:
-            context['linkable_indices'].append(context['column_headings'].index('Submitted date'))
+            context['linkable_indices'].append(
+                context['column_headings'].index('Submitted date')
+            )
         except ValueError:
             pass
         if not context['linkable_indices']:
@@ -441,8 +443,10 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
         """
         locker = Locker.objects.get(pk=self.kwargs['locker_id'])
         locker.fields_selected(self.request.POST)
-        return HttpResponseRedirect(reverse('datalocker:submissions_list',
-            kwargs={'locker_id': self.kwargs['locker_id']}))
+        return HttpResponseRedirect(reverse(
+            'datalocker:submissions_list',
+            kwargs={'locker_id': self.kwargs['locker_id']}
+            ))
 
 
 @login_required()
@@ -519,9 +523,8 @@ def modify_locker(request, **kwargs):
     Modifies locker name, ownership, and settings.
     """
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    try:
-        previous_owner = User.objects.get(username=locker.owner)
-    except User.DoesNotExist:
+    previous_owner = locker.owner
+    if not locker.owner:
         previous_owner = request.user
     new_locker_name = request.POST.get('locker-name', '')
     new_owner_email = request.POST.get('locker-owner', '')
@@ -529,7 +532,7 @@ def modify_locker(request, **kwargs):
         locker.name = new_locker_name
     if new_owner_email != "":
         try:
-            new_owner = User.objects.get(email=new_owner_email).username
+            new_owner = User.objects.get(email=new_owner_email)
         except User.DoesNotExist:
             logger.error(
                 "Attempted to reassign locker (%s) to non-existent user (%s)" %
@@ -705,7 +708,6 @@ def submission_view(request, locker_id, submission_id):
 @require_http_methods(["POST"])
 def unarchive_locker(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
-    owner = locker.owner
     locker.archive_timestamp = None
     locker.save()
     return HttpResponseRedirect(reverse('datalocker:index'))
@@ -716,6 +718,9 @@ def unarchive_locker(request, locker_id):
 def users_list(request, **kwargs):
     """
     Returns a list of all the user email addresses in the system
+
+    This is used to power the owner and shared user auto-complete which is
+    driven by TypeAhead.js.
     """
     users_list = []
     for user in User.objects.all():
