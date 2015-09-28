@@ -20,7 +20,7 @@
                     "input[name='csrfmiddlewaretoken']").val()
             },
         }).done(function(response, textStatus, jqXHR) {
-            $("#locker-list tr[data-id='" + id + "']").addClass('is-archived');
+            $("table tr[data-id='" + id + "']").addClass('is-archived');
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
                 "Locker.archive in Locker.js AJAX error: "
@@ -44,7 +44,7 @@
                     "input[name='csrfmiddlewaretoken']").val()
             },
         }).done(function(response, textStatus, jqXHR) {
-            $('#locker-list tr[data-id=' + id + "]").removeClass('is-archived');
+            $('table tr[data-id=' + id + "]").removeClass('is-archived');
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
                 "Locker.archive in Locker.js AJAX error: "
