@@ -85,13 +85,31 @@ class SubmissionManager(models.Manager):
 ##
 
 class Locker(models.Model):
-    form_url = models.CharField(max_length=255)
-    form_identifier = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    owner = models.CharField(max_length=255)
+    form_url = models.CharField(
+        max_length=255,
+        default='',
+        blank=True,
+        )
+    form_identifier = models.CharField(
+        max_length=255,
+        default='',
+        blank=True,
+        )
+    name = models.CharField(
+        max_length=255,
+        default='',
+        blank=True,)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='lockers_owned',
+        default=None,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        )
     users = models.ManyToManyField(
         User,
-        related_name='lockers',
+        related_name='shared_lockers',
         blank=True,
         )
     create_timestamp = models.DateTimeField(
@@ -103,8 +121,9 @@ class Locker(models.Model):
         auto_now=False,
         auto_now_add=False,
         editable=False,
-        null=True,
+        default=None,
         blank=True,
+        null=True,
         )
     objects = LockerManager()
 
@@ -432,14 +451,20 @@ class Locker(models.Model):
 
 
 class LockerSetting(models.Model):
-    category = models.CharField(max_length=255)
-    setting = models.CharField(max_length=255)
-    setting_identifier = models.SlugField()
-    value = models.TextField()
+    category = models.CharField(
+        max_length=255,
+        )
+    setting = models.CharField(
+        max_length=255,
+        )
+    identifier = models.SlugField()
+    value = models.TextField(
+        default='',
+        )
     locker = models.ForeignKey(
         Locker,
         related_name="settings",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         )
 
 
@@ -448,23 +473,30 @@ class LockerSetting(models.Model):
 class Submission(models.Model):
     locker = models.ForeignKey(
         Locker,
-        db_column="form_identifier",
         related_name="submissions",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         )
     timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
+        editable=False,
         )
-    data = models.TextField(blank=True)
+    data = models.TextField(
+        default='',
+        blank=True,
+        )
     deleted = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=False,
+        editable=False,
+        default=None,
         blank=True,
         null=True,
         )
     workflow_state = models.CharField(
-        max_length=25,
-        blank=True,
+        max_length=255,
         default='',
+        blank=True,
         )
     objects = SubmissionManager()
 
@@ -539,21 +571,26 @@ class Comment(models.Model):
     submission = models.ForeignKey(
         Submission,
         related_name="comments",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         )
     user = models.ForeignKey(
-        User,
-        related_name="comment_user",
+        settings.AUTH_USER_MODEL,
+        related_name="comments",
+        on_delete=models.PROTECT,
         )
     timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
         )
-    comment = models.TextField(blank=True)
-    parent_comment = models.ForeignKey(
+    comment = models.TextField(
+        default='',
+        blank=True,
+        )
+    parent = models.ForeignKey(
         'self',
-        related_name="comment_parent",
+        related_name="children",
+        default=None,
         blank=True,
         null=True,
         )
