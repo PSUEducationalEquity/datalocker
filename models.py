@@ -526,6 +526,7 @@ class Submission(models.Model):
         # auto_now_add=True are considered not editable, thus we add the
         # submission timestamp back in manually
         result['timestamp'] = self.timestamp.isoformat()
+        result['deleted'] = self.deleted.isoformat() if self.deleted else None
         return result
 
 
