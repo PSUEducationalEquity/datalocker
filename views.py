@@ -693,12 +693,12 @@ def submission_view(request, locker_id, submission_id):
         'newest_disabled': True if submission.id == newest.id else False,
 
         'workflow_enabled': workflow_enabled,
-        'workflow_users_can_edit': submission.locker.workflow_users_can_edit() or submission.locker.owner == request.user.username,
+        'workflow_users_can_edit': submission.locker.workflow_users_can_edit() or submission.locker.owner == request.user,
         'workflow_states': submission.locker.workflow_states(),
         'workflow_state': submission.workflow_state,
 
         'discussion_enabled': discussion_enabled,
-        'discussion_users_have_access': submission.locker.discussion_users_have_access() or submission.locker.owner == request.user.username,
+        'discussion_users_have_access': submission.locker.discussion_users_have_access() or submission.locker.owner == request.user,
 
         'sidebar_enabled': workflow_enabled or discussion_enabled,
         })
