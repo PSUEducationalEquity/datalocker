@@ -1,5 +1,5 @@
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
 
 from .models import Locker, LockerQuerySet
 
@@ -8,10 +8,10 @@ def user_has_locker_access(view_func):
         try:
             locker = Locker.objects.get(pk=kwargs['locker_id'])
         except (Locker.DoesNotExist, KeyError):
-            locker_access = True
+            locker_access = False
         else:
             locker_access = locker.has_access(request.user)
         if request.user.is_active and locker_access:
             return view_func(request, *args, **kwargs)
-        return HttpResponseRedirect(reverse('datalocker:404'))
+        raise PermissionDenied
     return _wrapped_view_func
