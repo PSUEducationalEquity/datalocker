@@ -32,6 +32,7 @@
     users:
       - 2
       - 3
+      - 4
   model: datalocker.Locker
   pk: 3
 - fields:
@@ -44,6 +45,7 @@
     users:
       - 2
       - 3
+      - 4
   model: datalocker.Locker
   pk: 4
 - fields:
