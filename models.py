@@ -295,7 +295,7 @@ class Locker(models.Model):
         """
         settings_dict = {}
         for setting in self.settings.all():
-            key = "%s|%s" % (setting.category, setting.setting_identifier)
+            key = "%s|%s" % (setting.category, setting.identifier)
             try:
                 value = json.loads(setting.value)
             except:
