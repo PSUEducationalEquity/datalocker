@@ -132,9 +132,7 @@
               <td class="record-name">
                 <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}
                 </a>
-                {% if locker.archive_timestamp != null %}
-                  <span class="label label-default">Archived</span>
-                {% endif %}
+                <span class="label label-default archived-label">Archived</span>
                 <span class="url">{{ locker.form_url }}</span>
               </td>
               <td class="hidden-xs">{{ locker.latest_submission }}</td>
