@@ -338,7 +338,7 @@ class Locker(models.Model):
         Returns a boolean indicating if the specified user has shared access
         to the locker
         """
-        return user in self.users
+        return user in self.users.all()
 
 
     def shared_users_notification(self, enable=None):
