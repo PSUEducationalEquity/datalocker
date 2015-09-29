@@ -26,7 +26,7 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.active() ],
-            (1, 2, 4, 6, )
+            (1, 2, 4, 5, )
             )
 
 
@@ -36,18 +36,19 @@ class LockerManagerTestCase(TestCase):
         """
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.archived() ],
-            (3, 5, )
+            (3, )
             )
 
 
     def test_has_access(self):
         """
         Returns only those lockers that the specified user has access to
+        as an owner or shared user
         """
         user = User.objects.get(pk=2)
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.has_access(user) ],
-            (1, 2, 3, 4, 6, )
+            (1, 2, 3, 4, )
             )
 
 
@@ -55,10 +56,10 @@ class LockerManagerTestCase(TestCase):
         """
         User who does not own any lockers but has lockers shared with him.
         """
-        user = User.objects.get(pk=1)
+        user = User.objects.get(pk=4)
         self.assertItemsEqual(
             [ locker.pk for locker in Locker.objects.has_access(user) ],
-            (1, 3, 4, 5, 6, )
+            (3, 4, )
             )
 
 
@@ -92,16 +93,14 @@ class SubmissionTestCase(TestCase):
         to_dict method should properly convert the object to a python dictionary
         """
         data = OrderedDict({
-            u'first-name': u'Dominick',
-            u'last-name': u'Stuck',
-            u'email': u'das66@psu.edu',
+            u'first-name': u'Bart',
+            u'last-name': u'Simpson',
             u'subject': u'Testing',
             u'comment': u'Testing the Submission.to_dict() method.',
             })
         submission = Submission(
             locker = Locker.objects.get(pk=1),
             data = json.dumps(data),
-            deleted = None
             )
         submission.save()
         expected_results = {
@@ -128,7 +127,7 @@ class FormSubmissionTestCase(TestCase):
         """
         user = User(
             username='das66',
-            email='eeq+das66@psu.edu'
+            email='eeqdev+das66@psu.edu'
             )
         user.save()
         response = self.client.post(
@@ -139,7 +138,7 @@ class FormSubmissionTestCase(TestCase):
                 'owner': 'das66',
                 'name': 'Contact Us',
                 'data': json.dumps({
-                    'Your E-mail Address': 'das66@psu.edu',
+                    'Your E-mail Address': 'eeqdev+das66@psu.edu',
                     'Subject': 'New Form Entry Test',
                     'Comments': 'Testing locker creation from initial form submission',
                     }),
@@ -159,14 +158,14 @@ class FormSubmissionTestCase(TestCase):
         """
         user = User(
             username='das66',
-            email='eeq+das66@psu.edu'
+            email='eeqdev+das66@psu.edu'
             )
         user.save()
         locker = Locker(
             form_url='http://equity.psu.edu/contact-form',
             form_identifier='contact-form',
             name='Contact Us',
-            owner='das66',
+            owner=user,
             create_timestamp='2015-01-14 15:00:00+05:00',
             )
         locker.save()
@@ -178,7 +177,7 @@ class FormSubmissionTestCase(TestCase):
                 'owner': 'das66',
                 'name': 'Contact Us',
                 'data': json.dumps({
-                    'Your E-mail Address': 'das66@psu.edu',
+                    'Your E-mail Address': 'eeqdev+das66@psu.edu',
                     'Subject': 'New Form Entry Test',
                     'Comments': 'Testing locker creation from initial form submission',
                     }),
@@ -206,8 +205,8 @@ class FormSubmissionTestCase(TestCase):
             form_url='http://equity.psu.edu/contact-form',
             form_identifier='contact-form',
             name='Contact Us',
-            owner='das66',
-            create_timestamp='2015-01-14 15:00:00+05:00',
+            owner=user,
+            create_timestamp='2014-01-14 15:00:00+05:00',
             archive_timestamp='2014-04-19 12:00:00+05:00',
             )
         locker.save()
@@ -219,7 +218,7 @@ class FormSubmissionTestCase(TestCase):
                 'owner': 'das66',
                 'name': 'Contact Us',
                 'data': json.dumps({
-                    'Your E-mail Address': 'das66@psu.edu',
+                    'Your E-mail Address': 'eeqdev+das66@psu.edu',
                     'Subject': 'New Form Entry Test',
                     'Comments': 'Testing locker creation from initial form submission',
                     }),
@@ -238,11 +237,16 @@ class FormSubmissionTestCase(TestCase):
         Form submission should add a submission with no data,
         which shouldn't generate any errors to the user.
         """
+        user = User(
+            username='das66',
+            email='eeqdev+das66@psu.edu'
+            )
+        user.save()
         locker = Locker(
             form_url='http://equity.psu.edu/contact-form',
             form_identifier='contact-form',
             name='Contact Us',
-            owner='das66',
+            owner=user,
             create_timestamp='2015-01-14 15:00:00+05:00',
             archive_timestamp='2014-04-19 12:00:00+05:00',
             )
