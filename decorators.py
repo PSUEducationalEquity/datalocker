@@ -11,7 +11,7 @@ def user_has_locker_access(view_func):
             locker_access = False
         else:
             locker_access = locker.has_access(request.user)
-        if request.user.is_active and locker_access:
+        if request.user.is_superuser or (request.user.is_active and locker_access):
             return view_func(request, *args, **kwargs)
         raise PermissionDenied
     return _wrapped_view_func
