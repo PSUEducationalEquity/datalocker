@@ -299,7 +299,7 @@ def form_submission_view(request, **kwargs):
         ))
     else:
         notify_addresses.append(safe_values['owner'].email)
-    if Locker.shared_users_receive_email(locker):
+    if locker.shared_users_notification():
         for user in locker.users.all():
             notify_addresses.append(user.email)
     if notify_addresses:
