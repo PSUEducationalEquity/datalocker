@@ -83,10 +83,14 @@ class UserColors():
         """
         Pops a random available color from the list and returns it
         """
-        index = randint(
-            0,
-            len(self.request.session[COLOR_HELPER_AVAILABLE_COLORS]) - 1
-        )
-        color = self.request.session[COLOR_HELPER_AVAILABLE_COLORS].pop(index)
-        self.request.session.modified = True
+        try:
+            index = randint(
+                0,
+                len(self.request.session[COLOR_HELPER_AVAILABLE_COLORS]) - 1
+            )
+        except ValueError:
+            color = ''
+        else:
+            color = self.request.session[COLOR_HELPER_AVAILABLE_COLORS].pop(index)
+            self.request.session.modified = True
         return color
