@@ -84,6 +84,13 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
+class NeverCacheMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(NeverCacheMixin, cls).as_view(**initkwargs)
+        return never_cache(view)
+
+
 class UserHasLockerAccessMixin(object):
     @classmethod
     def as_view(cls, **initkwargs):
