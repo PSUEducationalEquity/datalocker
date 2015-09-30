@@ -22,7 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
-from .decorators import user_has_locker_access
+from .decorators import never_cache, user_has_locker_access
 from .helpers import UserColors
 from .models import Comment, Locker, LockerManager, LockerSetting, \
     LockerQuerySet, Submission
@@ -105,6 +105,7 @@ class UserHasLockerAccessMixin(object):
 ##
 
 @login_required
+@never_cache
 @require_http_methods(["POST"])
 def archive_locker(request, **kwargs):
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
@@ -116,6 +117,7 @@ def archive_locker(request, **kwargs):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+@never_cache
 def bad_request_view(request):
     """
     Displays a custom bad request (400) page
@@ -124,6 +126,7 @@ def bad_request_view(request):
 
 
 @login_required
+@never_cache
 @require_http_methods(["POST"])
 def comment_add(request, locker_id, submission_id):
     """
@@ -168,6 +171,7 @@ def comment_add(request, locker_id, submission_id):
 
 
 @login_required
+@never_cache
 @require_http_methods(["POST"])
 def comment_modify(request, locker_id, submission_id):
     """
@@ -202,6 +206,7 @@ def comment_modify(request, locker_id, submission_id):
 
 
 @login_required
+@never_cache
 @require_http_methods(["GET", "HEAD"])
 def comments_list(request, locker_id, submission_id):
     """
@@ -237,6 +242,7 @@ def comments_list(request, locker_id, submission_id):
         ))
 
 
+@never_cache
 def forbidden_view(request):
     """
     Displays a custom forbidden (403) page
@@ -245,6 +251,7 @@ def forbidden_view(request):
 
 
 @csrf_exempt
+@never_cache
 def form_submission_view(request, **kwargs):
     """
     Handles form submissions from outside applications to be saved in lockers.
@@ -342,6 +349,7 @@ def form_submission_view(request, **kwargs):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["GET", "HEAD"])
 def locker_list_view(request):
     """
@@ -371,7 +379,7 @@ def locker_list_view(request):
     return render(request, 'datalocker/index.html', context)
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, generic.ListView):
+class LockerSubmissionsListView(LoginRequiredMixin, NeverCacheMixin, UserHasLockerAccessMixin, generic.ListView):
     template_name = 'datalocker/submissions_list.html'
 
 
@@ -457,6 +465,7 @@ class LockerSubmissionsListView(LoginRequiredMixin, UserHasLockerAccessMixin, ge
 
 
 @login_required()
+@never_cache
 @require_http_methods(["POST"])
 def locker_user_add(request, locker_id):
     """
@@ -494,6 +503,7 @@ def locker_user_add(request, locker_id):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["POST"])
 def locker_user_delete(request, locker_id):
     """
@@ -511,6 +521,7 @@ def locker_user_delete(request, locker_id):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["GET", "HEAD"])
 def locker_users(request, locker_id):
     if request.is_ajax():
@@ -524,6 +535,7 @@ def locker_users(request, locker_id):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     """
@@ -600,6 +612,7 @@ def modify_locker(request, **kwargs):
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+@never_cache
 def not_found_view(request):
     """
     Displays a custom not found (404) page
@@ -607,6 +620,7 @@ def not_found_view(request):
     return render(request, 'datalocker/404.html', {})
 
 
+@never_cache
 def server_error_view(request):
     """
     Displays a custom internal server error (500) page
@@ -615,6 +629,7 @@ def server_error_view(request):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["POST"])
 def submission_delete(request, locker_id, submission_id):
     """
@@ -641,6 +656,7 @@ def submission_delete(request, locker_id, submission_id):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["POST"])
 def submission_undelete(request, locker_id, submission_id):
     """
@@ -662,6 +678,7 @@ def submission_undelete(request, locker_id, submission_id):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["GET", "HEAD"])
 def submission_view(request, locker_id, submission_id):
     """
@@ -712,6 +729,7 @@ def submission_view(request, locker_id, submission_id):
 
 
 @login_required
+@never_cache
 @require_http_methods(["POST"])
 def unarchive_locker(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
@@ -721,6 +739,7 @@ def unarchive_locker(request, locker_id):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["GET", "HEAD"])
 def users_list(request, **kwargs):
     """
@@ -740,6 +759,7 @@ def users_list(request, **kwargs):
 
 
 @login_required()
+@never_cache
 @require_http_methods(["POST"])
 def workflow_modify(request, locker_id, submission_id):
     submission = get_object_or_404(Submission, pk=submission_id)
