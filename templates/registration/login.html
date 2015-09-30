@@ -50,6 +50,7 @@
             <label for="id-username" class="control-label">Username</label>
             <input type="text" id="id-username" name="username"
                    class="form-control"
+                   autocomplete="off"
                    value="{{ form.username.value|default_if_none:'' }}"
                    {% if form.username.errors %}aria-describedby="id-username-error-status"{% endif %}
                    />
@@ -65,6 +66,7 @@
             <label for="id-password" class="control-label">Password</label>
             <input type="password" id="id-password" name="password"
                    class="form-control"
+                   autocomplete="off"
                    {% if form.password.errors %}aria-describedby="id-password-error-status"{% endif %} />
             {% if form.password.errors %}
               <span class="glyphicon glyphicon-remove form-control-feedback"
