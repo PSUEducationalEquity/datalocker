@@ -6,14 +6,19 @@
     Locker.deleteRequest;
 
 
-    /* Adds the ability to archive a locker */
-    Locker.archive = function(id) {
+    /**
+     * Archive the specified locker
+     *
+     * @param   integer locker_id  an integer indicating the locker to archive
+     * @return  void
+     */
+    Locker.archive = function(locker_id) {
         archiveUrl = $("#locker-list").data("archive-url");
         $.ajax({
-            url: archiveUrl.replace("/0/", "/" + id +"/"),
+            url: archiveUrl.replace("/0/", "/" + locker_id +"/"),
             type: 'POST',
             data: {
-                id: id,
+                id: locker_id,
                 csrfmiddlewaretoken: $("#dialog-sharing").find(
                     "input[name='csrfmiddlewaretoken']").val()
             },
@@ -30,14 +35,19 @@
 
 
 
-    /* Adds the ability to unarchive a locker */
-    Locker.unarchive = function(id) {
+    /**
+     * Unarchive the specified locker
+     *
+     * @param   integer locker_id  an integer indicating the locker to unarchive
+     * @return  void
+     */
+    Locker.unarchive = function(locker_id) {
         unarchiveUrl = $("#locker-list").data("unarchive-url");
         $.ajax({
-            url: unarchiveUrl.replace("/0/", "/" + id +"/"),
+            url: unarchiveUrl.replace("/0/", "/" + locker_id +"/"),
             type: 'POST',
             data: {
-                id: id,
+                id: locker_id,
                 csrfmiddlewaretoken: $("#dialog-sharing").find(
                     "input[name='csrfmiddlewaretoken']").val()
             },
