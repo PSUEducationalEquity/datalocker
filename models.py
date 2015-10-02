@@ -64,18 +64,24 @@ class SubmissionManager(models.Manager):
         """
         Returns the oldest submission based on the timestamp
         """
-        return self.filter(
-            locker=locker, deleted=None
-            ).earliest('timestamp')
+        try:
+            return self.filter(
+                locker=locker, deleted=None
+                ).earliest('timestamp')
+        except Submission.DoesNotExist:
+            return None
 
 
     def newest(self, locker):
         """
         Returns the newest submission based on the timestamp
         """
-        return self.filter(
-            locker=locker, deleted=None
-            ).latest('timestamp')
+        try:
+            return self.filter(
+                locker=locker, deleted=None
+                ).latest('timestamp')
+        except Submission.DoesNotExist:
+            return None
 
 
 

@@ -763,9 +763,13 @@ def submission_view(request, locker_id, submission_id):
     """
     submission = get_object_or_404(Submission, pk=submission_id)
     oldest = Submission.objects.oldest(submission.locker)
+    if not oldest:
+        oldest = submission
     older = submission.older()
     newer = submission.newer()
     newest = Submission.objects.newest(submission.locker)
+    if not newest:
+        newest = submission
     workflow_enabled = submission.locker.workflow_enabled()
     discussion_enabled = submission.locker.discussion_enabled()
 
