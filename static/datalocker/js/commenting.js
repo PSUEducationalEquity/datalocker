@@ -1,5 +1,3 @@
-/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
-
 /**
  * Handle the discussion functionality for a submission
  */

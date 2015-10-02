@@ -1,5 +1,3 @@
-/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
-
 /**
  * Submission related actions
  */
@@ -16,7 +14,6 @@
      *
      * @param   integer id  an integer indicating the submission id to delete
      * @return  void
-     * @author  Hunter Yohn  <hay110@psu.edu>
      */
     Submission.delete = function (id)
     {
@@ -52,7 +49,6 @@
      *
      * @param   integer id  an integer indicating the submission id to undelete
      * @return  void
-     * @author  Hunter Yohn  <hay110@psu.edu>
      */
     Submission.undelete = function (id)
     {

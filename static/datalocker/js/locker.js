@@ -1,5 +1,3 @@
-/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
-
 (function (Locker, $, undefined)
 {
     // the AJAX objects that handles server communication
@@ -63,7 +61,6 @@
      *                       entry for
      * @return  a string containing the HTML to display a single user in the
      *          existing users list
-     * @author  Hunter Yohn <hay110@psu.edu>
      */
     Locker._build_user_list_entry = function (user)
     {
@@ -89,7 +86,6 @@
      * @param   users array  an array of users who currently have access to
      *          the locker
      * @return  void
-     * @author  Hunter Yohn <hay110@psu.edu>
      */
     Locker.build_user_list = function (users)
     {

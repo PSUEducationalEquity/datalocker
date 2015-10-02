@@ -1,10 +1,7 @@
-/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
-
 /**
  * Handle manipulating the workflow state of a submission
  *
  * @return     void
- * @author     Hunter Yohn  <hay110@psu.edu>
  */
 (function (Workflow, $, undefined)
 {
