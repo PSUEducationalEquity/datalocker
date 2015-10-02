@@ -110,19 +110,6 @@ class UserHasLockerAccessMixin(object):
 ## Views
 ##
 
-@login_required
-@never_cache
-@require_http_methods(["POST"])
-def archive_locker(request, **kwargs):
-    locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    locker.archive_timestamp = timezone.now()
-    locker.save()
-    if request.is_ajax():
-        return JsonResponse({})
-    else:
-        return HttpResponseRedirect(reverse('datalocker:index'))
-
-
 @never_cache
 def bad_request_view(request):
     """
@@ -354,6 +341,19 @@ def form_submission_view(request, **kwargs):
     return HttpResponse(status=201)
 
 
+@login_required
+@never_cache
+@require_http_methods(["POST"])
+def locker_archive(request, locker_id):
+    locker = get_object_or_404(Locker, id=locker_id)
+    locker.archive_timestamp = timezone.now()
+    locker.save()
+    if request.is_ajax():
+        return JsonResponse({'locker_id': locker_id})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
+
+
 @login_required()
 @never_cache
 @require_http_methods(["GET", "HEAD"])
@@ -468,6 +468,19 @@ class LockerSubmissionsListView(LoginRequiredMixin, NeverCacheMixin, UserHasLock
             'datalocker:submissions_list',
             kwargs={'locker_id': self.kwargs['locker_id']}
             ))
+
+
+@login_required
+@never_cache
+@require_http_methods(["POST"])
+def locker_unarchive(request, locker_id):
+    locker = get_object_or_404(Locker, id=locker_id)
+    locker.archive_timestamp = None
+    locker.save()
+    if request.is_ajax():
+        return JsonResponse({'locker_id': locker_id})
+    else:
+        return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 @login_required()
@@ -790,16 +803,6 @@ def submission_view(request, locker_id, submission_id):
 
         'sidebar_enabled': workflow_enabled or discussion_enabled,
         })
-
-
-@login_required
-@never_cache
-@require_http_methods(["POST"])
-def unarchive_locker(request, locker_id):
-    locker = get_object_or_404(Locker, id=locker_id)
-    locker.archive_timestamp = None
-    locker.save()
-    return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 @login_required()

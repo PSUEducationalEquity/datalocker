@@ -37,16 +37,16 @@ urlpatterns = patterns('',
         name='users_list'
         ),
     url(r'^(?P<locker_id>[0-9]+)/archive$',
-        views.archive_locker,
-        name='archive_locker'
+        views.locker_archive,
+        name='locker_archive'
         ),
     url(r'^(?P<locker_id>[0-9]+)/modify$',
         views.modify_locker,
         name='modify_locker'
         ),
     url(r'^(?P<locker_id>[0-9]+)/unarchive$',
-        views.unarchive_locker,
-        name='unarchive_locker'
+        views.locker_unarchive,
+        name='locker_unarchive'
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/delete$',
         views.submission_delete,

@@ -23,36 +23,9 @@
                     "input[name='csrfmiddlewaretoken']").val()
             },
         }).done(function(response, textStatus, jqXHR) {
-            $("table tr[data-id='" + id + "']").addClass('is-archived');
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            console.error(
-                "Locker.archive in Locker.js AJAX error: "
-                + textStatus,
-                errorThrown
+            $("table tr[data-id='" + response.locker_id + "']").addClass(
+                'is-archived'
             );
-        });
-    }
-
-
-
-    /**
-     * Unarchive the specified locker
-     *
-     * @param   integer locker_id  an integer indicating the locker to unarchive
-     * @return  void
-     */
-    Locker.unarchive = function(locker_id) {
-        unarchiveUrl = $("#locker-list").data("unarchive-url");
-        $.ajax({
-            url: unarchiveUrl.replace("/0/", "/" + locker_id +"/"),
-            type: 'POST',
-            data: {
-                id: locker_id,
-                csrfmiddlewaretoken: $("#dialog-sharing").find(
-                    "input[name='csrfmiddlewaretoken']").val()
-            },
-        }).done(function(response, textStatus, jqXHR) {
-            $('table tr[data-id=' + id + "]").removeClass('is-archived');
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
                 "Locker.archive in Locker.js AJAX error: "
@@ -144,6 +117,37 @@
         } else {
             $users_list.children(".no-entries").hide();
         }
+    }
+
+
+
+    /**
+     * Unarchive the specified locker
+     *
+     * @param   integer locker_id  an integer indicating the locker to unarchive
+     * @return  void
+     */
+    Locker.unarchive = function(locker_id) {
+        unarchiveUrl = $("#locker-list").data("unarchive-url");
+        $.ajax({
+            url: unarchiveUrl.replace("/0/", "/" + locker_id +"/"),
+            type: 'POST',
+            data: {
+                id: locker_id,
+                csrfmiddlewaretoken: $("#dialog-sharing").find(
+                    "input[name='csrfmiddlewaretoken']").val()
+            },
+        }).done(function(response, textStatus, jqXHR) {
+            $('table tr[data-id=' + response.locker_id + "]").removeClass(
+                'is-archived'
+            );
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(
+                "Locker.archive in Locker.js AJAX error: "
+                + textStatus,
+                errorThrown
+            );
+        });
     }
 
 

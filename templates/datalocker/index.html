@@ -64,8 +64,8 @@
     <h2>My Lockers</h2>
     {% if owned|length > 0 %}
       <table class="table table-striped table-hover listing tablesorter"
-             data-archive-url="{% url 'datalocker:archive_locker' 0 %}"
-             data-unarchive-url="{% url 'datalocker:unarchive_locker' 0 %}"
+             data-archive-url="{% url 'datalocker:locker_archive' 0 %}"
+             data-unarchive-url="{% url 'datalocker:locker_unarchive' 0 %}"
              data-users-url="{% url 'datalocker:users_list' %}"
              id="locker-list">
         <caption class="sr-only">List of lockers that I own</caption>
