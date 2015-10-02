@@ -156,6 +156,7 @@
               <thead>
                 <tr>
                   <th>Form Name</th>
+                  <th>Owner</th>
                   <th class="hidden-xs">Latest Submission</th>
                   <th><span class="sr-only">Locker Actions</span></th>
                 </tr>
@@ -173,6 +174,12 @@
                         <span class="label label-danger">Orphaned</span>
                       {% endif %}
                       <span class="url">{{ locker.form_url }}</span>
+                    </td>
+                    <td>
+                      <div>
+                        {{ locker.owner.first_name }} {{ locker.owner.last_name }}
+                      </div>
+                      <div class="text-muted">{{ locker.owner.username }}</div>
                     </td>
                     <td class="hidden-xs">{{ locker.latest_submission }}</td>
                     <td class="record-actions">
