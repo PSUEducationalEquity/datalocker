@@ -529,14 +529,21 @@ def locker_user_delete(request, locker_id):
     Removes the indicated user from the locker's list of users
     """
     if request.is_ajax():
-        user = get_object_or_404(User, id=request.POST.get('id', ''))
-        locker =  get_object_or_404(Locker, id=locker_id)
-        if user in locker.users.all():
-            locker.users.remove(user)
-            locker.save()
-        return JsonResponse({'user_id': user.id})
-    else:
-        return HttpResponseRedirect(reverse('datalocker:index'))
+        try:
+            user = get_object_or_404(User, id=request.POST.get('id', ''))
+        except ValueError:
+            error_msg = "An invalid user was requested to be deleted."
+            return HttpResponseBadRequest(error_msg)
+        else:
+            locker =  get_object_or_404(Locker, id=locker_id)
+            if user in locker.users.all():
+                locker.users.remove(user)
+                locker.save()
+            return JsonResponse({'user_id': user.id})
+    if error_msg:
+        error_msg = "<strong>Oops</strong> %s" % error_msg
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(reverse('datalocker:index'))
 
 
 @login_required()
