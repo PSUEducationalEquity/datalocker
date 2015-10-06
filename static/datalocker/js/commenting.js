@@ -51,9 +51,9 @@
         }).fail(function(jqXHR, textStatus, errorThrown) {
             if (errorThrown != "abort") {
                 console.error(
-                    "Discussion.display in commenting.js AJAX error: "
-                        + textStatus,
-                    errorThrown
+                    "Discussion.add in commenting.js AJAX error:",
+                    errorThrown,
+                    jqXHR.responseText
                 );
             }
         }).always(function(jqXHR, textStatus, errorThrown) {
@@ -186,9 +186,9 @@
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 if  (errorThrown != "abort") {
                     console.error(
-                        "Discussion.display in commenting.js AJAX error: "
-                            + textStatus,
-                        errorThrown
+                        "Discussion.display in commenting.js AJAX error:",
+                        errorThrown,
+                        jqXHR.responseText
                     );
                 }
                 Discussion.dataRequest = null;
@@ -228,9 +228,9 @@
         }).fail(function(jqXHR, textStatus, errorThrown) {
             if  (errorThrown != "abort") {
                 console.error(
-                    "Discussion.edit in commenting.js AJAX error: "
-                        + textStatus,
-                    errorThrown
+                    "Discussion.edit in commenting.js AJAX error:",
+                    errorThrown,
+                    jqXHR.responseText
                 );
             }
             Comment.addRequest = null;

@@ -28,9 +28,9 @@
             );
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
-                "Locker.archive in Locker.js AJAX error: "
-                + textStatus,
-                errorThrown
+                "Locker.archive in Locker.js AJAX error:",
+                errorThrown,
+                jqXHR.responseText
             );
         });
     }
@@ -92,9 +92,9 @@
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 if  (errorThrown != "abort") {
                     console.error(
-                        "Locker.build_user_list in locker.js AJAX error: "
-                            + textStatus,
-                        errorThrown
+                        "Locker.build_user_list in locker.js AJAX error:",
+                        errorThrown,
+                        jqXHR.responseText
                     );
                 }
                 Locker.dataRequest = null;
@@ -143,9 +143,9 @@
             );
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
-                "Locker.archive in Locker.js AJAX error: "
-                + textStatus,
-                errorThrown
+                "Locker.unarchive in Locker.js AJAX error:",
+                errorThrown,
+                jqXHR.responseText
             );
         });
     }
@@ -185,9 +185,9 @@
                 );
             } else if (errorThrown != "abort") {
                 console.error(
-                    "Locker.add_user in locker.js AJAX error: "
-                        + textStatus,
-                    errorThrown
+                    "Locker.user_add in locker.js AJAX error:",
+                    errorThrown,
+                    jqXHR.responseText
                 );
             }
             Locker.addRequest = null;
@@ -221,9 +221,9 @@
         }).fail(function(jqXHR, textStatus, errorThrown) {
             if (errorThrown != "abort") {
                 console.error(
-                    "Locker.build_user_list in locker.js AJAX error: "
-                        + textStatus,
-                    errorThrown
+                    "Locker.user_delete in locker.js AJAX error:",
+                    errorThrown,
+                    jqXHR.responseText
                 );
             }
             Locker.deleteRequest = null;

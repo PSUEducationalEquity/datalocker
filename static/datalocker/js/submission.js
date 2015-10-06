@@ -34,9 +34,9 @@
             Submission.deleteRequest = null;
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
-                "Submission.delete in Submission.js AJAX error: "
-                + textStatus,
-                errorThrown
+                "Submission.delete in Submission.js AJAX error:",
+                errorThrown,
+                jqXHR.responseText
             );
             Submission.deleteRequest = null;
         });
@@ -68,9 +68,9 @@
             Submission.undeleteRequest = null;
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error(
-                "Submission.undelete in Submission.js AJAX error: "
-                + textStatus,
-                errorThrown
+                "Submission.undelete in Submission.js AJAX error:",
+                errorThrown,
+                jqXHR.responseText
             );
             Submission.undeleteRequest = null;
         });

@@ -45,9 +45,9 @@
                     );
                 } else if (errorThrown != "abort") {
                     console.error(
-                        "Workflow.change in workflow.js AJAX error: "
-                        + textStatus,
-                        errorThrown
+                        "Workflow.change in workflow.js AJAX error:",
+                        errorThrown,
+                        jqXHR.responseText
                     );
                 }
                 Workflow.request = null;
