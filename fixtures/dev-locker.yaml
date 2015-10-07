@@ -1,0 +1,61 @@
+---
+- fields:
+    form_url: http://localhost/funding-request-form
+    form_identifier: funding-request-form
+    owner: 2
+    name: 'Funding Request Form 2015'
+    create_timestamp: '2015-01-14 15:00:00+05:00'
+    archive_timestamp: null
+    users:
+      - 3
+      - 1
+  model: datalocker.Locker
+  pk: 1
+- fields:
+    form_url: http://localhost/membership-app
+    form_identifier: membership-app
+    owner: 3
+    name: Membership Application 2015
+    create_timestamp: '2015-06-25 09:45:10+05:00'
+    archive_timestamp: null
+    users:
+      - 2
+  model: datalocker.Locker
+  pk: 2
+- fields:
+    form_url: http://localhost/new-york-bus-trip
+    form_identifier: new-york-bus-trip
+    owner: 1
+    name: New York Bus Trip 2014
+    create_timestamp: '2014-06-25 09:45:10+05:00'
+    archive_timestamp: '2015-06-20 12:50:00+05:00'
+    users:
+      - 2
+      - 3
+      - 4
+  model: datalocker.Locker
+  pk: 3
+- fields:
+    form_url: http://localhost/new-york-bus-trip
+    form_identifier: new-york-bus-trip
+    owner: 1
+    name: New York Bus Trip 2015
+    create_timestamp: '2015-06-25 09:45:10+05:00'
+    archive_timestamp: null
+    users:
+      - 2
+      - 3
+      - 4
+  model: datalocker.Locker
+  pk: 4
+- fields:
+    form_url: http://localhost/call-for-proposals
+    form_identifier: call-for-proposals
+    owner: 3
+    name: Call for Proposals
+    create_timestamp: '2015-06-25 09:45:10+05:00'
+    archive_timestamp: null
+    users:
+      - 1
+  model: datalocker.Locker
+  pk: 5

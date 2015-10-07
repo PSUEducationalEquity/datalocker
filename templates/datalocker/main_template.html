@@ -1,0 +1,209 @@
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+{% load staticfiles %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% block title-wrapper %}
+      <title>
+        {% block page-meta-title %}Site{% endblock page-meta-title %}
+        :: {% block page-meta-org %}Data Locker{% endblock page-meta-org %}
+      </title>
+    {% endblock title-wrapper %}
+
+    {% block favicons %}
+      <link rel="apple-touch-icon" sizes="57x57"
+            href="{% static 'datalocker/img/apple-icon-57x57.png' %}" />
+      <link rel="apple-touch-icon" sizes="60x60"
+            href="{% static 'datalocker/img/apple-icon-60x60.png' %}" />
+      <link rel="apple-touch-icon" sizes="72x72"
+            href="{% static 'datalocker/img/apple-icon-72x72.png' %}" />
+      <link rel="apple-touch-icon" sizes="76x76"
+            href="{% static 'datalocker/img/apple-icon-76x76.png' %}" />
+      <link rel="apple-touch-icon" sizes="114x114"
+            href="{% static 'datalocker/img/apple-icon-114x114.png' %}" />
+      <link rel="apple-touch-icon" sizes="120x120"
+            href="{% static 'datalocker/img/apple-icon-120x120.png' %}" />
+      <link rel="apple-touch-icon" sizes="144x144"
+            href="{% static 'datalocker/img/apple-icon-144x144.png' %}" />
+      <link rel="apple-touch-icon" sizes="152x152"
+            href="{% static 'datalocker/img/apple-icon-152x152.png' %}" />
+      <link rel="apple-touch-icon" sizes="180x180"
+            href="{% static 'datalocker/img/apple-icon-180x180.png' %}" />
+      <link rel="icon" type="image/png" sizes="192x192"
+            href="{% static 'datalocker/img/android-icon-192x192.png' %}" />
+      <link rel="icon" type="image/png" sizes="32x32"
+            href="{% static 'datalocker/img/favicon-32x32.png' %}" />
+      <link rel="icon" type="image/png" sizes="96x96"
+            href="{% static 'datalocker/img/favicon-96x96.png' %}" />
+      <link rel="icon" type="image/png" sizes="16x16"
+            href="{% static 'datalocker/img/favicon-16x16.png' %}" />
+      <link rel="manifest"
+            href="{% static 'datalocker/img/manifest.json' %}" />
+      <meta name="msapplication-TileColor" content="#ffffff" />
+      <meta name="msapplication-TileImage"
+            content="{% static 'datalocker/img/ms-icon-144x144.png' %}" />
+      <meta name="theme-color" content="#ffffff" />
+      <link rel="shortcut icon" type="image/x-icon"
+            href="{% static 'datalocker/img/favicon.ico' %}" />
+    {% endblock favicons %}
+
+    {% block site-styles %}
+      <link type="text/css" rel="stylesheet"
+            href="{% static 'datalocker/css/bootstrap-3.3.5.min.css' %}" />
+      <link type="{text/css" rel="stylesheet"
+            href="{% static 'datalocker/css/tablesorter.css' %}" />
+      <link type="text/css" rel="stylesheet"
+            href="{% static 'datalocker/css/common.css' %}" />
+    {% endblock site-styles %}
+  </head>
+
+  {% block body-tag %}<body>{% endblock body-tag %}
+    {% block header-wrapper %}
+      <header class="hidden-print">
+        {% block header-top %}{% endblock %}
+        <div class="document-header">
+          <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <button type="button"
+                        class="navbar-toggle collapsed"
+                        data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1"
+                        aria-expanded="false"
+                        >
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'datalocker:index' %}"
+                   ><span class="application-name" id="application-name">
+                    {% block app-name %}Data Locker{% endblock app-name %}
+                  <span class="sr-only">Homepage</span></span>
+                </a>
+              </div>
+
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                {% block personal-bar-wrapper %}
+                  <ul class="nav navbar-nav navbar-right personal-bar">
+                    {% if request.user.is_authenticated %}
+                      <li class="dropdown">
+                        <a href="#"
+                           class="dropdown-toggle"
+                           data-toggle="dropdown"
+                           id="dropdown-personal-bar"
+                           role="button"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                           >
+                          <span class="sr-only">
+                            Currently logged in username:
+                          </span>
+                          <span id="current-username"
+                                >{{ request.user.username }}</span>
+                          <span class="caret"></span>
+                        </a>
+                        <ul aria-label="site-wide commands for the current user"
+                            class="dropdown-menu pull-right"
+                            role="menu">
+                          {% block personal-bar-menu %}
+                            <li role="presentation"
+                              ><a role="menuitem"
+                                  tabindex="-1"
+                                  href="{% block logout-url %}{% url 'datalocker:app_logout' %}{% endblock %}"
+                                >{% block logout-label %}Log out{% endblock logout-label %}</a>
+                            </li>
+                            {% block menuitem-password-change %}
+                              <li role="presentation"
+                                ><a role="menuitem"
+                                    tabindex="-1"
+                                    href="{% url 'datalocker:password_change' %}"
+                                  >Change Password</a>
+                              </li>
+                            {% endblock menuitem-password-change %}
+                            {% if user.is_staff %}
+                              <li role="separator" class="divider"></li>
+                              <li role="presentation"
+                                ><a role="menuitem"
+                                    tabindex="-1"
+                                    href="{% url 'admin:index' %}"
+                                  >Settings</a>
+                              </li>
+                            {% endif %}
+                          {% endblock personal-bar-menu %}
+                        </ul>
+                      </li>
+
+                    {% else %}
+                      <li>
+                        <a href="{% block login-url %}{% url 'datalocker:app_login' %}{% endblock %}"
+                           >{% block login-label %}Log In{% endblock login-label %}</a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                {% endblock personal-bar-wrapper %}
+              </div>{# /.navbar-collapse #}
+            </div>{# /.container-fluid #}
+          </nav>
+        </div>
+        {% block breadcrumbs %}
+          <div class="document-breadcrumbs">
+            <span class="document-breadcrumbs-label">
+              You are here:
+            </span>
+            <ol class="breadcrumb-trail">
+              {% block breadcrumb-trail %}
+              {% endblock breadcrumb-trail %}
+            </ol>
+          </div>
+        {% endblock breadcrumbs %}
+        {% block header-bottom %}{% endblock %}
+      </header>
+    {% endblock header-wrapper %}
+
+    <div class="document-content">
+      {% block content %}{% endblock %}
+    </div>
+
+    {% block footer-wrapper %}
+      <footer class="hidden-print">
+        {% block footer-top %}{% endblock %}
+        {% block footer %}
+          <div class="document-footer">
+            <div class="container-fluid">
+              <div class="row">
+                <p class="copyright col-sm-6">
+                  Copyright 2015
+                  <a href="http://www.psu.edu">The Pennsylvania State University</a>.
+                  All Rights Reserved.
+                </p>
+                <p class="ownership col-sm-6">
+                  Developed by the
+                  <a href="http://equity.psu.edu"
+                     >Office of the Vice Provost for Educational Equity</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endblock %}
+        {% block footer-bottom %}{% endblock %}
+      </footer>
+    {% endblock footer-wrapper %}
+
+    {% block dialogs %}
+    {% endblock dialogs %}
+
+    {% block site-scripts %}
+      <script type="text/javascript"
+              src="{% static 'datalocker/js/jquery-2.1.4.min.js' %}"></script>
+      <script type="text/javascript"
+              src="{% static 'datalocker/js/bootstrap-3.3.5.min.js' %}"></script>
+      <script type="text/javascript"
+              src="{% static 'datalocker/js/moment-2.10.3.min.js' %}"></script>
+    {% endblock site-scripts %}
+  </body>
+</html>

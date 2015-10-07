@@ -1,0 +1,94 @@
+{% extends "datalocker/app_template.html" %}
+{% load staticfiles %}
+
+{% block personal-bar-wrapper %}{% endblock %}
+
+{% block breadcrumb-trail %}
+  <li class="active">
+    Login
+  </li>
+{% endblock breadcrumb-trail %}
+
+{% block page-meta-title %}Login{% endblock page-meta-title %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <h1>Login</h1>
+
+        <ul class="messages list-unstyled" id="user-messages">
+          {% for msg in messages %}
+            <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+          {% endfor %}
+
+          {% if form.errors and not form.non_field_errors %}
+            <li class="alert alert-danger">
+              <strong>Oops!</strong>
+              {% if form.errors.items|length == 1 %}
+                Please correct the error below.
+              {% else %}
+                Please correct the errors below.
+              {% endif %}
+            </li>
+          {% endif %}
+
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <li class="alert alert-danger">
+                <strong>Oops!</strong> {{ error }}
+              </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+
+        <form action="{{ app_path }}" method="post" id="login-form">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}" />
+
+          <div class="form-group {% if form.username.errors %}has-error has-feedback{% endif %}">
+            <label for="id-username" class="control-label">Username</label>
+            <input type="text" id="id-username" name="username"
+                   class="form-control"
+                   autocomplete="off"
+                   value="{{ form.username.value|default_if_none:'' }}"
+                   {% if form.username.errors %}aria-describedby="id-username-error-status"{% endif %}
+                   />
+            {% if form.username.errors %}
+              <span class="glyphicon glyphicon-remove form-control-feedback"
+                    aria-hidden="true"></span>
+              <span id="id-username-error-status" class="help-block">
+                {{ form.username.errors }}
+              </span>
+            {% endif %}
+          </div>
+          <div class="form-group {% if form.password.errors %}has-error has-feedback{% endif %}">
+            <label for="id-password" class="control-label">Password</label>
+            <input type="password" id="id-password" name="password"
+                   class="form-control"
+                   autocomplete="off"
+                   {% if form.password.errors %}aria-describedby="id-password-error-status"{% endif %} />
+            {% if form.password.errors %}
+              <span class="glyphicon glyphicon-remove form-control-feedback"
+                    aria-hidden="true"></span>
+              <span id="id-password-error-status" class="help-block">
+                {{ form.password.errors }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="submit-row">
+            <input type="submit" class="btn btn-primary" value="Log in" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block site-scripts %}
+    {{ block.super }}
+    <script type="text/javascript">
+      document.getElementById('id_username').focus()
+    </script>
+{% endblock site-scripts %}

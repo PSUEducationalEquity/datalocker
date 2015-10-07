@@ -1,0 +1,433 @@
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+{% extends "datalocker/app_template.html" %}
+{% load staticfiles %}
+{% load datalocker_tags %}
+
+{% block breadcrumb-trail %}
+  <li class="active">
+    <span class="sr-only">List of </span>My Lockers
+  </li>
+{% endblock breadcrumb-trail %}
+
+{% block page-meta-title %}My Lockers{% endblock page-meta-title %}
+
+{% block site-styles %}
+  {{ block.super }}
+  <link type="text/css" rel="stylesheet"
+        href="{% static 'datalocker/css/bootstrap-toggle.css' %}" />
+{% endblock site-styles %}
+
+{% block content %}
+  <div class="container-fluid">
+    <h1>Data lockers</h1>
+
+    <ul class="messages list-unstyled" id="user-messages">
+      {% for msg in messages %}
+        <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+      {% endfor %}
+    </ul>
+
+    {% if request.user.is_superuser %}
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a href="#main" aria-controls="main"
+             role="tab" data-toggle="tab"
+             >Main</a>
+        </li>
+        <li role="presentation">
+          <a href="#all" aria-controls="all"
+             role="tab" data-toggle="tab"
+             >All</a>
+        </li>
+        <li role="presentation">
+          <a href="#orphaned" aria-controls="orphaned"
+             role="tab" data-toggle="tab"
+             >Orphaned</a>
+        </li>
+      </ul>
+    {% endif %}
+
+    {% if request.user.is_superuser %}
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="main">
+    {% endif %}
+    <div class="switch-toggle">
+      <input type="checkbox"
+             name="archived-lockers-toggle"
+             data-size="mini"
+             data-toggle="toggle"
+             data-onstyle="success"
+             data-offstyle="danger"
+             data-on="Hide Archived Lockers"
+             data-off="Show Archived Lockers" />
+    </div>
+    <h2>My Lockers</h2>
+    {% if owned|length > 0 %}
+      <table class="table table-striped table-hover listing tablesorter"
+             data-archive-url="{% url 'datalocker:locker_archive' 0 %}"
+             data-unarchive-url="{% url 'datalocker:locker_unarchive' 0 %}"
+             data-users-url="{% url 'datalocker:users_list' %}"
+             id="locker-list">
+        <caption class="sr-only">List of lockers that I own</caption>
+        <thead>
+          <tr>
+            <th>Form Name</th>
+            <th class="hidden-xs">Latest Submission</th>
+            <th><span class="sr-only">Locker Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for locker in owned %}
+            <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
+                data-settings="{{ locker.get_settings|jsonify }}"
+                {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
+              <td class="record-name">
+                <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}</a>
+                <span class="label label-default archived-label">Archived</span>
+                <span class="url">{{ locker.form_url }}</span>
+              </td>
+              <td class="hidden-xs">{{ locker.latest_submission }}</td>
+              <td class="record-actions">
+                <button type="button" class="btn btn-primary btn-xs" role="sharing" title="Edit users for this locker">Share</button>
+                <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
+                <button type="button"
+                        class="btn btn-success btn-xs"
+                        role="unarchive-locker"
+                        >Unarchive</button>
+                <button type="button"
+                        class="btn btn-danger btn-xs"
+                        role="archive-locker"
+                        >Archive</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      {% block no-my-lockers-message %}
+        <p>
+          You currently do not own any lockers.
+          <span class="text-muted">
+            A locker will be created for you when a form that you own is submitted.
+          </span>
+        </p>
+      {% endblock no-my-lockers-message %}
+    {% endif %}
+    <hr />
+    {% if shared|length > 0 %}
+      <h2>Lockers Shared with Me</h2>
+      <table class="table table-striped table-hover listing tablesorter"
+        id="shared-locker-list">
+        <caption class="sr-only">List of lockers that have been shared with me</caption>
+        <thead>
+          <tr>
+            <th>Form Name</th>
+            <th class="hidden-xs">Latest Submission</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for locker in shared %}
+            <tr data-id="{{ locker.id }}"
+            {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
+              <td class="record-name">
+                <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}
+                </a>
+                <span class="label label-default archived-label">Archived</span>
+                <span class="url">{{ locker.form_url }}</span>
+              </td>
+              <td class="hidden-xs">{{ locker.latest_submission }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if request.user.is_superuser %}
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="all">
+          <h2>All lockers</h2>
+          {% if all|length == 0 %}
+            <p>There are no lockers in the system yet.</p>
+          {% else %}
+            <table class="table table-striped table-hover listing tablesorter js-show-archived"
+              id="all-locker-list">
+              <caption class="sr-only">List of all lockers in the system</caption>
+              <thead>
+                <tr>
+                  <th>Form Name</th>
+                  <th>Owner</th>
+                  <th class="hidden-xs">Latest Submission</th>
+                  <th><span class="sr-only">Locker Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for locker in all %}
+                  <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
+                      data-settings="{{ locker.get_settings|jsonify }}"
+                      {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
+                    <td class="record-name">
+                      <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}
+                      </a>
+                      <span class="label label-default archived-label">Archived</span>
+                      {% if not locker.owner %}
+                        <span class="label label-danger">Orphaned</span>
+                      {% endif %}
+                      <span class="url">{{ locker.form_url }}</span>
+                    </td>
+                    <td>
+                      <div>
+                        {{ locker.owner.first_name }} {{ locker.owner.last_name }}
+                      </div>
+                      <div class="text-muted">{{ locker.owner.username }}</div>
+                    </td>
+                    <td class="hidden-xs">{{ locker.latest_submission }}</td>
+                    <td class="record-actions">
+                      <button type="button" class="btn btn-primary btn-xs" role="sharing" title="Edit users for this locker">Share</button>
+                      <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
+                      <button type="button"
+                              class="btn btn-success btn-xs"
+                              role="unarchive-locker"
+                              >Unarchive</button>
+                      <button type="button"
+                              class="btn btn-danger btn-xs"
+                              role="archive-locker"
+                              >Archive</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="orphaned">
+          <h2>Orphaned lockers</h2>
+          {% if orphaned|length == 0 %}
+            <p>
+              <strong>Yay!</strong>
+              There are no orphaned lockers in the system.
+            </p>
+          {% else %}
+            <table class="table table-striped table-hover listing tablesorter js-show-archived"
+              id="orphaned-locker-list">
+              <caption class="sr-only">List of orphaned lockers in the system</caption>
+              <thead>
+                <tr>
+                  <th>Form Name</th>
+                  <th class="hidden-xs">Latest Submission</th>
+                  <th><span class="sr-only">Locker Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for locker in orphaned %}
+                  <tr data-id="{{ locker.id }}" data-name="{{ locker.name }}"
+                      data-settings="{{ locker.get_settings|jsonify }}"
+                      {% if locker.archive_timestamp != None %} class="is-archived" {% endif %}>
+                    <td class="record-name">
+                      <a href="{% url 'datalocker:submissions_list' locker.pk %}">{{ locker.name }}
+                      </a>
+                      {% if locker.archive_timestamp != null %}
+                        <span class="label label-default">Archived</span>
+                      {% endif %}
+                      <span class="url">{{ locker.form_url }}</span>
+                    </td>
+                    <td class="hidden-xs">{{ locker.latest_submission }}</td>
+                    <td class="record-actions">
+                      <button type="button" class="btn btn-primary btn-xs" role="sharing" title="Edit users for this locker">Share</button>
+                      <button type="button" class="btn btn-info btn-xs" role="edit-locker" title="Edit this locker">Edit</button>
+                      <button type="button"
+                              class="btn btn-success btn-xs"
+                              role="unarchive-locker"
+                              >Unarchive</button>
+                      <button type="button"
+                              class="btn btn-danger btn-xs"
+                              role="archive-locker"
+                              >Archive</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+
+{% block dialogs %}
+  <div class="modal fade dialog-sharing" id="dialog-sharing" tabindex="-1"
+       role="dialog" aria-labelledby="dialog-sharing-title"
+       aria-hidden="true" data-locker-id="0">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="dialog-sharing-title">Share access to this locker</h4>
+        </div>
+        <div class="modal-body">
+          <ul class="messages list-unstyled"></ul>
+
+          <h5>Users who have access to this locker</h5>
+          <ul class="list-existing-users" id="existing-users"
+              data-delete-url="{% url 'datalocker:locker_user_delete' 0 %}"
+              data-url="{% url 'datalocker:locker_users' 0 %}">
+            <li class="no-entries">Not shared with anyone</li>
+          </ul>
+
+          <h5>Share access to this locker with another user</h5>
+          <form name="modalForm" class="form-inline" method="post" action=""
+                data-url="{% url 'datalocker:locker_user_add' 0 %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="email" class="sr-only">Email Address</label>
+              <input type="text"
+                     name="email"
+                     class="form-control typeahead autocomplete"
+                     id="email"
+                     size="50"
+                     placeholder="user's email address" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm"
+                    id="button-user-add">Add</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-default btn-sm pull-left"
+                  data-dismiss="modal">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="dialog-edit-locker" tabindex="-1" role="dialog"
+       aria-labelledby="dialog-edit-locker-title" aria-hidden="true"
+       data-locker-id="0">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post" action=""
+              data-url="{% url 'datalocker:modify_locker' 0 %}">
+          {% csrf_token %}
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="dialog-edit-locker-title">Edit Locker</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="locker-name">Locker name</label>
+              <input type="text"
+                     name="locker-name"
+                     class="form-control"
+                     id="locker-name"
+                     value="" />
+            </div>
+            <div class="form-group">
+              <label for="locker-owner">Owner</label>
+              <input type="text"
+                     name="locker-owner"
+                     class="form-control typeahead autocomplete"
+                     id="locker-owner"
+                     placeholder="New owner's email address">
+            </div>
+
+            <h5>Locker features</h5>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"
+                       name="shared-users"
+                       value="True"
+                       />
+                Send new submission notifications to all users who have
+                access to this locker
+              </label>
+            </div>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"
+                       name="workflow-enable"
+                       class="locker-option"
+                       value="True"
+                       data-target="js-workflow-options"
+                       />
+                Enable Workflow
+              </label>
+            </div>
+            <div class="checkbox sub-option" role="js-workflow-options">
+              <label>
+                <input type="checkbox"
+                       name="workflow-users-can-edit"
+                       value="True"
+                       />
+                Users can edit the workflow
+              </label>
+            </div>
+            <div class="form-group sub-option" role="js-workflow-options">
+              <label for="workflow-states">
+                Workflow states
+                <small class="text-muted">
+                  One per line, first one is the default state for new submissions
+                </small>
+              </label>
+              <textarea name="workflow-states"
+                        id="workflow-states"
+                        class="form-control"
+                        ></textarea>
+            </div>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"
+                       name="discussion-enable"
+                       class="locker-option"
+                       value="True"
+                       data-target="js-discussion-options"
+                       />
+                Enable discussion
+              </label>
+            </div>
+            <div class="checkbox sub-option" role="js-discussion-options">
+              <label>
+                <input type="checkbox"
+                       name="discussion-users-have-access"
+                       value="True"
+                       />
+                All users this locker is shared with can participate in the
+                discussion
+              </label>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary btn-sm pull-left"
+                   value="Save" />
+            <input type="button" class="btn btn-default btn-sm pull-left"
+                   data-dismiss="modal" value="Close" />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock dialogs%}
+
+{% block site-scripts %}
+    {{ block.super }}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/bootstrap-toggle.js' %}"></script>
+    {% comment %}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/tablesorter.js' %}"></script>
+    {% endcomment %}
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/typeahead.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/messages.js' %}"></script>
+    <script type="text/javascript"
+            src=" {% static 'datalocker/js/locker.js' %}"></script>
+{% endblock site-scripts %}

@@ -1,0 +1,151 @@
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+{% extends "datalocker/app_template.html" %}
+{% load staticfiles %}
+{% load datalocker_tags %}
+
+{% block breadcrumb-trail %}
+  <li>
+    <a href="{% url 'datalocker:index' %}">
+      <span class="sr-only">List of </span>My Lockers
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'datalocker:submissions_list' submission.locker.id %}">
+      All Submissions<span class="sr-only"> for {{ locker.name }}</span>
+    </a>
+  </li>
+  <li class="active">
+    <span class="sr-only">{{ locker.name }}</span> Submission
+  </li>
+{% endblock breadcrumb-trail %}
+
+{% block page-meta-title %}Submission View{% endblock page-meta-title %}
+
+{% block site-styles %}
+  {{ block.super }}
+  <link type="text/css" rel="stylesheet"
+        href="{% static 'datalocker/css/user_colors.css' %}" />
+{% endblock site-styles %}
+
+{% block content %}
+  <div class="container-fluid">
+    <h1>{{ submission.locker.name }}</h1>
+
+    <ul class="messages list-unstyled" id="user-messages">
+        {% for msg in messages %}
+          <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+        {% endfor %}
+    </ul>
+
+    <div class="row">
+      <div class="col-md-{% if sidebar_enabled %}7{% else %}12{% endif %}">
+        <div class="pagination" aria-label="submission navigation buttons">
+          {% include "datalocker/pagination_template.html" %}
+        </div>
+
+        <ul class="list-unstyled">
+          <li class="key-value-pair">
+            <div class="key">Submission Date</div>
+            <div class="value">{{ submission.timestamp }}</div>
+          </li>
+          {% for key, value in submission.data_dict.items %}
+            <li class="key-value-pair">
+              <div class="key">{{ key }}</div>
+              <div class="value">{{ value }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <div class="pagination" aria-label="submission navigation buttons">
+          {% include "datalocker/pagination_template.html" %}
+        </div>
+      </div>
+
+
+      {% if sidebar_enabled %}
+        <div class="col-md-5">
+          {% if workflow_enabled %}
+            <div class="panel panel-default panel-workflow">
+              <div class="panel-heading">
+                <div class="panel-title">Workflow</div>
+              </div>
+              <div class="panel-body">
+                <div>
+                  <div class="workflow-label">Current State:</div>
+                  <div class="workflow-state js-workflow-current-state">{{ workflow_state }}</div>
+                </div>
+                {% if workflow_users_can_edit %}
+                  <form action="{% url 'datalocker:workflow_modify' submission.locker.id submission.id %}"
+                        id="workflow_form" method="POST">
+                    {% csrf_token %}
+
+                    <label for="workflow-state">Change the workflow state</label>
+                    <select name="workflow-state"
+                            id="workflow-state"
+                            class="form-control">
+                      <option selected="selected"
+                              disabled="disabled"
+                              value="0"
+                              >Select a new workflow state</option>
+                      {% for state in workflow_states %}
+                        <option value="{{ state }}">{{ state }}</option>
+                      {% endfor %}
+                    </select>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if discussion_enabled %}
+            {% if discussion_users_have_access %}
+              <div class="panel panel-default panel-discussion"
+                   data-url="{% url 'datalocker:comments_list' submission.locker.id submission.pk %}">
+                <div class="panel-heading" >
+                  <div class="panel-title">Discussion</div>
+                </div>
+                <div class="panel-body">
+                  <form method="post"
+                        action="{% url 'datalocker:comment_add' submission.locker.id submission.pk %}"
+                        data-edit-url="{% url 'datalocker:comment_modify' submission.locker.id submission.pk %}"
+                        >
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                      <label for="comment-text" class="sr-only">
+                        Comment on this submission
+                      </label>
+                      <textarea name="comment"
+                                class="form-control"
+                                id="comment-text"
+                                placeholder="Say something about this submission"
+                                ></textarea>
+                    </div>
+
+                    <input type="submit"
+                           class="btn btn-primary btn-sm pull-right"
+                           value="Post" />
+                  </form>
+
+                  <ul class="media-list discussion-tree"></ul>
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block site-scripts %}
+  {{ block.super }}
+  <script type="text/javascript"
+          src=" {% static 'datalocker/js/messages.js' %}"></script>
+  <script type="text/javascript"
+          src=" {% static 'datalocker/js/workflow.js' %}"></script>
+  <script type="text/javascript"
+          src="{% static 'datalocker/js/commenting.js' %}"></script>
+{% endblock site-scripts %}

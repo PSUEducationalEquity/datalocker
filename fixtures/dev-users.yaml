@@ -1,0 +1,99 @@
+---
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-paul-rentschler@psu.edu
+    first_name: Paul
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2015-01-14 15:08:22+05:00'
+    last_name: Rentschler
+    password: pbkdf2_sha256$10000$IF2EIwH9oGe7$4TtpR9H/lvTi4UNi50kXFqz9NORd3wsq26SZXf5A1mg=
+    user_permissions: []
+    username: par117
+  model: auth.user
+  pk: 1
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-dominick-stuck@psu.edu
+    first_name: Dominick
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38+05:00'
+    last_name: Stuck
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: das66
+  model: auth.user
+  pk: 2
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-hunter-yohn@psu.edu
+    first_name: Hunter
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38+05:00'
+    last_name: Yohn
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: hay110
+  model: auth.user
+  pk: 3
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-mark-smith@psu.edu
+    first_name: Mark
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38+05:00'
+    last_name: Smith
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: mxs2464
+  model: auth.user
+  pk: 4
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-tom-jones@psu.edu
+    first_name: Tom
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38+05:00'
+    last_name: Jones
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: txj2589
+  model: auth.user
+  pk: 5
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-tonya-kirk@psu.edu
+    first_name: Tonya
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38+05:00'
+    last_name: Kirk
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: txk2860
+  model: auth.user
+  pk: 6
+- fields:
+    date_joined: '2014-08-14 13:59:38+05:00'
+    email: eeqdev+dl-richard-bob@psu.edu
+    first_name: Richard
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: '2014-08-14 13:59:38+05:00'
+    last_name: Bob
+    password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
+    user_permissions: []
+    username: rxb2869
+  model: auth.user
+  pk: 7

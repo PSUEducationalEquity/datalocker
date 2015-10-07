@@ -1,0 +1,27 @@
+/* Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. */
+
+/**
+ * Color combinations for discussion user indicators
+ */
+.user-color-azure          { background-color: #F0FFFF;   color: #000000; }
+.user-color-black          { background-color: #000000;   color: #CCCC33; }
+.user-color-blue           { background-color: #0000FF;   color: #FFFFFF; }
+.user-color-brown          { background-color: #993D00;   color: #FFFFFF; }
+.user-color-dark-cyan      { background-color: #336666;   color: #FFFFFF; }
+.user-color-dark-magenta   { background-color: #990099;   color: #FFFFFF; }
+.user-color-green          { background-color: #006600;   color: #FFFFFF; }
+.user-color-hard-cyan      { background-color: #00CCCC;   color: #000000; }
+.user-color-hard-magenta   { background-color: #CC00CC;   color: #000000; }
+.user-color-hard-orange    { background-color: #CC6600;   color: #FFFFFF; }
+.user-color-hard-red       { background-color: #CC0000;   color: #FFFFFF; }
+.user-color-light-grey     { background-color: #999999;   color: #000000; }
+.user-color-maroon         { background-color: #800000;   color: #FFFFFF; }
+.user-color-midnight-blue  { background-color: #191970;   color: #FFFF00; }
+.user-color-obscure-grey   { background-color: #333333;   color: #00CCCC; }
+.user-color-obscure-pink   { background-color: #660033;   color: #FFFFFF; }
+.user-color-purple         { background-color: #7070FF;   color: #FFFFFF; }
+.user-color-sea-green      { background-color: #00FA9A;   color: #000000; }
+.user-color-slate-grey     { background-color: #2F4F4F;   color: #FFFFFF; }
+.user-color-tan            { background-color: #D2B48C;   color: #000000; }
+.user-color-yellow         { background-color: #CCCC33;   color: #000000; }
+.user-color-violet-blue    { background-color: #8A2BE2;   color: #FFFFFF; }

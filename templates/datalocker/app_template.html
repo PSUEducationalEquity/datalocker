@@ -1,0 +1,18 @@
+{# Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+{% extends "datalocker/main_template.html" %}
+
+{% comment %}
+
+    This template exists to make it easy to customize some of the site wide
+    features in main_template.html without having to completely replace
+    main_template.html in your product.
+
+    To utilize this feature, create a Django application that is loaded after
+    the `datalocker` application in `INSTALLED_APPS`.
+    Within your Django application, create a file:
+        templates\datalocker\app_template.html
+
+    In that file, you can redefine any of the {% block %} elements that exist
+    in main_template.html.
+
+{% endcomment %}
