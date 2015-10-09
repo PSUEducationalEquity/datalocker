@@ -794,6 +794,7 @@ def submission_view(request, locker_id, submission_id):
             )
     return render(request, 'datalocker/submission_view.html', {
         'submission': submission,
+        'data': submission.data_dict(with_types=True),
 
         'oldest': oldest,
         'older': older,

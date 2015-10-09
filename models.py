@@ -511,7 +511,7 @@ class Submission(models.Model):
         return "%s to %s" % (self.timestamp, self.locker)
 
 
-    def data_dict(self):
+    def data_dict(self, with_types=False):
         """
         Returns the data field as an ordered dictionary
         """
@@ -519,6 +519,15 @@ class Submission(models.Model):
             data = json.loads(self.data, object_pairs_hook=OrderedDict)
         except ValueError:
             data = {}
+        if with_types:
+            for key, value in data.iteritems():
+                if isinstance(value, list):
+                    value_type = 'list'
+                elif isinstance(value, dict) or isinstance(value, OrderedDict):
+                    value_type = 'dict'
+                else:
+                    value_type = 'string'
+                data[key] = { 'value': value, 'type': value_type }
         return data
 
 
