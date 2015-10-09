@@ -445,12 +445,18 @@ header { margin-bottom: 20px; }
 
 /*ol,ul*/ .key-value-pair .key {
     font-size: 14px;
+    font-weight: normal;
 }
 
 /*ol,ul*/ .key-value-pair .value {
     font-size: 16px;
     font-weight: bold;
     padding-left: 2em;
+}
+
+/*ol,ul*/ .key-value-pair .value ul {
+    list-style-type: disc;
+    padding-left: 1em;
 }
 
 

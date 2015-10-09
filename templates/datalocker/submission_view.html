@@ -48,10 +48,29 @@
             <div class="key">Submission Date</div>
             <div class="value">{{ submission.timestamp }}</div>
           </li>
-          {% for key, value in submission.data_dict.items %}
+          {% for key, item in data.items %}
             <li class="key-value-pair">
               <div class="key">{{ key }}</div>
-              <div class="value">{{ value }}</div>
+              <div class="value">
+                {% if item.type == "list" %}
+                  <ul>
+                    {% for value in item.value %}
+                      <li>{{ value }}</li>
+                    {% endfor %}
+                  </ul>
+                {% elif item.type == "dict" %}
+                  <ul>
+                    {% for question, answer in item.value.items %}
+                      <li>
+                        <div class="key">{{ question }}</div>
+                        <div class="value">{{ answer }}</div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  {{ item.value }}
+                {% endif %}
+              </div>
             </li>
           {% endfor %}
         </ul>
