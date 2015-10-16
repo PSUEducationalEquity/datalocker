@@ -24,7 +24,7 @@
 
 {% block content %}
   <div class="container-fluid">
-    {% if locker.owner = request.user %}
+    {% if allow_maintenance_mode %}
       <div class="switch-toggle">
         <input type="checkbox"
                name="maintenance-mode-toggle"
