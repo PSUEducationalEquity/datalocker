@@ -279,6 +279,9 @@ def form_submission_view(request, **kwargs):
             )
         locker.save()
         created = True
+    else:
+        if locker.owner:
+            safe_values['owner'] = locker.owner
     if locker.workflow_enabled:
         workflow_state = locker.workflow_default_state()
     else:
