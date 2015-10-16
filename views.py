@@ -159,7 +159,7 @@ def comment_add(request, locker_id, submission_id):
             messages.error(request, error_msg)
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
-        kwargs={'locker_id': locker_id, 'submission_id': submission_id }
+        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
         ))
 
 
@@ -194,7 +194,7 @@ def comment_modify(request, locker_id, submission_id):
             messages.warning(request, error_msg)
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
-        kwargs={'locker_id': locker_id, 'submission_id': submission_id }
+        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
         ))
 
 
@@ -231,7 +231,7 @@ def comments_list(request, locker_id, submission_id):
                     })
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
-        {'locker_id': locker_id, 'submission_id': submission_id }
+        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
         ))
 
 
