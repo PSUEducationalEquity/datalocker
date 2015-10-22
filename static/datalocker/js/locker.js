@@ -13,7 +13,7 @@
      * @return  void
      */
     Locker.archive = function(locker_id) {
-        archiveUrl = $("#locker-list").data("archive-url");
+        archiveUrl = $("#data-lockers").data("archive-url");
         $.ajax({
             url: archiveUrl.replace("/0/", "/" + locker_id +"/"),
             type: 'POST',
@@ -128,7 +128,7 @@
      * @return  void
      */
     Locker.unarchive = function(locker_id) {
-        unarchiveUrl = $("#locker-list").data("unarchive-url");
+        unarchiveUrl = $("#data-lockers").data("unarchive-url");
         $.ajax({
             url: unarchiveUrl.replace("/0/", "/" + locker_id +"/"),
             type: 'POST',
@@ -364,7 +364,7 @@ $(document).ready(function () {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('email'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
-            url: $("#locker-list").data("users-url"),
+            url: $("#data-lockers").data("users-url"),
             cache: false,
             transform: function (response) {
                 return response.users;
