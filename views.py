@@ -10,6 +10,7 @@ from django.contrib.auth.views import login as auth_login, \
     password_change as auth_password_change, \
     password_change_done as auth_password_change_done
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMessage
 from django.core.urlresolvers import reverse
@@ -98,6 +99,8 @@ def comment_add(request, locker_id, submission_id):
     Adds a comment or reply to the specified submission
     """
     submission = get_object_or_404(Submission, id=submission_id)
+    if not submission.locker.has_access(request.user):
+        raise PermissionDenied
     comment_text = request.POST.get('comment', '').strip()
     parent_id = request.POST.get('parent', None)
     try:
@@ -178,6 +181,8 @@ def comments_list(request, locker_id, submission_id):
     Returns a list of comments for the specified submission
     """
     submission = get_object_or_404(Submission, pk=submission_id)
+    if not submission.locker.has_access(request.user):
+        raise PermissionDenied
     if submission.locker.discussion_enabled():
         if submission.locker.is_owner(request.user) or (
             submission.locker.is_user(request.user) and submission.locker.discussion_users_have_access()
@@ -321,6 +326,8 @@ def form_submission_view(request, **kwargs):
 @require_http_methods(["POST"])
 def locker_archive(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
+    if not locker.has_access(request.user):
+        raise PermissionDenied
     locker.archive_timestamp = timezone.now()
     locker.save()
     if request.is_ajax():
@@ -365,6 +372,8 @@ def locker_list_view(request):
 @require_http_methods(["POST"])
 def locker_unarchive(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
+    if not locker.has_access(request.user):
+        raise PermissionDenied
     locker.archive_timestamp = None
     locker.save()
     if request.is_ajax():
@@ -381,8 +390,10 @@ def locker_user_add(request, locker_id):
     Adds the indicated user to the locker's list of users
     """
     if request.is_ajax():
-        user = get_object_or_404(User, email=request.POST.get('email', ''))
         locker =  get_object_or_404(Locker, id=locker_id)
+        if not locker.has_access(request.user):
+            raise PermissionDenied
+        user = get_object_or_404(User, email=request.POST.get('email', ''))
         if not user in locker.users.all():
             locker.users.add(user)
             locker.save()
@@ -419,13 +430,15 @@ def locker_user_delete(request, locker_id):
     Removes the indicated user from the locker's list of users
     """
     if request.is_ajax():
+        locker =  get_object_or_404(Locker, id=locker_id)
+        if not locker.has_access(request.user):
+            raise PermissionDenied
         try:
             user = get_object_or_404(User, id=request.POST.get('id', ''))
         except ValueError:
             error_msg = "An invalid user was requested to be deleted."
             return HttpResponseBadRequest(error_msg)
         else:
-            locker =  get_object_or_404(Locker, id=locker_id)
             if user in locker.users.all():
                 locker.users.remove(user)
                 locker.save()
@@ -442,6 +455,8 @@ def locker_user_delete(request, locker_id):
 def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
+        if not locker.has_access(request.user):
+            raise PermissionDenied
         users = []
         for user in locker.users.all():
             users.append(_get_public_user_dict(user))
@@ -488,6 +503,8 @@ def modify_locker(request, **kwargs):
     Modifies locker name, ownership, and settings.
     """
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
+    if not locker.has_access(request.user):
+        raise PermissionDenied
     previous_owner = locker.owner
     if not locker.owner:
         previous_owner = request.user
@@ -611,6 +628,8 @@ def submission_delete(request, locker_id, submission_id):
     """
     if request.is_ajax():
         submission = get_object_or_404(Submission, id=submission_id)
+        if not submission.locker.has_access(request.user):
+            raise PermissionDenied
         submission.deleted = timezone.now()
         submission.save()
         return JsonResponse({
@@ -635,6 +654,8 @@ def submission_undelete(request, locker_id, submission_id):
     """
     if request.is_ajax():
         submission = get_object_or_404(Submission, id=submission_id)
+        if not submission.locker.has_access(request.user):
+            raise PermissionDenied
         submission.deleted = None
         submission.save()
         return JsonResponse({
@@ -656,6 +677,8 @@ def submission_view(request, locker_id, submission_id):
     Displays an individual submission
     """
     submission = get_object_or_404(Submission, pk=submission_id)
+    if not submission.locker.has_access(request.user):
+        raise PermissionDenied
     oldest = Submission.objects.oldest(submission.locker)
     if not oldest:
         oldest = submission
@@ -710,6 +733,8 @@ def submissions_list_view(request, locker_id):
     Returns a list of submissions for the specified locker.
     """
     locker = get_object_or_404(Locker, pk=locker_id)
+    if not locker.has_access(request.user):
+        raise PermissionDenied
     if request.method == 'POST':
         # Save the selected fields to include in the submissions list
         locker.fields_selected(request.POST)
@@ -798,6 +823,8 @@ def users_list(request, **kwargs):
 @require_http_methods(["POST"])
 def workflow_modify(request, locker_id, submission_id):
     submission = get_object_or_404(Submission, pk=submission_id)
+    if not submission.locker.has_access(request.user):
+        raise PermissionDenied
     new_state = request.POST.get('workflow-state', '')
     if new_state in submission.locker.workflow_states():
         submission.workflow_state = new_state
