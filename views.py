@@ -726,14 +726,11 @@ def submission_delete(request, locker_id, submission_id):
         submission = get_object_or_404(Submission, id=submission_id)
         submission.deleted = timezone.now()
         submission.save()
-        purge_timestamp = submission.deleted + datetime.timedelta(
-            days=settings.SUBMISSION_PURGE_DAYS
-            )
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
             'deleted': submission.deleted,
-            'purge_timestamp': purge_timestamp,
+            'purge_timestamp': submission.purge_date,
             })
     else:
         return HttpResponseRedirect(reverse(
@@ -785,14 +782,12 @@ def submission_view(request, locker_id, submission_id):
 
     # generate a message to the user if the submission is deleted
     if submission.deleted:
-        purge_date = submission.deleted
-        purge_date += datetime.timedelta(days=settings.SUBMISSION_PURGE_DAYS)
         messages.warning(
             request,
             "<strong>Heads up!</strong> This submission has been deleted " \
             "and <strong>will be permanently removed</strong> from the " \
             "locker <strong>%s</strong>." % (
-                naturaltime(purge_date)
+                naturaltime(submission.purge_date)
                 )
             )
     return render(request, 'datalocker/submission_view.html', {
