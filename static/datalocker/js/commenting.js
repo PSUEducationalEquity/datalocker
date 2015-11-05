@@ -159,7 +159,7 @@
      */
     Discussion.display = function ()
     {
-        var url = $(".panel-discussion").data("url");
+        var url = $(".panel-discussion").attr("data-url");
         // submit the request (if none are pending)
         if  (!Discussion.dataRequest && url) {
             Discussion.dataRequest = $.ajax({
@@ -251,7 +251,7 @@
         var oldest_timestamp = moment().subtract(editing_time[0], editing_time[1]);
         $(".discussion-tree .discussion-timestamp").each(function (index, entry) {
             var text = $(entry).next().text().substr(0, 40);
-            var timestamp = moment($(entry).data("timestamp"));
+            var timestamp = moment($(entry).attr("data-timestamp"));
             $(entry).html(timestamp.fromNow());
             if (timestamp < oldest_timestamp) {
                 var $actions = $(entry).closest("li").find(
@@ -287,7 +287,7 @@ $(document).ready(function() {
             // are we updating or adding?
             if ($(this).find("input[type='submit']").val() == "Update") {
                 // update the existing comment
-                Discussion.edit($(this).closest("li[data-id]").data("id"));
+                Discussion.edit($(this).closest("li[data-id]").attr("data-id"));
             } else {
                 // determine if there is a parent
                 var $replies_container = $(this).closest(".discussion-replies");
@@ -298,7 +298,7 @@ $(document).ready(function() {
                 }
 
                 // add the comment to the discussion
-                Discussion.add($textarea.val(), $parent.data("id"));
+                Discussion.add($textarea.val(), $parent.attr("data-id"));
             }
         }
     });
@@ -334,7 +334,7 @@ $(document).ready(function() {
         event.preventDefault();
         var $comment = $(this).closest("li");
         var $form = $(".panel-discussion form:first").clone();
-        $form.attr("action", $form.data("edit-url"));
+        $form.attr("action", $form.attr("data-edit-url"));
         $form.find("input[type='submit']").attr("value", "Update").after(
             $("<input />").addClass(
                 "btn btn-default btn-sm pull-right"

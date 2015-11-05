@@ -13,7 +13,7 @@
      * @return  void
      */
     Locker.archive = function(locker_id) {
-        archiveUrl = $("#data-lockers").data("archive-url");
+        archiveUrl = $("#data-lockers").attr("data-archive-url");
         $.ajax({
             url: archiveUrl.replace("/0/", "/" + locker_id +"/"),
             type: 'POST',
@@ -72,8 +72,8 @@
      */
     Locker.build_user_list = function (users)
     {
-        var locker_id = $("#dialog-sharing").data("locker-id");
-        var url = $("#dialog-sharing .list-existing-users").data("url");
+        var locker_id = $("#dialog-sharing").attr("data-locker-id");
+        var url = $("#dialog-sharing .list-existing-users").attr("data-url");
 
         // submit the request (if none are pending)
         if  (!Locker.dataRequest && url) {
@@ -128,7 +128,7 @@
      * @return  void
      */
     Locker.unarchive = function(locker_id) {
-        unarchiveUrl = $("#data-lockers").data("unarchive-url");
+        unarchiveUrl = $("#data-lockers").attr("data-unarchive-url");
         $.ajax({
             url: unarchiveUrl.replace("/0/", "/" + locker_id +"/"),
             type: 'POST',
@@ -204,8 +204,8 @@
      */
     Locker.user_delete = function (user_id)
     {
-        var url =  $("#dialog-sharing .list-existing-users").data("delete-url");
-        var locker_id = $("#dialog-sharing").data("locker-id");
+        var url =  $("#dialog-sharing .list-existing-users").attr("data-delete-url");
+        var locker_id = $("#dialog-sharing").attr("data-locker-id");
         var csrf_token = $("#dialog-sharing").find("input[name='csrfmiddlewaretoken']").val();
         Locker.deleteRequest = $.ajax({
             url: url.replace("/0/", "/" + locker_id +"/"),
@@ -300,7 +300,7 @@ $(document).ready(function () {
     // Handle the archive locker buttons
     $("[role='archive-locker']").on("click", function (event) {
         event.preventDefault();
-        var id = $(this).closest("tr").data("id");
+        var id = $(this).closest("tr").attr("data-id");
         Locker.archive(id);
     });
 
@@ -308,7 +308,7 @@ $(document).ready(function () {
     // Handle the unarchive locker buttons
     $("[role='unarchive-locker']").on("click", function (event) {
         event.preventDefault();
-        var id = $(this).closest("tr").data("id");
+        var id = $(this).closest("tr").attr("data-id");
         Locker.unarchive(id);
     });
 
@@ -319,14 +319,14 @@ $(document).ready(function () {
     $("button[role='sharing']").on("click", function (event)
     {
         event.preventDefault();
-        var locker_id = $(this).closest("tr").data("id");
+        var locker_id = $(this).closest("tr").attr("data-id");
         $("#dialog-sharing").attr("data-locker-id", locker_id);
-        var url = $("#dialog-sharing").find("form").data("url");
+        var url = $("#dialog-sharing").find("form").attr("data-url");
         $("#dialog-sharing").find("form").attr(
             "action",
             url.replace("/0/","/"+ locker_id + "/")
         );
-        var name = $(this).closest("tr").data("name");
+        var name = $(this).closest("tr").attr("data-name");
 
         Locker.build_user_list();
         $("#dialog-sharing-title").html('Share access to ' + name);
@@ -347,7 +347,7 @@ $(document).ready(function () {
     $("#dialog-sharing .list-existing-users").on("click", "a", function (event)
     {
         event.preventDefault();
-        var user_id = $(this).closest("li").data("id");
+        var user_id = $(this).closest("li").attr("data-id");
         Locker.user_delete(user_id);
     });
 
@@ -364,7 +364,7 @@ $(document).ready(function () {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('email'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
-            url: $("#data-lockers").data("users-url"),
+            url: $("#data-lockers").attr("data-users-url"),
             cache: false,
             transform: function (response) {
                 return response.users;
@@ -398,20 +398,20 @@ $(document).ready(function () {
     $("[role='edit-locker']").on("click", function (event)
     {
         event.preventDefault();
-        var locker_id = $(this).closest("tr").data("id");
+        var locker_id = $(this).closest("tr").attr("data-id");
         $("#dialog-edit-locker").attr("data-locker-id", locker_id);
-        var url = $("#dialog-edit-locker").find("form").data("url");
+        var url = $("#dialog-edit-locker").find("form").attr("data-url");
         $("#dialog-edit-locker").find("form").attr(
             "action",
             url.replace("/0/","/"+ locker_id +"/")
         );
 
         // set the name and clear the owner field
-        $("#locker-name").val($(this).closest("tr").data("name"));
+        $("#locker-name").val($(this).closest("tr").attr("data-name"));
         $("#dialog-edit-locker .typeahead").typeahead('val', '');
 
         // load the feature options
-        var settings = $(this).closest("tr").data("settings");
+        var settings = $(this).closest("tr").attr("data-settings");
 
         // set the new submissions option
         $("input[name='shared-users']").prop(
@@ -453,7 +453,7 @@ $(document).ready(function () {
     // Show/hide the various locker options
     $(".locker-option").on("change", function ()
     {
-        $sub_options = $("[role='" + $(this).data("target") + "']");
+        $sub_options = $("[role='" + $(this).attr("data-target") + "']");
         if ($(this).prop("checked")) {
             $sub_options.slideDown();
         } else {
