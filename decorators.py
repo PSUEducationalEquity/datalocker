@@ -32,8 +32,9 @@ def never_cache(view_func):
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view_func(request, *args, **kwargs):
         response = view_func(request, *args, **kwargs)
-        response['Cache-Control'] = 'no-cache,no-store'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = 'Tue, 01 Jan 1980 1:00:00 GMT'
+        if response.status_code not in (301, 302):
+            response['Cache-Control'] = 'no-cache,no-store'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = 'Tue, 01 Jan 1980 1:00:00 GMT'
         return response
     return _wrapped_view_func
