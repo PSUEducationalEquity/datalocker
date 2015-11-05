@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
-from .decorators import login_required, never_cache, user_has_locker_access
+from .decorators import login_required, never_cache
 from .helpers import UserColors
 from .models import Comment, Locker, LockerManager, LockerSetting, \
     LockerQuerySet, Submission
@@ -74,33 +74,6 @@ def _get_public_user_dict(user):
         if key in public_fields:
             user_dict[key] = value
     return user_dict
-
-
-
-
-##
-## Mixins
-##
-
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
-
-
-class NeverCacheMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(NeverCacheMixin, cls).as_view(**initkwargs)
-        return never_cache(view)
-
-
-class UserHasLockerAccessMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(UserHasLockerAccessMixin, cls).as_view(**initkwargs)
-        return user_has_locker_access(view)
 
 
 
