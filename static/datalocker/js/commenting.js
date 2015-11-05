@@ -33,9 +33,9 @@
             data: form_data,
         }).done(function(response, textStatus, jqXHR) {
             var $discussion_tree = $(".panel-discussion .discussion-tree")
-            if (response.parent_comment) {
+            if (response.parent) {
                 var $parent = $discussion_tree.find(
-                    "li[data-id='" + response.parent_comment + "']"
+                    "li[data-id='" + response.parent + "']"
                 );
                 $parent.find(".discussion-replies").prepend(
                     Discussion._build_entry(response)
@@ -130,7 +130,7 @@
             $entry.find("[role='discussion-edit']").remove();
             $entry.find(".action-separator").remove();
         }
-        if (comment.parent_comment) {
+        if (comment.parent) {
             $entry.find(".discussion-replies").remove();
         }
         return $entry;
@@ -174,13 +174,13 @@
                 );
                 $discussion_tree.children("li").remove();
                 $.each(response.discussion, function (index, comment) {
-                    if (comment.parent_comment) {
-                        $discussion_tree.find(
-                            "li[data-id='" + comment.parent_comment + "'] .discussion-replies"
-                        ).append(Discussion._build_entry(comment))
-                    } else {
-                        $discussion_tree.append(Discussion._build_entry(comment));
+                    var $comment_parent = $discussion_tree;
+                    if (comment.parent) {
+                        $comment_parent = $discussion_tree.find(
+                            "li[data-id='" + comment.parent + "'] .discussion-replies"
+                        );
                     }
+                    $comment_parent.append(Discussion._build_entry(comment));
                 });
                 Discussion.dataRequest = null;
             }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -250,7 +250,6 @@
         var editing_time = $(".discussion-tree").attr('data-editing-time').split("|");
         var oldest_timestamp = moment().subtract(editing_time[0], editing_time[1]);
         $(".discussion-tree .discussion-timestamp").each(function (index, entry) {
-            var text = $(entry).next().text().substr(0, 40);
             var timestamp = moment($(entry).attr("data-timestamp"));
             $(entry).html(timestamp.fromNow());
             if (timestamp < oldest_timestamp) {
