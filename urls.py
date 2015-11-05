@@ -77,7 +77,7 @@ urlpatterns = patterns('',
     	name='submission_view'
     	),
     url(r'^(?P<locker_id>[0-9]+)/submissions$',
-        views.LockerSubmissionsListView.as_view(context_object_name='my_submission_list'),
+        views.submissions_list_view,
         name='submissions_list',
         ),
     url(r'^(?P<locker_id>[0-9]+)/users$',

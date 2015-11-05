@@ -387,92 +387,6 @@ def locker_list_view(request):
     return render(request, 'datalocker/index.html', context)
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, NeverCacheMixin, UserHasLockerAccessMixin, generic.ListView):
-    template_name = 'datalocker/submissions_list.html'
-
-
-    def get_context_data(self, **kwargs):
-        """
-        Build the data that is made available to the template
-
-        context['data'] contains all the data and metadata for displaying
-        the list of submissions table.
-
-        Format:
-            [
-                [<list of table cell data>],
-                submission id,
-                deleted (True/False),
-                purged date
-            ]
-        """
-        context = super(LockerSubmissionsListView, self).get_context_data(**kwargs)
-        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        context['locker'] = locker
-        fields_list = locker.fields_all()
-        context['fields_list'] = fields_list
-        selected_fields = locker.fields_selected()
-        context['selected_fields'] = selected_fields
-        context['column_headings'] = ['Submitted date', ] + selected_fields
-        context['purge_days'] = settings.SUBMISSION_PURGE_DAYS
-        context['allow_maintenance_mode'] = self.request.user == locker.owner or self.request.user.is_superuser
-
-        # build the list of submissions to be displayed
-        context['data'] = []
-        for submission in locker.submissions.all().order_by('-timestamp'):
-            if submission.deleted is not None:
-                purge_date = submission.deleted + datetime.timedelta(
-                    days=settings.SUBMISSION_PURGE_DAYS
-                    )
-            else:
-                purge_date = None
-            entry = [
-                [submission.timestamp, ],
-                submission.id,
-                True if submission.deleted else False,
-                purge_date,
-                ]
-            submission_data = submission.data_dict()
-            for field in selected_fields:
-                try:
-                    entry[0].append(submission_data[field])
-                except KeyError:
-                    if field == 'Workflow state':
-                        entry[0].append(submission.workflow_state)
-            context['data'].append(entry)
-        # determine which indices in the cell data list will be linked
-        context['linkable_indices'] = []
-        try:
-            context['linkable_indices'].append(
-                context['column_headings'].index('Submitted date')
-            )
-        except ValueError:
-            pass
-        if not context['linkable_indices']:
-            context['linkable_indices'] = [0,]
-        return context
-
-
-    def get_queryset(self):
-        """ Return all submissions for selected locker """
-        return Submission.objects.filter(
-            locker_id=self.kwargs['locker_id']).order_by('-timestamp')
-
-
-    def post(self, *args, **kwargs):
-        """
-        Takes the checkboxes selected on the select fields dialog and saves
-        those as a selected-fields setting which is loaded then on every page
-        load thereafter.
-        """
-        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        locker.fields_selected(self.request.POST)
-        return HttpResponseRedirect(reverse(
-            'datalocker:submissions_list',
-            kwargs={'locker_id': self.kwargs['locker_id']}
-            ))
-
-
 @login_required
 @never_cache
 @require_http_methods(["POST"])
@@ -813,6 +727,77 @@ def submission_view(request, locker_id, submission_id):
 
         'sidebar_enabled': workflow_enabled or discussion_enabled,
         })
+
+
+@login_required()
+@never_cache
+@require_http_methods(["GET", "HEAD", "POST"])
+def submissions_list_view(request, locker_id):
+    """
+    Returns a list of submissions for the specified locker.
+    """
+    locker = get_object_or_404(Locker, pk=locker_id)
+    if request.method == 'POST':
+        # Save the selected fields to include in the submissions list
+        locker.fields_selected(request.POST)
+        return HttpResponseRedirect(reverse(
+            'datalocker:submissions_list',
+            kwargs={'locker_id': locker_id}
+            ))
+
+    selected_fields = locker.fields_selected();
+    context = {
+        'allow_maintenance_mode': request.user == locker.owner or request.user.is_superuser,
+        'column_headings': ['Submitted date', ] + selected_fields,
+        'data': [],
+        'fields_list': locker.fields_all(),
+        'linkable_indices': [],
+        'locker': locker,
+        'purge_days': settings.SUBMISSION_PURGE_DAYS,
+        'selected_fields': selected_fields,
+        }
+
+    ##
+    # Build the data that is made available to the template
+    #
+    # context['data'] contains all the data and metadata for displaying
+    # the list of submissions table.
+    #
+    # Format:
+    #     [
+    #         [<list of table cell data>],
+    #         submission id,
+    #         deleted (True/False),
+    #         purged date
+    #     ]
+    ##
+    for submission in locker.submissions.all().order_by('-timestamp'):
+        entry_data = [submission.timestamp, ]
+        submission_data = submission.data_dict()
+        for field in selected_fields:
+            try:
+                entry_data.append(submission_data[field])
+            except KeyError:
+                if field == 'Workflow state':
+                    entry_data.append(submission.workflow_state)
+        context['data'].append([
+            entry_data,
+            submission.id,
+            True if submission.deleted else False,
+            submission.purge_date,
+            ])
+
+    # determine which indices in the cell data list will be linked
+    try:
+        context['linkable_indices'].append(
+            context['column_headings'].index('Submitted date')
+        )
+    except ValueError:
+        pass
+    if not context['linkable_indices']:
+        context['linkable_indices'] = [0,]
+
+    return render(request, 'datalocker/submissions_list.html', context)
 
 
 @login_required()
