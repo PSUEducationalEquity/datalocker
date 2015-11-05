@@ -2,12 +2,7 @@ from functools import wraps
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
-from django.utils.cache import patch_response_headers
 from django.utils.decorators import available_attrs
-
-from .models import Locker, LockerQuerySet
 
 
 def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
@@ -23,20 +18,6 @@ def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login
     if function:
         return actual_decorator(function)
     return actual_decorator
-
-
-def user_has_locker_access(view_func):
-    def _wrapped_view_func(request, *args, **kwargs):
-        try:
-            locker = Locker.objects.get(pk=kwargs['locker_id'])
-        except (Locker.DoesNotExist, KeyError):
-            locker_access = False
-        else:
-            locker_access = locker.has_access(request.user)
-        if request.user.is_superuser or (request.user.is_active and locker_access):
-            return view_func(request, *args, **kwargs)
-        raise PermissionDenied
-    return _wrapped_view_func
 
 
 def never_cache(view_func):
