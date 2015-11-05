@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login as auth_login, \
@@ -28,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
-from .decorators import never_cache, user_has_locker_access
+from .decorators import login_required, never_cache, user_has_locker_access
 from .helpers import UserColors
 from .models import Comment, Locker, LockerManager, LockerSetting, \
     LockerQuerySet, Submission
