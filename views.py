@@ -28,7 +28,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
-from .decorators import login_required, never_cache
+from .decorators import login_required, never_cache, prevent_url_guessing
 from .helpers import UserColors
 from .models import Comment, Locker, LockerManager, LockerSetting, \
     LockerQuerySet, Submission
@@ -93,14 +93,13 @@ def bad_request_view(request):
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def comment_add(request, locker_id, submission_id):
     """
     Adds a comment or reply to the specified submission
     """
     submission = get_object_or_404(Submission, id=submission_id)
-    if not submission.locker.has_access(request.user):
-        raise PermissionDenied
     comment_text = request.POST.get('comment', '').strip()
     parent_id = request.POST.get('parent', None)
     try:
@@ -140,6 +139,7 @@ def comment_add(request, locker_id, submission_id):
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def comment_modify(request, locker_id, submission_id):
     """
@@ -169,20 +169,22 @@ def comment_modify(request, locker_id, submission_id):
             messages.warning(request, error_msg)
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
-        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
+        kwargs={
+            'locker_id': comment.submission.locker.id,
+            'submission_id': comment.submission.id,
+            }
         ))
 
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD"])
 def comments_list(request, locker_id, submission_id):
     """
     Returns a list of comments for the specified submission
     """
     submission = get_object_or_404(Submission, pk=submission_id)
-    if not submission.locker.has_access(request.user):
-        raise PermissionDenied
     if submission.locker.discussion_enabled():
         if submission.locker.is_owner(request.user) or (
             submission.locker.is_user(request.user) and submission.locker.discussion_users_have_access()
@@ -323,11 +325,10 @@ def form_submission_view(request, **kwargs):
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_archive(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
-    if not locker.has_access(request.user):
-        raise PermissionDenied
     locker.archive_timestamp = timezone.now()
     locker.save()
     if request.is_ajax():
@@ -369,11 +370,10 @@ def locker_list_view(request):
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_unarchive(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
-    if not locker.has_access(request.user):
-        raise PermissionDenied
     locker.archive_timestamp = None
     locker.save()
     if request.is_ajax():
@@ -384,6 +384,7 @@ def locker_unarchive(request, locker_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_user_add(request, locker_id):
     """
@@ -391,8 +392,6 @@ def locker_user_add(request, locker_id):
     """
     if request.is_ajax():
         locker =  get_object_or_404(Locker, id=locker_id)
-        if not locker.has_access(request.user):
-            raise PermissionDenied
         user = get_object_or_404(User, email=request.POST.get('email', ''))
         if not user in locker.users.all():
             locker.users.add(user)
@@ -424,6 +423,7 @@ def locker_user_add(request, locker_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_user_delete(request, locker_id):
     """
@@ -431,8 +431,6 @@ def locker_user_delete(request, locker_id):
     """
     if request.is_ajax():
         locker =  get_object_or_404(Locker, id=locker_id)
-        if not locker.has_access(request.user):
-            raise PermissionDenied
         try:
             user = get_object_or_404(User, id=request.POST.get('id', ''))
         except ValueError:
@@ -451,12 +449,11 @@ def locker_user_delete(request, locker_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD"])
 def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
-        if not locker.has_access(request.user):
-            raise PermissionDenied
         users = []
         for user in locker.users.all():
             users.append(_get_public_user_dict(user))
@@ -497,14 +494,13 @@ def logout(request, next_page=None,
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     """
     Modifies locker name, ownership, and settings.
     """
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
-    if not locker.has_access(request.user):
-        raise PermissionDenied
     previous_owner = locker.owner
     if not locker.owner:
         previous_owner = request.user
@@ -621,6 +617,7 @@ def server_error_view(request):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def submission_delete(request, locker_id, submission_id):
     """
@@ -628,8 +625,6 @@ def submission_delete(request, locker_id, submission_id):
     """
     if request.is_ajax():
         submission = get_object_or_404(Submission, id=submission_id)
-        if not submission.locker.has_access(request.user):
-            raise PermissionDenied
         submission.deleted = timezone.now()
         submission.save()
         return JsonResponse({
@@ -647,6 +642,7 @@ def submission_delete(request, locker_id, submission_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def submission_undelete(request, locker_id, submission_id):
     """
@@ -654,8 +650,6 @@ def submission_undelete(request, locker_id, submission_id):
     """
     if request.is_ajax():
         submission = get_object_or_404(Submission, id=submission_id)
-        if not submission.locker.has_access(request.user):
-            raise PermissionDenied
         submission.deleted = None
         submission.save()
         return JsonResponse({
@@ -671,14 +665,13 @@ def submission_undelete(request, locker_id, submission_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD"])
 def submission_view(request, locker_id, submission_id):
     """
     Displays an individual submission
     """
     submission = get_object_or_404(Submission, pk=submission_id)
-    if not submission.locker.has_access(request.user):
-        raise PermissionDenied
     oldest = Submission.objects.oldest(submission.locker)
     if not oldest:
         oldest = submission
@@ -727,14 +720,13 @@ def submission_view(request, locker_id, submission_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD", "POST"])
 def submissions_list_view(request, locker_id):
     """
     Returns a list of submissions for the specified locker.
     """
     locker = get_object_or_404(Locker, pk=locker_id)
-    if not locker.has_access(request.user):
-        raise PermissionDenied
     if request.method == 'POST':
         # Save the selected fields to include in the submissions list
         locker.fields_selected(request.POST)
@@ -820,11 +812,10 @@ def users_list(request, **kwargs):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def workflow_modify(request, locker_id, submission_id):
     submission = get_object_or_404(Submission, pk=submission_id)
-    if not submission.locker.has_access(request.user):
-        raise PermissionDenied
     new_state = request.POST.get('workflow-state', '')
     if new_state in submission.locker.workflow_states():
         submission.workflow_state = new_state
