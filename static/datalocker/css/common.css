@@ -488,18 +488,22 @@ header { margin-bottom: 20px; }
 \*------------------------------------*/
 
 .record-actions {
-  text-align: right;
+    text-align: right;
 }
 
 .record-name {
-  width: 600px;
+    width: 600px;
+}
+
+.table-hover > tbody > tr:hover {
+    background-color: #ddd;
 }
 
 .url {
-  display: block;
-  margin-left: 1em;
-  font-size: 13px;
-  opacity: 0.75;
+    display: block;
+    margin-left: 1em;
+    font-size: 13px;
+    opacity: 0.75;
 }
 
 
