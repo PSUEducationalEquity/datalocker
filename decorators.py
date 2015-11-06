@@ -49,10 +49,13 @@ def never_cache(view_func):
 
 def prevent_url_guessing(view_func):
     """
-    Decorator ...
+    Decorator ensures that the current user has access to the locker/submission
+    they are trying to access. Additionally when a locker and submission are
+    specified it ensures that the submission is contained in the specified locker.
     """
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view_func(request, *args, **kwargs):
+        submission = None
         if 'submission_id' in kwargs:
             submission = get_object_or_404(Submission, pk=kwargs['submission_id'])
             locker = submission.locker
