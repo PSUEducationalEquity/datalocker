@@ -83,14 +83,6 @@ def _get_public_user_dict(user):
 ## Views
 ##
 
-@never_cache
-def bad_request_view(request):
-    """
-    Displays a custom bad request (400) page
-    """
-    return render(request, 'datalocker/400.html', {})
-
-
 @login_required
 @never_cache
 @prevent_url_guessing
@@ -212,14 +204,6 @@ def comments_list(request, locker_id, submission_id):
         'datalocker:submission_view',
         kwargs={'locker_id': locker_id, 'submission_id': submission_id}
         ))
-
-
-@never_cache
-def forbidden_view(request):
-    """
-    Displays a custom forbidden (403) page
-    """
-    return render(request, 'datalocker/403.html', {})
 
 
 @csrf_exempt
@@ -572,14 +556,6 @@ def modify_locker(request, **kwargs):
 
 
 @never_cache
-def not_found_view(request):
-    """
-    Displays a custom not found (404) page
-    """
-    return render(request, 'datalocker/404.html', {})
-
-
-@never_cache
 def password_change(request,
                     template_name='registration/password_change_form.html',
                     post_change_redirect=None,
@@ -605,14 +581,6 @@ def password_change_done(request,
         current_app,
         extra_context
         )
-
-
-@never_cache
-def server_error_view(request):
-    """
-    Displays a custom internal server error (500) page
-    """
-    return render(request, 'datalocker/500.html', {})
 
 
 @login_required()
@@ -788,6 +756,42 @@ def submissions_list_view(request, locker_id):
         context['linkable_indices'] = [0,]
 
     return render(request, 'datalocker/submissions_list.html', context)
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_bad_request_view(request):
+    """
+    Displays a custom bad request (400) page
+    """
+    return render(request, '400.html', {})
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_forbidden_view(request):
+    """
+    Displays a custom forbidden (403) page
+    """
+    return render(request, '403.html', {})
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_not_found_view(request):
+    """
+    Displays a custom not found (404) page
+    """
+    return render(request, '404.html', {})
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_server_error_view(request):
+    """
+    Displays a custom internal server error (500) page
+    """
+    return render(request, '500.html', {})
 
 
 @login_required()
