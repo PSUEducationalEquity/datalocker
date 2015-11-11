@@ -17,13 +17,13 @@
      */
     Submission.delete = function (id)
     {
-        var delete_url = $("#submission-list").data("delete-url");
+        var delete_url = $("#submission-list").attr("data-delete-url");
         Submission.deleteRequest = $.ajax({
             url: delete_url.replace("/0/", "/" + id + "/"),
             type: "post",
             data: {
                 id: id,
-                csrfmiddlewaretoken: $("#submission-list").data("csrf-token")
+                csrfmiddlewaretoken: $("#submission-list").attr("data-csrf-token")
             },
         }).done(function(response, textStatus, jqXHR) {
             $("#submission-list tr[data-id='" + response.id +"']").attr(
@@ -52,13 +52,13 @@
      */
     Submission.undelete = function (id)
     {
-        var delete_url = $("#submission-list").data("undelete-url");
+        var delete_url = $("#submission-list").attr("data-undelete-url");
         Submission.undeleteRequest = $.ajax({
             url: delete_url.replace("/0/", "/" + id + "/"),
             type: "post",
             data: {
                 id: id,
-                csrfmiddlewaretoken: $("#submission-list").data("csrf-token")
+                csrfmiddlewaretoken: $("#submission-list").attr("data-csrf-token")
             },
         }).done(function(response, textStatus, jqXHR) {
             $("#submission-list tr[data-id='" + response.id +"']").attr(
@@ -90,7 +90,7 @@
     Submission.update_purge_warning = function (id)
     {
         var $element = $("tr[data-id='" + id + "']");
-        var purge_timestamp = $element.data("purge-timestamp");
+        var purge_timestamp = $element.attr("data-purge-timestamp");
         $element.find("span.label").text(
             "Will be removed "
             + moment(purge_timestamp).fromNow() + "."
@@ -129,7 +129,7 @@ $(document).ready(function(id)
         }
 
         $("#submission-list tr.is-deleted").each(function() {
-            Submission.update_purge_warning($(this).data("id"));
+            Submission.update_purge_warning($(this).attr("data-id"));
         });
     });
     $("[name='maintenance-mode-toggle']").change();
@@ -138,7 +138,7 @@ $(document).ready(function(id)
     // Handle the delete submission buttons
     $("[role='delete-submission']").on("click", function (event) {
         event.preventDefault();
-        var id = $(this).closest("tr").data("id");
+        var id = $(this).closest("tr").attr("data-id");
         Submission.delete(id);
     });
 
@@ -146,7 +146,7 @@ $(document).ready(function(id)
     // Handle the undelete submission buttons
     $("[role='undelete-submission']").on("click", function (event) {
         event.preventDefault();
-        var id = $(this).closest("tr").data("id");
+        var id = $(this).closest("tr").attr("data-id");
         Submission.undelete(id);
     });
 });

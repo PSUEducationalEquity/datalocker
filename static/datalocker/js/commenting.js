@@ -33,9 +33,9 @@
             data: form_data,
         }).done(function(response, textStatus, jqXHR) {
             var $discussion_tree = $(".panel-discussion .discussion-tree")
-            if (response.parent_comment) {
+            if (response.parent) {
                 var $parent = $discussion_tree.find(
-                    "li[data-id='" + response.parent_comment + "']"
+                    "li[data-id='" + response.parent + "']"
                 );
                 $parent.find(".discussion-replies").prepend(
                     Discussion._build_entry(response)
@@ -130,7 +130,7 @@
             $entry.find("[role='discussion-edit']").remove();
             $entry.find(".action-separator").remove();
         }
-        if (comment.parent_comment) {
+        if (comment.parent) {
             $entry.find(".discussion-replies").remove();
         }
         return $entry;
@@ -159,7 +159,7 @@
      */
     Discussion.display = function ()
     {
-        var url = $(".panel-discussion").data("url");
+        var url = $(".panel-discussion").attr("data-url");
         // submit the request (if none are pending)
         if  (!Discussion.dataRequest && url) {
             Discussion.dataRequest = $.ajax({
@@ -174,13 +174,13 @@
                 );
                 $discussion_tree.children("li").remove();
                 $.each(response.discussion, function (index, comment) {
-                    if (comment.parent_comment) {
-                        $discussion_tree.find(
-                            "li[data-id='" + comment.parent_comment + "'] .discussion-replies"
-                        ).append(Discussion._build_entry(comment))
-                    } else {
-                        $discussion_tree.append(Discussion._build_entry(comment));
+                    var $comment_parent = $discussion_tree;
+                    if (comment.parent) {
+                        $comment_parent = $discussion_tree.find(
+                            "li[data-id='" + comment.parent + "'] .discussion-replies"
+                        );
                     }
+                    $comment_parent.append(Discussion._build_entry(comment));
                 });
                 Discussion.dataRequest = null;
             }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -250,8 +250,7 @@
         var editing_time = $(".discussion-tree").attr('data-editing-time').split("|");
         var oldest_timestamp = moment().subtract(editing_time[0], editing_time[1]);
         $(".discussion-tree .discussion-timestamp").each(function (index, entry) {
-            var text = $(entry).next().text().substr(0, 40);
-            var timestamp = moment($(entry).data("timestamp"));
+            var timestamp = moment($(entry).attr("data-timestamp"));
             $(entry).html(timestamp.fromNow());
             if (timestamp < oldest_timestamp) {
                 var $actions = $(entry).closest("li").find(
@@ -287,7 +286,7 @@ $(document).ready(function() {
             // are we updating or adding?
             if ($(this).find("input[type='submit']").val() == "Update") {
                 // update the existing comment
-                Discussion.edit($(this).closest("li[data-id]").data("id"));
+                Discussion.edit($(this).closest("li[data-id]").attr("data-id"));
             } else {
                 // determine if there is a parent
                 var $replies_container = $(this).closest(".discussion-replies");
@@ -298,7 +297,7 @@ $(document).ready(function() {
                 }
 
                 // add the comment to the discussion
-                Discussion.add($textarea.val(), $parent.data("id"));
+                Discussion.add($textarea.val(), $parent.attr("data-id"));
             }
         }
     });
@@ -334,7 +333,7 @@ $(document).ready(function() {
         event.preventDefault();
         var $comment = $(this).closest("li");
         var $form = $(".panel-discussion form:first").clone();
-        $form.attr("action", $form.data("edit-url"));
+        $form.attr("action", $form.attr("data-edit-url"));
         $form.find("input[type='submit']").attr("value", "Update").after(
             $("<input />").addClass(
                 "btn btn-default btn-sm pull-right"

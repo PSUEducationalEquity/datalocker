@@ -7,13 +7,13 @@
 $(document).ready(function() {
     $("body").on("click", "[role='select-all']", function (event)
     {
-        var target = $(this).data("target");
+        var target = $(this).attr("data-target");
         $("#" + target + " input[type='checkbox']").prop(
         	"checked", $(this).prop("checked"));
     });
 
     $("[role='select-all']").each(function () {
-        var $target = $("#" + $(this).data("target"));
+        var $target = $("#" + $(this).attr("data-target"));
         var checked_count = $target.find("input[type='checkbox']:checked").length;
         var checkbox_count = $target.find("input[type='checkbox']").length;
         if (checkbox_count == checked_count) {

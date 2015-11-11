@@ -318,9 +318,9 @@ class Locker(models.Model):
     def has_access(self, user):
         """
         Returns a boolean indicating if the specified user has access to the
-        locker as either the owner or a shared user.
+        locker as either the owner, a shared user, or a super user.
         """
-        return self.is_owner(user) or self.is_user(user)
+        return self.is_owner(user) or self.is_user(user) or user.is_superuser
 
 
     def is_archived(self):
@@ -542,6 +542,7 @@ class Submission(models.Model):
         # submission timestamp back in manually
         result['timestamp'] = self.timestamp.isoformat()
         result['deleted'] = self.deleted.isoformat() if self.deleted else None
+        result['purge_date'] = self.purge_date
         return result
 
 
@@ -567,7 +568,7 @@ class Submission(models.Model):
         """
         Returns the submission object that was submitted immediately before
         this one. If there isn't an older submission, the current submission is
-        reutrned.
+        returned.
         """
         try:
             prevSubmission = Submission.objects.filter(
@@ -579,6 +580,18 @@ class Submission(models.Model):
             return self
         else:
             return prevSubmission
+
+
+    @property
+    def purge_date(self):
+        """
+        Returns the date that the submission should be purged from the system
+        """
+        if self.deleted is None:
+            return None
+        return self.deleted + datetime.timedelta(
+                days=settings.SUBMISSION_PURGE_DAYS
+                )
 
 
 

@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login as auth_login, \
@@ -11,6 +10,7 @@ from django.contrib.auth.views import login as auth_login, \
     password_change as auth_password_change, \
     password_change_done as auth_password_change_done
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMessage
 from django.core.urlresolvers import reverse
@@ -28,7 +28,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View
 
-from .decorators import never_cache, user_has_locker_access
+from .decorators import login_required, never_cache, prevent_url_guessing
 from .helpers import UserColors
 from .models import Comment, Locker, LockerManager, LockerSetting, \
     LockerQuerySet, Submission
@@ -80,46 +80,12 @@ def _get_public_user_dict(user):
 
 
 ##
-## Mixins
-##
-
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
-
-
-class NeverCacheMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(NeverCacheMixin, cls).as_view(**initkwargs)
-        return never_cache(view)
-
-
-class UserHasLockerAccessMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(UserHasLockerAccessMixin, cls).as_view(**initkwargs)
-        return user_has_locker_access(view)
-
-
-
-
-##
 ## Views
 ##
 
-@never_cache
-def bad_request_view(request):
-    """
-    Displays a custom bad request (400) page
-    """
-    return render(request, 'datalocker/400.html', {})
-
-
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def comment_add(request, locker_id, submission_id):
     """
@@ -165,6 +131,7 @@ def comment_add(request, locker_id, submission_id):
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def comment_modify(request, locker_id, submission_id):
     """
@@ -194,12 +161,16 @@ def comment_modify(request, locker_id, submission_id):
             messages.warning(request, error_msg)
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
-        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
+        kwargs={
+            'locker_id': comment.submission.locker.id,
+            'submission_id': comment.submission.id,
+            }
         ))
 
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD"])
 def comments_list(request, locker_id, submission_id):
     """
@@ -233,14 +204,6 @@ def comments_list(request, locker_id, submission_id):
         'datalocker:submission_view',
         kwargs={'locker_id': locker_id, 'submission_id': submission_id}
         ))
-
-
-@never_cache
-def forbidden_view(request):
-    """
-    Displays a custom forbidden (403) page
-    """
-    return render(request, 'datalocker/403.html', {})
 
 
 @csrf_exempt
@@ -346,6 +309,7 @@ def form_submission_view(request, **kwargs):
 
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_archive(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
@@ -388,94 +352,9 @@ def locker_list_view(request):
     return render(request, 'datalocker/index.html', context)
 
 
-class LockerSubmissionsListView(LoginRequiredMixin, NeverCacheMixin, UserHasLockerAccessMixin, generic.ListView):
-    template_name = 'datalocker/submissions_list.html'
-
-
-    def get_context_data(self, **kwargs):
-        """
-        Build the data that is made available to the template
-
-        context['data'] contains all the data and metadata for displaying
-        the list of submissions table.
-
-        Format:
-            [
-                [<list of table cell data>],
-                submission id,
-                deleted (True/False),
-                purged date
-            ]
-        """
-        context = super(LockerSubmissionsListView, self).get_context_data(**kwargs)
-        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        context['locker'] = locker
-        fields_list = locker.fields_all()
-        context['fields_list'] = fields_list
-        selected_fields = locker.fields_selected()
-        context['selected_fields'] = selected_fields
-        context['column_headings'] = ['Submitted date', ] + selected_fields
-        context['purge_days'] = settings.SUBMISSION_PURGE_DAYS
-        context['allow_maintenance_mode'] = self.request.user == locker.owner or self.request.user.is_superuser
-
-        # build the list of submissions to be displayed
-        context['data'] = []
-        for submission in locker.submissions.all().order_by('-timestamp'):
-            if submission.deleted is not None:
-                purge_date = submission.deleted + datetime.timedelta(
-                    days=settings.SUBMISSION_PURGE_DAYS
-                    )
-            else:
-                purge_date = None
-            entry = [
-                [submission.timestamp, ],
-                submission.id,
-                True if submission.deleted else False,
-                purge_date,
-                ]
-            submission_data = submission.data_dict()
-            for field in selected_fields:
-                try:
-                    entry[0].append(submission_data[field])
-                except KeyError:
-                    if field == 'Workflow state':
-                        entry[0].append(submission.workflow_state)
-            context['data'].append(entry)
-        # determine which indices in the cell data list will be linked
-        context['linkable_indices'] = []
-        try:
-            context['linkable_indices'].append(
-                context['column_headings'].index('Submitted date')
-            )
-        except ValueError:
-            pass
-        if not context['linkable_indices']:
-            context['linkable_indices'] = [0,]
-        return context
-
-
-    def get_queryset(self):
-        """ Return all submissions for selected locker """
-        return Submission.objects.filter(
-            locker_id=self.kwargs['locker_id']).order_by('-timestamp')
-
-
-    def post(self, *args, **kwargs):
-        """
-        Takes the checkboxes selected on the select fields dialog and saves
-        those as a selected-fields setting which is loaded then on every page
-        load thereafter.
-        """
-        locker = Locker.objects.get(pk=self.kwargs['locker_id'])
-        locker.fields_selected(self.request.POST)
-        return HttpResponseRedirect(reverse(
-            'datalocker:submissions_list',
-            kwargs={'locker_id': self.kwargs['locker_id']}
-            ))
-
-
 @login_required
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_unarchive(request, locker_id):
     locker = get_object_or_404(Locker, id=locker_id)
@@ -489,14 +368,15 @@ def locker_unarchive(request, locker_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_user_add(request, locker_id):
     """
     Adds the indicated user to the locker's list of users
     """
     if request.is_ajax():
-        user = get_object_or_404(User, email=request.POST.get('email', ''))
         locker =  get_object_or_404(Locker, id=locker_id)
+        user = get_object_or_404(User, email=request.POST.get('email', ''))
         if not user in locker.users.all():
             locker.users.add(user)
             locker.save()
@@ -527,19 +407,20 @@ def locker_user_add(request, locker_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def locker_user_delete(request, locker_id):
     """
     Removes the indicated user from the locker's list of users
     """
     if request.is_ajax():
+        locker =  get_object_or_404(Locker, id=locker_id)
         try:
             user = get_object_or_404(User, id=request.POST.get('id', ''))
         except ValueError:
             error_msg = "An invalid user was requested to be deleted."
             return HttpResponseBadRequest(error_msg)
         else:
-            locker =  get_object_or_404(Locker, id=locker_id)
             if user in locker.users.all():
                 locker.users.remove(user)
                 locker.save()
@@ -552,6 +433,7 @@ def locker_user_delete(request, locker_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD"])
 def locker_users(request, locker_id):
     if request.is_ajax():
@@ -596,6 +478,7 @@ def logout(request, next_page=None,
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def modify_locker(request, **kwargs):
     """
@@ -673,14 +556,6 @@ def modify_locker(request, **kwargs):
 
 
 @never_cache
-def not_found_view(request):
-    """
-    Displays a custom not found (404) page
-    """
-    return render(request, 'datalocker/404.html', {})
-
-
-@never_cache
 def password_change(request,
                     template_name='registration/password_change_form.html',
                     post_change_redirect=None,
@@ -708,16 +583,9 @@ def password_change_done(request,
         )
 
 
-@never_cache
-def server_error_view(request):
-    """
-    Displays a custom internal server error (500) page
-    """
-    return render(request, 'datalocker/500.html', {})
-
-
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def submission_delete(request, locker_id, submission_id):
     """
@@ -727,14 +595,11 @@ def submission_delete(request, locker_id, submission_id):
         submission = get_object_or_404(Submission, id=submission_id)
         submission.deleted = timezone.now()
         submission.save()
-        purge_timestamp = submission.deleted + datetime.timedelta(
-            days=settings.SUBMISSION_PURGE_DAYS
-            )
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
             'deleted': submission.deleted,
-            'purge_timestamp': purge_timestamp,
+            'purge_timestamp': submission.purge_date,
             })
     else:
         return HttpResponseRedirect(reverse(
@@ -745,6 +610,7 @@ def submission_delete(request, locker_id, submission_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def submission_undelete(request, locker_id, submission_id):
     """
@@ -767,6 +633,7 @@ def submission_undelete(request, locker_id, submission_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["GET", "HEAD"])
 def submission_view(request, locker_id, submission_id):
     """
@@ -786,14 +653,12 @@ def submission_view(request, locker_id, submission_id):
 
     # generate a message to the user if the submission is deleted
     if submission.deleted:
-        purge_date = submission.deleted
-        purge_date += datetime.timedelta(days=settings.SUBMISSION_PURGE_DAYS)
         messages.warning(
             request,
             "<strong>Heads up!</strong> This submission has been deleted " \
             "and <strong>will be permanently removed</strong> from the " \
             "locker <strong>%s</strong>." % (
-                naturaltime(purge_date)
+                naturaltime(submission.purge_date)
                 )
             )
     return render(request, 'datalocker/submission_view.html', {
@@ -823,6 +688,114 @@ def submission_view(request, locker_id, submission_id):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
+@require_http_methods(["GET", "HEAD", "POST"])
+def submissions_list_view(request, locker_id):
+    """
+    Returns a list of submissions for the specified locker.
+    """
+    locker = get_object_or_404(Locker, pk=locker_id)
+    if request.method == 'POST':
+        # Save the selected fields to include in the submissions list
+        locker.fields_selected(request.POST)
+        return HttpResponseRedirect(reverse(
+            'datalocker:submissions_list',
+            kwargs={'locker_id': locker_id}
+            ))
+
+    selected_fields = locker.fields_selected();
+    context = {
+        'allow_maintenance_mode': request.user == locker.owner or request.user.is_superuser,
+        'column_headings': ['Submitted date', ] + selected_fields,
+        'data': [],
+        'fields_list': locker.fields_all(),
+        'linkable_indices': [],
+        'locker': locker,
+        'purge_days': settings.SUBMISSION_PURGE_DAYS,
+        'selected_fields': selected_fields,
+        }
+
+    ##
+    # Build the data that is made available to the template
+    #
+    # context['data'] contains all the data and metadata for displaying
+    # the list of submissions table.
+    #
+    # Format:
+    #     [
+    #         [<list of table cell data>],
+    #         submission id,
+    #         deleted (True/False),
+    #         purged date
+    #     ]
+    ##
+    for submission in locker.submissions.all().order_by('-timestamp'):
+        entry_data = [submission.timestamp, ]
+        submission_data = submission.data_dict()
+        for field in selected_fields:
+            try:
+                entry_data.append(submission_data[field])
+            except KeyError:
+                if field == 'Workflow state':
+                    entry_data.append(submission.workflow_state)
+        context['data'].append([
+            entry_data,
+            submission.id,
+            True if submission.deleted else False,
+            submission.purge_date,
+            ])
+
+    # determine which indices in the cell data list will be linked
+    try:
+        context['linkable_indices'].append(
+            context['column_headings'].index('Submitted date')
+        )
+    except ValueError:
+        pass
+    if not context['linkable_indices']:
+        context['linkable_indices'] = [0,]
+
+    return render(request, 'datalocker/submissions_list.html', context)
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_bad_request_view(request):
+    """
+    Displays a custom bad request (400) page
+    """
+    return render(request, '400.html', {})
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_forbidden_view(request):
+    """
+    Displays a custom forbidden (403) page
+    """
+    return render(request, '403.html', {})
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_not_found_view(request):
+    """
+    Displays a custom not found (404) page
+    """
+    return render(request, '404.html', {})
+
+
+@never_cache
+@require_http_methods(["GET", "HEAD"])
+def testing_server_error_view(request):
+    """
+    Displays a custom internal server error (500) page
+    """
+    return render(request, '500.html', {})
+
+
+@login_required()
+@never_cache
 @require_http_methods(["GET", "HEAD"])
 def users_list(request, **kwargs):
     """
@@ -843,6 +816,7 @@ def users_list(request, **kwargs):
 
 @login_required()
 @never_cache
+@prevent_url_guessing
 @require_http_methods(["POST"])
 def workflow_modify(request, locker_id, submission_id):
     submission = get_object_or_404(Submission, pk=submission_id)
