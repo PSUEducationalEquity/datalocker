@@ -180,7 +180,7 @@ def comments_list(request, locker_id, submission_id):
     if submission.locker.discussion_enabled():
         if submission.locker.is_owner(request.user) or (
             submission.locker.is_user(request.user) and submission.locker.discussion_users_have_access()
-        ):
+        ) or request.user.is_superuser:
             if request.is_ajax():
                 color_helper = UserColors(request)
                 comments = []
