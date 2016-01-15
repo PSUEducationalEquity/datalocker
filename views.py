@@ -229,7 +229,7 @@ def form_submission_view(request, **kwargs):
         safe_values['owner'] = None
     try:
         locker = Locker.objects.filter(
-            form_identifier=safe_values['url'],
+            form_url=safe_values['url'],
             archive_timestamp=None,
             ).order_by('-pk')[0]
         created = False
