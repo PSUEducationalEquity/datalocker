@@ -200,10 +200,14 @@ def comments_list(request, locker_id, submission_id):
                     'editing_time_value': settings.COMMENT_EDIT_MAX,
                     'editing_time_units': 'minutes',
                     })
-    return HttpResponseRedirect(reverse(
-        'datalocker:submission_view',
-        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
-        ))
+    if request.is_ajax():
+        error_msg = "The user does not have permission to view the discussion."
+        return HttpResponseBadRequest(error_msg)
+    else:
+        return HttpResponseRedirect(reverse(
+            'datalocker:submission_view',
+            kwargs={'locker_id': locker_id, 'submission_id': submission_id}
+            ))
 
 
 @csrf_exempt
