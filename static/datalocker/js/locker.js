@@ -411,7 +411,7 @@ $(document).ready(function () {
         $("#dialog-edit-locker .typeahead").typeahead('val', '');
 
         // load the feature options
-        var settings = $(this).closest("tr").attr("data-settings");
+        var settings = JSON.parse($(this).closest("tr").attr("data-settings"));
 
         // set the new submissions option
         $("input[name='shared-users']").prop(

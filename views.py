@@ -180,7 +180,7 @@ def comments_list(request, locker_id, submission_id):
     if submission.locker.discussion_enabled():
         if submission.locker.is_owner(request.user) or (
             submission.locker.is_user(request.user) and submission.locker.discussion_users_have_access()
-        ):
+        ) or request.user.is_superuser:
             if request.is_ajax():
                 color_helper = UserColors(request)
                 comments = []
@@ -200,10 +200,14 @@ def comments_list(request, locker_id, submission_id):
                     'editing_time_value': settings.COMMENT_EDIT_MAX,
                     'editing_time_units': 'minutes',
                     })
-    return HttpResponseRedirect(reverse(
-        'datalocker:submission_view',
-        kwargs={'locker_id': locker_id, 'submission_id': submission_id}
-        ))
+    if request.is_ajax():
+        error_msg = "The user does not have permission to view the discussion."
+        return HttpResponseBadRequest(error_msg)
+    else:
+        return HttpResponseRedirect(reverse(
+            'datalocker:submission_view',
+            kwargs={'locker_id': locker_id, 'submission_id': submission_id}
+            ))
 
 
 @csrf_exempt
@@ -229,7 +233,7 @@ def form_submission_view(request, **kwargs):
         safe_values['owner'] = None
     try:
         locker = Locker.objects.filter(
-            form_identifier=safe_values['url'],
+            form_url=safe_values['url'],
             archive_timestamp=None,
             ).order_by('-pk')[0]
         created = False
