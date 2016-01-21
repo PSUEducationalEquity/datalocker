@@ -459,6 +459,10 @@ header { margin-bottom: 20px; }
     padding-left: 1em;
 }
 
+/*ol,ul*/ .key-value-pair .value table tbody tr {
+    font-weight: normal;
+}
+
 
 
 

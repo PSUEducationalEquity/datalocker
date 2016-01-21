@@ -67,6 +67,29 @@
                       </li>
                     {% endfor %}
                   </ul>
+                {% elif item.type == "table" %}
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                      {% if item.headings %}
+                        <thead>
+                          <tr>
+                            {% for id, title in item.headings.items %}
+                              <th>{{ title }}</th>
+                            {% endfor %}
+                          </tr>
+                        </thead>
+                      {% endif %}
+                      <tbody>
+                        {% for row in item.value %}
+                          <tr>
+                            {% for column_id, value in row.items %}
+                              <td>{{ value }}</td>
+                            {% endfor %}
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
                 {% else %}
                   {{ item.value|linebreaks }}
                 {% endif %}
