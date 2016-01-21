@@ -73,7 +73,7 @@
                       {% if item.headings %}
                         <thead>
                           <tr>
-                            {% for id, title in item.headings %}
+                            {% for id, title in item.headings.items %}
                               <th>{{ title }}</th>
                             {% endfor %}
                           </tr>
