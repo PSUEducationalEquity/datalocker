@@ -523,20 +523,23 @@ class Submission(models.Model):
             for key, value in data.iteritems():
                 headings = []
                 if isinstance(value, list):
-                    if isinstance(value[0], dict) or isinstance(value[0], OrderedDict):
-                        # list of dicts which is likely a Data Grid
-                        value_type = 'table'
-                        rows = []
-                        for rowdict in value:
-                            if rowdict.get('orderindex_', '') == 'headings':
-                                del rowdict['orderindex_']
-                                headings = rowdict
-                            else:
-                                if 'orderindex_' in rowdict.keys():
+                    try:
+                        if isinstance(value[0], dict) or isinstance(value[0], OrderedDict):
+                            # list of dicts which is likely a Data Grid
+                            value_type = 'table'
+                            rows = []
+                            for rowdict in value:
+                                if rowdict.get('orderindex_', '') == 'headings':
                                     del rowdict['orderindex_']
-                                rows.append(rowdict)
-                        value = rows
-                    else:
+                                    headings = rowdict
+                                else:
+                                    if 'orderindex_' in rowdict.keys():
+                                        del rowdict['orderindex_']
+                                    rows.append(rowdict)
+                            value = rows
+                        else:
+                            value_type = 'list'
+                    except IndexError:
                         value_type = 'list'
                 elif isinstance(value, dict) or isinstance(value, OrderedDict):
                     value_type = 'dict'
