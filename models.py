@@ -1,18 +1,20 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
-from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.forms.models import model_to_dict
-from django.http import request
 from django.utils import timezone
 from django.utils.text import slugify
-from django.db.models.query import QuerySet
 
 from collections import OrderedDict
 
-import datetime, json
+import datetime
+import json
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 ##
@@ -21,25 +23,20 @@ import datetime, json
 
 class LockerQuerySet(models.query.QuerySet):
     def active(self):
-        """
-        If the locker  doesn't have an archived timestamp,
-        the locker is active
-        """
-        return self.filter(archive_timestamp = None)
+        """Filter only Lockers without an archived timestamp"""
+        return self.filter(archive_timestamp=None)
 
 
     def archived(self):
-        """
-        If the locker does have an archived timestamp,
-        then the locker is archived
-        """
-        return self.filter(archive_timestamp__isnull = False)
+        """Filter only Lockers with an archived timestamp"""
+        return self.filter(archive_timestamp__isnull=False)
 
 
     def has_access(self, user):
-        """
-        Filters the lockers such that the user specified must be the owner or
-        user of the locker to be included
+        """Filter only lockers that the user has access to
+
+        `user` must be the owner or a shared user of the locker to be
+        included in the results.
         """
         return Locker.objects.filter(Q(owner=user) | Q(users=user)).distinct()
 
@@ -52,7 +49,7 @@ class LockerManager(models.Manager):
 
     def __getattr__(self, attr, *args):
         try:
-            return getattr(self.__class__,attr, *args)
+            return getattr(self.__class__, attr, *args)
         except AttributeError:
             return getattr(self.get_query_set(), attr, *args)
 
@@ -61,25 +58,17 @@ class LockerManager(models.Manager):
 
 class SubmissionManager(models.Manager):
     def oldest(self, locker):
-        """
-        Returns the oldest submission based on the timestamp
-        """
+        """Returns the oldest submission based on the timestamp"""
         try:
-            return self.filter(
-                locker=locker, deleted=None
-                ).earliest('timestamp')
+            return self.filter(locker=locker, deleted=None).earliest('timestamp')  # NOQA
         except Submission.DoesNotExist:
             return None
 
 
     def newest(self, locker):
-        """
-        Returns the newest submission based on the timestamp
-        """
+        """Returns the newest submission based on the timestamp"""
         try:
-            return self.filter(
-                locker=locker, deleted=None
-                ).latest('timestamp')
+            return self.filter(locker=locker, deleted=None).latest('timestamp')
         except Submission.DoesNotExist:
             return None
 
@@ -95,16 +84,17 @@ class Locker(models.Model):
         max_length=255,
         default='',
         blank=True,
-        )
+    )
     form_identifier = models.CharField(
         max_length=255,
         default='',
         blank=True,
-        )
+    )
     name = models.CharField(
         max_length=255,
         default='',
-        blank=True,)
+        blank=True,
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='lockers_owned',
@@ -112,17 +102,17 @@ class Locker(models.Model):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        )
+    )
     users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='shared_lockers',
         blank=True,
-        )
+    )
     create_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
-        )
+    )
     archive_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
@@ -130,7 +120,7 @@ class Locker(models.Model):
         default=None,
         blank=True,
         null=True,
-        )
+    )
     objects = LockerManager()
 
 
@@ -139,19 +129,23 @@ class Locker(models.Model):
 
 
     def discussion_enabled(self, enable=None):
-        """
-        Gets or sets the discussion enabled setting on the locker.
+        """Get or set whether discussions are enabled for the locker
 
         Calling it with enable=None will return the current setting value
         as a boolean.
         Passing it a boolean value, will set the value.
+        Arguments:
+            enable {bool} -- If True, allows discussions on the locker
+                             submissions. If False, prevents discussions on the
+                             locker submissions. (Default: {None} which returns
+                             the current setting)
         """
         setting, created = self._get_or_create_setting(
             category='discussion',
             identifier='enabled',
             setting='Indicates if discussion is enabled or not',
             value=False
-            )
+        )
         if enable is None:
             return True if setting.value == 'True' else False
         elif enable in (True, False):
@@ -160,20 +154,20 @@ class Locker(models.Model):
 
 
     def discussion_users_have_access(self, enable=None):
-        """
-        Gets or sets the discussion setting on the locker indicating if shared
-        users have access to the discussion.
+        """Get or set whether shared users have access to discussions
 
-        Calling it with enable=None will return the current setting value
-        as a boolean.
-        Passing it a boolean value, will set the value.
+        Arguments:
+            enable {bool} -- If True, allows shared users to have access to
+                             discussions. If False, prevents shared users from
+                             having access to discussions. (Default: {None}
+                             which returns the current setting)
         """
         setting, created = self._get_or_create_setting(
             category='discussion',
             identifier='users-have-access',
             setting='Indicates if users have access to discussion',
             value=False
-            )
+        )
         if enable is None:
             return True if setting.value == 'True' else False
         elif enable in (True, False):
@@ -182,16 +176,13 @@ class Locker(models.Model):
 
 
     def fields_all(self):
-        """
-        Returns a list of all the fields that appear in any of the
-        form submissions
-        """
+        """List of all the fields that appear in any of the submissions"""
         all_fields_setting, created = self._get_or_create_setting(
             category='fields-list',
             identifier='all-fields',
             setting='List of all fields',
             value=json.dumps([])
-            )
+        )
         all_fields = json.loads(all_fields_setting.value)
         is_dirty = False
 
@@ -214,7 +205,7 @@ class Locker(models.Model):
             identifier='last-updated',
             setting='Date/time all fields list last updated',
             value=timezone.now()
-            )
+        )
         if created:
             submissions = self.submissions.all()
         else:
@@ -223,7 +214,7 @@ class Locker(models.Model):
         for submission in submissions:
             fields = submission.data_dict().keys()
             for field in fields:
-                if not field in all_fields:
+                if field not in all_fields:
                     all_fields.append(field)
                     is_dirty = True
 
@@ -237,8 +228,7 @@ class Locker(models.Model):
 
 
     def fields_selected(self, fields=None):
-        """
-        Gets/sets the list of fields to display for a submissions list
+        """Gets/sets the list of fields to display for a submissions list
 
         If `fields` is None:
 
@@ -248,17 +238,20 @@ class Locker(models.Model):
         If `fields` is specified:
 
             Validates and saves the list of selected fields to display.
-            Validation involves ensuring there is a match between each specified
-            field and the list of all fields possible for this locker.
+            Validation involves ensuring there is a match between each
+            specified field and the list of all fields possible for this
+            locker.
 
-            `fields` is a list of field names or slugified field names.
+        Arguments:
+            fields {list} -- List of field names or slugified field names to
+                             be shown in the tabular view
         """
         setting, created = self._get_or_create_setting(
             category='fields-list',
             identifier='selected-fields',
             setting='User-defined list of fields to display in tabular view',
             value=json.dumps([])
-            )
+        )
         if fields is None:
             return json.loads(setting.value)
         else:
@@ -271,14 +264,20 @@ class Locker(models.Model):
 
 
     def _get_or_create_setting(self, category, identifier, setting, value):
-        """
-        Gets or creates a setting from the current object's `settings` field.
+        """Gets or creates a setting for the locker
+
+        Arguments:
+            category {str} -- Category for grouping the setting
+            identifier {str} -- Identifier for the setting
+            setting {str} -- Friendly name of the setting being retrieved
+                             or created
+            value {str} -- Value to use if the setting is created
         """
         try:
             setting = self.settings.get(
                 category=category,
                 identifier=identifier
-                )
+            )
         except LockerSetting.DoesNotExist:
             setting = LockerSetting(
                 category=category,
@@ -286,7 +285,7 @@ class Locker(models.Model):
                 locker=self,
                 setting=setting,
                 value=value
-                )
+            )
             setting.save()
             self.settings.add(setting)
             self.save()
@@ -296,9 +295,7 @@ class Locker(models.Model):
 
 
     def get_settings(self):
-        """
-        Returns a dictionary of all the locker's settings
-        """
+        """Returns a dictionary of all the locker's settings"""
         settings_dict = {}
         for setting in self.settings.all():
             key = "%s|%s" % (setting.category, setting.identifier)
@@ -316,33 +313,43 @@ class Locker(models.Model):
 
 
     def has_access(self, user):
-        """
-        Returns a boolean indicating if the specified user has access to the
-        locker as either the owner, a shared user, or a super user.
+        """Returns True if user has access to the locker
+
+        Arguments:
+            user {User} -- User instance to check
+
+        Returns:
+            {bool} -- True if the user has access to the locker as either the
+                      owner, a shared user, or a super user.
         """
         return self.is_owner(user) or self.is_user(user) or user.is_superuser
 
 
     def is_archived(self):
-        """
-        Returns a boolean indicating if the locker has been archived
-        """
-        if archive_timestamp is None:
-            return False
-        return True
+        """Returns True if the locker has been archived"""
+        return self.archive_timestamp is not None
 
 
     def is_owner(self, user):
-        """
-        Returns a boolean indicating if the specified user is the locker owner
+        """Returns True if user is the locker owner
+
+        Arguments:
+            user {User} -- User instance to check
+
+        Returns:
+            {bool} -- True if the user is the locker owner
         """
         return user == self.owner
 
 
     def is_user(self, user):
-        """
-        Returns a boolean indicating if the specified user has shared access
-        to the locker
+        """Returns True if user has shared access to the locker
+
+        Arguments:
+            user {User} -- User instance to check
+
+        Returns:
+            {bool} -- True if the user has shared access to the locker
         """
         return user in self.users.all()
 
@@ -359,10 +366,10 @@ class Locker(models.Model):
         setting, created = self._get_or_create_setting(
             category='submission-notifications',
             identifier='notify-shared-users',
-            setting='Indicates if shared users should receive an ' \
-                'email when a new submission is received',
+            setting='Indicates if shared users should receive an '
+                    'email when a new submission is received',
             value=False
-            )
+        )
         if enable is None:
             return True if setting.value == 'True' else False
         elif enable in (True, False):
@@ -374,13 +381,12 @@ class Locker(models.Model):
         states = self.workflow_states()
         try:
             return states[0]
-        except:
+        except IndexError:
             return ''
 
 
     def workflow_enabled(self, enable=None):
-        """
-        Gets or sets the workflow enabled setting on the locker.
+        """Gets or sets the workflow enabled setting on the locker.
 
         Calling it with enable=None will return the current setting value
         as a boolean.
@@ -391,7 +397,7 @@ class Locker(models.Model):
             identifier='enabled',
             setting='Indicates if workflow is enabled or not',
             value=False
-            )
+        )
         if enable is None:
             return True if setting.value == 'True' else False
         elif enable in (True, False):
@@ -401,7 +407,7 @@ class Locker(models.Model):
                 # remove the workflow state from the selected fields list
                 fields = self.fields_selected()
                 try:
-                    fields.remove("Workflow state")
+                    fields.remove('Workflow state')
                 except ValueError:
                     pass
                 else:
@@ -422,13 +428,13 @@ class Locker(models.Model):
             identifier='states',
             setting='User-defined list of workflow states',
             value=json.dumps([])
-            )
+        )
         if states is None:
             return json.loads(setting.value)
         else:
             setting.value = json.dumps(
-                [ item.strip() for item in states.split("\n") if item.strip() ]
-                )
+                [item.strip() for item in states.split('\n') if item.strip()]
+            )
             setting.save()
 
 
@@ -446,7 +452,7 @@ class Locker(models.Model):
             identifier='users-can-edit',
             setting='Indicates if users can change the workflow state',
             value=False
-            )
+        )
         if enable is None:
             return True if setting.value == 'True' else False
         elif enable in (True, False):
@@ -459,19 +465,19 @@ class Locker(models.Model):
 class LockerSetting(models.Model):
     category = models.CharField(
         max_length=255,
-        )
+    )
     setting = models.CharField(
         max_length=255,
-        )
+    )
     identifier = models.SlugField()
     value = models.TextField(
         default='',
-        )
+    )
     locker = models.ForeignKey(
         Locker,
         related_name="settings",
         on_delete=models.CASCADE,
-        )
+    )
 
 
 
@@ -481,16 +487,16 @@ class Submission(models.Model):
         Locker,
         related_name="submissions",
         on_delete=models.CASCADE,
-        )
+    )
     timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
-        )
+    )
     data = models.TextField(
         default='',
         blank=True,
-        )
+    )
     deleted = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
@@ -498,12 +504,12 @@ class Submission(models.Model):
         default=None,
         blank=True,
         null=True,
-        )
+    )
     workflow_state = models.CharField(
         max_length=255,
         default='',
         blank=True,
-        )
+    )
     objects = SubmissionManager()
 
 
@@ -512,9 +518,7 @@ class Submission(models.Model):
 
 
     def data_dict(self, with_types=False):
-        """
-        Returns the data field as an ordered dictionary
-        """
+        """Returns the data field as an ordered dictionary"""
         try:
             data = json.loads(self.data, object_pairs_hook=OrderedDict)
         except ValueError:
@@ -524,12 +528,12 @@ class Submission(models.Model):
                 headings = []
                 if isinstance(value, list):
                     try:
-                        if isinstance(value[0], dict) or isinstance(value[0], OrderedDict):
+                        if isinstance(value[0], dict) or isinstance(value[0], OrderedDict):  # NOQA
                             # list of dicts which is likely a Data Grid
                             value_type = 'table'
                             rows = []
                             for rowdict in value:
-                                if rowdict.get('orderindex_', '') == 'headings':
+                                if rowdict.get('orderindex_', '') == 'headings':  # NOQA
                                     del rowdict['orderindex_']
                                     headings = rowdict
                                 else:
@@ -549,14 +553,12 @@ class Submission(models.Model):
                     'value': value,
                     'type': value_type,
                     'headings': headings,
-                    }
+                }
         return data
 
 
     def to_dict(self):
-        """
-        Returns the entire object as a Python dictionary
-        """
+        """Returns the entire object as a Python dictionary"""
         result = model_to_dict(self)
         result['data'] = self.data_dict()
         # model_to_dict skips fields that are not editable and fields that have
@@ -579,7 +581,7 @@ class Submission(models.Model):
                 locker=self.locker,
                 timestamp__gt=self.timestamp,
                 deleted=None
-                ).order_by('timestamp')[0]
+            ).order_by('timestamp')[0]
         except IndexError:
             return self
         else:
@@ -597,7 +599,7 @@ class Submission(models.Model):
                 locker=self.locker,
                 timestamp__lt=self.timestamp,
                 deleted=None
-                ).order_by('-timestamp')[0]
+            ).order_by('-timestamp')[0]
         except IndexError:
             return self
         else:
@@ -606,14 +608,10 @@ class Submission(models.Model):
 
     @property
     def purge_date(self):
-        """
-        Returns the date that the submission should be purged from the system
-        """
+        """Returns the date that the submission should be deleted"""
         if self.deleted is None:
             return None
-        return self.deleted + datetime.timedelta(
-                days=settings.SUBMISSION_PURGE_DAYS
-                )
+        return self.deleted + datetime.timedelta(days=settings.SUBMISSION_PURGE_DAYS)  # NOQA
 
 
 
@@ -623,28 +621,28 @@ class Comment(models.Model):
         Submission,
         related_name="comments",
         on_delete=models.CASCADE,
-        )
+    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="comments",
         on_delete=models.PROTECT,
-        )
+    )
     timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
-        )
+    )
     comment = models.TextField(
         default='',
         blank=True,
-        )
+    )
     parent = models.ForeignKey(
         'self',
         related_name="children",
         default=None,
         blank=True,
         null=True,
-        )
+    )
 
 
     def __str__(self):
@@ -652,7 +650,7 @@ class Comment(models.Model):
             self.submission.timestamp,
             self.submission.locker,
             self.user
-            )
+        )
 
 
     @property
@@ -662,14 +660,12 @@ class Comment(models.Model):
         COMMENT_EDIT_MAX time till now.
         """
         oldest_timestamp = timezone.now()
-        oldest_timestamp -= datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)
+        oldest_timestamp -= datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)  # NOQA
         return True if (self.timestamp > oldest_timestamp) else False
 
 
     def to_dict(self):
-        """
-        Returns the entire object as a Python dictionary
-        """
+        """Returns the entire object as a Python dictionary"""
         result = model_to_dict(self)
         result['editable'] = self.is_editable
         # model_to_dict skips fields that are not editable and fields that have
@@ -682,5 +678,5 @@ class Comment(models.Model):
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
             'email': self.user.email,
-            }
+        }
         return result
