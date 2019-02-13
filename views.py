@@ -5,35 +5,37 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
-from django.contrib.auth.views import login as auth_login, \
-    logout as auth_logout, \
-    password_change as auth_password_change, \
+from django.contrib.auth.views import (
+    login as auth_login,
+    logout as auth_logout,
+    password_change as auth_password_change,
     password_change_done as auth_password_change_done
+)
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
-from django.core.mail.message import EmailMessage
+from django.core.mail import send_mail, BadHeaderError
 from django.core.urlresolvers import reverse
-from django.db.models.query import QuerySet
 from django.db.models import Max
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseBadRequest, \
-    HttpResponseNotFound, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response, get_object_or_404
-from django.template.loader import get_template
-from django.template import Context
+from django.http import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+    JsonResponse,
+)
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.views.generic import View
 
 from .decorators import login_required, never_cache, prevent_url_guessing
 from .helpers import UserColors
-from .models import Comment, Locker, LockerManager, LockerSetting, \
-    LockerQuerySet, Submission
+from .models import (
+    Comment,
+    Locker,
+    Submission,
+)
 
-import datetime, json, logging, requests
+import logging
 
 
 logger = logging.getLogger(__name__)
