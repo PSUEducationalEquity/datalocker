@@ -1,6 +1,8 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
 from django.conf import settings
+from django.core.mail import send_mail, BadHeaderError
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -8,6 +10,8 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from collections import OrderedDict
+
+from .helpers import _get_notification_from_address
 
 import datetime
 import json
@@ -40,8 +44,126 @@ class LockerQuerySet(models.query.QuerySet):
 
 
 class LockerManager(models.Manager):
+    def add_submission(self, values, request=None, locker=None):
+        """Add a submission to the appropriate locker
+
+        [description]
+
+        Arguments:
+            values {dict} -- Python dictionary that includes the following:
+                identifier {str} -- unique form identifier name (default: {''})
+                name {str} -- name of the locker (default: {'New Locker'})
+                url {str} -- URL where the submission came from (default: {''})
+                owner {str} -- name of the person who "owns" the form making
+                               the submission which is used to determine the
+                               owner of the Locker if it is created
+                               (default: {''})
+                data {str} -- string of JSON-encoded data that is the
+                              submission to save (default: {''})
+
+        Keyword Arguments:
+            request {obj} -- Django HTTP Request object instance
+                             (default: {None})
+            locker {Locker} -- Instance of Locker to save the submission to.
+                               Will be looked up or created if not specifed.
+                               (default: {None})
+        """
+        def _exists(attr):
+            try:
+                value = locker[attr]
+            except KeyError:
+                return False
+            if value.strip() == '':
+                return False
+            return True
+
+        created = False
+        if locker is not None:
+            values['owner'] = locker.owner
+            if not _exists('identifier'):
+                values['identifier'] = locker.form_identifier
+            if not _exists('name'):
+                values['name'] = locker.name
+            if not _exists('url'):
+                values['url'] = locker.form_url
+        else:
+            try:
+                locker = self.filter(
+                    form_url=values['url'],
+                    archive_timestamp=None,
+                ).order_by('-pk')[0]
+            except (Locker.DoesNotExist, IndexError):
+                locker = self.create(
+                    form_identifier=values['identifier'],
+                    name=values['name'],
+                    form_url=values['url'],
+                    owner=values['owner'],
+                )
+                created = True
+            else:
+                if locker.owner:
+                    values['owner'] = locker.owner
+        if locker.workflow_enabled:
+            workflow_state = locker.workflow_default_state()
+        else:
+            workflow_state = ''
+        submission = Submission.objects.create(
+            locker=locker,
+            workflow_state=workflow_state,
+            data=values['data'],
+        )
+        logger.info('New submission ({}) from {} saved to {} locker ({})'.format(  # NOQA
+            submission.pk,
+            values['url'],
+            'new' if created else 'existing',
+            locker.pk
+        ))
+
+        submission_url = reverse(
+            'datalocker:submission_view',
+            kwargs={'locker_id': locker.id, 'submission_id': submission.id}
+        )
+        if request:
+            submission_url = request.build_absolute_uri(submission_url)
+        locker_url = reverse(
+            'datalocker:submissions_list',
+            kwargs={'locker_id': locker.id}
+        )
+        if request:
+            locker_url = request.build_absolute_uri(locker_url)
+        notify_addresses = []
+        if not values['owner']:
+            logger.warning('New submission saved to orphaned locker: '
+                           '{}'.format(submission_url))
+        else:
+            notify_addresses.append(values['owner'].email)
+        if locker.shared_users_notification():
+            for user in locker.users.all():
+                notify_addresses.append(user.email)
+        if notify_addresses:
+            from_addr = _get_notification_from_address('new submission')
+            if from_addr:
+                subject = '{} - new submission'.format(values['name'])
+                message = 'A new form submission was saved to the Data ' \
+                          'Locker. The name of the locker and links to view ' \
+                          'the submission are provided below.\n\n' \
+                          'Locker: {}\n\n' \
+                          'View submission: {}\n' \
+                          'View all submissions: {}\n'.format(
+                              values['name'],
+                              submission_url,
+                              locker_url,
+                          )
+                try:
+                    for to_email in notify_addresses:
+                        send_mail(subject, message, from_addr, [to_email])
+                except (BadHeaderError):
+                    logger.exception('New submission email to the locker owner failed')  # NOQA
+
+
     def get_query_set(self):
         return LockerQuerySet(self.model, using=self._db)
+
 
     def __getattr__(self, attr, *args):
         try:
