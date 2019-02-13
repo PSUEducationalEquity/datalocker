@@ -28,7 +28,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .decorators import login_required, never_cache, prevent_url_guessing
-from .helpers import UserColors
+from .helpers import _get_notification_from_address, UserColors
 from .models import (
     Comment,
     Locker,
@@ -44,27 +44,6 @@ logger = logging.getLogger(__name__)
 ##
 ## Helper Functions
 ##
-
-def _get_notification_from_address(email_purpose):
-    """
-    Gets the from address for notification emails from settings.py. If the
-    setting does not exist or is blank, it logs the error and uses
-    `email_purpose` to explain what email was trying to be sent.
-    """
-    from_addr = ''
-    try:
-        from_addr = settings.NOTIFICATIONS_FROM
-    except:
-        logger.warning("The '%s' email was not sent because " \
-            "NOTIFICATIONS_FROM was not defined in settings_local.py or " \
-            "settings.py" % email_purpose)
-    else:
-        if from_addr == '':
-            logger.warning("The '%s' email was not sent because " \
-                "NOTIFICATIONS_FROM in settings_local.py or settings.py " \
-                "is blank" % email_purpose)
-    return from_addr
-
 
 def _get_public_user_dict(user):
     """

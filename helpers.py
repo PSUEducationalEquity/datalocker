@@ -2,14 +2,36 @@ from django.conf import settings
 
 from random import randint
 
-import logging, os
+import logging
+import os
 
 
-CSS_FILE = os.path.join(settings.STATIC_ROOT, 'datalocker', 'css', 'user_colors.css')
+CSS_FILE = os.path.join(settings.STATIC_ROOT, 'datalocker', 'css', 'user_colors.css')  # NOQA
 COLOR_HELPER_AVAILABLE_COLORS = 'user_colors_helper_available_colors'
 COLOR_HELPER_ASSIGNMENTS = 'user_colors_helper_color_assignments'
 
 logger = logging.getLogger(__name__)
+
+
+def _get_notification_from_address(email_purpose):
+    """
+    Gets the from address for notification emails from settings.py. If the
+    setting does not exist or is blank, it logs the error and uses
+    `email_purpose` to explain what email was trying to be sent.
+    """
+    from_addr = ''
+    try:
+        from_addr = settings.NOTIFICATIONS_FROM
+    except AttributeError:
+        logger.warning("The '{}' email was not sent because "
+                       'NOTIFICATIONS_FROM was not defined in '
+                       'settings.py'.format(email_purpose))
+    else:
+        if from_addr == '':
+            logger.warning("The '{}' email was not sent because "
+                           'NOTIFICATIONS_FROM in settings.py '
+                           'is blank'.format(email_purpose))
+    return from_addr
 
 
 class UserColors():
