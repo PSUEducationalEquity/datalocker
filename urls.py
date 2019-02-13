@@ -48,6 +48,10 @@ urlpatterns = patterns('',
         views.locker_unarchive,
         name='locker_unarchive'
         ),
+    url(r'^(?P<locker_id>[0-9]+)/submissions/add$',
+        views.submission_add,
+        name='submission_add'
+        ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/delete$',
         views.submission_delete,
         name='submission_delete'

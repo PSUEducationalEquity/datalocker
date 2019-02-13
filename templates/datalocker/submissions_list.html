@@ -25,15 +25,25 @@
 {% block content %}
   <div class="container-fluid">
     {% if allow_maintenance_mode %}
-      <div class="switch-toggle">
-        <input type="checkbox"
-               name="maintenance-mode-toggle"
-               data-size="mini"
-               data-toggle="toggle"
-               data-onstyle="success"
-               data-offstyle="danger"
-               data-on="Done editing"
-               data-off="Edit submissions" />
+      <div class="pull-right">
+        {% if 2 %}
+          <button class="btn btn-xs btn-primary js-submission-add"
+                  data-target="#dialog-submission-manual"
+                  data-toggle="modal"
+                  title="Manually add a submission to the locker"
+                  >Add submission</button>
+          &nbsp;
+        {% endif %}
+        <div class="switch-toggle">
+          <input type="checkbox"
+                 name="maintenance-mode-toggle"
+                 data-size="mini"
+                 data-toggle="toggle"
+                 data-onstyle="success"
+                 data-offstyle="danger"
+                 data-on="Done editing"
+                 data-off="Edit submissions" />
+        </div>
       </div>
     {% endif %}
     <h1>{{ locker.name }}</h1>
@@ -168,10 +178,49 @@
       </div>
     </div>
   </div>
+
+
+{# Modal for adding a manual submission #}
+  <div aria-hidden="true"
+       aria-labelledby="dialog-submission-manual-title"
+       class="modal fade"
+       id="dialog-submission-manual"
+       role="dialog"
+       tabindex="-1"
+       >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{% url 'datalocker:submission_add' locker.id %}"
+              method="POST"
+              >
+          {% csrf_token %}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"
+                id="dialog-submission-manual-title"
+                >Manually add a submission to the locker</h4>
           </div>
-        </div>
-  </div>
-        </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="submission-json">Paste the submission data in JSON format</label>
+              <textarea class="form-control"
+                        id="submission-json"
+                        name="json"
+                        rows="15"
+                        ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-primary btn-sm pull-left"
+                   type="submit"
+                   value="Add"
+                   />
+            <input class="btn btn-default btn-sm pull-left"
+                   data-dismiss="modal"
+                   type="button"
+                   value="Cancel"
+                   />
+          </div>
         </form>
       </div>
     </div>

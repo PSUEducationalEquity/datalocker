@@ -123,9 +123,9 @@ $(document).ready(function(id)
     $("[name='maintenance-mode-toggle']").on("change", function (event)
     {
         if ($("[name='maintenance-mode-toggle']").prop("checked")) {
-            $("body").addClass("js-show-deleted");
+            $("body").toggleClass("js-show-deleted", true);
         } else {
-            $("body").removeClass("js-show-deleted");
+            $("body").toggleClass("js-show-deleted", false);
         }
 
         $("#submission-list tr.is-deleted").each(function() {

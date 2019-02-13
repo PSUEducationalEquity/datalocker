@@ -491,6 +491,29 @@ def password_change_done(request,
         )
 
 
+@require_http_methods(['POST'])
+@login_required()
+@never_cache
+def submission_add(request, locker_id):
+    """Manually add a submission to a locker
+
+    Arguments:
+        request {obj} -- Django HTTP Request object instance
+        locker_id {int} -- Unique identifier for the Locker to add the
+                           submission to
+    """
+    locker = get_object_or_404(Locker, id=locker_id)
+    Locker.objects.add_submission(
+        {'data': request.POST.get('json', '').strip()},
+        request=request,
+        locker=locker
+    )
+    return HttpResponseRedirect(reverse(
+        'datalocker:submissions_list',
+        kwargs={'locker_id': locker_id}
+    ))
+
+
 @login_required()
 @never_cache
 @prevent_url_guessing
