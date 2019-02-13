@@ -17,10 +17,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-##
-# Model Managers
-##
-
 class LockerQuerySet(models.query.QuerySet):
     def active(self):
         """Filter only Lockers without an archived timestamp"""
@@ -55,29 +51,6 @@ class LockerManager(models.Manager):
 
 
 
-
-class SubmissionManager(models.Manager):
-    def oldest(self, locker):
-        """Returns the oldest submission based on the timestamp"""
-        try:
-            return self.filter(locker=locker, deleted=None).earliest('timestamp')  # NOQA
-        except Submission.DoesNotExist:
-            return None
-
-
-    def newest(self, locker):
-        """Returns the newest submission based on the timestamp"""
-        try:
-            return self.filter(locker=locker, deleted=None).latest('timestamp')
-        except Submission.DoesNotExist:
-            return None
-
-
-
-
-##
-# Models
-##
 
 class Locker(models.Model):
     form_url = models.CharField(
@@ -478,6 +451,25 @@ class LockerSetting(models.Model):
         related_name="settings",
         on_delete=models.CASCADE,
     )
+
+
+
+
+class SubmissionManager(models.Manager):
+    def oldest(self, locker):
+        """Returns the oldest submission based on the timestamp"""
+        try:
+            return self.filter(locker=locker, deleted=None).earliest('timestamp')  # NOQA
+        except Submission.DoesNotExist:
+            return None
+
+
+    def newest(self, locker):
+        """Returns the newest submission based on the timestamp"""
+        try:
+            return self.filter(locker=locker, deleted=None).latest('timestamp')
+        except Submission.DoesNotExist:
+            return None
 
 
 
