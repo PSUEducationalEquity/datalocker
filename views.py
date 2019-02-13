@@ -213,9 +213,7 @@ def comments_list(request, locker_id, submission_id):
 @csrf_exempt
 @never_cache
 def form_submission_view(request, **kwargs):
-    """
-    Handles form submissions from outside applications to be saved in lockers.
-    """
+    """Handles submissions from outside forms to be saved in lockers"""
     # redirect non-form submissions to the main page
     if request.method != 'POST':
         return HttpResponseRedirect(reverse('datalocker:index'))
@@ -226,25 +224,24 @@ def form_submission_view(request, **kwargs):
         'url': request.POST.get('url', '').strip(),
         'owner_name': request.POST.get('owner', '').strip(),
         'data': request.POST.get('data', '').strip(),
-        }
+    }
     try:
-        safe_values['owner'] = User.objects.get(username=safe_values['owner_name'])
+        safe_values['owner'] = User.objects.get(username=safe_values['owner_name'])  # NOQA
     except User.DoesNotExist:
         safe_values['owner'] = None
+    created = False
     try:
         locker = Locker.objects.filter(
             form_url=safe_values['url'],
             archive_timestamp=None,
-            ).order_by('-pk')[0]
-        created = False
+        ).order_by('-pk')[0]
     except (Locker.DoesNotExist, IndexError):
-        locker = Locker(
+        locker = Locker.objects.create(
             form_identifier=safe_values['identifier'],
             name=safe_values['name'],
             form_url=safe_values['url'],
             owner=safe_values['owner'],
-            )
-        locker.save()
+        )
         created = True
     else:
         if locker.owner:
@@ -254,25 +251,32 @@ def form_submission_view(request, **kwargs):
     else:
         workflow_state = ''
     submission = Submission(
-        locker = locker,
-        workflow_state = workflow_state,
-        data = safe_values['data'],
-        )
+        locker=locker,
+        workflow_state=workflow_state,
+        data=safe_values['data'],
+    )
     submission.save()
-    logger.info("New submission (%s) from %s saved to %s locker (%s)" % (
+    logger.info('New submission ({}) from {} saved to {} locker ({})'.format(
         submission.pk,
         safe_values['url'],
         'new' if created else 'existing',
         locker.pk
-        ))
+    ))
 
+    submission_url = reverse(
+        'datalocker:submission_view',
+        kwargs={'locker_id': locker.id, 'submission_id': submission.id}
+    )
+    submission_url = request.build_absolute_uri(submission_url)
+    locker_url = reverse(
+        'datalocker:submissions_list',
+        kwargs={'locker_id': locker.id}
+    )
+    locker_url = request.build_absolute_uri(locker_url)
     notify_addresses = []
     if not safe_values['owner']:
-        logger.warning("New submission saved to orphaned locker: %s" % (
-            reverse(
-                'datalocker:submission_view',
-                kwargs={'locker_id': locker.id, 'submission_id': submission.id}
-                ),
+        logger.warning('New submission saved to orphaned locker: {}'.format(
+            submission_url
         ))
     else:
         notify_addresses.append(safe_values['owner'].email)
@@ -282,32 +286,22 @@ def form_submission_view(request, **kwargs):
     if notify_addresses:
         from_addr = _get_notification_from_address("new submission")
         if from_addr:
-            subject = "%s - new submission" % safe_values['name']
-            message = "A new form submission was saved to the Data Locker. " \
-                "The name of the locker and links to view the submission " \
-                "are provided below.\n\n" \
-                "Locker: %s\n\n" \
-                "View submission: %s\n" \
-                "View all submissions: %s\n" % (
-                    request.POST.get('name', 'New Locker'),
-                    request.build_absolute_uri(
-                        reverse(
-                            'datalocker:submission_view',
-                            kwargs={'locker_id': locker.id, 'submission_id': submission.id}
-                            )
-                        ),
-                    request.build_absolute_uri(
-                        reverse(
-                            'datalocker:submissions_list',
-                            kwargs={'locker_id': locker.id,}
-                            )
-                        ),
-                    )
+            subject = '{} - new submission'.format(safe_values['name'])
+            message = 'A new form submission was saved to the Data Locker. ' \
+                'The name of the locker and links to view the submission ' \
+                'are provided below.\n\n' \
+                'Locker: {}\n\n' \
+                'View submission: {}\n' \
+                'View all submissions: {}\n'.format(
+                    safe_values['name'],
+                    submission_url,
+                    locker_url,
+                )
             try:
                 for to_email in notify_addresses:
                     send_mail(subject, message, from_addr, [to_email])
-            except:
-                logger.exception("New submission email to the locker owner failed")
+            except (BadHeaderError):
+                logger.exception('New submission email to the locker owner failed')  # NOQA
     return HttpResponse(status=201)
 
 
