@@ -25,15 +25,25 @@
 {% block content %}
   <div class="container-fluid">
     {% if allow_maintenance_mode %}
-      <div class="switch-toggle">
-        <input type="checkbox"
-               name="maintenance-mode-toggle"
-               data-size="mini"
-               data-toggle="toggle"
-               data-onstyle="success"
-               data-offstyle="danger"
-               data-on="Done editing"
-               data-off="Edit submissions" />
+      <div class="pull-right">
+        {% if perms.datalocker.add_manual_submission %}
+          <button class="btn btn-xs btn-primary js-submission-add"
+                  data-target="#dialog-submission-manual"
+                  data-toggle="modal"
+                  title="Manually add a submission to the locker"
+                  >Add submission</button>
+          &nbsp;
+        {% endif %}
+        <div class="switch-toggle">
+          <input type="checkbox"
+                 name="maintenance-mode-toggle"
+                 data-size="mini"
+                 data-toggle="toggle"
+                 data-onstyle="success"
+                 data-offstyle="danger"
+                 data-on="Done editing"
+                 data-off="Edit submissions" />
+        </div>
       </div>
     {% endif %}
     <h1>{{ locker.name }}</h1>
@@ -104,57 +114,113 @@
 
 {% block dialogs %}
 {# Modal for filtering out the data shown in the submission list #}
-  <div class="modal fade"
-    id="dialog-filter-results"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="dialog-filter-results-title"
-    aria-hidden="true">
+  <div aria-hidden="true"
+       aria-labelledby="dialog-filter-results-title"
+       class="modal fade"
+       id="dialog-filter-results"
+       role="dialog"
+       tabindex="-1"
+       >
     <div class="modal-dialog">
       <div class="modal-content">
-        <form method="POST"
-          name="modalForm"
-          action="{% url 'datalocker:submissions_list' locker.id %}">
+        <form action="{% url 'datalocker:submissions_list' locker.id %}"
+              method="POST"
+              name="modalForm"
+              >
           {% csrf_token %}
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"
-            id="dialog-filter-results-title">Select the form fields to display below</h4>
-        </div>
-        <div class="modal-body">
-          <div>
-            <input type="checkbox"
-              id="fields-select-all"
-              role="select-all"
-              data-target="fields-list"/>
-            <label for="fields-select-all"  class="select-all-checkbox">Select All</label>
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"
+                id="dialog-filter-results-title"
+                >Select the form fields to display below</h4>
           </div>
-          <ul class="list-unstyled" id="fields-list">
-          {% for field in fields_list %}
-            <li>
-              <input type="checkbox"
-                id="{{ field|slugify }}"
-                name="{{ field|slugify }}"
-                class="checkbox-inputs"
-                {% if field in selected_fields %}
-                checked="checked" {% endif %} />
-              <label for="{{ field|slugify }}">{{ field }}</label>
-            </li>
-          {% endfor %}
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <input type="submit"
-            class="btn btn-primary btn-sm pull-left"
-            value="Update"/>
-          <input type="button"
-            class="btn btn-default btn-sm pull-left"
-            value="Close"
-            data-dismiss="modal">
-          </button>
+          <div class="modal-body">
+            <div>
+              <label class="select-all-checkbox">
+                <input data-target="fields-list"
+                       id="fields-select-all"
+                       role="select-all"
+                       type="checkbox"
+                       />
+                Select All
+              </label>
+            </div>
+            <ul class="list-unstyled" id="fields-list">
+              {% for field in fields_list %}
+                <li>
+                  <label>
+                    <input class="checkbox-inputs"
+                           id="{{ field|slugify }}"
+                           name="{{ field|slugify }}"
+                           type="checkbox"
+                           {% if field in selected_fields %}
+                             checked="checked"
+                           {% endif %}
+                           />
+                    {{ field }}
+                  </label>
+                </li>
+              {% endfor %}
+            </ul>
           </div>
-        </div>
-        </div>
+          <div class="modal-footer">
+            <input class="btn btn-primary btn-sm pull-left"
+                   type="submit"
+                   value="Update"
+                   />
+            <input class="btn btn-default btn-sm pull-left"
+                   data-dismiss="modal"
+                   type="button"
+                   value="Close"
+                   />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+{# Modal for adding a manual submission #}
+  <div aria-hidden="true"
+       aria-labelledby="dialog-submission-manual-title"
+       class="modal fade"
+       id="dialog-submission-manual"
+       role="dialog"
+       tabindex="-1"
+       >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{% url 'datalocker:submission_add' locker.id %}"
+              method="POST"
+              >
+          {% csrf_token %}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"
+                id="dialog-submission-manual-title"
+                >Manually add a submission to the locker</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="submission-json">Paste the submission data in JSON format</label>
+              <textarea class="form-control"
+                        id="submission-json"
+                        name="json"
+                        rows="15"
+                        ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-primary btn-sm pull-left"
+                   type="submit"
+                   value="Add"
+                   />
+            <input class="btn btn-default btn-sm pull-left"
+                   data-dismiss="modal"
+                   type="button"
+                   value="Cancel"
+                   />
+          </div>
         </form>
       </div>
     </div>

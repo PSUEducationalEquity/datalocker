@@ -11,13 +11,13 @@
  * AUTO_COMPLETE........Styling for the auto-complete dialog
  * BREADCRUMBS..........Breadcrumb list stying
  * BUTTONS..............Button styling
- * DELETED..............Styles for deleting submissions and associated actions
  * DISCUSSION...........Discussion display and editing
  * EDIT_DIALOG..........Styling for the Edit Locker dialog
  * FOOTER...............Styling specifically for the page footer
  * GENERAL..............General styles
  * HEADER...............Styling specifically for the page header
  * KEY_VALUE_PAIRS......Key/value pair display styling
+ * MAINTENANCE_MODE.....Styles for deleting submissions and associated actions
  * SHARING_DIALOG.......Styling for the sharing dialog
  * TABLES...............Table specific styling
  * TOGGLE_SWITCH........Toggle Switch the stying when entering and exiting maintenance mode
@@ -258,41 +258,6 @@ fieldset[disabled] .btn-inverse.active {
 
 
 
-/*------------------------------------*\
-    $DELETED
-\*------------------------------------*/
-
-/* show/hide maintenance mode warning */
-.warning-maintenance-mode { display: none; }
-.js-show-deleted .warning-maintenance-mode { display: block; }
-
-/* show/hide the deleted rows */
-.is-deleted { display: none; }
-.js-show-deleted .is-deleted { display: table-row; }
-.js-show-deleted table > tbody tr.is-deleted {
-    background-color: #CCC;
-}
-
-/* show/hide the delete labels */
-.js-show-deleted .is-deleted .label-deleted {
-    display: inline-block;
-    margin-left: .5em;
-}
-.label-deleted {
-    display: none;
-}
-
-/* show/hide the delete/undelete buttons */
-button[role='undelete-submission'] { display: none; }
-button[role='delete-submission']   { display: none; }
-.js-show-deleted button[role='undelete-submission'] { display: none; }
-.js-show-deleted button[role='delete-submission']   { display: inline-block; }
-.js-show-deleted .is-deleted button[role='undelete-submission'] { display: inline-block; }
-.js-show-deleted .is-deleted button[role='delete-submission'] { display: none; }
-
-
-
-
 /*-----------------------------------*\
     $DISCUSSION
 \*-----------------------------------*/
@@ -466,6 +431,47 @@ header { margin-bottom: 20px; }
 
 
 
+/*------------------------------------*\
+    $MAINTENANCE_MODE
+\*------------------------------------*/
+
+.switch-toggle { display: inline-block; }
+
+/* show/hide the Add submission button */
+.js-submission-add { display: none; }
+.js-show-deleted .js-submission-add { display: inline-block; }
+
+/* show/hide maintenance mode warning */
+.warning-maintenance-mode { display: none; }
+.js-show-deleted .warning-maintenance-mode { display: block; }
+
+/* show/hide the deleted rows */
+.is-deleted { display: none; }
+.js-show-deleted .is-deleted { display: table-row; }
+.js-show-deleted table > tbody tr.is-deleted {
+    background-color: #CCC;
+}
+
+/* show/hide the delete labels */
+.js-show-deleted .is-deleted .label-deleted {
+    display: inline-block;
+    margin-left: .5em;
+}
+.label-deleted {
+    display: none;
+}
+
+/* show/hide the delete/undelete buttons */
+button[role='undelete-submission'] { display: none; }
+button[role='delete-submission']   { display: none; }
+.js-show-deleted button[role='undelete-submission'] { display: none; }
+.js-show-deleted button[role='delete-submission']   { display: inline-block; }
+.js-show-deleted .is-deleted button[role='undelete-submission'] { display: inline-block; }
+.js-show-deleted .is-deleted button[role='delete-submission'] { display: none; }
+
+
+
+
 /*-----------------------------------*\
     $SHARE_DIALOG
 \*-----------------------------------*/
@@ -516,10 +522,6 @@ header { margin-bottom: 20px; }
 /*------------------------------------*\
     $TOGGLE_SWITCH
 \*------------------------------------*/
-
-.switch-toggle {
-    float: right;
-}
 
 .toggle.btn {
     width: 150px;
