@@ -26,7 +26,7 @@
   <div class="container-fluid">
     {% if allow_maintenance_mode %}
       <div class="pull-right">
-        {% if 2 %}
+        {% if perms.datalocker.add_manual_submission %}
           <button class="btn btn-xs btn-primary js-submission-add"
                   data-target="#dialog-submission-manual"
                   data-toggle="modal"

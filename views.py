@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import (
@@ -12,7 +13,7 @@ from django.contrib.auth.views import (
     password_change_done as auth_password_change_done
 )
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Max
 from django.forms.models import model_to_dict
@@ -491,8 +492,9 @@ def password_change_done(request,
         )
 
 
-@require_http_methods(['POST'])
+@permission_required('datalocker.add_manual_submission')
 @login_required()
+@require_http_methods(['POST'])
 @never_cache
 def submission_add(request, locker_id):
     """Manually add a submission to a locker

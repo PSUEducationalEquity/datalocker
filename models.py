@@ -219,6 +219,10 @@ class Locker(models.Model):
     objects = LockerManager()
 
 
+    class Meta:
+        permissions = (('add_manual_submission', 'Can add manual submission'), )  # NOQA
+
+
     def __str__(self):
         return self.name
 
