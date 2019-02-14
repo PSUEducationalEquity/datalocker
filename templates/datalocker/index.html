@@ -56,15 +56,17 @@
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="main">
     {% endif %}
-    <div class="switch-toggle">
-      <input type="checkbox"
-             name="archived-lockers-toggle"
-             data-size="mini"
-             data-toggle="toggle"
-             data-onstyle="success"
-             data-offstyle="danger"
-             data-on="Hide Archived Lockers"
-             data-off="Show Archived Lockers" />
+    <div class="pull-right">
+      <div class="switch-toggle">
+        <input type="checkbox"
+               name="archived-lockers-toggle"
+               data-size="mini"
+               data-toggle="toggle"
+               data-onstyle="success"
+               data-offstyle="danger"
+               data-on="Hide Archived Lockers"
+               data-off="Show Archived Lockers" />
+      </div>
     </div>
     <h2>My Lockers</h2>
     {% if owned|length > 0 %}

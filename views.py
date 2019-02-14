@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import (
@@ -12,7 +13,7 @@ from django.contrib.auth.views import (
     password_change_done as auth_password_change_done
 )
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Max
 from django.forms.models import model_to_dict
@@ -28,7 +29,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .decorators import login_required, never_cache, prevent_url_guessing
-from .helpers import UserColors
+from .helpers import _get_notification_from_address, UserColors
 from .models import (
     Comment,
     Locker,
@@ -44,27 +45,6 @@ logger = logging.getLogger(__name__)
 ##
 ## Helper Functions
 ##
-
-def _get_notification_from_address(email_purpose):
-    """
-    Gets the from address for notification emails from settings.py. If the
-    setting does not exist or is blank, it logs the error and uses
-    `email_purpose` to explain what email was trying to be sent.
-    """
-    from_addr = ''
-    try:
-        from_addr = settings.NOTIFICATIONS_FROM
-    except:
-        logger.warning("The '%s' email was not sent because " \
-            "NOTIFICATIONS_FROM was not defined in settings_local.py or " \
-            "settings.py" % email_purpose)
-    else:
-        if from_addr == '':
-            logger.warning("The '%s' email was not sent because " \
-                "NOTIFICATIONS_FROM in settings_local.py or settings.py " \
-                "is blank" % email_purpose)
-    return from_addr
-
 
 def _get_public_user_dict(user):
     """
@@ -231,79 +211,8 @@ def form_submission_view(request, **kwargs):
         safe_values['owner'] = User.objects.get(username=safe_values['owner_name'])  # NOQA
     except User.DoesNotExist:
         safe_values['owner'] = None
-    created = False
-    try:
-        locker = Locker.objects.filter(
-            form_url=safe_values['url'],
-            archive_timestamp=None,
-        ).order_by('-pk')[0]
-    except (Locker.DoesNotExist, IndexError):
-        locker = Locker.objects.create(
-            form_identifier=safe_values['identifier'],
-            name=safe_values['name'],
-            form_url=safe_values['url'],
-            owner=safe_values['owner'],
-        )
-        created = True
-    else:
-        if locker.owner:
-            safe_values['owner'] = locker.owner
-    if locker.workflow_enabled:
-        workflow_state = locker.workflow_default_state()
-    else:
-        workflow_state = ''
-    submission = Submission(
-        locker=locker,
-        workflow_state=workflow_state,
-        data=safe_values['data'],
-    )
-    submission.save()
-    logger.info('New submission ({}) from {} saved to {} locker ({})'.format(
-        submission.pk,
-        safe_values['url'],
-        'new' if created else 'existing',
-        locker.pk
-    ))
 
-    submission_url = reverse(
-        'datalocker:submission_view',
-        kwargs={'locker_id': locker.id, 'submission_id': submission.id}
-    )
-    submission_url = request.build_absolute_uri(submission_url)
-    locker_url = reverse(
-        'datalocker:submissions_list',
-        kwargs={'locker_id': locker.id}
-    )
-    locker_url = request.build_absolute_uri(locker_url)
-    notify_addresses = []
-    if not safe_values['owner']:
-        logger.warning('New submission saved to orphaned locker: {}'.format(
-            submission_url
-        ))
-    else:
-        notify_addresses.append(safe_values['owner'].email)
-    if locker.shared_users_notification():
-        for user in locker.users.all():
-            notify_addresses.append(user.email)
-    if notify_addresses:
-        from_addr = _get_notification_from_address("new submission")
-        if from_addr:
-            subject = '{} - new submission'.format(safe_values['name'])
-            message = 'A new form submission was saved to the Data Locker. ' \
-                'The name of the locker and links to view the submission ' \
-                'are provided below.\n\n' \
-                'Locker: {}\n\n' \
-                'View submission: {}\n' \
-                'View all submissions: {}\n'.format(
-                    safe_values['name'],
-                    submission_url,
-                    locker_url,
-                )
-            try:
-                for to_email in notify_addresses:
-                    send_mail(subject, message, from_addr, [to_email])
-            except (BadHeaderError):
-                logger.exception('New submission email to the locker owner failed')  # NOQA
+    Locker.objects.add_submission(safe_values, request=request)
     return HttpResponse(status=201)
 
 
@@ -581,6 +490,30 @@ def password_change_done(request,
         current_app,
         extra_context
         )
+
+
+@permission_required('datalocker.add_manual_submission')
+@login_required()
+@require_http_methods(['POST'])
+@never_cache
+def submission_add(request, locker_id):
+    """Manually add a submission to a locker
+
+    Arguments:
+        request {obj} -- Django HTTP Request object instance
+        locker_id {int} -- Unique identifier for the Locker to add the
+                           submission to
+    """
+    locker = get_object_or_404(Locker, id=locker_id)
+    Locker.objects.add_submission(
+        {'data': request.POST.get('json', '').strip()},
+        request=request,
+        locker=locker
+    )
+    return HttpResponseRedirect(reverse(
+        'datalocker:submissions_list',
+        kwargs={'locker_id': locker_id}
+    ))
 
 
 @login_required()
