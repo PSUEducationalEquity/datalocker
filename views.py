@@ -505,8 +505,17 @@ def submission_add(request, locker_id):
                            submission to
     """
     locker = get_object_or_404(Locker, id=locker_id)
+    json_data = request.POST.get('json', '').strip()
+    json_data = json_data.replace('\r', '')
+    json_data = json_data.replace('\n', '')
+    json_data = json_data.replace('<div>', '')
+    json_data = json_data.replace('</div>', '')
+    json_data = json_data.replace('<br />', '\\r\\n')
+    json_data = json_data.replace('<br>', '\\r\\n')
+    if json_data[-3:] == '",}':
+        json_data = json_data[:-3] + '"}'
     Locker.objects.add_submission(
-        {'data': request.POST.get('json', '').strip()},
+        {'data': json_data},
         request=request,
         locker=locker
     )
