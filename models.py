@@ -70,7 +70,7 @@ class LockerManager(models.Manager):
         """
         def _exists(attr):
             try:
-                value = locker[attr]
+                value = values[attr]
             except KeyError:
                 return False
             if value.strip() == '':
