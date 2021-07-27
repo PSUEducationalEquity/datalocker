@@ -1,5 +1,13 @@
-settings_local.py
-secret_key.py
+## Python specific
+*.egg-info
 *.pyc
-~*
 
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+
+# specific files
+*/management/commands/tmp__*.py
