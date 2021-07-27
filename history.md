@@ -1,5 +1,10 @@
 # History
 
+## 21.07.1 (27 Jul 2021)
+
+* Converted to a proper Python package
+
+
 ## 19.02.1 (14 Feb 2019)
 
 * Switched to calendar-based versioning
