@@ -1,0 +1,26 @@
+{# Copyright 2021 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+
+{% if user.is_staff %}
+  <li role="presentation"
+    ><a role="menuitem"
+        tabindex="-1"
+        href="{% url 'admin:index' %}"
+      >Settings</a>
+  </li>
+  <li role="separator" class="divider"></li>
+{% endif %}
+
+{% block menuitem-password-change %}
+  <li role="presentation"
+    ><a role="menuitem"
+        tabindex="-1"
+        href="{% url 'datalocker:password_change' %}"
+      >Change Password</a>
+  </li>
+{% endblock menuitem-password-change %}
+<li role="presentation"
+  ><a role="menuitem"
+      tabindex="-1"
+      href="{% block logout-url %}{% url 'datalocker:app_logout' %}{% endblock %}"
+    >{% block logout-label %}Log out{% endblock logout-label %}</a>
+</li>
