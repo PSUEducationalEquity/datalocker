@@ -1,5 +1,11 @@
 # History
 
+## 21.07.1 (28 Jul 2021)
+
+* Converted to a proper Python package
+* Updates to support theming via a Django app
+
+
 ## 19.02.1 (14 Feb 2019)
 
 * Switched to calendar-based versioning

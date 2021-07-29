@@ -3,16 +3,16 @@
 
 {% comment %}
 
-    This template exists to make it easy to customize some of the site wide
-    features in main_template.html without having to completely replace
-    main_template.html in your product.
+    This template exists to make it easy to customize the site wide template
+    without having to completely replace the `main_template.html` file in
+    your product.
 
     To utilize this feature, create a Django application that is loaded before
     the `datalocker` application in `INSTALLED_APPS`.
-    Within your Django application, create a file:
+    Within your Django application, copy this file to:
         templates\datalocker\app_template.html
 
     In that file, you can redefine any of the {% block %} elements that exist
-    in main_template.html.
+    in `main_template.html` below this comment.
 
 {% endcomment %}

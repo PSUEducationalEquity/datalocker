@@ -1,0 +1,17 @@
+{# Copyright 2021 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+{% extends "datalocker/personalbar-menu-base.html" %}
+
+{% comment %}
+
+    This template exists to make it easy to customize the personal bar menu
+    without having to completely replace the `personalbar-menu.html` template.
+
+    To utilize this feature, create a Django application that is loaded before
+    the `datalocker` application in `INSTALLED_APPS`.
+    Within your Django application, copy this file to:
+        templates\datalocker\personalbar-menu.html
+
+    In the copy, you can redefine any of the {% block %} elements that exist
+    in `personalbar-menu-base.html` below this comment.
+
+{% endcomment %}

@@ -57,7 +57,7 @@
       <link type="{text/css" rel="stylesheet"
             href="{% static 'datalocker/css/tablesorter.css' %}" />
       <link type="text/css" rel="stylesheet"
-            href="{% static 'datalocker/css/common.css' %}" />
+            href="{% static 'datalocker/css/datalocker.css' %}" />
     {% endblock site-styles %}
   </head>
 
@@ -65,91 +65,69 @@
     {% block header-wrapper %}
       <header class="hidden-print">
         {% block header-top %}{% endblock %}
-        <div class="document-header">
-          <nav class="navbar navbar-default">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <button type="button"
-                        class="navbar-toggle collapsed"
-                        data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1"
-                        aria-expanded="false"
-                        >
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{% url 'datalocker:index' %}"
-                   ><span class="application-name" id="application-name">
-                    {% block app-name %}Data Locker{% endblock app-name %}
-                  <span class="sr-only">Homepage</span></span>
-                </a>
-              </div>
+        {% block header-navbar %}
+          <div class="document-header">
+            <nav class="navbar navbar-default">
+              <div class="container-fluid">
+                <div class="navbar-header">
+                  <button type="button"
+                          class="navbar-toggle collapsed"
+                          data-toggle="collapse"
+                          data-target="#bs-example-navbar-collapse-1"
+                          aria-expanded="false"
+                          >
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="{% url 'datalocker:index' %}"
+                     ><span class="application-name" id="application-name">
+                      {% block app-name %}Data Locker{% endblock app-name %}
+                    <span class="sr-only">Homepage</span></span>
+                  </a>
+                </div>
 
-              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                {% block personal-bar-wrapper %}
-                  <ul class="nav navbar-nav navbar-right personal-bar">
-                    {% if request.user.is_authenticated %}
-                      <li class="dropdown">
-                        <a href="#"
-                           class="dropdown-toggle"
-                           data-toggle="dropdown"
-                           id="dropdown-personal-bar"
-                           role="button"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           >
-                          <span class="sr-only">
-                            Currently logged in username:
-                          </span>
-                          <span id="current-username"
-                                >{{ request.user.username }}</span>
-                          <span class="caret"></span>
-                        </a>
-                        <ul aria-label="site-wide commands for the current user"
-                            class="dropdown-menu pull-right"
-                            role="menu">
-                          {% block personal-bar-menu %}
-                            <li role="presentation"
-                              ><a role="menuitem"
-                                  tabindex="-1"
-                                  href="{% block logout-url %}{% url 'datalocker:app_logout' %}{% endblock %}"
-                                >{% block logout-label %}Log out{% endblock logout-label %}</a>
-                            </li>
-                            {% block menuitem-password-change %}
-                              <li role="presentation"
-                                ><a role="menuitem"
-                                    tabindex="-1"
-                                    href="{% url 'datalocker:password_change' %}"
-                                  >Change Password</a>
-                              </li>
-                            {% endblock menuitem-password-change %}
-                            {% if user.is_staff %}
-                              <li role="separator" class="divider"></li>
-                              <li role="presentation"
-                                ><a role="menuitem"
-                                    tabindex="-1"
-                                    href="{% url 'admin:index' %}"
-                                  >Settings</a>
-                              </li>
-                            {% endif %}
-                          {% endblock personal-bar-menu %}
-                        </ul>
-                      </li>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  {% block personal-bar-wrapper %}
+                    <ul class="nav navbar-nav navbar-right personal-bar">
+                      {% if request.user.is_authenticated %}
+                        <li class="dropdown">
+                          <a href="#"
+                             class="dropdown-toggle"
+                             data-toggle="dropdown"
+                             id="dropdown-personal-bar"
+                             role="button"
+                             aria-haspopup="true"
+                             aria-expanded="false"
+                             >
+                            <span class="sr-only">
+                              Currently logged in username:
+                            </span>
+                            <span id="current-username"
+                                  >{{ request.user.username }}</span>
+                            <span class="caret"></span>
+                          </a>
+                          <ul aria-label="site-wide commands for the current user"
+                              class="dropdown-menu pull-right"
+                              role="menu">
+                            {% include "datalocker/personalbar-menu.html" %}
+                          </ul>
+                        </li>
 
-                    {% else %}
-                      <li>
-                        <a href="{% block login-url %}{% url 'datalocker:app_login' %}{% endblock %}"
-                           >{% block login-label %}Log In{% endblock login-label %}</a>
-                      </li>
-                    {% endif %}
-                  </ul>
-                {% endblock personal-bar-wrapper %}
-              </div>{# /.navbar-collapse #}
-            </div>{# /.container-fluid #}
-          </nav>
-        </div>
+                      {% else %}
+                        <li>
+                          <a href="{% block login-url %}{% url 'datalocker:app_login' %}{% endblock %}"
+                             >{% block login-label %}Log In{% endblock login-label %}</a>
+                        </li>
+                      {% endif %}
+                    </ul>
+                  {% endblock personal-bar-wrapper %}
+                </div>{# /.navbar-collapse #}
+              </div>{# /.container-fluid #}
+            </nav>
+          </div>
+        {% endblock header-navbar %}
         {% block breadcrumbs %}
           <div class="document-breadcrumbs">
             <span class="document-breadcrumbs-label">
@@ -177,7 +155,7 @@
             <div class="container-fluid">
               <div class="row">
                 <p class="copyright col-sm-6">
-                  Copyright 2015
+                  Copyright 2015-{% now "Y" %}
                   <a href="http://www.psu.edu">The Pennsylvania State University</a>.
                   All Rights Reserved.
                 </p>
