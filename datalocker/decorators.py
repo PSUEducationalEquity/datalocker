@@ -12,10 +12,12 @@ from django.utils.decorators import available_attrs
 from .models import Locker, Submission
 
 
-def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
-    """
-    Decorator for views that checks that the user is logged in AND an active
-    user, redirecting to the log-in page if necessary.
+def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME,
+                   login_url=None):
+    """Ensure view user is logged in and active
+
+    Decorator for views that checks to ensure the user is logged in AND
+    an active user, redirecting to the log-in page if necessary.
     """
     actual_decorator = user_passes_test(
         lambda u: u.is_authenticated() and u.is_active,
@@ -28,7 +30,8 @@ def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login
 
 
 def never_cache(view_func):
-    """
+    """Adds HTTP headers to the response to block caching
+
     Decorator that adds headers to a response so that it will
     never be cached.
 
@@ -48,46 +51,48 @@ def never_cache(view_func):
 
 
 def prevent_url_guessing(view_func):
-    """
-    Decorator ensures that the current user has access to the locker/submission
-    they are trying to access. Additionally when a locker and submission are
-    specified it ensures that the submission is contained in the specified locker.
+    """Verify permission to lockers/submissions
+
+    Decorator to ensure that the current user has access to the locker
+    or submission being accessed. Additionally when a locker and submission
+    are specified it ensures that the submission is contained in the
+    specified locker.
     """
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view_func(request, *args, **kwargs):
         submission = None
+        try:
+            locker_id = int(kwargs.get('locker_id', 0))
+        except (TypeError, ValueError):
+            locker_id = 0
         if 'submission_id' in kwargs:
-            submission = get_object_or_404(Submission, pk=kwargs['submission_id'])
+            submission = get_object_or_404(Submission,
+                                           pk=kwargs.get('submission_id', 0))
             locker = submission.locker
         elif 'locker_id' in kwargs:
-            locker = get_object_or_404(Locker, pk=kwargs['locker_id'])
+            locker = get_object_or_404(Locker, pk=locker_id)
         if not locker:
             raise SuspiciousOperation
         if not locker.has_access(request.user):
             raise PermissionDenied
         if submission:
-            # redirect these views to the submissions list, otherwise submission view
-            redirect_to_list = (
-                'submission_delete',
-                'submission_undelete'
-                )
-            if submission.locker.id != int(kwargs['locker_id']):
+            # redirect these views to the submissions list
+            redirect_to_list = ('submission_delete', 'submission_undelete')
+            if submission.locker.id != int(locker_id):
                 if request.resolver_match.url_name in redirect_to_list:
-                    view = reverse(
-                        'datalocker:submissions_list',
-                        kwargs={'locker_id': kwargs['locker_id']}
-                        )
-                    msg = "<strong>Oops!</strong> The submission you " \
-                        + "requested is not in the locker you specified, " \
-                        + "but here are the submissions that are in the locker."
+                    view = reverse('datalocker:submissions_list',
+                                   kwargs={'locker_id': locker_id})
+                    msg = (u'<strong>Oops!</strong> The submission you '
+                           u'requested is not in the locker you specified.')
                     messages.error(request, msg)
                 else:
                     view = reverse(
                         'datalocker:submission_view',
                         kwargs={
                             'locker_id': submission.locker.id,
-                            'submission_id': submission.id }
-                        )
+                            'submission_id': submission.id,
+                        }
+                    )
                 return HttpResponseRedirect(view)
         response = view_func(request, *args, **kwargs)
         return response

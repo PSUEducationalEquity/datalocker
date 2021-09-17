@@ -1,16 +1,17 @@
-###Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
+### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from datalocker import views
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$',
         views.locker_list_view,
         name='index',
         ),
+
     url(r'^login$',
         views.login,
         name="app_login"
@@ -28,14 +29,17 @@ urlpatterns = patterns('',
         views.password_change_done,
         name="password_change_done"
         ),
+
     url(r'^submission$',
         views.form_submission_view,
         name="form_submission"
         ),
+
     url(r'^users$',
         views.users_list,
         name='users_list'
         ),
+
     url(r'^(?P<locker_id>[0-9]+)/archive$',
         views.locker_archive,
         name='locker_archive'
@@ -48,42 +52,44 @@ urlpatterns = patterns('',
         views.locker_unarchive,
         name='locker_unarchive'
         ),
+
     url(r'^(?P<locker_id>[0-9]+)/submissions/add$',
         views.submission_add,
         name='submission_add'
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/delete$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/delete$',  # NOQA
         views.submission_delete,
         name='submission_delete'
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion/add$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion/add$',  # NOQA
         views.comment_add,
         name='comment_add',
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion/modify$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion/modify$',  # NOQA
         views.comment_modify,
         name='comment_modify',
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/discussion$',  # NOQA
         views.comments_list,
         name='comments_list',
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/undelete$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/undelete$',  # NOQA
         views.submission_undelete,
         name='submission_undelete'
         ),
-    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/workflow/modify$',
+    url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)/workflow/modify$',  # NOQA
         views.workflow_modify,
         name='workflow_modify',
         ),
     url(r'^(?P<locker_id>[0-9]+)/submissions/(?P<submission_id>[0-9]+)$',
-    	views.submission_view,
-    	name='submission_view'
-    	),
+        views.submission_view,
+        name='submission_view'
+        ),
     url(r'^(?P<locker_id>[0-9]+)/submissions$',
         views.submissions_list_view,
         name='submissions_list',
         ),
+
     url(r'^(?P<locker_id>[0-9]+)/users$',
         views.locker_users,
         name='locker_users'
@@ -96,10 +102,10 @@ urlpatterns = patterns('',
         views.locker_user_delete,
         name='locker_user_delete'
         ),
-    )
+]
 
 if settings.DEBUG:
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^testing/400$',
             views.testing_bad_request_view,
             name='testing_bad_request',
@@ -116,7 +122,7 @@ if settings.DEBUG:
             views.testing_server_error_view,
             name='testing_server_error',
             ),
-        )
+    ]
 
 ##
 # EXAMPLE Urls

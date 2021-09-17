@@ -1,5 +1,11 @@
 # History
 
+## 21.09.1 (17 Sep 2021)
+
+* Updates to strings to treat them as unicode
+* Overall code cleanup for PEP8 styling
+
+
 ## 21.07.1 (28 Jul 2021)
 
 * Converted to a proper Python package

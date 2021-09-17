@@ -4,14 +4,14 @@ from django.conf import settings
 from django.core.mail import send_mail, BadHeaderError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.forms.models import model_to_dict
 from django.utils import timezone
 from django.utils.text import slugify
 
 from collections import OrderedDict
 
-from .helpers import _get_notification_from_address
+from .utils.notifications import get_from_address
 
 import datetime
 import json
@@ -22,15 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 class LockerQuerySet(models.query.QuerySet):
+
     def active(self):
         """Filter only Lockers without an archived timestamp"""
         return self.filter(archive_timestamp=None)
 
-
     def archived(self):
         """Filter only Lockers with an archived timestamp"""
         return self.filter(archive_timestamp__isnull=False)
-
 
     def has_access(self, user):
         """Filter only lockers that the user has access to
@@ -38,16 +37,17 @@ class LockerQuerySet(models.query.QuerySet):
         `user` must be the owner or a shared user of the locker to be
         included in the results.
         """
-        return Locker.objects.filter(Q(owner=user) | Q(users=user)).distinct()
+        return self.filter(Q(owner=user) | Q(users=user)).distinct()
 
-
+    def include_latest(self):
+        """Include timestamp of the most recent submission"""
+        return self.annotate(latest_submission=Max('submissions__timestamp'))
 
 
 class LockerManager(models.Manager):
+
     def add_submission(self, values, request=None, locker=None):
         """Add a submission to the appropriate locker
-
-        [description]
 
         Arguments:
             values {dict} -- Python dictionary that includes the following:
@@ -112,120 +112,103 @@ class LockerManager(models.Manager):
             workflow_state=workflow_state,
             data=values['data'],
         )
-        logger.info('New submission ({}) from {} saved to {} locker ({})'.format(  # NOQA
+        logger.info(u'New submission ({}) from {} saved to {} locker ({})'.format(  # NOQA
             submission.pk,
             values['url'],
             'new' if created else 'existing',
             locker.pk
         ))
 
-        submission_url = reverse(
-            'datalocker:submission_view',
-            kwargs={'locker_id': locker.id, 'submission_id': submission.id}
-        )
+        submission_url = reverse('datalocker:submission_view',
+                                 kwargs={'locker_id': locker.id,
+                                         'submission_id': submission.id})
         if request:
             submission_url = request.build_absolute_uri(submission_url)
-        locker_url = reverse(
-            'datalocker:submissions_list',
-            kwargs={'locker_id': locker.id}
-        )
+        locker_url = reverse('datalocker:submissions_list',
+                             kwargs={'locker_id': locker.id})
         if request:
             locker_url = request.build_absolute_uri(locker_url)
         notify_addresses = []
         if not values['owner']:
-            logger.warning('New submission saved to orphaned locker: '
-                           '{}'.format(submission_url))
+            logger.warning(u'New submission saved to orphaned locker: '
+                           u'{}'.format(submission_url))
         else:
             notify_addresses.append(values['owner'].email)
         if locker.shared_users_notification():
             for user in locker.users.all():
                 notify_addresses.append(user.email)
         if notify_addresses:
-            from_addr = _get_notification_from_address('new submission')
+            from_addr = get_from_address('new submission')
             if from_addr:
-                subject = '{} - new submission'.format(values['name'])
-                message = 'A new form submission was saved to the Data ' \
-                          'Locker. The name of the locker and links to view ' \
-                          'the submission are provided below.\n\n' \
-                          'Locker: {}\n\n' \
-                          'View submission: {}\n' \
-                          'View all submissions: {}\n'.format(
-                              values['name'],
-                              submission_url,
-                              locker_url,
-                          )
+                subject = u'{} - new submission'.format(values['name'])
+                message = (u'A new form submission was saved to the Data '
+                           u'Locker. The name of the locker and links to view '
+                           u'the submission are provided below.\n\n'
+                           u'Locker: {}\n\n'
+                           u'View submission: {}\n'
+                           u'View all submissions: {}\n'.format(
+                               values['name'],
+                               submission_url,
+                               locker_url,
+                           ))
                 try:
                     for to_email in notify_addresses:
                         send_mail(subject, message, from_addr, [to_email])
                 except (BadHeaderError):
-                    logger.exception('New submission email to the locker owner failed')  # NOQA
-
-
-    def get_query_set(self):
-        return LockerQuerySet(self.model, using=self._db)
-
-
-    def __getattr__(self, attr, *args):
-        try:
-            return getattr(self.__class__, attr, *args)
-        except AttributeError:
-            return getattr(self.get_query_set(), attr, *args)
-
-
+                    logger.exception(u'New submission email to the locker owner failed')  # NOQA
 
 
 class Locker(models.Model):
-    form_url = models.CharField(
-        max_length=255,
-        default='',
+    """Container that stores the submissions from a form"""
+    archive_timestamp = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=False,
         blank=True,
-    )
-    form_identifier = models.CharField(
-        max_length=255,
-        default='',
-        blank=True,
-    )
-    name = models.CharField(
-        max_length=255,
-        default='',
-        blank=True,
-    )
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name='lockers_owned',
         default=None,
-        blank=True,
+        editable=False,
         null=True,
-        on_delete=models.SET_NULL,
-    )
-    users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='shared_lockers',
-        blank=True,
     )
     create_timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
     )
-    archive_timestamp = models.DateTimeField(
-        auto_now=False,
-        auto_now_add=False,
-        editable=False,
-        default=None,
+    form_identifier = models.CharField(
         blank=True,
-        null=True,
+        default='',
+        max_length=255,
     )
-    objects = LockerManager()
-
+    form_url = models.CharField(
+        blank=True,
+        default='',
+        max_length=255,
+    )
+    name = models.CharField(
+        blank=True,
+        default='',
+        max_length=255,
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        default=None,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='lockers_owned',
+    )
+    users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='shared_lockers',
+    )
+    objects = LockerManager.from_queryset(LockerQuerySet)()
 
     class Meta:
+        order_by = ('name', )
         permissions = (('add_manual_submission', 'Can add manual submission'), )  # NOQA
-
 
     def __str__(self):
         return self.name
-
 
     def discussion_enabled(self, enable=None):
         """Get or set whether discussions are enabled for the locker
@@ -251,7 +234,6 @@ class Locker(models.Model):
             setting.value = str(enable)
             setting.save()
 
-
     def discussion_users_have_access(self, enable=None):
         """Get or set whether shared users have access to discussions
 
@@ -272,7 +254,6 @@ class Locker(models.Model):
         elif enable in (True, False):
             setting.value = str(enable)
             setting.save()
-
 
     def fields_all(self):
         """List of all the fields that appear in any of the submissions"""
@@ -325,7 +306,6 @@ class Locker(models.Model):
             last_updated_setting.save()
         return all_fields
 
-
     def fields_selected(self, fields=None):
         """Gets/sets the list of fields to display for a submissions list
 
@@ -361,7 +341,6 @@ class Locker(models.Model):
             setting.value = json.dumps(selected_fields)
             setting.save()
 
-
     def _get_or_create_setting(self, category, identifier, setting, value):
         """Gets or creates a setting for the locker
 
@@ -392,24 +371,22 @@ class Locker(models.Model):
         else:
             return (setting, False)
 
-
     def get_settings(self):
         """Returns a dictionary of all the locker's settings"""
         settings_dict = {}
         for setting in self.settings.all():
-            key = "%s|%s" % (setting.category, setting.identifier)
+            key = u'{}|{}'.format(setting.category, setting.identifier)
             try:
                 value = json.loads(setting.value)
             except:
-                if setting.value == "False":
+                if setting.value == u'False':
                     value = False
-                elif setting.value == "True":
+                elif setting.value == u'True':
                     value = True
                 else:
                     value = setting.value
             settings_dict[key] = value
         return settings_dict
-
 
     def has_access(self, user):
         """Returns True if user has access to the locker
@@ -423,11 +400,9 @@ class Locker(models.Model):
         """
         return self.is_owner(user) or self.is_user(user) or user.is_superuser
 
-
     def is_archived(self):
         """Returns True if the locker has been archived"""
         return self.archive_timestamp is not None
-
 
     def is_owner(self, user):
         """Returns True if user is the locker owner
@@ -440,7 +415,6 @@ class Locker(models.Model):
         """
         return user == self.owner
 
-
     def is_user(self, user):
         """Returns True if user has shared access to the locker
 
@@ -451,7 +425,6 @@ class Locker(models.Model):
             {bool} -- True if the user has shared access to the locker
         """
         return user in self.users.all()
-
 
     def shared_users_notification(self, enable=None):
         """
@@ -475,14 +448,12 @@ class Locker(models.Model):
             setting.value = str(enable)
             setting.save()
 
-
     def workflow_default_state(self):
         states = self.workflow_states()
         try:
             return states[0]
         except IndexError:
             return ''
-
 
     def workflow_enabled(self, enable=None):
         """Gets or sets the workflow enabled setting on the locker.
@@ -512,7 +483,6 @@ class Locker(models.Model):
                 else:
                     self.fields_selected(fields)
 
-
     def workflow_states(self, states=None):
         """
         Gets or sets the workflow setting on the locker indicating the possible
@@ -536,7 +506,6 @@ class Locker(models.Model):
             )
             setting.save()
 
-
     def workflow_users_can_edit(self, enable=None):
         """
         Gets or sets the workflow setting on the locker indicating if shared
@@ -559,36 +528,32 @@ class Locker(models.Model):
             setting.save()
 
 
-
-
 class LockerSetting(models.Model):
     category = models.CharField(
         max_length=255,
     )
+    identifier = models.SlugField()
+    locker = models.ForeignKey(
+        Locker,
+        on_delete=models.CASCADE,
+        related_name='settings',
+    )
     setting = models.CharField(
         max_length=255,
     )
-    identifier = models.SlugField()
     value = models.TextField(
         default='',
     )
-    locker = models.ForeignKey(
-        Locker,
-        related_name="settings",
-        on_delete=models.CASCADE,
-    )
-
-
 
 
 class SubmissionManager(models.Manager):
     def oldest(self, locker):
         """Returns the oldest submission based on the timestamp"""
         try:
-            return self.filter(locker=locker, deleted=None).earliest('timestamp')  # NOQA
+            return (self.filter(locker=locker, deleted=None)
+                        .earliest('timestamp'))
         except Submission.DoesNotExist:
             return None
-
 
     def newest(self, locker):
         """Returns the newest submission based on the timestamp"""
@@ -598,42 +563,38 @@ class SubmissionManager(models.Manager):
             return None
 
 
-
-
 class Submission(models.Model):
+    data = models.TextField(
+        blank=True,
+        default='',
+    )
+    deleted = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=False,
+        blank=True,
+        default=None,
+        editable=False,
+        null=True,
+    )
     locker = models.ForeignKey(
         Locker,
-        related_name="submissions",
         on_delete=models.CASCADE,
+        related_name="submissions",
     )
     timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
     )
-    data = models.TextField(
-        default='',
-        blank=True,
-    )
-    deleted = models.DateTimeField(
-        auto_now=False,
-        auto_now_add=False,
-        editable=False,
-        default=None,
-        blank=True,
-        null=True,
-    )
     workflow_state = models.CharField(
-        max_length=255,
-        default='',
         blank=True,
+        default='',
+        max_length=255,
     )
     objects = SubmissionManager()
 
-
     def __str__(self):
-        return "%s to %s" % (self.timestamp, self.locker)
-
+        return u'{} to {}'.format(self.timestamp, self.locker)
 
     def data_dict(self, with_types=False):
         """Returns the data field as an ordered dictionary"""
@@ -674,7 +635,6 @@ class Submission(models.Model):
                 }
         return data
 
-
     def to_dict(self):
         """Returns the entire object as a Python dictionary"""
         result = model_to_dict(self)
@@ -687,11 +647,10 @@ class Submission(models.Model):
         result['purge_date'] = self.purge_date
         return result
 
-
     def newer(self):
-        """
-        Returns the submission object that was submitted immediately after
-        this one. If there isn't a newer submission, the current submission is
+        """Returns submission submitted immediately after this one
+
+        If there isn't a newer submission, the current submission is
         returned.
         """
         try:
@@ -705,11 +664,10 @@ class Submission(models.Model):
         else:
             return nextSubmission
 
-
     def older(self):
-        """
-        Returns the submission object that was submitted immediately before
-        this one. If there isn't an older submission, the current submission is
+        """Returns sumbission submitted immediately before this one
+
+        If there isn't an older submission, the current submission is
         returned.
         """
         try:
@@ -723,7 +681,6 @@ class Submission(models.Model):
         else:
             return prevSubmission
 
-
     @property
     def purge_date(self):
         """Returns the date that the submission should be deleted"""
@@ -732,55 +689,51 @@ class Submission(models.Model):
         return self.deleted + datetime.timedelta(days=settings.SUBMISSION_PURGE_DAYS)  # NOQA
 
 
-
-
 class Comment(models.Model):
+    comment = models.TextField(
+        blank=True,
+        default='',
+    )
+    parent = models.ForeignKey(
+        'self',
+        blank=True,
+        default=None,
+        null=True,
+        related_name='children',
+    )
     submission = models.ForeignKey(
         Submission,
-        related_name="comments",
         on_delete=models.CASCADE,
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="comments",
-        on_delete=models.PROTECT,
+        related_name='comments',
     )
     timestamp = models.DateTimeField(
         auto_now=False,
         auto_now_add=True,
         editable=False,
     )
-    comment = models.TextField(
-        default='',
-        blank=True,
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='comments',
     )
-    parent = models.ForeignKey(
-        'self',
-        related_name="children",
-        default=None,
-        blank=True,
-        null=True,
-    )
-
 
     def __str__(self):
-        return "%s in %s by %s" % (
+        return u'{} in {} by {}'.format(
             self.submission.timestamp,
             self.submission.locker,
             self.user
         )
 
-
     @property
     def is_editable(self):
-        """
-        Indicates if the comment is editable because it was created within
+        """Indicates if the comment is editable
+
+        To be considered editable, it must have been created within
         COMMENT_EDIT_MAX time till now.
         """
         oldest_timestamp = timezone.now()
         oldest_timestamp -= datetime.timedelta(minutes=settings.COMMENT_EDIT_MAX)  # NOQA
         return True if (self.timestamp > oldest_timestamp) else False
-
 
     def to_dict(self):
         """Returns the entire object as a Python dictionary"""
