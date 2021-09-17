@@ -39,7 +39,8 @@
 
     <div class="row">
       <div class="col-md-{% if sidebar_enabled %}7{% else %}12{% endif %}">
-        <div class="pagination" aria-label="submission navigation buttons">
+        <div aria-label="submission navigation buttons"
+             class="pagination hidden-print">
           {% include "datalocker/pagination_template.html" %}
         </div>
 
@@ -98,7 +99,8 @@
           {% endfor %}
         </ul>
 
-        <div class="pagination" aria-label="submission navigation buttons">
+        <div aria-label="submission navigation buttons"
+             class="pagination hidden-print">
           {% include "datalocker/pagination_template.html" %}
         </div>
       </div>
@@ -118,7 +120,9 @@
                 </div>
                 {% if workflow_users_can_edit %}
                   <form action="{% url 'datalocker:workflow_modify' submission.locker.id submission.id %}"
-                        id="workflow_form" method="POST">
+                        class="hidden-print"
+                        id="workflow_form"
+                        method="POST">
                     {% csrf_token %}
 
                     <label for="workflow-state">Change the workflow state</label>
@@ -147,9 +151,10 @@
                   <div class="panel-title">Discussion</div>
                 </div>
                 <div class="panel-body">
-                  <form method="post"
-                        action="{% url 'datalocker:comment_add' submission.locker.id submission.pk %}"
+                  <form action="{% url 'datalocker:comment_add' submission.locker.id submission.pk %}"
+                        class="discussion-add hidden-print"
                         data-edit-url="{% url 'datalocker:comment_modify' submission.locker.id submission.pk %}"
+                        method="post"
                         >
                     {% csrf_token %}
 
@@ -165,7 +170,7 @@
                     </div>
 
                     <input type="submit"
-                           class="btn btn-primary btn-sm pull-right"
+                           class="btn btn-sm btn-primary"
                            value="Post" />
                   </form>
 

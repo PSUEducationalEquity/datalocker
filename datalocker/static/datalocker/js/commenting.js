@@ -101,7 +101,7 @@
             '  <h4 class="media-heading"></h4>' +
             '  <p class="discussion-timestamp text-muted"></p>' +
             '  <p class="discussion-comment"></p>' +
-            '  <div class="discussion-actions">' +
+            '  <div class="discussion-actions hidden-print">' +
             '    <a href="#" role="discussion-reply">Reply</a>' +
             '    <span class="action-separator">&#149;</span>' +
             '    <a href="#" role="discussion-edit">Edit</a>' +

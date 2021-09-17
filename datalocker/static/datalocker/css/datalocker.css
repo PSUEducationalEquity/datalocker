@@ -268,8 +268,8 @@ fieldset[disabled] .btn-inverse.active {
     margin-top: -10px;
 }
 
-/*ol,ul*/.discussion-tree {
-    margin-top: 5em;
+/*ol,ul*/.discussion-add {
+    margin-bottom: 2em;
 }
 
 /*ol,ul*/.discussion-tree .user-icon {
@@ -497,6 +497,16 @@ button[role='delete-submission']   { display: none; }
     $TABLES
 \*------------------------------------*/
 
+table tbody td a.link {
+    display: block;
+}
+
+@media print {
+    table tbody td a[href].link::after {
+        content: "";
+    }
+}
+
 .record-actions {
     text-align: right;
 }
@@ -544,6 +554,12 @@ button[role='delete-submission']   { display: none; }
     font-size: 22px;
     font-weight: bold;
     margin-left: 5px;
+}
+
+@media print {
+    .workflow-state {
+        font-size: 1em;
+    }
 }
 
 .panel-workflow form {
