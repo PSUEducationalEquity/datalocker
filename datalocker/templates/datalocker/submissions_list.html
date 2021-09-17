@@ -27,14 +27,14 @@
     {% if allow_maintenance_mode %}
       <div class="pull-right">
         {% if perms.datalocker.add_manual_submission %}
-          <button class="btn btn-xs btn-primary js-submission-add"
+          <button class="btn btn-xs btn-primary js-submission-add hidden-print"
                   data-target="#dialog-submission-manual"
                   data-toggle="modal"
                   title="Manually add a submission to the locker"
                   >Add submission</button>
           &nbsp;
         {% endif %}
-        <div class="switch-toggle">
+        <div class="switch-toggle hidden-print">
           <input type="checkbox"
                  name="maintenance-mode-toggle"
                  data-size="mini"
@@ -57,8 +57,10 @@
         after {{ purge_days }} days.
       </li>
     </ul>
-    <button type="button" class="btn btn-default btn-xs" role="filter-results">
-    Select the fields to display in the table</button>
+    <button class="btn btn-default btn-xs hidden-print"
+            role="filter-results"
+            type="button"
+            >Select the fields to display in the table</button>
     <table class="table table-striped table-hover listing tablesorter"
            name="submission listing"
            id="submission-list"
@@ -84,9 +86,9 @@
             {% for value in submission.0 %}
               <td data-count="{{ forloop.counter0 }}">
                 {% if forloop.counter0 in linkable_indices %}
-                  <a href="{% url 'datalocker:submission_view' locker.id submission.1 %}"
-                     style="display:block;"
-                    >{{ value }}</a>
+                  <a class="link"
+                     href="{% url 'datalocker:submission_view' locker.id submission.1 %}"
+                     >{{ value }}</a>
                   <span class="label label-danger label-deleted" />
                 {% else %}
                   {{ value }}

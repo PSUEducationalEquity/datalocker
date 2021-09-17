@@ -15,8 +15,6 @@ from django.contrib.auth.views import (
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Max
-from django.forms.models import model_to_dict
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
@@ -28,13 +26,16 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from smtplib import SMTPException
+
 from .decorators import login_required, never_cache, prevent_url_guessing
-from .helpers import _get_notification_from_address, UserColors
 from .models import (
     Comment,
     Locker,
     Submission,
 )
+from .utils.notifications import get_from_address
+from .utils.users import get_public_user_dict, UserColors
 
 import logging
 
@@ -42,37 +43,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-##
-## Helper Functions
-##
-
-def _get_public_user_dict(user):
-    """
-    Converts a user object to a dictionary and only returns certain
-    publically-available fields for the user.
-    """
-    public_fields = ['id', 'username', 'email', 'first_name', 'last_name']
-    user_dict = {}
-    for key, value in model_to_dict(user).iteritems():
-        if key in public_fields:
-            user_dict[key] = value
-    return user_dict
-
-
-
-
-##
-## Views
-##
-
 @login_required
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def comment_add(request, locker_id, submission_id):
-    """
-    Adds a comment or reply to the specified submission
-    """
+    """Adds a comment or reply to the specified submission"""
     submission = get_object_or_404(Submission, id=submission_id)
     comment_text = request.POST.get('comment', '').strip()
     parent_id = request.POST.get('parent', None)
@@ -86,21 +62,19 @@ def comment_add(request, locker_id, submission_id):
             comment=comment_text,
             user=request.user,
             parent=parent
-            )
+        )
         comment.save()
         if request.is_ajax():
             color_helper = UserColors(request)
             comment_dict = comment.to_dict()
-            comment_dict['user']['color'] = color_helper.get(comment.user.username)
+            comment_dict['user']['color'] = color_helper.get(comment.user.username)  # NOQA
             return JsonResponse(comment_dict)
         else:
-            messages.success(
-                request,
-                "<strong>Success!</strong> " \
-                "Your comment was added to the discussion."
-            )
+            messages.success(request,
+                             u'<strong>Success!</strong> '
+                             u'Your comment was added to the discussion.')
     else:
-        error_msg = "<strong>Oops!</strong> Your comment was blank."
+        error_msg = u'<strong>Oops!</strong> Your comment was blank.'
         if request.is_ajax():
             return HttpResponseBadRequest(error_msg)
         else:
@@ -108,17 +82,15 @@ def comment_add(request, locker_id, submission_id):
     return HttpResponseRedirect(reverse(
         'datalocker:submission_view',
         kwargs={'locker_id': locker_id, 'submission_id': submission_id}
-        ))
+    ))
 
 
 @login_required
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def comment_modify(request, locker_id, submission_id):
-    """
-    Modifies the existing comment if it is still editable
-    """
+    """Modifies the existing comment if it is still editable"""
     comment = get_object_or_404(Comment, id=request.POST.get('id', ''))
     if comment.is_editable and comment.user == request.user:
         comment_text = request.POST.get('comment', '').strip()
@@ -128,15 +100,13 @@ def comment_modify(request, locker_id, submission_id):
             return JsonResponse({
                 'comment': comment_text,
                 'id': comment.id,
-                })
+            })
         else:
-            messages.success(
-                request,
-                "<strong>Success!</strong> " \
-                "Your comment was added to the discussion."
-            )
+            messages.success(request,
+                             u'<strong>Success!</strong> '
+                             u'Your comment was added to the discussion.')
     else:
-        error_msg = "<strong>D'oh!</strong> This comment is no longer editable."
+        error_msg = u"<strong>D'oh!</strong> This comment is no longer editable."  # NOQA
         if request.is_ajax():
             return HttpResponseBadRequest(error_msg)
         else:
@@ -146,34 +116,29 @@ def comment_modify(request, locker_id, submission_id):
         kwargs={
             'locker_id': comment.submission.locker.id,
             'submission_id': comment.submission.id,
-            }
-        ))
+        }
+    ))
 
 
 @login_required
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def comments_list(request, locker_id, submission_id):
-    """
-    Returns a list of comments for the specified submission
-    """
+    """Returns a list of comments for the specified submission"""
     submission = get_object_or_404(Submission, pk=submission_id)
     if submission.locker.discussion_enabled():
-        if submission.locker.is_owner(request.user) or (
-            submission.locker.is_user(request.user) and submission.locker.discussion_users_have_access()
-        ) or request.user.is_superuser:
+        is_owner = submission.locker.is_owner(request.user)
+        is_user = submission.locker.is_user(request.user)
+        discussion_users = submission.locker.discussion_users_have_access()
+        if is_owner or (is_user and discussion_users) or request.user.is_superuser:  # NOQA
             if request.is_ajax():
                 color_helper = UserColors(request)
                 comments = []
-                comment_objs = submission.comments.order_by(
-                    'parent', '-timestamp'
-                )
+                comment_objs = submission.comments.order_by('parent', '-timestamp')  # NOQA
                 for comment in comment_objs:
                     comment_dict = comment.to_dict()
-                    comment_dict['user']['color'] = color_helper.get(
-                        comment.user.username
-                    )
+                    comment_dict['user']['color'] = color_helper.get(comment.user.username)  # NOQA
                     if comment.user != request.user:
                         comment_dict['editable'] = False
                     comments.append(comment_dict)
@@ -181,15 +146,15 @@ def comments_list(request, locker_id, submission_id):
                     'discussion': comments,
                     'editing_time_value': settings.COMMENT_EDIT_MAX,
                     'editing_time_units': 'minutes',
-                    })
+                })
     if request.is_ajax():
-        error_msg = "The user does not have permission to view the discussion."
+        error_msg = u'The user does not have permission to view the discussion.'  # NOQA
         return HttpResponseBadRequest(error_msg)
     else:
         return HttpResponseRedirect(reverse(
             'datalocker:submission_view',
             kwargs={'locker_id': locker_id, 'submission_id': submission_id}
-            ))
+        ))
 
 
 @csrf_exempt
@@ -211,7 +176,6 @@ def form_submission_view(request, **kwargs):
         safe_values['owner'] = User.objects.get(username=safe_values['owner_name'])  # NOQA
     except User.DoesNotExist:
         safe_values['owner'] = None
-
     Locker.objects.add_submission(safe_values, request=request)
     return HttpResponse(status=201)
 
@@ -219,8 +183,9 @@ def form_submission_view(request, **kwargs):
 @login_required
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def locker_archive(request, locker_id):
+    """Archive a locker so it receives no new submissions"""
     locker = get_object_or_404(Locker, id=locker_id)
     locker.archive_timestamp = timezone.now()
     locker.save()
@@ -232,40 +197,38 @@ def locker_archive(request, locker_id):
 
 @login_required()
 @never_cache
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def locker_list_view(request):
-    """
-    Returns a list of lockers owned by the current user and a list of those
-    lockers shared with the current user.
+    """Return list of lockers for the current user
+
+    The list includes lockers for which the current user is an owner and
+    lockers for which the current user is included in the list of shared users.
     """
     context = {}
-    context['owned'] = Locker.objects.active().has_access(
-        request.user
-    ).annotate(
-        latest_submission=Max('submissions__timestamp')
-    ).order_by('name').filter(owner=request.user)
-    context['shared'] = Locker.objects.active().has_access(
-        request.user
-    ).annotate(
-        latest_submission=Max('submissions__timestamp')
-    ).order_by('name').exclude(owner=request.user)
-
+    context['owned'] = (Locker.objects
+                              .active()
+                              .has_access(request.user)
+                              .include_latest()
+                              .filter(owner=request.user))
+    context['shared'] = (Locker.objects
+                               .active()
+                               .has_access(request.user)
+                               .include_latest()
+                               .exclude(owner=request.user))
     if request.user.is_superuser:
-        context['all'] = Locker.objects.all().annotate(
-            latest_submission=Max('submissions__timestamp')
-        ).order_by('name')
-        context['orphaned'] = Locker.objects.filter(owner=None).annotate(
-            latest_submission=Max('submissions__timestamp')
-        ).order_by('name')
-
+        context['all'] = (Locker.objects.include_latest())
+        context['orphaned'] = (Locker.objects
+                                     .filter(owner=None)
+                                     .include_latest())
     return render(request, 'datalocker/index.html', context)
 
 
 @login_required
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def locker_unarchive(request, locker_id):
+    """Unarchives a locker so it can receive new submissions"""
     locker = get_object_or_404(Locker, id=locker_id)
     locker.archive_timestamp = None
     locker.save()
@@ -278,38 +241,32 @@ def locker_unarchive(request, locker_id):
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def locker_user_add(request, locker_id):
-    """
-    Adds the indicated user to the locker's list of users
-    """
+    """Adds the specified user to the locker's list of shared users"""
     if request.is_ajax():
-        locker =  get_object_or_404(Locker, id=locker_id)
+        locker = get_object_or_404(Locker, id=locker_id)
         user = get_object_or_404(User, email=request.POST.get('email', ''))
-        if not user in locker.users.all():
+        if user not in locker.users.all():
             locker.users.add(user)
-            locker.save()
-            from_addr = _get_notification_from_address("locker access granted")
+            from_addr = get_from_address('locker access granted')
             if from_addr:
-                subject = "Access to Locker: %s" % locker.name
+                subject = u'Access to Locker: {}'.format(locker.name)
                 to_addr = user.email
-                message = "The following Data Locker of form submissions has been " \
-                    "shared with you.\n\n" \
-                    "Locker: %s\n\n" \
-                    "You can view the submissions at:\n%s\n" % (
-                        locker.name,
-                        request.build_absolute_uri(
-                            reverse(
-                                'datalocker:submissions_list',
-                                kwargs={'locker_id': locker.id,}
-                                )
-                            ),
-                        )
+                url = request.build_absolute_uri(reverse(
+                    'datalocker:submissions_list',
+                    kwargs={'locker_id': locker.id}
+                ))
+                message = (u'The following Data Locker of form submissions '
+                           u'has been shared with you.\n\n'
+                           u'Locker: {}\n\n'
+                           u'You can view the submissions at:\n{}\n'
+                           u''.format(locker.name, url))
                 try:
                     send_mail(subject, message, from_addr, [to_addr])
-                except:
-                    logger.exception("Locker shared with you email failed to send")
-        return JsonResponse({ 'user': _get_public_user_dict(user) })
+                except SMTPException:
+                    logger.exception(u'Locker shared with you email failed to send')  # NOQA
+        return JsonResponse({'user': get_public_user_dict(user)})
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
 
@@ -317,25 +274,22 @@ def locker_user_add(request, locker_id):
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def locker_user_delete(request, locker_id):
-    """
-    Removes the indicated user from the locker's list of users
-    """
+    """Removes the specified user from the locker's list of users"""
     if request.is_ajax():
-        locker =  get_object_or_404(Locker, id=locker_id)
+        locker = get_object_or_404(Locker, id=locker_id)
         try:
             user = get_object_or_404(User, id=request.POST.get('id', ''))
         except ValueError:
-            error_msg = "An invalid user was requested to be deleted."
+            error_msg = u'An invalid user was requested to be deleted.'
             return HttpResponseBadRequest(error_msg)
         else:
             if user in locker.users.all():
                 locker.users.remove(user)
-                locker.save()
             return JsonResponse({'user_id': user.id})
     if error_msg:
-        error_msg = "<strong>Oops</strong> %s" % error_msg
+        error_msg = u'<strong>Oops</strong> {}'.format(error_msg)
         messages.error(request, error_msg)
     return HttpResponseRedirect(reverse('datalocker:index'))
 
@@ -343,13 +297,14 @@ def locker_user_delete(request, locker_id):
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def locker_users(request, locker_id):
     if request.is_ajax():
         locker = get_object_or_404(Locker, pk=locker_id)
-        users = []
-        for user in locker.users.all():
-            users.append(_get_public_user_dict(user))
+        users = [
+            get_public_user_dict(user)
+            for user in locker.users.all()
+        ]
         return JsonResponse({'users': users})
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
@@ -367,7 +322,7 @@ def login(request, template_name='registration/login.html',
         authentication_form,
         current_app,
         extra_context
-        )
+    )
 
 
 @never_cache
@@ -382,66 +337,57 @@ def logout(request, next_page=None,
         redirect_field_name,
         current_app,
         extra_context
-        )
+    )
 
 
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def modify_locker(request, **kwargs):
-    """
-    Modifies locker name, ownership, and settings.
-    """
+    """Modifies locker name, ownership, and settings"""
     locker = get_object_or_404(Locker, id=kwargs['locker_id'])
     previous_owner = locker.owner
     if not locker.owner:
         previous_owner = request.user
     new_locker_name = request.POST.get('locker-name', '')
     new_owner_email = request.POST.get('locker-owner', '')
-    if new_locker_name != "":
+    if new_locker_name != '':
         locker.name = new_locker_name
-    if new_owner_email != "":
+    if new_owner_email != '':
         try:
             new_owner = User.objects.get(email=new_owner_email)
         except User.DoesNotExist:
-            logger.error(
-                "Attempted to reassign locker (%s) to non-existent user (%s)" %
-                (locker.name, new_owner_email)
-                )
-            messages.error(
-                request,
-                "<strong>Oops!</strong> The user (%s) you tryed to make the " \
-                "owner of the <strong>%s</strong> locker does not exist. " \
-                "<strong>You still own the locker.</strong>" % (
-                    new_owner_email,
-                    locker.name
-                    ))
+            logger.error(u'Attempted to reassign locker ({}) '
+                         u'to non-existent user ({})'
+                         u''.format(locker.name, new_owner_email))
+            messages.error(request,
+                           u'<strong>Oops!</strong> The user ({}) you tried '
+                           u'to make the owner of the <strong>{}</strong> '
+                           u'locker does not exist. '
+                           u'<strong>You still own the locker.</strong>'
+                           u''.format(new_owner_email, locker.name))
         else:
             locker.owner = new_owner
-            from_addr = _get_notification_from_address("change locker owner")
+            from_addr = get_from_address(u'change locker owner')
             if from_addr:
-                subject = "Ownership of Locker: %s" % locker.name
+                subject = u'Ownership of Locker: {}'.format(locker.name)
                 to_addr = new_owner_email
-                message = "%s %s has changed the ownership of the following " \
-                    "Data Locker of form submissions to you.\n\n" \
-                    "Locker: %s\n\n" \
-                    "You can view the submissions at:\n%s\n" % (
-                        previous_owner.first_name,
-                        previous_owner.last_name,
-                        locker.name,
-                        request.build_absolute_uri(
-                            reverse(
-                                'datalocker:submissions_list',
-                                kwargs={'locker_id': locker.id,}
-                                )
-                            ),
-                        )
+                previous_name = u'{} {}'.format(previous_owner.first_name,
+                                                previous_owner.last_name)
+                url = request.build_absolute_uri(reverse(
+                    'datalocker:submissions_list',
+                    kwargs={'locker_id': locker.id}
+                ))
+                message = (u'{} has changed the ownership of the following '
+                           u'locker of form submissions to you.\n\n'
+                           u'Locker: {}\n\n'
+                           u'You can view the submissions at:\n{}\n'
+                           u''.format(previous_name, locker.name, url))
                 try:
                     send_mail(subject, message, from_addr, [to_addr])
-                except:
-                    logger.exception("Locker ownership changed to you email " \
-                        "failed to send")
+                except SMTPException:
+                    logger.exception(u'Locker ownership changed to you email failed to send')  # NOQA
     locker.save()
 
     # update the locker settings
@@ -477,19 +423,19 @@ def password_change(request,
         password_change_form,
         current_app,
         extra_context
-        )
+    )
 
 
 @never_cache
 def password_change_done(request,
-                         template_name='registration/password_change_done.html',
+                         template_name='registration/password_change_done.html',  # NOQA
                          current_app=None, extra_context=None):
     return auth_password_change_done(
         request,
         template_name,
         current_app,
         extra_context
-        )
+    )
 
 
 @permission_required('datalocker.add_manual_submission')
@@ -528,114 +474,103 @@ def submission_add(request, locker_id):
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def submission_delete(request, locker_id, submission_id):
-    """
-    Marks a submission as deleted in the database.
-    """
+    """Marks a submission as deleted"""
+    submission = get_object_or_404(Submission, id=submission_id)
+    submission.deleted = timezone.now()
+    submission.save()
     if request.is_ajax():
-        submission = get_object_or_404(Submission, id=submission_id)
-        submission.deleted = timezone.now()
-        submission.save()
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
             'deleted': submission.deleted,
             'purge_timestamp': submission.purge_date,
-            })
+        })
     else:
         return HttpResponseRedirect(reverse(
             'datalocker:submissions_list',
             kwargs={'locker_id': locker_id}
-            ))
+        ))
 
 
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def submission_undelete(request, locker_id, submission_id):
-    """
-    Removes the deleted timestamp from a submission
-    """
+    """Removes the deleted timestamp from a submission"""
+    submission = get_object_or_404(Submission, id=submission_id)
+    submission.deleted = None
+    submission.save()
     if request.is_ajax():
-        submission = get_object_or_404(Submission, id=submission_id)
-        submission.deleted = None
-        submission.save()
         return JsonResponse({
             'id': submission.id,
             'timestamp': submission.timestamp,
-            })
+        })
     else:
         return HttpResponseRedirect(reverse(
             'datalocker:submissions_list',
             kwargs={'locker_id': locker_id}
-            ))
+        ))
 
 
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def submission_view(request, locker_id, submission_id):
-    """
-    Displays an individual submission
-    """
+    """Displays an individual submission"""
     submission = get_object_or_404(Submission, pk=submission_id)
-    oldest = Submission.objects.oldest(submission.locker)
-    if not oldest:
-        oldest = submission
-    older = submission.older()
     newer = submission.newer()
     newest = Submission.objects.newest(submission.locker)
     if not newest:
         newest = submission
-    workflow_enabled = submission.locker.workflow_enabled()
+    oldest = Submission.objects.oldest(submission.locker)
+    if not oldest:
+        oldest = submission
+    older = submission.older()
     discussion_enabled = submission.locker.discussion_enabled()
+    is_owner = submission.locker.owner == request.user
+    users_discussion = submission.locker.discussion_users_have_access()
+    users_workflow = submission.locker.workflow_users_can_edit()
+    workflow_enabled = submission.locker.workflow_enabled()
 
     # generate a message to the user if the submission is deleted
     if submission.deleted:
-        messages.warning(
-            request,
-            "<strong>Heads up!</strong> This submission has been deleted " \
-            "and <strong>will be permanently removed</strong> from the " \
-            "locker <strong>%s</strong>." % (
-                naturaltime(submission.purge_date)
-                )
-            )
+        messages.warning(request,
+                         u'<strong>Heads up!</strong> This submission has '
+                         u'been deleted and <strong>will be permanently '
+                         u'removed</strong> from the locker '
+                         u'<strong>{}</strong>.'
+                         u''.format(naturaltime(submission.purge_date)))
     return render(request, 'datalocker/submission_view.html', {
-        'submission': submission,
         'data': submission.data_dict(with_types=True),
-
-        'oldest': oldest,
-        'older': older,
+        'discussion_enabled': discussion_enabled,
+        'discussion_users_have_access': users_discussion or is_owner,
         'newer': newer,
-        'newest': newest,
-        'oldest_disabled': True if submission.id == oldest.id else False,
-        'older_disabled': True if submission.id == older.id else False,
         'newer_disabled': True if submission.id == newer.id else False,
+        'newest': newest,
         'newest_disabled': True if submission.id == newest.id else False,
-
+        'older': older,
+        'older_disabled': True if submission.id == older.id else False,
+        'oldest': oldest,
+        'oldest_disabled': True if submission.id == oldest.id else False,
+        'sidebar_enabled': workflow_enabled or discussion_enabled,
+        'submission': submission,
         'workflow_enabled': workflow_enabled,
-        'workflow_users_can_edit': submission.locker.workflow_users_can_edit() or submission.locker.owner == request.user,
         'workflow_states': submission.locker.workflow_states(),
         'workflow_state': submission.workflow_state,
-
-        'discussion_enabled': discussion_enabled,
-        'discussion_users_have_access': submission.locker.discussion_users_have_access() or submission.locker.owner == request.user,
-
-        'sidebar_enabled': workflow_enabled or discussion_enabled,
-        })
+        'workflow_users_can_edit': users_workflow or is_owner,
+    })
 
 
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["GET", "HEAD", "POST"])
+@require_http_methods(['GET', 'HEAD', 'POST'])
 def submissions_list_view(request, locker_id):
-    """
-    Returns a list of submissions for the specified locker.
-    """
+    """Returns a list of submissions for the specified locker"""
     locker = get_object_or_404(Locker, pk=locker_id)
     if request.method == 'POST':
         # Save the selected fields to include in the submissions list
@@ -643,11 +578,11 @@ def submissions_list_view(request, locker_id):
         return HttpResponseRedirect(reverse(
             'datalocker:submissions_list',
             kwargs={'locker_id': locker_id}
-            ))
-
-    selected_fields = locker.fields_selected();
+        ))
+    is_owner = locker.owner == request.user
+    selected_fields = locker.fields_selected()
     context = {
-        'allow_maintenance_mode': request.user == locker.owner or request.user.is_superuser,
+        'allow_maintenance_mode': is_owner or request.user.is_superuser,
         'column_headings': ['Submitted date', ] + selected_fields,
         'data': [],
         'fields_list': locker.fields_all(),
@@ -655,13 +590,13 @@ def submissions_list_view(request, locker_id):
         'locker': locker,
         'purge_days': settings.SUBMISSION_PURGE_DAYS,
         'selected_fields': selected_fields,
-        }
+    }
 
     ##
     # Build the data that is made available to the template
     #
     # context['data'] contains all the data and metadata for displaying
-    # the list of submissions table.
+    # the table of submissions.
     #
     # Format:
     #     [
@@ -671,7 +606,7 @@ def submissions_list_view(request, locker_id):
     #         purged date
     #     ]
     ##
-    for submission in locker.submissions.all().order_by('-timestamp'):
+    for submission in locker.submissions.order_by('-timestamp'):
         entry_data = [submission.timestamp, ]
         submission_data = submission.data_dict()
         for field in selected_fields:
@@ -685,7 +620,7 @@ def submissions_list_view(request, locker_id):
             submission.id,
             True if submission.deleted else False,
             submission.purge_date,
-            ])
+        ])
 
     # determine which indices in the cell data list will be linked
     try:
@@ -695,53 +630,43 @@ def submissions_list_view(request, locker_id):
     except ValueError:
         pass
     if not context['linkable_indices']:
-        context['linkable_indices'] = [0,]
-
+        context['linkable_indices'] = [0, ]
     return render(request, 'datalocker/submissions_list.html', context)
 
 
 @never_cache
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def testing_bad_request_view(request):
-    """
-    Displays a custom bad request (400) page
-    """
+    """Displays a custom bad request (400) page"""
     return render(request, '400.html', {})
 
 
 @never_cache
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def testing_forbidden_view(request):
-    """
-    Displays a custom forbidden (403) page
-    """
+    """Displays a custom forbidden (403) page"""
     return render(request, '403.html', {})
 
 
 @never_cache
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def testing_not_found_view(request):
-    """
-    Displays a custom not found (404) page
-    """
+    """Displays a custom not found (404) page"""
     return render(request, '404.html', {})
 
 
 @never_cache
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def testing_server_error_view(request):
-    """
-    Displays a custom internal server error (500) page
-    """
+    """Displays a custom internal server error (500) page"""
     return render(request, '500.html', {})
 
 
 @login_required()
 @never_cache
-@require_http_methods(["GET", "HEAD"])
+@require_http_methods(['GET', 'HEAD'])
 def users_list(request, **kwargs):
-    """
-    Returns a list of all the user email addresses in the system
+    """Returns a list of all the user email addresses in the system
 
     This is used to power the owner and shared user auto-complete which is
     driven by TypeAhead.js.
@@ -752,14 +677,14 @@ def users_list(request, **kwargs):
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            })
-    return JsonResponse({ 'users': users_list })
+        })
+    return JsonResponse({'users': users_list})
 
 
 @login_required()
 @never_cache
 @prevent_url_guessing
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def workflow_modify(request, locker_id, submission_id):
     submission = get_object_or_404(Submission, pk=submission_id)
     new_state = request.POST.get('workflow-state', '')
@@ -767,13 +692,11 @@ def workflow_modify(request, locker_id, submission_id):
         submission.workflow_state = new_state
         submission.save()
         if request.is_ajax():
-            return JsonResponse({
-                'state': new_state
-                })
+            return JsonResponse({'state': new_state})
     else:
-        error_msg = "<strong>Oops!</strong> Unknown workflow state specified."
+        error_msg = u'<strong>Oops!</strong> Unknown workflow state specified.'
         if request.is_ajax():
-            return HttpResponseBadRequest(error_msg, content_type='text/plain');
+            return HttpResponseBadRequest(error_msg, content_type='text/plain')
         else:
             messages.error(request, error_msg)
     return HttpResponseRedirect(reverse(
@@ -781,5 +704,5 @@ def workflow_modify(request, locker_id, submission_id):
         kwargs={
             'locker_id': submission.locker.id,
             'submission_id': submission.id,
-            }
-        ))
+        }
+    ))

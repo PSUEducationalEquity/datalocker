@@ -10,6 +10,6 @@ register = template.Library()
 
 @register.filter
 def jsonify(object):
-	if isinstance(object, QuerySet):
-		return serialize('json', object)
-	return json.dumps(object)
+    if isinstance(object, QuerySet):
+        return serialize('json', object)
+    return json.dumps(object)
