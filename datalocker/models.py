@@ -204,7 +204,7 @@ class Locker(models.Model):
     objects = LockerManager.from_queryset(LockerQuerySet)()
 
     class Meta:
-        order_by = ('name', )
+        ordering = ('name', )
         permissions = (('add_manual_submission', 'Can add manual submission'), )  # NOQA
 
     def __str__(self):
