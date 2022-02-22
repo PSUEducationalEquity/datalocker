@@ -26,6 +26,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from dateutil import parser as date_parser
 from smtplib import SMTPException
 
 from .decorators import login_required, never_cache, prevent_url_guessing
@@ -37,6 +38,7 @@ from .models import (
 from .utils.notifications import get_from_address
 from .utils.users import get_public_user_dict, UserColors
 
+import json
 import logging
 
 
@@ -451,20 +453,39 @@ def submission_add(request, locker_id):
                            submission to
     """
     locker = get_object_or_404(Locker, id=locker_id)
-    json_data = request.POST.get('json', '').strip()
-    json_data = json_data.replace('\r', '')
-    json_data = json_data.replace('\n', '')
-    json_data = json_data.replace('<div>', '')
-    json_data = json_data.replace('</div>', '')
-    json_data = json_data.replace('<br />', '\\r\\n')
-    json_data = json_data.replace('<br>', '\\r\\n')
-    if json_data[-3:] == '",}':
-        json_data = json_data[:-3] + '"}'
-    Locker.objects.add_submission(
-        {'data': json_data},
+    raw_text = request.POST.get('json', u'').strip()
+    raw_text = raw_text.replace('<div>', '')
+    raw_text = raw_text.replace('</div>', '')
+    raw_text = raw_text.replace('<br />', '\\r\\n')
+    raw_text = raw_text.replace('<br>', '\\r\\n')
+    try:
+        data = json.loads(raw_text)
+    except ValueError as e:
+        if 'Expecting property name enclosed' in str(e):
+            raw_text = raw_text.rsplit(',', 1)[0] + '}'
+            data = json.loads(raw_text)
+        else:
+            raise e
+    submission, _ = Locker.objects.add_submission(
+        {'data': json.dumps(data)},
         request=request,
         locker=locker
     )
+    if request.user.is_superuser:
+        timestamp_raw = request.POST.get('timestamp', '').strip()
+        if timestamp_raw:
+            try:
+                timestamp = date_parser.parse(timestamp_raw)
+            except ValueError:
+                pass
+            else:
+                submission.timestamp = timestamp
+                submission.save()
+        if locker.workflow_enabled():
+            state = request.POST.get('workflow-state', '').strip()
+            if state:
+                submission.workflow_state = state
+                submission.save()
     return HttpResponseRedirect(reverse(
         'datalocker:submissions_list',
         kwargs={'locker_id': locker_id}

@@ -204,13 +204,43 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label for="submission-json">Paste the submission data in JSON format</label>
+              <label for="submission-json">
+                Paste the submission data in JSON format
+              </label>
               <textarea class="form-control"
                         id="submission-json"
                         name="json"
                         rows="15"
                         ></textarea>
             </div>
+            {% if request.user.is_superuser %}
+              <div class="form-group">
+                <label for="submission-timestamp">
+                  Timestamp of the submission
+                  <small class="text-primary">(optional)</small>
+                </label>
+                <input class="form-control"
+                       id="submission-timestamp"
+                       name="timestamp"
+                       type="text"
+                       value=""
+                       />
+              </div>
+              {% if locker.workflow_enabled %}
+                <div class="form-group">
+                  <label for="submission-workflow-state">
+                    Workflow state
+                    <small class="text-primary">(optional)</small>
+                  </label>
+                  <input class="form-control"
+                         id="submission-workflow-state"
+                         name="workflow-state"
+                         type="text"
+                         value=""
+                         />
+                </div>
+              {% endif %}
+            {% endif %}
           </div>
           <div class="modal-footer">
             <input class="btn btn-primary btn-sm pull-left"

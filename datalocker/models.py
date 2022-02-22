@@ -67,6 +67,11 @@ class LockerManager(models.Manager):
             locker {Locker} -- Instance of Locker to save the submission to.
                                Will be looked up or created if not specifed.
                                (default: {None})
+
+        Returns:
+            {tuple} -- 2-item tuple:
+                        1: {Submission} -- the submission created
+                        2: {bool} -- True when the locker is created
         """
         def _exists(attr):
             try:
@@ -119,15 +124,14 @@ class LockerManager(models.Manager):
             locker.pk
         ))
 
+        locker_url = reverse('datalocker:submissions_list',
+                             kwargs={'locker_id': locker.id})
         submission_url = reverse('datalocker:submission_view',
                                  kwargs={'locker_id': locker.id,
                                          'submission_id': submission.id})
         if request:
-            submission_url = request.build_absolute_uri(submission_url)
-        locker_url = reverse('datalocker:submissions_list',
-                             kwargs={'locker_id': locker.id})
-        if request:
             locker_url = request.build_absolute_uri(locker_url)
+            submission_url = request.build_absolute_uri(submission_url)
         notify_addresses = []
         if not values['owner']:
             logger.warning(u'New submission saved to orphaned locker: '
@@ -156,6 +160,7 @@ class LockerManager(models.Manager):
                         send_mail(subject, message, from_addr, [to_email])
                 except (BadHeaderError):
                     logger.exception(u'New submission email to the locker owner failed')  # NOQA
+        return (submission, created)
 
 
 class Locker(models.Model):
