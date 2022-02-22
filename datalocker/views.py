@@ -26,6 +26,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from dateutil import parser as date_parser
 from smtplib import SMTPException
 
 from .decorators import login_required, never_cache, prevent_url_guessing
@@ -465,11 +466,26 @@ def submission_add(request, locker_id):
             data = json.loads(raw_text)
         else:
             raise e
-    Locker.objects.add_submission(
+    submission, _ = Locker.objects.add_submission(
         {'data': json.dumps(data)},
         request=request,
         locker=locker
     )
+    if request.user.is_superuser:
+        timestamp_raw = request.POST.get('timestamp', '').strip()
+        if timestamp_raw:
+            try:
+                timestamp = date_parser.parse(timestamp_raw)
+            except ValueError:
+                pass
+            else:
+                submission.timestamp = timestamp
+                submission.save()
+        if locker.workflow_enabled():
+            state = request.POST.get('workflow-state', '').strip()
+            if state:
+                submission.workflow_state = state
+                submission.save()
     return HttpResponseRedirect(reverse(
         'datalocker:submissions_list',
         kwargs={'locker_id': locker_id}
