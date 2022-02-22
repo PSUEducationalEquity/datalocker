@@ -37,6 +37,7 @@ from .models import (
 from .utils.notifications import get_from_address
 from .utils.users import get_public_user_dict, UserColors
 
+import json
 import logging
 
 
@@ -451,17 +452,21 @@ def submission_add(request, locker_id):
                            submission to
     """
     locker = get_object_or_404(Locker, id=locker_id)
-    json_data = request.POST.get('json', '').strip()
-    json_data = json_data.replace('\r', '')
-    json_data = json_data.replace('\n', '')
-    json_data = json_data.replace('<div>', '')
-    json_data = json_data.replace('</div>', '')
-    json_data = json_data.replace('<br />', '\\r\\n')
-    json_data = json_data.replace('<br>', '\\r\\n')
-    if json_data[-3:] == '",}':
-        json_data = json_data[:-3] + '"}'
+    raw_text = request.POST.get('json', u'').strip()
+    raw_text = raw_text.replace('<div>', '')
+    raw_text = raw_text.replace('</div>', '')
+    raw_text = raw_text.replace('<br />', '\\r\\n')
+    raw_text = raw_text.replace('<br>', '\\r\\n')
+    try:
+        data = json.loads(raw_text)
+    except ValueError as e:
+        if 'Expecting property name enclosed' in str(e):
+            raw_text = raw_text.rsplit(',', 1)[0] + '}'
+            data = json.loads(raw_text)
+        else:
+            raise e
     Locker.objects.add_submission(
-        {'data': json_data},
+        {'data': json.dumps(data)},
         request=request,
         locker=locker
     )
