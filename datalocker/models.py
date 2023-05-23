@@ -704,6 +704,7 @@ class Comment(models.Model):
         blank=True,
         default=None,
         null=True,
+        on_delete=models.CASCADE,
         related_name='children',
     )
     submission = models.ForeignKey(
