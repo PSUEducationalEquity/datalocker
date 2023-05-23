@@ -6,12 +6,6 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
-from django.contrib.auth.views import (
-    login as auth_login,
-    logout as auth_logout,
-    password_change as auth_password_change,
-    password_change_done as auth_password_change_done
-)
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
 from django.http import (
@@ -312,36 +306,6 @@ def locker_users(request, locker_id):
         return HttpResponseRedirect(reverse('datalocker:index'))
 
 
-@never_cache
-def login(request, template_name='registration/login.html',
-          redirect_field_name=REDIRECT_FIELD_NAME,
-          authentication_form=AuthenticationForm,
-          current_app=None, extra_context=None):
-    return auth_login(
-        request,
-        template_name,
-        redirect_field_name,
-        authentication_form,
-        current_app,
-        extra_context
-    )
-
-
-@never_cache
-def logout(request, next_page=None,
-           template_name='registration/logged_out.html',
-           redirect_field_name=REDIRECT_FIELD_NAME,
-           current_app=None, extra_context=None):
-    return auth_logout(
-        request,
-        next_page,
-        template_name,
-        redirect_field_name,
-        current_app,
-        extra_context
-    )
-
-
 @login_required()
 @never_cache
 @prevent_url_guessing
@@ -410,34 +374,6 @@ def modify_locker(request, **kwargs):
         bool(request.POST.get('discussion-users-have-access', False))
     )
     return HttpResponseRedirect(reverse('datalocker:index'))
-
-
-@never_cache
-def password_change(request,
-                    template_name='registration/password_change_form.html',
-                    post_change_redirect=None,
-                    password_change_form=PasswordChangeForm,
-                    current_app=None, extra_context=None):
-    return auth_password_change(
-        request,
-        template_name,
-        post_change_redirect,
-        password_change_form,
-        current_app,
-        extra_context
-    )
-
-
-@never_cache
-def password_change_done(request,
-                         template_name='registration/password_change_done.html',  # NOQA
-                         current_app=None, extra_context=None):
-    return auth_password_change_done(
-        request,
-        template_name,
-        current_app,
-        extra_context
-    )
 
 
 @permission_required('datalocker.add_manual_submission')

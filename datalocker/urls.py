@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.conf.urls import url
+from django.contrib.auth import views as auth_views
 
 from datalocker import views
 
@@ -14,20 +15,19 @@ urlpatterns = [
         ),
 
     url(r'^login$',
-        views.login,
+        auth_views.LoginView.as_view(),
         name="app_login"
         ),
     url(r'^logout$',
-        views.logout,
+        auth_views.LogoutView.as_view(),
         name="app_logout"
         ),
     url(r'^password_change$',
-        views.password_change,
-        {'post_change_redirect': 'datalocker:password_change_done'},
+        auth_views.PasswordChangeView.as_view(),
         name="password_change"
         ),
     url(r'^password_change_done$',
-        views.password_change_done,
+        auth_views.PasswordChangeDoneView.as_view(),
         name="password_change_done"
         ),
 
