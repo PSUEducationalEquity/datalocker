@@ -14,7 +14,6 @@ from django.contrib.auth.views import (
 )
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
@@ -22,6 +21,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
