@@ -84,6 +84,7 @@ class SubmissionTestCase(TestCase):
             'locker': 1,
             'data': data,
             u'id': submission.id,
+            'purge_date': None,
             'timestamp': submission.timestamp.isoformat(),
             'workflow_state': '',
         }
