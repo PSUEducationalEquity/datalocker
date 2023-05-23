@@ -11,7 +11,6 @@ from .models import Locker, LockerSetting, Submission, Comment
 
 class DataLockerAdminSite(AdminSite):
     site_header = 'Data Locker Administration'
-    site_url = '/datalocker'
 
     def admin_view(self, view, cacheable=False):
         view_function = super(DataLockerAdminSite, self).admin_view(view, cacheable)  # NOQA
