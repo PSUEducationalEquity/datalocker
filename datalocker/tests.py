@@ -1,8 +1,8 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.urls import reverse
 
 from collections import OrderedDict
 
@@ -84,6 +84,7 @@ class SubmissionTestCase(TestCase):
             'locker': 1,
             'data': data,
             u'id': submission.id,
+            'purge_date': None,
             'timestamp': submission.timestamp.isoformat(),
             'workflow_state': '',
         }

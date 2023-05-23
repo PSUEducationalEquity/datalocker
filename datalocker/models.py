@@ -2,10 +2,10 @@
 
 from django.conf import settings
 from django.core.mail import send_mail, BadHeaderError
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Max, Q
 from django.forms.models import model_to_dict
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -704,6 +704,7 @@ class Comment(models.Model):
         blank=True,
         default=None,
         null=True,
+        on_delete=models.CASCADE,
         related_name='children',
     )
     submission = models.ForeignKey(
