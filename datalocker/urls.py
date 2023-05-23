@@ -6,6 +6,7 @@ from django.conf.urls import url
 from datalocker import views
 
 
+app_name = 'datalocker'
 urlpatterns = [
     url(r'^$',
         views.locker_list_view,
