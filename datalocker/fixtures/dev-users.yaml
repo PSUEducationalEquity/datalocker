@@ -47,7 +47,7 @@
     first_name: Mark
     is_active: true
     is_staff: true
-    is_superuser: true
+    is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
     last_name: Smith
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
@@ -61,7 +61,7 @@
     first_name: Tom
     is_active: true
     is_staff: true
-    is_superuser: true
+    is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
     last_name: Jones
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
@@ -75,7 +75,7 @@
     first_name: Tonya
     is_active: true
     is_staff: true
-    is_superuser: true
+    is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
     last_name: Kirk
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
@@ -89,7 +89,7 @@
     first_name: Richard
     is_active: true
     is_staff: true
-    is_superuser: true
+    is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
     last_name: Bob
     password: pbkdf2_sha256$10000$s1zCpgbGis6m$0huThf+OUy3tRf6sy1YtiS/9z9pqE5AWH4bvLQobl18=
