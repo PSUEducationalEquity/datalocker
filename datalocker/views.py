@@ -202,15 +202,13 @@ def locker_list_view(request):
     """
     context = {}
     context['owned'] = (Locker.objects
-                              .active()
                               .has_access(request.user)
-                              .include_latest()
-                              .filter(owner=request.user))
+                              .filter(owner=request.user)
+                              .include_latest())
     context['shared'] = (Locker.objects
-                               .active()
                                .has_access(request.user)
-                               .include_latest()
-                               .exclude(owner=request.user))
+                               .exclude(owner=request.user)
+                               .include_latest())
     if request.user.is_superuser:
         context['all'] = (Locker.objects.include_latest())
         context['orphaned'] = (Locker.objects
