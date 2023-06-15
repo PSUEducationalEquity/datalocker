@@ -23,7 +23,7 @@ def get_public_user_dict(user):
     """
     public_fields = ['id', 'username', 'email', 'first_name', 'last_name']
     user_dict = {}
-    for key, value in model_to_dict(user).iteritems():
+    for key, value in model_to_dict(user).items():
         if key in public_fields:
             user_dict[key] = value
     return user_dict
@@ -65,8 +65,8 @@ class UserColors():
                         name = line.split()[0][1:].strip()
                         available_colors.append(name)
         except IOError:
-            logger.warning(u"The css file for user colors doesn't exist at the"
-                           u" following location '{}'".format(self.CSS_FILE))
+            logger.warning("The css file for user colors doesn't exist at the"
+                           " following location '{}'".format(self.CSS_FILE))
             self.error = True
         self.request.session[self.AVAILABLE_COLORS] = available_colors
 

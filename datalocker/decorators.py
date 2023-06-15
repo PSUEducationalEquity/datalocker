@@ -82,8 +82,8 @@ def prevent_url_guessing(view_func):
                 if request.resolver_match.url_name in redirect_to_list:
                     view = reverse('datalocker:submissions_list',
                                    kwargs={'locker_id': locker_id})
-                    msg = (u'<strong>Oops!</strong> The submission you '
-                           u'requested is not in the locker you specified.')
+                    msg = ('<strong>Oops!</strong> The submission you '
+                           'requested is not in the locker you specified.')
                     messages.error(request, msg)
                 else:
                     view = reverse(

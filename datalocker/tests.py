@@ -62,18 +62,18 @@ class SubmissionTestCase(TestCase):
         self.assertDictEqual(
             s.data_dict(),
             {
-                u'name': u'George',
-                u'Gender': u'Male',
+                'name': 'George',
+                'Gender': 'Male',
             }
         )
 
     def test_to_dict(self):
         """to_dict method should convert the object to a python dict"""
         data = OrderedDict({
-            u'first-name': u'Bart',
-            u'last-name': u'Simpson',
-            u'subject': u'Testing',
-            u'comment': u'Testing the Submission.to_dict() method.',
+            'first-name': 'Bart',
+            'last-name': 'Simpson',
+            'subject': 'Testing',
+            'comment': 'Testing the Submission.to_dict() method.',
         })
         submission = Submission.objects.create(
             locker=Locker.objects.get(pk=1),
@@ -83,7 +83,7 @@ class SubmissionTestCase(TestCase):
             'deleted': None,
             'locker': 1,
             'data': data,
-            u'id': submission.id,
+            'id': submission.id,
             'purge_date': None,
             'timestamp': submission.timestamp.isoformat(),
             'workflow_state': '',
