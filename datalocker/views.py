@@ -67,10 +67,10 @@ def comment_add(request, locker_id, submission_id):
             return JsonResponse(comment_dict)
         else:
             messages.success(request,
-                             u'<strong>Success!</strong> '
-                             u'Your comment was added to the discussion.')
+                             '<strong>Success!</strong> '
+                             'Your comment was added to the discussion.')
     else:
-        error_msg = u'<strong>Oops!</strong> Your comment was blank.'
+        error_msg = '<strong>Oops!</strong> Your comment was blank.'
         if request.is_ajax():
             return HttpResponseBadRequest(error_msg)
         else:
@@ -99,10 +99,10 @@ def comment_modify(request, locker_id, submission_id):
             })
         else:
             messages.success(request,
-                             u'<strong>Success!</strong> '
-                             u'Your comment was added to the discussion.')
+                             '<strong>Success!</strong> '
+                             'Your comment was added to the discussion.')
     else:
-        error_msg = u"<strong>D'oh!</strong> This comment is no longer editable."  # NOQA
+        error_msg = "<strong>D'oh!</strong> This comment is no longer editable."  # NOQA
         if request.is_ajax():
             return HttpResponseBadRequest(error_msg)
         else:
@@ -144,7 +144,7 @@ def comments_list(request, locker_id, submission_id):
                     'editing_time_units': 'minutes',
                 })
     if request.is_ajax():
-        error_msg = u'The user does not have permission to view the discussion.'  # NOQA
+        error_msg = 'The user does not have permission to view the discussion.'  # NOQA
         return HttpResponseBadRequest(error_msg)
     else:
         return HttpResponseRedirect(reverse(
@@ -245,21 +245,21 @@ def locker_user_add(request, locker_id):
             locker.users.add(user)
             from_addr = get_from_address('locker access granted')
             if from_addr:
-                subject = u'Access to Locker: {}'.format(locker.name)
+                subject = 'Access to Locker: {}'.format(locker.name)
                 to_addr = user.email
                 url = request.build_absolute_uri(reverse(
                     'datalocker:submissions_list',
                     kwargs={'locker_id': locker.id}
                 ))
-                message = (u'The following Data Locker of form submissions '
-                           u'has been shared with you.\n\n'
-                           u'Locker: {}\n\n'
-                           u'You can view the submissions at:\n{}\n'
-                           u''.format(locker.name, url))
+                message = ('The following Data Locker of form submissions '
+                           'has been shared with you.\n\n'
+                           'Locker: {}\n\n'
+                           'You can view the submissions at:\n{}\n'
+                           ''.format(locker.name, url))
                 try:
                     send_mail(subject, message, from_addr, [to_addr])
                 except SMTPException:
-                    logger.exception(u'Locker shared with you email failed to send')  # NOQA
+                    logger.exception('Locker shared with you email failed to send')  # NOQA
         return JsonResponse({'user': get_public_user_dict(user)})
     else:
         return HttpResponseRedirect(reverse('datalocker:index'))
@@ -276,14 +276,14 @@ def locker_user_delete(request, locker_id):
         try:
             user = get_object_or_404(User, id=request.POST.get('id', ''))
         except ValueError:
-            error_msg = u'An invalid user was requested to be deleted.'
+            error_msg = 'An invalid user was requested to be deleted.'
             return HttpResponseBadRequest(error_msg)
         else:
             if user in locker.users.all():
                 locker.users.remove(user)
             return JsonResponse({'user_id': user.id})
     if error_msg:
-        error_msg = u'<strong>Oops</strong> {}'.format(error_msg)
+        error_msg = '<strong>Oops</strong> {}'.format(error_msg)
         messages.error(request, error_msg)
     return HttpResponseRedirect(reverse('datalocker:index'))
 
@@ -322,36 +322,36 @@ def modify_locker(request, **kwargs):
         try:
             new_owner = User.objects.get(email=new_owner_email)
         except User.DoesNotExist:
-            logger.error(u'Attempted to reassign locker ({}) '
-                         u'to non-existent user ({})'
-                         u''.format(locker.name, new_owner_email))
+            logger.error('Attempted to reassign locker ({}) '
+                         'to non-existent user ({})'
+                         ''.format(locker.name, new_owner_email))
             messages.error(request,
-                           u'<strong>Oops!</strong> The user ({}) you tried '
-                           u'to make the owner of the <strong>{}</strong> '
-                           u'locker does not exist. '
-                           u'<strong>You still own the locker.</strong>'
-                           u''.format(new_owner_email, locker.name))
+                           '<strong>Oops!</strong> The user ({}) you tried '
+                           'to make the owner of the <strong>{}</strong> '
+                           'locker does not exist. '
+                           '<strong>You still own the locker.</strong>'
+                           ''.format(new_owner_email, locker.name))
         else:
             locker.owner = new_owner
-            from_addr = get_from_address(u'change locker owner')
+            from_addr = get_from_address('change locker owner')
             if from_addr:
-                subject = u'Ownership of Locker: {}'.format(locker.name)
+                subject = 'Ownership of Locker: {}'.format(locker.name)
                 to_addr = new_owner_email
-                previous_name = u'{} {}'.format(previous_owner.first_name,
+                previous_name = '{} {}'.format(previous_owner.first_name,
                                                 previous_owner.last_name)
                 url = request.build_absolute_uri(reverse(
                     'datalocker:submissions_list',
                     kwargs={'locker_id': locker.id}
                 ))
-                message = (u'{} has changed the ownership of the following '
-                           u'locker of form submissions to you.\n\n'
-                           u'Locker: {}\n\n'
-                           u'You can view the submissions at:\n{}\n'
-                           u''.format(previous_name, locker.name, url))
+                message = ('{} has changed the ownership of the following '
+                           'locker of form submissions to you.\n\n'
+                           'Locker: {}\n\n'
+                           'You can view the submissions at:\n{}\n'
+                           ''.format(previous_name, locker.name, url))
                 try:
                     send_mail(subject, message, from_addr, [to_addr])
                 except SMTPException:
-                    logger.exception(u'Locker ownership changed to you email failed to send')  # NOQA
+                    logger.exception('Locker ownership changed to you email failed to send')  # NOQA
     locker.save()
 
     # update the locker settings
@@ -387,7 +387,7 @@ def submission_add(request, locker_id):
                            submission to
     """
     locker = get_object_or_404(Locker, id=locker_id)
-    raw_text = request.POST.get('json', u'').strip()
+    raw_text = request.POST.get('json', '').strip()
     raw_text = raw_text.replace('<div>', '')
     raw_text = raw_text.replace('</div>', '')
     raw_text = raw_text.replace('<br />', '\\r\\n')
@@ -494,11 +494,11 @@ def submission_view(request, locker_id, submission_id):
     # generate a message to the user if the submission is deleted
     if submission.deleted:
         messages.warning(request,
-                         u'<strong>Heads up!</strong> This submission has '
-                         u'been deleted and <strong>will be permanently '
-                         u'removed</strong> from the locker '
-                         u'<strong>{}</strong>.'
-                         u''.format(naturaltime(submission.purge_date)))
+                         '<strong>Heads up!</strong> This submission has '
+                         'been deleted and <strong>will be permanently '
+                         'removed</strong> from the locker '
+                         '<strong>{}</strong>.'
+                         ''.format(naturaltime(submission.purge_date)))
     return render(request, 'datalocker/submission_view.html', {
         'data': submission.data_dict(with_types=True),
         'discussion_enabled': discussion_enabled,
@@ -649,7 +649,7 @@ def workflow_modify(request, locker_id, submission_id):
         if request.is_ajax():
             return JsonResponse({'state': new_state})
     else:
-        error_msg = u'<strong>Oops!</strong> Unknown workflow state specified.'
+        error_msg = '<strong>Oops!</strong> Unknown workflow state specified.'
         if request.is_ajax():
             return HttpResponseBadRequest(error_msg, content_type='text/plain')
         else:

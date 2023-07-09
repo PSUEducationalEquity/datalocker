@@ -117,7 +117,7 @@ class LockerManager(models.Manager):
             workflow_state=workflow_state,
             data=values['data'],
         )
-        logger.info(u'New submission ({}) from {} saved to {} locker ({})'.format(  # NOQA
+        logger.info('New submission ({}) from {} saved to {} locker ({})'.format(  # NOQA
             submission.pk,
             values['url'],
             'new' if created else 'existing',
@@ -134,8 +134,8 @@ class LockerManager(models.Manager):
             submission_url = request.build_absolute_uri(submission_url)
         notify_addresses = []
         if not values['owner']:
-            logger.warning(u'New submission saved to orphaned locker: '
-                           u'{}'.format(submission_url))
+            logger.warning('New submission saved to orphaned locker: '
+                           '{}'.format(submission_url))
         else:
             notify_addresses.append(values['owner'].email)
         if locker.shared_users_notification():
@@ -144,13 +144,13 @@ class LockerManager(models.Manager):
         if notify_addresses:
             from_addr = get_from_address('new submission')
             if from_addr:
-                subject = u'{} - new submission'.format(values['name'])
-                message = (u'A new form submission was saved to the Data '
-                           u'Locker. The name of the locker and links to view '
-                           u'the submission are provided below.\n\n'
-                           u'Locker: {}\n\n'
-                           u'View submission: {}\n'
-                           u'View all submissions: {}\n'.format(
+                subject = '{} - new submission'.format(values['name'])
+                message = ('A new form submission was saved to the Data '
+                           'Locker. The name of the locker and links to view '
+                           'the submission are provided below.\n\n'
+                           'Locker: {}\n\n'
+                           'View submission: {}\n'
+                           'View all submissions: {}\n'.format(
                                values['name'],
                                submission_url,
                                locker_url,
@@ -159,7 +159,7 @@ class LockerManager(models.Manager):
                     for to_email in notify_addresses:
                         send_mail(subject, message, from_addr, [to_email])
                 except (BadHeaderError):
-                    logger.exception(u'New submission email to the locker owner failed')  # NOQA
+                    logger.exception('New submission email to the locker owner failed')  # NOQA
         return (submission, created)
 
 
@@ -297,8 +297,7 @@ class Locker(models.Model):
             submissions = self.submissions.filter(
                 timestamp__gte=last_updated_setting.value)
         for submission in submissions:
-            fields = submission.data_dict().keys()
-            for field in fields:
+            for field in submission.data_dict().keys():
                 if field not in all_fields:
                     all_fields.append(field)
                     is_dirty = True
@@ -380,13 +379,13 @@ class Locker(models.Model):
         """Returns a dictionary of all the locker's settings"""
         settings_dict = {}
         for setting in self.settings.all():
-            key = u'{}|{}'.format(setting.category, setting.identifier)
+            key = '{}|{}'.format(setting.category, setting.identifier)
             try:
                 value = json.loads(setting.value)
             except:
-                if setting.value == u'False':
+                if setting.value == 'False':
                     value = False
-                elif setting.value == u'True':
+                elif setting.value == 'True':
                     value = True
                 else:
                     value = setting.value
@@ -599,7 +598,7 @@ class Submission(models.Model):
     objects = SubmissionManager()
 
     def __str__(self):
-        return u'{} to {}'.format(self.timestamp, self.locker)
+        return '{} to {}'.format(self.timestamp, self.locker)
 
     def data_dict(self, with_types=False):
         """Returns the data field as an ordered dictionary"""
@@ -608,7 +607,7 @@ class Submission(models.Model):
         except ValueError:
             data = {}
         if with_types:
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 headings = []
                 if isinstance(value, list):
                     try:
@@ -724,7 +723,7 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return u'{} in {} by {}'.format(
+        return '{} in {} by {}'.format(
             self.submission.timestamp,
             self.submission.locker,
             self.user

@@ -1,12 +1,12 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. ###
 
 from django.conf import settings
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.forms.models import model_to_dict
 
 from random import randint
 
 import logging
-import os
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ def get_public_user_dict(user):
     """
     public_fields = ['id', 'username', 'email', 'first_name', 'last_name']
     user_dict = {}
-    for key, value in model_to_dict(user).iteritems():
+    for key, value in model_to_dict(user).items():
         if key in public_fields:
             user_dict[key] = value
     return user_dict
@@ -33,15 +33,14 @@ class UserColors():
 
     AVAILABLE_COLORS = 'user_colors_helper_available_colors'
     ASSIGNMENTS = 'user_colors_helper_color_assignments'
-    CSS_FILE = os.path.join(settings.STATIC_ROOT,
-                            'datalocker',
-                            'css',
-                            'user_colors.css')
+    CSS_FILE = staticfiles_storage.path('datalocker/css/user_colors.css')
 
     def __init__(self, request):
         """Initialize the user colors helper"""
         self.request = request
         self.error = False
+        if settings.DEBUG:
+            self.CSS_FILE = self.CSS_FILE.replace('/app/', '/src/datalocker/datalocker/')
         if not self.initialized:
             self.build()
 
@@ -65,8 +64,8 @@ class UserColors():
                         name = line.split()[0][1:].strip()
                         available_colors.append(name)
         except IOError:
-            logger.warning(u"The css file for user colors doesn't exist at the"
-                           u" following location '{}'".format(self.CSS_FILE))
+            logger.warning("The css file for user colors doesn't exist at the"
+                           " following location '{}'".format(self.CSS_FILE))
             self.error = True
         self.request.session[self.AVAILABLE_COLORS] = available_colors
 

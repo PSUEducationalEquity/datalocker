@@ -20,7 +20,7 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             dest='dryrun',
-            help=u'Prevents the command from making any permanent changes',
+            help='Prevents the command from making any permanent changes',
         )
 
     def dryrun_write(self, msg, end=None, verbosity=1):
@@ -42,8 +42,8 @@ class Command(BaseCommand):
                                at for the message to be output (default: {1})
         """
         text_original = msg.strip()
-        text_updated = u'{}{}'.format(
-            self.style.DRYRUN(u'DryRun: ') if self.dryrun else u'',
+        text_updated = '{}{}'.format(
+            self.style.DRYRUN('DryRun: ') if self.dryrun else '',
             text_original
         )
         msg = msg.replace(text_original, text_updated)
