@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 import django.db.models.deletion
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('comment', models.TextField(default=b'', blank=True)),
-                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='datalocker.Comment', null=True)),
+                ('parent', models.ForeignKey(related_name='children', on_delete=django.db.models.deletion.CASCADE, default=None, blank=True, to='datalocker.Comment', null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('setting', models.CharField(max_length=255)),
                 ('identifier', models.SlugField()),
                 ('value', models.TextField(default=b'')),
-                ('locker', models.ForeignKey(related_name='settings', to='datalocker.Locker')),
+                ('locker', models.ForeignKey(related_name='settings', on_delete=django.db.models.deletion.CASCADE, to='datalocker.Locker')),
             ],
         ),
         migrations.CreateModel(
@@ -54,13 +54,13 @@ class Migration(migrations.Migration):
                 ('data', models.TextField(default=b'', blank=True)),
                 ('deleted', models.DateTimeField(default=None, null=True, editable=False, blank=True)),
                 ('workflow_state', models.CharField(default=b'', max_length=255, blank=True)),
-                ('locker', models.ForeignKey(related_name='submissions', to='datalocker.Locker')),
+                ('locker', models.ForeignKey(related_name='submissions', on_delete=django.db.models.deletion.CASCADE, to='datalocker.Locker')),
             ],
         ),
         migrations.AddField(
             model_name='comment',
             name='submission',
-            field=models.ForeignKey(related_name='comments', to='datalocker.Submission'),
+            field=models.ForeignKey(related_name='comments', on_delete=django.db.models.deletion.CASCADE, to='datalocker.Submission'),
         ),
         migrations.AddField(
             model_name='comment',

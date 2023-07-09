@@ -4,9 +4,9 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.decorators import available_attrs
 
 from .models import Locker, Submission
@@ -20,7 +20,7 @@ def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME,
     an active user, redirecting to the log-in page if necessary.
     """
     actual_decorator = user_passes_test(
-        lambda u: u.is_authenticated() and u.is_active,
+        lambda u: u.is_authenticated and u.is_active,
         login_url=login_url,
         redirect_field_name=redirect_field_name
     )
@@ -82,8 +82,8 @@ def prevent_url_guessing(view_func):
                 if request.resolver_match.url_name in redirect_to_list:
                     view = reverse('datalocker:submissions_list',
                                    kwargs={'locker_id': locker_id})
-                    msg = (u'<strong>Oops!</strong> The submission you '
-                           u'requested is not in the locker you specified.')
+                    msg = ('<strong>Oops!</strong> The submission you '
+                           'requested is not in the locker you specified.')
                     messages.error(request, msg)
                 else:
                     view = reverse(

@@ -15,16 +15,16 @@ def get_from_address(email_purpose):
     logged and uses `email_purpose` to explain what email was trying
     to be sent.
     """
-    from_addr = u''
+    from_addr = ''
     try:
         from_addr = settings.NOTIFICATIONS_FROM
     except AttributeError:
-        logger.warning(u'The "{}" email was not sent because '
-                       u'NOTIFICATIONS_FROM was not defined in '
-                       u'settings.py'.format(email_purpose))
+        logger.warning('The "{}" email was not sent because '
+                       'NOTIFICATIONS_FROM was not defined in '
+                       'settings.py'.format(email_purpose))
     else:
-        if from_addr == u'':
-            logger.warning(u'The "{}" email was not sent because '
-                           u'NOTIFICATIONS_FROM in settings.py '
-                           u'is blank'.format(email_purpose))
+        if from_addr == '':
+            logger.warning('The "{}" email was not sent because '
+                           'NOTIFICATIONS_FROM in settings.py '
+                           'is blank'.format(email_purpose))
     return from_addr
