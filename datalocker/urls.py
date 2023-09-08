@@ -13,6 +13,10 @@ urlpatterns = [
         views.locker_list_view,
         name='index',
         ),
+    url(r'^noaccess$',
+        views.no_access,
+        name='no_access'
+        ),
 
     url(r'^login$',
         auth_views.LoginView.as_view(),

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '23.07.1'
+version = '23.09.1'
 
 setup(
     name='datalocker',

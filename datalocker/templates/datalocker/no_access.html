@@ -1,0 +1,35 @@
+{# Copyright 2023 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved. #}
+{% extends "datalocker/app_template.html" %}
+{% load staticfiles %}
+
+{% block breadcrumb-trail %}
+  <li class="active">
+    No access
+  </li>
+{% endblock breadcrumb-trail %}
+
+{% block page-meta-title %}No access{% endblock page-meta-title %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-10 col-sm-offset-1">
+        <h1>No access</h1>
+        <ul class="messages list-unstyled" id="user-messages">
+          {% for msg in messages %}
+            <li class="alert {{ msg.tags }}">{{ msg|safe }}</li>
+          {% endfor %}
+        </ul>
+        <p class="lead">
+          You do not have access to this system.
+        </p>
+        <p>
+          {% block contact-support %}
+          If you feel you have gotten this message in error, please contact
+          support to resolve the problem.
+          {% endblock contact-support %}
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
