@@ -374,6 +374,12 @@ def modify_locker(request, **kwargs):
     return HttpResponseRedirect(reverse('datalocker:index'))
 
 
+@require_http_methods(['GET', 'HEAD'])
+def no_access(request):
+    """Message displayed to users who have no access to the system"""
+    return render(request, 'datalocker/no_access.html', {})
+
+
 @permission_required('datalocker.add_manual_submission')
 @login_required()
 @require_http_methods(['POST'])
