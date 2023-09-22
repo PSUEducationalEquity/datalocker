@@ -549,6 +549,9 @@ class LockerSetting(models.Model):
         default='',
     )
 
+    class Meta:
+        ordering = ('locker', 'setting')
+
 
 class SubmissionManager(models.Manager):
     def oldest(self, locker):
@@ -596,6 +599,9 @@ class Submission(models.Model):
         max_length=255,
     )
     objects = SubmissionManager()
+
+    class Meta:
+        ordering = ('-timestamp', )
 
     def __str__(self):
         return '{} to {}'.format(self.timestamp, self.locker)
