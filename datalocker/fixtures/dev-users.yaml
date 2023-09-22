@@ -45,7 +45,7 @@
     date_joined: '2014-08-14 13:59:38+05:00'
     email: eeqdev+dl-mark-smith@psu.edu
     first_name: Mark
-    is_active: true
+    is_active: false
     is_staff: true
     is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
@@ -59,7 +59,7 @@
     date_joined: '2014-08-14 13:59:38+05:00'
     email: eeqdev+dl-tom-jones@psu.edu
     first_name: Tom
-    is_active: true
+    is_active: false
     is_staff: true
     is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
@@ -73,7 +73,7 @@
     date_joined: '2014-08-14 13:59:38+05:00'
     email: eeqdev+dl-tonya-kirk@psu.edu
     first_name: Tonya
-    is_active: true
+    is_active: false
     is_staff: true
     is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
@@ -87,7 +87,7 @@
     date_joined: '2014-08-14 13:59:38+05:00'
     email: eeqdev+dl-richard-bob@psu.edu
     first_name: Richard
-    is_active: true
+    is_active: false
     is_staff: true
     is_superuser: false
     last_login: '2014-08-14 13:59:38+05:00'
