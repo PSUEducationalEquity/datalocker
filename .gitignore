@@ -1,4 +1,5 @@
 ## Python specific
+__pycache__
 *.egg-info
 *.pyc
 
