@@ -6,7 +6,7 @@ from django.contrib.auth.admin import GroupAdmin, UserAdmin as auth_UserAdmin
 from django.contrib.auth.models import Group, User
 
 from .decorators import never_cache
-from .models import Locker, LockerSetting, Submission, Comment
+from .models import Locker, LockerSetting, Submission
 
 
 class ArchivedFilter(admin.SimpleListFilter):
@@ -95,17 +95,6 @@ class DataLockerAdminSite(AdminSite):
     @never_cache
     def password_change_done(self, request, extra_context=None):
         return super(DataLockerAdminSite, self).password_change_done(request, extra_context)  # NOQA
-
-
-# class CommentAdmin(admin.ModelAdmin):
-#     list_display = [
-#         'id',
-#         'submission',
-#         'user',
-#         'timestamp',
-#         'comment',
-#         'parent'
-#     ]
 
 
 class LockerAdmin(admin.ModelAdmin):
@@ -243,7 +232,6 @@ class UserAdmin(auth_UserAdmin):
 
 admin_site = DataLockerAdminSite(name='datalockeradmin')
 
-# admin_site.register(Comment, CommentAdmin)
 admin_site.register(Group, GroupAdmin)
 admin_site.register(Locker, LockerAdmin)
 admin_site.register(LockerSetting, LockerSettingAdmin)
