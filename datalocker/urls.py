@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.contrib.auth import views as auth_views
-from django.url import path
+from django.urls import path
 
 from datalocker import views
 

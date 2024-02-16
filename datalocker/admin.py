@@ -1,5 +1,6 @@
 ### Copyright 2015 The Pennsylvania State University. Office of the Vice Provost for Educational Equity. All Rights Reserved.###
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import GroupAdmin, UserAdmin as auth_UserAdmin
@@ -66,7 +67,10 @@ class DeletedFilter(admin.SimpleListFilter):
 
 
 class DataLockerAdminSite(AdminSite):
+    index_title = 'Application settings'
     site_header = 'Data Locker Administration'
+    site_title = 'Data Locker'
+    site_url = settings.SESSION_COOKIE_PATH
 
     def admin_view(self, view, cacheable=False):
         view_function = super().admin_view(view, cacheable)
