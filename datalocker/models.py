@@ -41,7 +41,9 @@ class LockerQuerySet(models.query.QuerySet):
 
     def include_latest(self):
         """Include timestamp of the most recent submission"""
-        return self.annotate(latest_submission=Max('submissions__timestamp'))
+        default_ordering = self.model._meta.ordering
+        return (self.order_by(*default_ordering)
+                    .annotate(latest_submission=Max('submissions__timestamp')))
 
 
 class LockerManager(models.Manager):
